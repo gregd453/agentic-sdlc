@@ -12,8 +12,7 @@ import {
   TaskAssignmentSchema,
   TaskResultSchema,
   AgentError,
-  ValidationError,
-  TaskExecutionError
+  ValidationError
 } from './types';
 
 export abstract class BaseAgent implements AgentLifecycle {
@@ -78,7 +77,7 @@ export abstract class BaseAgent implements AgentLifecycle {
     const taskChannel = `agent:${this.capabilities.type}:tasks`;
     await this.redis.subscribe(taskChannel);
 
-    this.redis.on('message', async (channel, message) => {
+    this.redis.on('message', async (_channel, message) => {
       try {
         const agentMessage: AgentMessage = JSON.parse(message);
         await this.receiveTask(agentMessage);
