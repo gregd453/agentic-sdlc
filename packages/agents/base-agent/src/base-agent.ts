@@ -1,0 +1,318 @@
+import { randomUUID } from 'crypto';
+import Anthropic from '@anthropic-ai/sdk';
+import pino from 'pino';
+import Redis from 'ioredis';
+import {
+  AgentLifecycle,
+  AgentCapabilities,
+  TaskAssignment,
+  TaskResult,
+  AgentMessage,
+  HealthStatus,
+  TaskAssignmentSchema,
+  TaskResultSchema,
+  AgentError,
+  ValidationError,
+  TaskExecutionError
+} from './types';
+
+export abstract class BaseAgent implements AgentLifecycle {
+  protected readonly logger: pino.Logger;
+  protected readonly anthropic: Anthropic;
+  protected readonly redis: Redis;
+  protected readonly agentId: string;
+  protected readonly capabilities: AgentCapabilities;
+
+  private startTime: number;
+  private tasksProcessed: number = 0;
+  private errorsCount: number = 0;
+  private lastTaskAt?: string;
+
+  constructor(capabilities: AgentCapabilities) {
+    this.agentId = `${capabilities.type}-${randomUUID().slice(0, 8)}`;
+    this.capabilities = capabilities;
+
+    // Initialize logger
+    this.logger = pino({
+      name: this.agentId,
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'UTC:yyyy-mm-dd HH:MM:ss'
+        }
+      }
+    });
+
+    // Initialize Anthropic client
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      throw new AgentError('ANTHROPIC_API_KEY not configured', 'CONFIG_ERROR');
+    }
+
+    this.anthropic = new Anthropic({
+      apiKey
+    });
+
+    // Initialize Redis client
+    this.redis = new Redis({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6380'),
+      retryStrategy: (times) => Math.min(times * 100, 3000)
+    });
+
+    this.startTime = Date.now();
+  }
+
+  async initialize(): Promise<void> {
+    this.logger.info('Initializing agent', {
+      type: this.capabilities.type,
+      version: this.capabilities.version,
+      capabilities: this.capabilities.capabilities
+    });
+
+    // Connect to Redis
+    await this.redis.ping();
+
+    // Subscribe to task channel
+    const taskChannel = `agent:${this.capabilities.type}:tasks`;
+    await this.redis.subscribe(taskChannel);
+
+    this.redis.on('message', async (channel, message) => {
+      try {
+        const agentMessage: AgentMessage = JSON.parse(message);
+        await this.receiveTask(agentMessage);
+      } catch (error) {
+        this.logger.error('Failed to process message', { error, message });
+        this.errorsCount++;
+      }
+    });
+
+    // Register agent with orchestrator
+    await this.registerWithOrchestrator();
+
+    this.logger.info('Agent initialized successfully');
+  }
+
+  async receiveTask(message: AgentMessage): Promise<void> {
+    const traceId = message.trace_id;
+
+    this.logger.info('Task received', {
+      task_type: message.type,
+      workflow_id: message.workflow_id,
+      trace_id: traceId
+    });
+
+    try {
+      // Validate task
+      const task = this.validateTask(message.payload);
+
+      // Execute task
+      const result = await this.executeWithRetry(
+        () => this.execute(task),
+        3
+      );
+
+      // Report result
+      await this.reportResult(result);
+
+      this.tasksProcessed++;
+      this.lastTaskAt = new Date().toISOString();
+
+    } catch (error) {
+      this.errorsCount++;
+
+      const errorResult: TaskResult = {
+        task_id: message.payload.task_id as string || randomUUID(),
+        workflow_id: message.workflow_id,
+        status: 'failure',
+        output: {},
+        errors: [error instanceof Error ? error.message : String(error)]
+      };
+
+      await this.reportResult(errorResult);
+
+      this.logger.error('Task execution failed', {
+        error,
+        workflow_id: message.workflow_id,
+        trace_id: traceId
+      });
+    }
+  }
+
+  validateTask(task: unknown): TaskAssignment {
+    try {
+      return TaskAssignmentSchema.parse(task);
+    } catch (error) {
+      throw new ValidationError(
+        'Invalid task assignment',
+        error instanceof Error ? [error.message] : ['Unknown validation error']
+      );
+    }
+  }
+
+  abstract execute(task: TaskAssignment): Promise<TaskResult>;
+
+  async reportResult(result: TaskResult): Promise<void> {
+    // Validate result
+    const validatedResult = TaskResultSchema.parse(result);
+
+    // Publish result to Redis
+    const resultChannel = 'orchestrator:results';
+    await this.redis.publish(
+      resultChannel,
+      JSON.stringify({
+        id: randomUUID(),
+        type: 'result',
+        agent_id: this.agentId,
+        workflow_id: validatedResult.workflow_id,
+        stage: this.capabilities.type,
+        payload: validatedResult,
+        timestamp: new Date().toISOString(),
+        trace_id: randomUUID()
+      } as AgentMessage)
+    );
+
+    this.logger.info('Result reported', {
+      task_id: validatedResult.task_id,
+      status: validatedResult.status
+    });
+  }
+
+  async cleanup(): Promise<void> {
+    this.logger.info('Cleaning up agent');
+
+    // Unsubscribe from channels
+    await this.redis.unsubscribe();
+
+    // Disconnect from Redis
+    await this.redis.quit();
+
+    // Deregister from orchestrator
+    await this.deregisterFromOrchestrator();
+
+    this.logger.info('Agent cleanup completed');
+  }
+
+  async healthCheck(): Promise<HealthStatus> {
+    const uptime = Date.now() - this.startTime;
+
+    return {
+      status: this.errorsCount > 10 ? 'unhealthy' :
+              this.errorsCount > 5 ? 'degraded' : 'healthy',
+      uptime_ms: uptime,
+      tasks_processed: this.tasksProcessed,
+      last_task_at: this.lastTaskAt,
+      errors_count: this.errorsCount
+    };
+  }
+
+  // Helper: Execute with retry logic
+  protected async executeWithRetry<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 3
+  ): Promise<T> {
+    let lastError: Error;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error as Error;
+
+        this.logger.warn('Operation failed, retrying', {
+          agent_id: this.agentId,
+          attempt,
+          maxRetries,
+          error: lastError.message
+        });
+
+        if (attempt < maxRetries) {
+          // Exponential backoff
+          const delayMs = Math.min(1000 * Math.pow(2, attempt - 1), 30000);
+          await this.sleep(delayMs);
+        }
+      }
+    }
+
+    throw new AgentError(
+      `Operation failed after ${maxRetries} attempts`,
+      'RETRY_EXHAUSTED',
+      { cause: lastError! }
+    );
+  }
+
+  // Helper: Call Claude API
+  protected async callClaude(
+    prompt: string,
+    systemPrompt?: string,
+    maxTokens: number = 4096
+  ): Promise<string> {
+    try {
+      const response = await this.anthropic.messages.create({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: maxTokens,
+        temperature: 0.3,
+        system: systemPrompt,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      });
+
+      // Extract text from response
+      const textContent = response.content.find(c => c.type === 'text');
+      if (!textContent || textContent.type !== 'text') {
+        throw new AgentError('No text content in Claude response', 'API_ERROR');
+      }
+
+      return textContent.text;
+    } catch (error) {
+      if (error instanceof Anthropic.APIError) {
+        throw new AgentError(
+          `Claude API error: ${error.message}`,
+          'ANTHROPIC_API_ERROR',
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+  }
+
+  // Helper: Generate trace ID
+  protected generateTraceId(): string {
+    return `trace_${randomUUID()}`;
+  }
+
+  // Helper: Sleep for specified milliseconds
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Register agent with orchestrator
+  private async registerWithOrchestrator(): Promise<void> {
+    const registrationData = {
+      agent_id: this.agentId,
+      type: this.capabilities.type,
+      version: this.capabilities.version,
+      capabilities: this.capabilities.capabilities,
+      registered_at: new Date().toISOString()
+    };
+
+    await this.redis.hset(
+      'agents:registry',
+      this.agentId,
+      JSON.stringify(registrationData)
+    );
+
+    this.logger.info('Registered with orchestrator', { agent_id: this.agentId });
+  }
+
+  // Deregister agent from orchestrator
+  private async deregisterFromOrchestrator(): Promise<void> {
+    await this.redis.hdel('agents:registry', this.agentId);
+    this.logger.info('Deregistered from orchestrator', { agent_id: this.agentId });
+  }
+}
