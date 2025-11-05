@@ -37,6 +37,14 @@
   - Automatic Zod schema generation from contracts
   - 46 unit tests passing (96.5% coverage)
 
+- 🚧 **Phase 1: Agent-Orchestrator Integration** - 90% COMPLETE
+  - Fixed Redis pub/sub pattern in BaseAgent
+  - Created AgentDispatcherService for bidirectional communication
+  - Orchestrator dispatches tasks to agent:{type}:tasks channels
+  - Agents report results to orchestrator:results channel
+  - Agent registration in Redis working
+  - Pending: End-to-end workflow test (orchestrator restart issue)
+
 ### 🔧 System Configuration
 
 **Environment Variables (.env):**
@@ -49,8 +57,8 @@ ANTHROPIC_API_KEY=sk-ant-api03-ml1xRbyrhUtvgjaygYq8ipNACGGaIp0Qo-71u7NUjGgT4GclI
 
 **Git Status:**
 - Branch: develop
-- Last commit: "feat: implement Scaffold Agent with Claude integration (TASK-007)"
-- Tagged: v0.3.0-task-007
+- Last commit: "feat: implement agent-orchestrator bidirectional integration (Phase 1)"
+- Tagged: v0.4.0-phase1-integration
 
 ### 📁 Project Structure
 
