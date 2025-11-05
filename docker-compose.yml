@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: agentic-sdlc-postgres
+    environment:
+      POSTGRES_USER: agentic
+      POSTGRES_PASSWORD: agentic_dev
+      POSTGRES_DB: agentic_sdlc
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentic -d agentic_sdlc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agentic-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: agentic-sdlc-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agentic-network
+
+  orchestrator:
+    build:
+      context: ./packages/orchestrator
+      dockerfile: Dockerfile
+    container_name: agentic-sdlc-orchestrator
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://agentic:agentic_dev@postgres:5432/agentic_sdlc
+      - REDIS_URL=redis://redis:6379
+      - ORCHESTRATOR_PORT=3000
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./packages/orchestrator:/app
+      - /app/node_modules
+      - /app/dist
+    networks:
+      - agentic-network
+    restart: unless-stopped
+
+networks:
+  agentic-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

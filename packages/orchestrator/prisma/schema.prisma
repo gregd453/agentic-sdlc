@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workflow {
+  id               String           @id @default(uuid())
+  type             WorkflowType
+  name             String
+  description      String?
+  requirements     String?
+  status           WorkflowStatus
+  current_stage    String
+  priority         Priority
+  progress         Int              @default(0)
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  completed_at     DateTime?
+  created_by       String
+
+  stages           WorkflowStage[]
+  tasks            AgentTask[]
+  events           WorkflowEvent[]
+
+  @@index([status])
+  @@index([created_at])
+}
+
+model WorkflowStage {
+  id              String          @id @default(uuid())
+  workflow_id     String
+  name            String
+  status          StageStatus
+  started_at      DateTime?
+  completed_at    DateTime?
+  agent_id        String?
+  retry_count     Int             @default(0)
+
+  workflow        Workflow        @relation(fields: [workflow_id], references: [id])
+
+  @@index([workflow_id])
+}
+
+model AgentTask {
+  id              String          @id @default(uuid())
+  task_id         String          @unique
+  workflow_id     String
+  agent_type      AgentType
+  status          TaskStatus
+  priority        Priority
+  payload         Json
+  result          Json?
+  assigned_at     DateTime        @default(now())
+  started_at      DateTime?
+  completed_at    DateTime?
+  retry_count     Int             @default(0)
+  max_retries     Int             @default(3)
+  timeout_ms      Int             @default(300000)
+
+  workflow        Workflow        @relation(fields: [workflow_id], references: [id])
+
+  @@index([workflow_id])
+  @@index([status])
+  @@index([agent_type])
+}
+
+model WorkflowEvent {
+  id              String          @id @default(uuid())
+  workflow_id     String
+  event_type      String
+  payload         Json
+  timestamp       DateTime        @default(now())
+  trace_id        String
+
+  workflow        Workflow        @relation(fields: [workflow_id], references: [id])
+
+  @@index([workflow_id])
+  @@index([timestamp])
+}
+
+model Agent {
+  id              String          @id @default(uuid())
+  agent_id        String          @unique
+  type            AgentType
+  status          AgentStatus
+  version         String
+  capabilities    String[]
+  last_heartbeat  DateTime        @default(now())
+  registered_at   DateTime        @default(now())
+  metadata        Json?
+
+  @@index([type])
+  @@index([status])
+}
+
+enum WorkflowType {
+  app
+  feature
+  bugfix
+}
+
+enum WorkflowStatus {
+  initiated
+  running
+  paused
+  completed
+  failed
+  cancelled
+}
+
+enum StageStatus {
+  pending
+  running
+  completed
+  failed
+  skipped
+}
+
+enum TaskStatus {
+  pending
+  assigned
+  running
+  completed
+  failed
+  cancelled
+}
+
+enum AgentType {
+  scaffold
+  validation
+  e2e_test
+  integration
+  deployment
+  monitoring
+  debug
+  recovery
+}
+
+enum AgentStatus {
+  online
+  busy
+  offline
+  error
+}
+
+enum Priority {
+  low
+  normal
+  high
+  critical
+}

@@ -1,0 +1,29 @@
+# Development Dockerfile
+FROM node:20-alpine
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@8.11.0 --activate
+
+# Install development tools
+RUN apk add --no-cache bash git
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
+COPY prisma ./prisma/
+
+# Install all dependencies (including devDependencies)
+RUN pnpm install --frozen-lockfile
+
+# Generate Prisma client
+RUN pnpm exec prisma generate
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 3000
+
+# Run in development mode with hot reload
+CMD ["pnpm", "run", "dev"]
