@@ -18,7 +18,8 @@ import {
 export abstract class BaseAgent implements AgentLifecycle {
   protected readonly logger: pino.Logger;
   protected readonly anthropic: Anthropic;
-  protected readonly redis: Redis;
+  protected readonly redisSubscriber: Redis;  // For subscribing to task channel
+  protected readonly redisPublisher: Redis;    // For publishing results and registration
   protected readonly agentId: string;
   protected readonly capabilities: AgentCapabilities;
 
@@ -53,12 +54,15 @@ export abstract class BaseAgent implements AgentLifecycle {
       apiKey
     });
 
-    // Initialize Redis client
-    this.redis = new Redis({
+    // Initialize Redis clients (separate for pub/sub pattern)
+    const redisConfig = {
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6380'),
-      retryStrategy: (times) => Math.min(times * 100, 3000)
-    });
+      retryStrategy: (times: number) => Math.min(times * 100, 3000)
+    };
+
+    this.redisSubscriber = new Redis(redisConfig);
+    this.redisPublisher = new Redis(redisConfig);
 
     this.startTime = Date.now();
   }
@@ -70,14 +74,15 @@ export abstract class BaseAgent implements AgentLifecycle {
       capabilities: this.capabilities.capabilities
     });
 
-    // Connect to Redis
-    await this.redis.ping();
+    // Test Redis connections
+    await this.redisSubscriber.ping();
+    await this.redisPublisher.ping();
 
     // Subscribe to task channel
     const taskChannel = `agent:${this.capabilities.type}:tasks`;
-    await this.redis.subscribe(taskChannel);
+    await this.redisSubscriber.subscribe(taskChannel);
 
-    this.redis.on('message', async (_channel, message) => {
+    this.redisSubscriber.on('message', async (_channel, message) => {
       try {
         const agentMessage: AgentMessage = JSON.parse(message);
         await this.receiveTask(agentMessage);
@@ -156,9 +161,9 @@ export abstract class BaseAgent implements AgentLifecycle {
     // Validate result
     const validatedResult = TaskResultSchema.parse(result);
 
-    // Publish result to Redis
+    // Publish result to Redis using publisher client
     const resultChannel = 'orchestrator:results';
-    await this.redis.publish(
+    await this.redisPublisher.publish(
       resultChannel,
       JSON.stringify({
         id: randomUUID(),
@@ -182,12 +187,13 @@ export abstract class BaseAgent implements AgentLifecycle {
     this.logger.info('Cleaning up agent');
 
     // Unsubscribe from channels
-    await this.redis.unsubscribe();
+    await this.redisSubscriber.unsubscribe();
 
     // Disconnect from Redis
-    await this.redis.quit();
+    await this.redisSubscriber.quit();
+    await this.redisPublisher.quit();
 
-    // Deregister from orchestrator
+    // Deregister from orchestrator (do before disconnecting publisher)
     await this.deregisterFromOrchestrator();
 
     this.logger.info('Agent cleanup completed');
@@ -300,7 +306,7 @@ export abstract class BaseAgent implements AgentLifecycle {
       registered_at: new Date().toISOString()
     };
 
-    await this.redis.hset(
+    await this.redisPublisher.hset(
       'agents:registry',
       this.agentId,
       JSON.stringify(registrationData)
@@ -311,7 +317,7 @@ export abstract class BaseAgent implements AgentLifecycle {
 
   // Deregister agent from orchestrator
   private async deregisterFromOrchestrator(): Promise<void> {
-    await this.redis.hdel('agents:registry', this.agentId);
+    await this.redisPublisher.hdel('agents:registry', this.agentId);
     this.logger.info('Deregistered from orchestrator', { agent_id: this.agentId });
   }
 }

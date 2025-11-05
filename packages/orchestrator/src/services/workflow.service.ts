@@ -3,6 +3,7 @@ import { CreateWorkflowRequest, TaskAssignment, WorkflowResponse } from '../type
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
 import { WorkflowStateMachineService } from '../state-machine/workflow-state-machine';
+import { AgentDispatcherService } from './agent-dispatcher.service';
 import { logger, generateTraceId } from '../utils/logger';
 import { metrics } from '../utils/metrics';
 import { NotFoundError } from '../utils/errors';
@@ -11,7 +12,8 @@ export class WorkflowService {
   constructor(
     private repository: WorkflowRepository,
     private eventBus: EventBus,
-    private stateMachineService: WorkflowStateMachineService
+    private stateMachineService: WorkflowStateMachineService,
+    private agentDispatcher?: AgentDispatcherService
   ) {
     this.setupEventHandlers();
   }
@@ -73,7 +75,12 @@ export class WorkflowService {
       });
 
       // Create initial task for the first stage
-      await this.createTaskForStage(workflow.id, 'initialization');
+      await this.createTaskForStage(workflow.id, 'scaffolding', {
+        name: workflow.name,
+        description: workflow.description,
+        requirements: workflow.requirements,
+        type: workflow.type
+      });
 
       // Record metrics
       metrics.recordDuration('workflow.creation', Date.now() - startTime, {
@@ -175,7 +182,7 @@ export class WorkflowService {
     metrics.increment('workflows.retried');
   }
 
-  private async createTaskForStage(workflowId: string, stage: string): Promise<void> {
+  private async createTaskForStage(workflowId: string, stage: string, workflowData?: any): Promise<void> {
     const taskId = randomUUID();
     const agentType = this.getAgentTypeForStage(stage);
 
@@ -231,12 +238,51 @@ export class WorkflowService {
       trace_id: taskAssignment.metadata.trace_id
     });
 
-    logger.info('Task created for stage', {
+    // Dispatch task directly to agent via Redis
+    if (this.agentDispatcher) {
+      await this.agentDispatcher.dispatchTask(taskAssignment, workflowData);
+
+      // Register handler for agent result
+      this.agentDispatcher.onResult(workflowId, async (result) => {
+        await this.handleAgentResult(result);
+      });
+    }
+
+    logger.info('Task created and dispatched to agent', {
       task_id: taskId,
       workflow_id: workflowId,
       stage,
       agent_type: agentType
     });
+  }
+
+  private async handleAgentResult(result: any): Promise<void> {
+    const payload = result.payload;
+
+    logger.info('Handling agent result', {
+      workflow_id: result.workflow_id,
+      task_id: payload.task_id,
+      status: payload.status
+    });
+
+    if (payload.status === 'success') {
+      await this.handleTaskCompletion({
+        payload: {
+          task_id: payload.task_id,
+          workflow_id: result.workflow_id,
+          stage: result.stage
+        }
+      });
+    } else {
+      await this.handleTaskFailure({
+        payload: {
+          task_id: payload.task_id,
+          workflow_id: result.workflow_id,
+          stage: result.stage,
+          error: payload.errors?.join(', ')
+        }
+      });
+    }
   }
 
   private async handleTaskCompletion(event: any): Promise<void> {

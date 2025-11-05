@@ -73,10 +73,16 @@ export async function createServer() {
   const eventBus = new EventBus(redisUrl);
   const workflowRepository = new WorkflowRepository(prisma);
   const stateMachineService = new WorkflowStateMachineService(workflowRepository, eventBus);
+
+  // Import and initialize agent dispatcher
+  const { AgentDispatcherService } = await import('./services/agent-dispatcher.service');
+  const agentDispatcher = new AgentDispatcherService(redisUrl);
+
   const workflowService = new WorkflowService(
     workflowRepository,
     eventBus,
-    stateMachineService
+    stateMachineService,
+    agentDispatcher
   );
 
   // Register routes
