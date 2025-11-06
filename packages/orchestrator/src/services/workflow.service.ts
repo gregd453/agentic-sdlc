@@ -58,7 +58,7 @@ export class WorkflowService {
       );
 
       // Start the workflow
-      stateMachine.send('START');
+      stateMachine.send({ type: 'START' });
 
       // Publish workflow created event
       await this.eventBus.publish({
@@ -150,7 +150,7 @@ export class WorkflowService {
 
     const stateMachine = this.stateMachineService.getStateMachine(workflowId);
     if (stateMachine) {
-      stateMachine.send('CANCEL');
+      stateMachine.send({ type: 'CANCEL' });
     }
 
     await this.repository.update(workflowId, {
@@ -169,7 +169,7 @@ export class WorkflowService {
 
     const stateMachine = this.stateMachineService.getStateMachine(workflowId);
     if (stateMachine) {
-      stateMachine.send('RETRY');
+      stateMachine.send({ type: 'RETRY' });
     }
 
     const stage = fromStage || workflow.current_stage;

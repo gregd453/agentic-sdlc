@@ -107,25 +107,25 @@ export const createWorkflowStateMachine = (
     }
   }, {
     actions: {
-      logTransition: (context, event) => {
+      logTransition: ({ context, event }) => {
         logger.info('Workflow state transition', {
           workflow_id: context.workflow_id,
           event: event.type,
           current_stage: context.current_stage
         });
       },
-      updateWorkflowStatus: async (context, event, { state }) => {
+      updateWorkflowStatus: async ({ context }) => {
+        // Status updates are handled by specific actions (markComplete, etc.)
         await repository.update(context.workflow_id, {
-          status: state.value as string,
           current_stage: context.current_stage
         });
       },
-      updateProgress: (context, event) => {
+      updateProgress: ({ context, event }) => {
         if (event.type === 'STAGE_COMPLETE') {
           context.progress = Math.min(100, context.progress + 15);
         }
       },
-      logStageComplete: (context, event) => {
+      logStageComplete: ({ context, event }) => {
         if (event.type === 'STAGE_COMPLETE') {
           logger.info('Stage completed', {
             workflow_id: context.workflow_id,
@@ -133,7 +133,7 @@ export const createWorkflowStateMachine = (
           });
         }
       },
-      logError: (context, event) => {
+      logError: ({ context, event }) => {
         if (event.type === 'STAGE_FAILED') {
           context.error = event.error;
           logger.error('Stage failed', {
@@ -143,15 +143,15 @@ export const createWorkflowStateMachine = (
           });
         }
       },
-      resetError: (context) => {
+      resetError: ({ context }) => {
         delete context.error;
       },
-      logRetry: (context) => {
+      logRetry: ({ context }) => {
         logger.info('Retrying workflow', {
           workflow_id: context.workflow_id
         });
       },
-      moveToNextStage: async (context) => {
+      moveToNextStage: async ({ context }) => {
         const stages = getStagesForType(context.type);
         const currentIndex = stages.indexOf(context.current_stage);
         if (currentIndex < stages.length - 1) {
@@ -161,7 +161,7 @@ export const createWorkflowStateMachine = (
           });
         }
       },
-      markComplete: async (context) => {
+      markComplete: async ({ context }) => {
         context.progress = 100;
         await repository.update(context.workflow_id, {
           status: 'completed',
@@ -169,7 +169,7 @@ export const createWorkflowStateMachine = (
           completed_at: new Date()
         });
       },
-      notifyCompletion: async (context) => {
+      notifyCompletion: async ({ context }) => {
         await eventBus.publish({
           id: `event-${Date.now()}`,
           type: 'WORKFLOW_COMPLETED',
@@ -182,7 +182,7 @@ export const createWorkflowStateMachine = (
           workflow_id: context.workflow_id
         });
       },
-      notifyCancellation: async (context) => {
+      notifyCancellation: async ({ context }) => {
         await eventBus.publish({
           id: `event-${Date.now()}`,
           type: 'WORKFLOW_CANCELLED',
@@ -197,7 +197,7 @@ export const createWorkflowStateMachine = (
       }
     },
     guards: {
-      isWorkflowComplete: (context) => {
+      isWorkflowComplete: ({ context }) => {
         const stages = getStagesForType(context.type);
         const currentIndex = stages.indexOf(context.current_stage);
         return currentIndex === stages.length - 1;

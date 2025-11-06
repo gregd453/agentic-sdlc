@@ -32,6 +32,10 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
+  console.error('=============== UNCAUGHT EXCEPTION ===============');
+  console.error('Message:', error.message);
+  console.error('Stack:', error.stack);
+  console.error('==================================================');
   logger.error('Uncaught Exception:', {
     error: error.message,
     stack: error.stack
