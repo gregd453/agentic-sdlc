@@ -152,7 +152,7 @@ enum AgentStatus {
 
 enum Priority {
   low
-  normal
+  medium
   high
   critical
 }

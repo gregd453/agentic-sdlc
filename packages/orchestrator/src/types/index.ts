@@ -78,7 +78,7 @@ export const CreateWorkflowSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().optional(),
   requirements: z.string().optional(),
-  priority: z.enum(['low', 'normal', 'high', 'critical'])
+  priority: z.enum(['low', 'medium', 'high', 'critical'])
 });
 
 export const WorkflowResponseSchema = z.object({
