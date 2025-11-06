@@ -75,13 +75,9 @@ export abstract class BaseAgent implements AgentLifecycle {
     });
 
     // Test Redis connections
-    await this.redisSubscriber.ping();
     await this.redisPublisher.ping();
 
-    // Subscribe to task channel
-    const taskChannel = `agent:${this.capabilities.type}:tasks`;
-    await this.redisSubscriber.subscribe(taskChannel);
-
+    // Set up message handler BEFORE subscribing
     this.redisSubscriber.on('message', async (_channel, message) => {
       try {
         const agentMessage: AgentMessage = JSON.parse(message);
@@ -92,7 +88,13 @@ export abstract class BaseAgent implements AgentLifecycle {
       }
     });
 
-    // Register agent with orchestrator
+    // Subscribe to task channel (this puts connection in subscriber mode)
+    const taskChannel = `agent:${this.capabilities.type}:tasks`;
+    await this.redisSubscriber.subscribe(taskChannel);
+
+    this.logger.info('Subscribed to task channel', { taskChannel });
+
+    // Register agent with orchestrator (use publisher connection)
     await this.registerWithOrchestrator();
 
     this.logger.info('Agent initialized successfully');

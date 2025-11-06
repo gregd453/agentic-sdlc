@@ -15,7 +15,7 @@ export const TaskAssignmentSchema = z.object({
     'debug',
     'recovery'
   ]),
-  priority: z.enum(['low', 'normal', 'high', 'critical']),
+  priority: z.enum(['low', 'medium', 'high', 'critical']),
   payload: z.object({
     action: z.string(),
     target: z.string().optional(),

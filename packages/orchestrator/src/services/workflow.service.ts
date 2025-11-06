@@ -192,7 +192,7 @@ export class WorkflowService {
       workflow_id: workflowId,
       agent_type: agentType as any,
       status: 'pending',
-      priority: 'normal',
+      priority: 'medium',
       payload: {
         stage,
         workflow_id: workflowId
@@ -208,7 +208,7 @@ export class WorkflowService {
       task_id: taskId,
       workflow_id: workflowId,
       agent_type: agentType as any,
-      priority: 'normal',
+      priority: 'medium',
       payload: {
         action: `execute_${stage}`,
         parameters: {

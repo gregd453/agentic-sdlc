@@ -15,7 +15,7 @@ export class WorkflowRepository {
           name: data.name,
           description: data.description,
           requirements: data.requirements,
-          priority: data.priority || 'normal',
+          priority: data.priority || 'medium',
           status: 'initiated',
           current_stage: 'initialization',
           created_by: data.created_by

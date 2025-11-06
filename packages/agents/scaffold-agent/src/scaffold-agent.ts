@@ -140,6 +140,16 @@ export class ScaffoldAgent extends BaseAgent {
    * Parse and validate scaffold-specific task data
    */
   private parseScaffoldTask(task: TaskAssignment): ScaffoldTask {
+    this.logger.info('Parsing scaffold task', {
+      task_id: task.task_id,
+      workflow_id: task.workflow_id,
+      has_name: !!task.name,
+      has_description: !!task.description,
+      has_requirements: !!task.requirements,
+      has_context: !!task.context,
+      priority: task.priority
+    });
+
     try {
       // Map generic TaskAssignment to ScaffoldTask
       const scaffoldTask: ScaffoldTask = {
@@ -153,8 +163,30 @@ export class ScaffoldAgent extends BaseAgent {
         context: task.context as any
       };
 
-      return ScaffoldTaskSchema.parse(scaffoldTask);
+      this.logger.debug('ScaffoldTask object created', { scaffoldTask });
+
+      // Validate with Zod
+      const validated = ScaffoldTaskSchema.parse(scaffoldTask);
+
+      this.logger.info('Task validation successful', {
+        task_id: validated.task_id,
+        project_type: validated.project_type
+      });
+
+      return validated;
     } catch (error) {
+      this.logger.error('Task validation failed', {
+        error,
+        task_data: {
+          task_id: task.task_id,
+          name: task.name,
+          description: task.description,
+          requirements: task.requirements,
+          priority: task.priority,
+          context: task.context
+        }
+      });
+
       throw new ScaffoldError(
         'Invalid scaffold task data',
         'VALIDATION_ERROR',
