@@ -10,6 +10,10 @@ export interface WorkflowContext {
   progress: number;
   error?: Error;
   metadata: Record<string, any>;
+  decision_id?: string;
+  clarification_id?: string;
+  pending_decision?: boolean;
+  pending_clarification?: boolean;
 }
 
 export type WorkflowEvent =
@@ -19,7 +23,12 @@ export type WorkflowEvent =
   | { type: 'PAUSE' }
   | { type: 'RESUME' }
   | { type: 'CANCEL' }
-  | { type: 'RETRY' };
+  | { type: 'RETRY' }
+  | { type: 'DECISION_REQUIRED'; decision_id: string }
+  | { type: 'DECISION_APPROVED'; decision_id: string }
+  | { type: 'DECISION_REJECTED'; decision_id: string; reason?: string }
+  | { type: 'CLARIFICATION_REQUIRED'; clarification_id: string }
+  | { type: 'CLARIFICATION_COMPLETE'; clarification_id: string };
 
 export const createWorkflowStateMachine = (
   context: WorkflowContext,
@@ -49,9 +58,45 @@ export const createWorkflowStateMachine = (
             target: 'failed',
             actions: ['logError', 'updateWorkflowStatus']
           },
+          DECISION_REQUIRED: {
+            target: 'awaiting_decision',
+            actions: ['recordDecisionId', 'logDecisionRequired']
+          },
+          CLARIFICATION_REQUIRED: {
+            target: 'awaiting_clarification',
+            actions: ['recordClarificationId', 'logClarificationRequired']
+          },
           PAUSE: {
             target: 'paused',
             actions: ['logTransition', 'updateWorkflowStatus']
+          },
+          CANCEL: {
+            target: 'cancelled',
+            actions: ['logTransition', 'updateWorkflowStatus']
+          }
+        }
+      },
+      awaiting_decision: {
+        on: {
+          DECISION_APPROVED: {
+            target: 'running',
+            actions: ['clearDecisionId', 'logDecisionApproved', 'updateWorkflowStatus']
+          },
+          DECISION_REJECTED: {
+            target: 'failed',
+            actions: ['clearDecisionId', 'logDecisionRejected', 'updateWorkflowStatus']
+          },
+          CANCEL: {
+            target: 'cancelled',
+            actions: ['logTransition', 'updateWorkflowStatus']
+          }
+        }
+      },
+      awaiting_clarification: {
+        on: {
+          CLARIFICATION_COMPLETE: {
+            target: 'running',
+            actions: ['clearClarificationId', 'logClarificationComplete', 'updateWorkflowStatus']
           },
           CANCEL: {
             target: 'cancelled',
@@ -194,6 +239,71 @@ export const createWorkflowStateMachine = (
         logger.info('Workflow cancelled', {
           workflow_id: context.workflow_id
         });
+      },
+      recordDecisionId: ({ context, event }) => {
+        if (event.type === 'DECISION_REQUIRED') {
+          context.decision_id = event.decision_id;
+          context.pending_decision = true;
+          context.metadata.decision_stage = context.current_stage;
+        }
+      },
+      clearDecisionId: ({ context }) => {
+        delete context.decision_id;
+        context.pending_decision = false;
+      },
+      logDecisionRequired: ({ context, event }) => {
+        if (event.type === 'DECISION_REQUIRED') {
+          logger.info('Decision required - workflow paused', {
+            workflow_id: context.workflow_id,
+            decision_id: event.decision_id,
+            stage: context.current_stage
+          });
+        }
+      },
+      logDecisionApproved: ({ context, event }) => {
+        if (event.type === 'DECISION_APPROVED') {
+          logger.info('Decision approved - workflow resumed', {
+            workflow_id: context.workflow_id,
+            decision_id: event.decision_id
+          });
+        }
+      },
+      logDecisionRejected: ({ context, event }) => {
+        if (event.type === 'DECISION_REJECTED') {
+          logger.warn('Decision rejected - workflow failed', {
+            workflow_id: context.workflow_id,
+            decision_id: event.decision_id,
+            reason: event.reason
+          });
+        }
+      },
+      recordClarificationId: ({ context, event }) => {
+        if (event.type === 'CLARIFICATION_REQUIRED') {
+          context.clarification_id = event.clarification_id;
+          context.pending_clarification = true;
+          context.metadata.clarification_stage = context.current_stage;
+        }
+      },
+      clearClarificationId: ({ context }) => {
+        delete context.clarification_id;
+        context.pending_clarification = false;
+      },
+      logClarificationRequired: ({ context, event }) => {
+        if (event.type === 'CLARIFICATION_REQUIRED') {
+          logger.info('Clarification required - workflow paused', {
+            workflow_id: context.workflow_id,
+            clarification_id: event.clarification_id,
+            stage: context.current_stage
+          });
+        }
+      },
+      logClarificationComplete: ({ context, event }) => {
+        if (event.type === 'CLARIFICATION_COMPLETE') {
+          logger.info('Clarification complete - workflow resumed', {
+            workflow_id: context.workflow_id,
+            clarification_id: event.clarification_id
+          });
+        }
       }
     },
     guards: {

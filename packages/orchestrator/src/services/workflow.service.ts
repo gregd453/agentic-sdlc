@@ -4,17 +4,21 @@ import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
 import { WorkflowStateMachineService } from '../state-machine/workflow-state-machine';
 import { AgentDispatcherService } from './agent-dispatcher.service';
+import { DecisionGateService } from './decision-gate.service';
 import { logger, generateTraceId } from '../utils/logger';
 import { metrics } from '../utils/metrics';
 import { NotFoundError } from '../utils/errors';
 
 export class WorkflowService {
+  private decisionGateService: DecisionGateService;
+
   constructor(
     private repository: WorkflowRepository,
     private eventBus: EventBus,
     private stateMachineService: WorkflowStateMachineService,
     private agentDispatcher?: AgentDispatcherService
   ) {
+    this.decisionGateService = new DecisionGateService();
     this.setupEventHandlers();
   }
 
@@ -366,5 +370,254 @@ export class WorkflowService {
     };
 
     return estimates[workflowType] || 1800000;
+  }
+
+  /**
+   * Evaluate if decision is required for a workflow stage
+   * Integrates with Phase 10 Decision Engine
+   */
+  async evaluateDecisionGate(
+    workflowId: string,
+    stage: string,
+    action: string,
+    confidence: number
+  ): Promise<void> {
+    const workflow = await this.repository.findById(workflowId);
+    if (!workflow) {
+      throw new NotFoundError(`Workflow ${workflowId} not found`);
+    }
+
+    // Check if this stage requires a decision gate
+    if (!this.decisionGateService.shouldEvaluateDecision(stage, workflow.type)) {
+      logger.info('Stage does not require decision gate', { workflow_id: workflowId, stage });
+      return;
+    }
+
+    const category = this.decisionGateService.getDecisionCategory(stage, workflow.type);
+    const evaluation = await this.decisionGateService.evaluateDecision({
+      workflow_id: workflowId,
+      item_id: workflow.id,
+      category,
+      action,
+      confidence,
+      trace_id: generateTraceId(),
+    });
+
+    if (evaluation.requires_human_approval) {
+      // Pause workflow and wait for operator decision
+      const stateMachine = this.stateMachineService.getStateMachine(workflowId);
+      if (stateMachine) {
+        stateMachine.send({
+          type: 'DECISION_REQUIRED',
+          decision_id: evaluation.decision.decision_id,
+        });
+      }
+
+      // Publish decision required event
+      await this.eventBus.publish({
+        id: `event-${Date.now()}`,
+        type: 'DECISION_REQUIRED',
+        workflow_id: workflowId,
+        payload: {
+          decision_id: evaluation.decision.decision_id,
+          category,
+          action,
+          confidence,
+          escalation_route: evaluation.escalation_route,
+        },
+        timestamp: new Date().toISOString(),
+        trace_id: generateTraceId(),
+      });
+
+      logger.info('Decision required - workflow paused', {
+        workflow_id: workflowId,
+        decision_id: evaluation.decision.decision_id,
+        stage,
+        category,
+      });
+
+      metrics.increment('workflows.decisions.required', { category });
+    } else {
+      logger.info('Decision auto-approved', {
+        workflow_id: workflowId,
+        decision_id: evaluation.decision.decision_id,
+        stage,
+        confidence,
+      });
+
+      metrics.increment('workflows.decisions.auto_approved', { category });
+    }
+  }
+
+  /**
+   * Handle operator decision approval
+   */
+  async approveDecision(workflowId: string, decisionId: string): Promise<void> {
+    const workflow = await this.repository.findById(workflowId);
+    if (!workflow) {
+      throw new NotFoundError(`Workflow ${workflowId} not found`);
+    }
+
+    const stateMachine = this.stateMachineService.getStateMachine(workflowId);
+    if (stateMachine) {
+      stateMachine.send({
+        type: 'DECISION_APPROVED',
+        decision_id: decisionId,
+      });
+    }
+
+    await this.eventBus.publish({
+      id: `event-${Date.now()}`,
+      type: 'DECISION_APPROVED',
+      workflow_id: workflowId,
+      payload: { decision_id: decisionId },
+      timestamp: new Date().toISOString(),
+      trace_id: generateTraceId(),
+    });
+
+    logger.info('Decision approved - workflow resumed', {
+      workflow_id: workflowId,
+      decision_id: decisionId,
+    });
+
+    metrics.increment('workflows.decisions.approved');
+  }
+
+  /**
+   * Handle operator decision rejection
+   */
+  async rejectDecision(
+    workflowId: string,
+    decisionId: string,
+    reason?: string
+  ): Promise<void> {
+    const workflow = await this.repository.findById(workflowId);
+    if (!workflow) {
+      throw new NotFoundError(`Workflow ${workflowId} not found`);
+    }
+
+    const stateMachine = this.stateMachineService.getStateMachine(workflowId);
+    if (stateMachine) {
+      stateMachine.send({
+        type: 'DECISION_REJECTED',
+        decision_id: decisionId,
+        reason,
+      });
+    }
+
+    await this.eventBus.publish({
+      id: `event-${Date.now()}`,
+      type: 'DECISION_REJECTED',
+      workflow_id: workflowId,
+      payload: { decision_id: decisionId, reason },
+      timestamp: new Date().toISOString(),
+      trace_id: generateTraceId(),
+    });
+
+    logger.warn('Decision rejected - workflow failed', {
+      workflow_id: workflowId,
+      decision_id: decisionId,
+      reason,
+    });
+
+    metrics.increment('workflows.decisions.rejected');
+  }
+
+  /**
+   * Evaluate if clarification is required for workflow requirements
+   */
+  async evaluateClarificationGate(
+    workflowId: string,
+    requirements: string,
+    acceptanceCriteria: string[],
+    confidence: number
+  ): Promise<void> {
+    const workflow = await this.repository.findById(workflowId);
+    if (!workflow) {
+      throw new NotFoundError(`Workflow ${workflowId} not found`);
+    }
+
+    const evaluation = await this.decisionGateService.evaluateClarification(
+      workflowId,
+      requirements,
+      acceptanceCriteria,
+      confidence
+    );
+
+    if (evaluation.needs_clarification) {
+      const clarificationId = `CLR-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`;
+
+      // Pause workflow and wait for clarification
+      const stateMachine = this.stateMachineService.getStateMachine(workflowId);
+      if (stateMachine) {
+        stateMachine.send({
+          type: 'CLARIFICATION_REQUIRED',
+          clarification_id: clarificationId,
+        });
+      }
+
+      // Publish clarification required event
+      await this.eventBus.publish({
+        id: `event-${Date.now()}`,
+        type: 'CLARIFICATION_REQUIRED',
+        workflow_id: workflowId,
+        payload: {
+          clarification_id: clarificationId,
+          ambiguities: evaluation.ambiguities,
+          missing_criteria: evaluation.missing_criteria,
+          conflicting_constraints: evaluation.conflicting_constraints,
+        },
+        timestamp: new Date().toISOString(),
+        trace_id: generateTraceId(),
+      });
+
+      logger.info('Clarification required - workflow paused', {
+        workflow_id: workflowId,
+        clarification_id: clarificationId,
+        ambiguities_count: evaluation.ambiguities.length,
+        missing_criteria_count: evaluation.missing_criteria.length,
+      });
+
+      metrics.increment('workflows.clarifications.required');
+    } else {
+      logger.info('Requirements clear - no clarification needed', {
+        workflow_id: workflowId,
+        confidence,
+      });
+    }
+  }
+
+  /**
+   * Handle clarification completion
+   */
+  async completeClarification(workflowId: string, clarificationId: string): Promise<void> {
+    const workflow = await this.repository.findById(workflowId);
+    if (!workflow) {
+      throw new NotFoundError(`Workflow ${workflowId} not found`);
+    }
+
+    const stateMachine = this.stateMachineService.getStateMachine(workflowId);
+    if (stateMachine) {
+      stateMachine.send({
+        type: 'CLARIFICATION_COMPLETE',
+        clarification_id: clarificationId,
+      });
+    }
+
+    await this.eventBus.publish({
+      id: `event-${Date.now()}`,
+      type: 'CLARIFICATION_COMPLETE',
+      workflow_id: workflowId,
+      payload: { clarification_id: clarificationId },
+      timestamp: new Date().toISOString(),
+      trace_id: generateTraceId(),
+    });
+
+    logger.info('Clarification complete - workflow resumed', {
+      workflow_id: workflowId,
+      clarification_id: clarificationId,
+    });
+
+    metrics.increment('workflows.clarifications.completed');
   }
 }
