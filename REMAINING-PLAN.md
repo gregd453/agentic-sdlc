@@ -404,20 +404,21 @@ Assuming full-time development:
 
 ## 💡 QUICK WIN OPPORTUNITIES
 
-1. **Phase 10 API Endpoints** (1 day)
-   - High impact, low effort
-   - Enables programmatic decision approval
-   - Unblocks operator workflows
-
-2. **Validation Agent** (2-3 days)
-   - No blockers
+1. **Validation Agent** (2-3 days) 🔥
+   - No blockers, ready to start
    - High value for code quality
    - Reuses existing tools (TSC, ESLint, Vitest)
+   - Completes Sprint 2
 
-3. **Webhook Notifications** (1 day)
-   - Simple integration
-   - Big UX improvement
-   - Enables operator awareness
+2. **E2E Test Agent** (4-5 days) 🔥
+   - High priority for test automation
+   - Claude-powered test generation
+   - Foundation for quality gates
+
+3. **CLI Command Enhancements** (ongoing)
+   - Add more commands (intake, plan, spec, implement, review, test)
+   - Improve output formatting
+   - Add progress indicators
 
 ---
 
