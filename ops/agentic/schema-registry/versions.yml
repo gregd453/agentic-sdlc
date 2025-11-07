@@ -1,0 +1,38 @@
+# Schema Registry Version Policy
+# Compatibility: N-2 (current version and two previous major versions)
+
+schemas:
+  decision-result:
+    current: "1.0.0"
+    supported:
+      - "1.0.0"
+    deprecated: []
+
+  clarification-request:
+    current: "1.0.0"
+    supported:
+      - "1.0.0"
+    deprecated: []
+
+  backlog-item:
+    current: "1.0.0"
+    supported:
+      - "1.0.0"
+    deprecated: []
+
+  agent-message:
+    current: "1.0.0"
+    supported:
+      - "1.0.0"
+    deprecated: []
+
+  pipeline-event:
+    current: "1.0.0"
+    supported:
+      - "1.0.0"
+    deprecated: []
+
+policy:
+  compatibility: "N-2"
+  deprecation_notice_days: 90
+  minimum_support_days: 180

@@ -1,0 +1,220 @@
+# Agentic SDLC Policy Configuration
+# Version: 1.0.0
+# Last Updated: 2025-11-07
+
+# Decision thresholds by category
+decisions:
+  thresholds:
+    # Technical refactoring - can be auto-approved with high confidence
+    technical_refactor:
+      auto_min_confidence: 0.85
+      human_required: false
+      description: "Code refactoring, optimization, internal improvements"
+
+    # Cost-impacting changes require human review
+    cost_impacting:
+      auto_min_confidence: 0.92
+      human_required: true
+      description: "Changes that increase infrastructure costs or resource usage"
+
+    # Security changes always require human approval
+    security_affecting:
+      auto_min_confidence: 1.00
+      human_required: true
+      description: "Security-related changes, auth, permissions, data access"
+
+    # Architectural changes need careful review
+    architectural_change:
+      auto_min_confidence: 0.90
+      human_required: true
+      description: "System architecture, API design, data model changes"
+
+    # Data migrations are high-risk
+    data_migration:
+      auto_min_confidence: 0.95
+      human_required: true
+      description: "Database migrations, data transformations, schema changes"
+
+  # Escalation rules
+  escalation:
+    low_confidence:
+      under: 0.80
+      route: "platform-arch@company.com"
+      description: "Escalate to architecture team when confidence is low"
+
+    high_cost:
+      over_amount: 1000
+      route: "eng-leadership@company.com"
+      description: "Escalate to leadership for changes over $1000/month"
+
+    security_critical:
+      categories: ["security_affecting"]
+      route: "security@company.com"
+      description: "All security decisions must be reviewed by security team"
+
+  # Decision timeout (how long to wait for operator response)
+  timeout:
+    interactive_seconds: 300  # 5 minutes
+    non_interactive_fail_immediately: true
+
+# Quality gates (composite)
+gates:
+  coverage:
+    metric: "line_coverage"
+    operator: ">="
+    threshold: 80
+    description: "Minimum code coverage percentage"
+    blocking: true
+
+  security:
+    metric: "critical_vulns"
+    operator: "=="
+    threshold: 0
+    description: "Zero critical vulnerabilities allowed"
+    blocking: true
+
+  contracts:
+    metric: "api_breaking_changes"
+    operator: "=="
+    threshold: 0
+    description: "No breaking API changes without versioning"
+    blocking: true
+
+  performance:
+    metric: "p95_latency_ms"
+    operator: "<"
+    threshold: 500
+    description: "95th percentile latency under 500ms"
+    blocking: false  # Warning only
+
+# Release promotion strategies
+release:
+  strategies:
+    dev:
+      smoke: true
+      e2e_critical: false
+      manual_approval: false
+      description: "Development environment - smoke tests only"
+
+    staging:
+      smoke: true
+      e2e_critical: true
+      manual_approval: false
+      description: "Staging environment - full test suite"
+
+    prod:
+      smoke: true
+      e2e_critical: true
+      manual_approval: true
+      canary_percent: 10
+      max_error_budget_burn: 5
+      description: "Production - canary deployment with monitoring"
+
+# Clarification rules
+clarifications:
+  # When to trigger clarification requests
+  triggers:
+    ambiguous_requirements:
+      confidence_threshold: 0.70
+      description: "Request clarification when requirements are unclear"
+
+    missing_acceptance_criteria:
+      required: true
+      description: "Must have clear acceptance criteria"
+
+    conflicting_constraints:
+      auto_detect: true
+      description: "Detect and resolve conflicting requirements"
+
+  # Maximum clarification rounds before escalation
+  max_rounds: 3
+
+  # Timeout for clarification responses
+  timeout_hours: 24
+
+# Cost controls
+cost:
+  # Model selection and fallback
+  models:
+    primary: "claude-3-haiku-20240307"
+    fallback:
+      - "claude-3-5-sonnet-20241022"
+      - "gpt-4"
+
+  # Per-workflow cost budget
+  budget:
+    default_per_workflow: 5.00  # USD
+    max_per_workflow: 50.00
+    alert_threshold: 0.80  # Alert at 80% of budget
+
+  # Semantic cache configuration
+  cache:
+    refinement_ttl_days: 7
+    spec_ttl_hours: 24
+    on_call_debug_cache: false
+
+# Observability configuration
+observability:
+  tracing:
+    enabled: true
+    sample_rate: 1.0
+    export_endpoint: "http://localhost:4318/v1/traces"
+
+  logging:
+    level: "info"
+    structured: true
+    redact_pii: true
+
+  metrics:
+    enabled: true
+    export_interval_seconds: 60
+    tracked:
+      - "change_failure_rate"
+      - "lead_time_hours"
+      - "mttr_minutes"
+      - "e2e_pass_rate"
+      - "flake_rate"
+      - "cost_per_deployment"
+
+# Security configuration
+security:
+  # Secret management
+  secrets:
+    vault_enabled: false
+    rotation_days: 90
+
+  # Sandboxing
+  sandbox:
+    enabled: true
+    container_runtime: "docker"
+    network_isolation: true
+    resource_limits:
+      memory_mb: 2048
+      cpu_cores: 2
+      disk_mb: 5120
+
+  # Provenance requirements
+  provenance:
+    sbom_required: true
+    sbom_format: "CycloneDX"
+    slsa_level: 2
+    attestation_required_for_prod: true
+
+# Error handling
+error_handling:
+  retry:
+    max_attempts: 3
+    backoff_strategy: "exponential"
+    initial_delay_ms: 1000
+    max_delay_ms: 30000
+
+  flake_quarantine:
+    enabled: true
+    max_retries: 2
+    quarantine_after_failures: 3
+    auto_ticket: true
+
+  rollback:
+    preflight_checks: true
+    require_verify_flag: true
+    block_on_irreversible_migration: true

@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://agentic-sdlc.local/schemas/decision-result.v1.json",
+  "title": "Decision Result",
+  "description": "Result of a decision evaluation for security/cost-impacting actions",
+  "type": "object",
+  "required": [
+    "decision_id",
+    "schema_version",
+    "workflow_id",
+    "item_id",
+    "category",
+    "action",
+    "confidence",
+    "options",
+    "recommendation",
+    "status",
+    "timestamp"
+  ],
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "pattern": "^DEC-[0-9]{4}-[0-9]{5}$",
+      "description": "Unique decision identifier (e.g., DEC-2025-00001)"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version (semver)"
+    },
+    "workflow_id": {
+      "type": "string",
+      "pattern": "^WF-[0-9]{4}-[0-9]{4}-[0-9]{3}$",
+      "description": "Associated workflow ID"
+    },
+    "item_id": {
+      "type": "string",
+      "pattern": "^(BI|TASK)-[0-9]{4}-[0-9]{5}$",
+      "description": "Backlog item or task ID"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "technical_refactor",
+        "cost_impacting",
+        "security_affecting",
+        "architectural_change",
+        "data_migration"
+      ],
+      "description": "Decision category determining approval requirements"
+    },
+    "action": {
+      "type": "string",
+      "description": "Human-readable description of the action requiring decision"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "AI confidence score (0.0 - 1.0)"
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["option_id", "label", "description", "risks", "estimated_time", "estimated_cost"],
+        "properties": {
+          "option_id": {
+            "type": "string",
+            "description": "Unique option identifier"
+          },
+          "label": {
+            "type": "string",
+            "description": "Short option label (e.g., 'Approve', 'Revise', 'Escalate', 'Abort')"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed explanation of this option"
+          },
+          "risks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of risks associated with this option"
+          },
+          "estimated_time": {
+            "type": "string",
+            "description": "Estimated time impact (e.g., '2h', '1d')"
+          },
+          "estimated_cost": {
+            "type": "string",
+            "description": "Estimated cost impact (e.g., '$50', 'low', 'medium', 'high')"
+          }
+        }
+      }
+    },
+    "recommendation": {
+      "type": "string",
+      "description": "AI-recommended option_id"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "approved", "rejected", "escalated", "revised", "aborted"],
+      "description": "Current decision status"
+    },
+    "selected_option": {
+      "type": "string",
+      "description": "User-selected option_id (present after decision made)"
+    },
+    "operator": {
+      "type": "string",
+      "description": "Email/ID of operator who made the decision"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Operator's rationale for the decision"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of decision creation"
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of decision completion"
+    },
+    "trace_id": {
+      "type": "string",
+      "description": "OpenTelemetry trace ID"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional context-specific metadata",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
