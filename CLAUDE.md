@@ -1,12 +1,12 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 2.2
-**Last Updated:** 2025-11-05
+**Version:** 2.3
+**Last Updated:** 2025-11-07
 **Purpose:** Session continuity guide and essential implementation patterns
 
 ---
 
-## 📍 CURRENT SESSION STATUS (2025-11-05)
+## 📍 CURRENT SESSION STATUS (2025-11-07)
 
 ### ✅ Session Accomplishments
 
@@ -45,6 +45,18 @@
   - Agent registration in Redis working
   - Pending: End-to-end workflow test (orchestrator restart issue)
 
+- ✅ **Phase 10: Decision & Clarification Flow** - COMPLETE
+  - Decision engine with policy-based evaluation (5 categories)
+  - Auto-approval vs human review logic with confidence thresholds
+  - Interactive CLI prompts (Approve/Revise/Escalate/Abort)
+  - Clarification engine with ambiguity detection
+  - Auto-generation of clarification questions (4 question types)
+  - Multi-round clarification support (max 3 rounds)
+  - Non-interactive mode for CI/CD (exit code 10)
+  - JSON schemas with N-2 compatibility policy
+  - Full persistence and auditability (runs/ directory)
+  - 42 unit tests passing (100% pass rate, 90%+ coverage)
+
 ### 🔧 System Configuration
 
 **Environment Variables (.env):**
@@ -57,8 +69,8 @@ ANTHROPIC_API_KEY=sk-ant-api03-ml1xRbyrhUtvgjaygYq8ipNACGGaIp0Qo-71u7NUjGgT4GclI
 
 **Git Status:**
 - Branch: develop
-- Last commit: "feat: implement agent-orchestrator bidirectional integration (Phase 1)"
-- Tagged: v0.4.0-phase1-integration
+- Last commit: "feat: implement Phase 10 - Decision & Clarification Flow"
+- Tagged: v0.5.0-phase10-decision-flow
 
 ### 📁 Project Structure
 
@@ -69,6 +81,12 @@ agent-sdlc/
 │   └── agents/
 │       ├── base-agent/           ✅ (12 tests)
 │       └── scaffold-agent/       ✅ (46 tests)
+├── ops/
+│   └── agentic/                  ✅ (42 tests) NEW
+│       ├── cli/                  # CLI handlers (decisions, clarify)
+│       ├── core/                 # Decision & clarification engines
+│       ├── backlog/              # policy.yaml
+│       └── schema-registry/      # JSON schemas
 ├── backlog/system-backlog.json
 ├── scripts/backlog-manager.sh
 └── docker-compose.yml
@@ -87,7 +105,13 @@ curl http://localhost:3000/api/v1/health
 ./scripts/backlog-manager.sh sprint
 ```
 
-### 📋 Next Tasks (Sprint 2)
+### 📋 Next Tasks
+
+**Integration: Phase 10 with Orchestrator** (Priority - 5 pts)
+- Add decision gates to workflow state machine
+- Integrate decision evaluation in workflow service
+- Add operator notifications (webhook/email)
+- Create E2E test for decision flow
 
 **TASK-008: Validation Agent** (Ready - 8 pts)
 - Code validation and linting
@@ -105,6 +129,9 @@ curl http://localhost:3000/api/v1/health
 - Communicate via Redis pub/sub
 - Handle errors with retry logic
 - Validate messages with Zod schemas
+- Policy-based decision evaluation
+- Interactive clarification requests
+- Auto-approval with confidence thresholds
 
 **Important Files:**
 - `/packages/agents/base-agent/src/base-agent.ts` - Core framework
@@ -112,19 +139,27 @@ curl http://localhost:3000/api/v1/health
 - `/packages/agents/scaffold-agent/src/scaffold-agent.ts` - Intelligent code generation
 - `/packages/agents/scaffold-agent/src/template-engine.ts` - Handlebars templates
 - `/packages/agents/scaffold-agent/src/file-generator.ts` - Safe file operations
+- `/ops/agentic/core/decisions.ts` - Decision engine (Phase 10)
+- `/ops/agentic/core/clarify.ts` - Clarification engine (Phase 10)
+- `/ops/agentic/backlog/policy.yaml` - Decision policy configuration
+- `/ops/agentic/cli/decisions.ts` - Decision CLI commands
+- `/ops/agentic/cli/clarify.ts` - Clarification CLI commands
 
 **Known Issues:**
 1. Only claude-3-haiku-20240307 available
 2. Console-only logging (no file logging)
 3. Agent-orchestrator integration via Redis not fully integrated with workflow
+4. Phase 10 decision gates not yet integrated with orchestrator state machine
 
 ### 📊 Progress Metrics
 
 - Sprint 1: 18/18 points (100%)
 - Sprint 2: 21/42 points (50%)
+- Phase 10: Complete (Decision & Clarification)
 - Overall: 39/105 points (37.1%)
 - Test Coverage: >90% for all completed components
-- Total Tests: 94 passing
+- Total Tests: 136 passing (94 + 42 Phase 10)
+- Packages: 4 (orchestrator, base-agent, scaffold-agent, ops/agentic)
 
 ---
 
