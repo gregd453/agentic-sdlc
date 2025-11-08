@@ -1,7 +1,7 @@
 # Remaining Implementation Plan - Agentic SDLC
 
-**Last Updated:** 2025-11-07
-**Current Progress:** 40% complete (39/107 story points)
+**Last Updated:** 2025-11-08
+**Current Progress:** 45% complete (47/105 story points)
 
 ---
 
@@ -15,12 +15,13 @@
 - ✅ Docker containerization
 - ✅ 36 tests passing
 
-### Sprint 2 - Agent Framework (50% 🚧)
+### Sprint 2 - Agent Framework (69% 🚧)
 - ✅ **TASK-006:** Base Agent Framework (12 tests)
 - ✅ **TASK-007:** Scaffold Agent (46 tests)
+- ✅ **TASK-008:** Validation Agent (28 tests) NEW
 - ✅ Anthropic Claude API integration
 - ✅ Redis pub/sub communication
-- ⏳ **TASK-008:** Validation Agent (NEXT)
+- ✅ Code validation (TypeScript, ESLint, coverage, security)
 - ⏳ **TASK-009:** E2E Test Agent (NEXT)
 
 ### Phase 10 - Decision & Clarification Flow (100% ✅)
@@ -34,56 +35,14 @@
 - ⏳ E2E test (polish)
 - ⏳ Operator notifications (polish)
 
-**Total Tests Passing:** 136 tests
-**Packages:** 4 (orchestrator, base-agent, scaffold-agent, ops/agentic)
+**Total Tests Passing:** 164 tests
+**Packages:** 5 (orchestrator, base-agent, scaffold-agent, validation-agent, ops/agentic)
 
 ---
 
 ## 🚧 IMMEDIATE NEXT STEPS (1-2 Weeks)
 
-### 1. Phase 10 Polish (1-2 days) 🔥
-**Status:** 90% complete
-**Remaining:**
-- Add REST API endpoints for decision approval/rejection
-- Add REST API endpoints for clarifications
-- Create E2E test for decision flow
-- Add webhook notifications for operators
-- Integration test with real workflow
-
-**Files to Create:**
-- `packages/orchestrator/src/api/routes/decision.routes.ts`
-- `packages/orchestrator/src/api/routes/clarification.routes.ts`
-- `packages/orchestrator/test/e2e/decision-flow.test.ts`
-- `packages/orchestrator/src/services/notification.service.ts`
-
-### 2. TASK-008: Validation Agent (2-3 days) 🔥
-**Status:** READY (no blockers)
-**Priority:** High (8 story points)
-
-**Requirements:**
-- TypeScript compilation checking
-- ESLint integration (programmatic)
-- Vitest coverage measurement
-- Security vulnerability scanning (npm audit + OSV)
-- Quality gate enforcement (from policy.yaml)
-- Generate validation reports
-
-**Files to Create:**
-- `packages/agents/validation-agent/src/validation-agent.ts`
-- `packages/agents/validation-agent/src/validators/typescript.ts`
-- `packages/agents/validation-agent/src/validators/eslint.ts`
-- `packages/agents/validation-agent/src/validators/coverage.ts`
-- `packages/agents/validation-agent/src/validators/security.ts`
-- `packages/agents/validation-agent/test/*.test.ts`
-
-**Acceptance Criteria:**
-- Validates TypeScript without errors
-- Enforces linting rules
-- Ensures 90% test coverage
-- Produces actionable reports
-- Fails fast on critical issues
-
-### 3. TASK-009: E2E Test Agent (4-5 days) 🔥
+### 1. TASK-009: E2E Test Agent (4-5 days) 🔥 READY
 **Status:** READY (no blockers)
 **Priority:** High (13 story points)
 
@@ -293,27 +252,26 @@
 | Sprint | Points | Completed | Remaining | % Complete |
 |--------|--------|-----------|-----------|------------|
 | **Sprint 1** | 18 | 18 | 0 | 100% ✅ |
-| **Sprint 2** | 42 | 21 | 21 | 50% 🚧 |
+| **Sprint 2** | 42 | 29 | 13 | 69% 🚧 |
 | **Sprint 3** | 29 | 0 | 29 | 0% |
 | **Sprint 4** | 18 | 0 | 18 | 0% |
 | **Backlog** | 26 | 0 | 26 | 0% |
-| **TOTAL** | **113** | **39** | **74** | **34.5%** |
+| **TOTAL** | **133** | **47** | **86** | **35.3%** |
 
 *Note: Phase 10 was bonus work not in original sprint plan*
 
 ### Test Coverage
-- **Total Tests:** 136 passing
+- **Total Tests:** 164 passing
 - **Coverage:** >90% on all completed components
-- **Packages:** 4 active packages
+- **Packages:** 5 active packages
 
 ---
 
 ## 🎯 RECOMMENDED EXECUTION ORDER
 
-### Phase 1: Core Completion (2 weeks)
-1. ✅ Phase 10 Polish (1-2 days)
-2. ✅ TASK-008: Validation Agent (2-3 days)
-3. ✅ TASK-009: E2E Test Agent (4-5 days)
+### Phase 1: Core Completion (1 week remaining)
+1. ✅ TASK-008: Validation Agent (COMPLETED)
+2. 🚧 TASK-009: E2E Test Agent (4-5 days) - IN PROGRESS
 
 ### Phase 2: Pipeline Infrastructure (2 weeks)
 4. TASK-011: Pipeline Engine (5-6 days)
@@ -404,16 +362,16 @@ Assuming full-time development:
 
 ## 💡 QUICK WIN OPPORTUNITIES
 
-1. **Validation Agent** (2-3 days) 🔥
-   - No blockers, ready to start
-   - High value for code quality
-   - Reuses existing tools (TSC, ESLint, Vitest)
-   - Completes Sprint 2
-
-2. **E2E Test Agent** (4-5 days) 🔥
+1. **E2E Test Agent** (4-5 days) 🔥 NEXT
    - High priority for test automation
    - Claude-powered test generation
    - Foundation for quality gates
+   - Completes Sprint 2 (42/42 points)
+
+2. **Pipeline Engine** (5-6 days)
+   - Unblocked by validation agent completion
+   - High value for workflow automation
+   - Enables continuous deployment
 
 3. **CLI Command Enhancements** (ongoing)
    - Add more commands (intake, plan, spec, implement, review, test)
