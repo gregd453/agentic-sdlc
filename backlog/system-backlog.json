@@ -124,7 +124,7 @@
           "description": "Build end-to-end testing automation agent",
           "story_points": 13,
           "priority": "high",
-          "status": "ready",
+          "status": "completed",
           "requirements": {
             "functional": [
               "Generate E2E tests from requirements using Claude",
@@ -166,8 +166,7 @@
           "description": "Create core pipeline execution engine",
           "story_points": 13,
           "priority": "high",
-          "status": "blocked",
-          "blocked_by": ["TASK-008"],
+          "status": "ready",
           "requirements": {
             "functional": [
               "Sequential and parallel stage execution",
@@ -316,14 +315,14 @@
   ],
   "metadata": {
     "total_story_points": 105,
-    "completed_story_points": 47,
+    "completed_story_points": 60,
     "in_progress_story_points": 0,
-    "completion_percentage": 44.76,
-    "current_sprint": 2,
+    "completion_percentage": 57.14,
+    "current_sprint": 3,
     "velocity": {
       "sprint_1": 18,
-      "sprint_2": 29,
-      "average": 23.5,
+      "sprint_2": 42,
+      "average": 30,
       "target": 30
     }
   }
