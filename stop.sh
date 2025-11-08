@@ -1,10 +1,13 @@
 #!/bin/bash
 
 # Agentic SDLC System Shutdown Script
-# Version: 1.0
+# Version: 1.1
 # Description: Gracefully stops the Agentic SDLC system
 
-set -e
+set -euo pipefail
+
+# PID file for orchestrator process
+PID_FILE=".orchestrator.pid"
 
 # Colors for output
 RED='\033[0;31m'
@@ -29,11 +32,46 @@ echo -e "${RED}═════════════════════�
 echo -e "${YELLOW}           Stopping Agentic SDLC System${NC}"
 echo -e "${RED}═══════════════════════════════════════════════════════════════${NC}\n"
 
-# Kill any running Node.js processes for the orchestrator
+# Stop orchestrator using PID file
 print_status "Stopping orchestrator..."
-pkill -f "tsx watch src/index.ts" 2>/dev/null || true
-pkill -f "node dist/index.js" 2>/dev/null || true
-print_success "Orchestrator stopped"
+
+if [ -f "$PID_FILE" ]; then
+    ORCHESTRATOR_PID=$(cat "$PID_FILE")
+
+    # Check if process is running
+    if ps -p "$ORCHESTRATOR_PID" > /dev/null 2>&1; then
+        print_status "Sending SIGTERM to orchestrator (PID: $ORCHESTRATOR_PID)..."
+        kill "$ORCHESTRATOR_PID" 2>/dev/null || true
+
+        # Wait for graceful shutdown (up to 30 seconds)
+        TIMEOUT=30
+        while [ $TIMEOUT -gt 0 ] && ps -p "$ORCHESTRATOR_PID" > /dev/null 2>&1; do
+            echo -n "."
+            sleep 1
+            TIMEOUT=$((TIMEOUT - 1))
+        done
+        echo ""
+
+        # Force kill if still running
+        if ps -p "$ORCHESTRATOR_PID" > /dev/null 2>&1; then
+            print_warning "Graceful shutdown timed out, force killing..."
+            kill -9 "$ORCHESTRATOR_PID" 2>/dev/null || true
+        fi
+
+        print_success "Orchestrator stopped"
+    else
+        print_warning "Process $ORCHESTRATOR_PID not running"
+    fi
+
+    # Clean up PID file
+    rm -f "$PID_FILE"
+else
+    print_warning "No PID file found, attempting fallback method..."
+    # Fallback to pkill if PID file doesn't exist
+    pkill -f "tsx watch src/index.ts" 2>/dev/null || true
+    pkill -f "node dist/index.js" 2>/dev/null || true
+    print_success "Orchestrator stopped (fallback method)"
+fi
 
 # Stop Docker containers
 print_status "Stopping Docker containers..."

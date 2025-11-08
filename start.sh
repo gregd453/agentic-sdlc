@@ -1,10 +1,13 @@
 #!/bin/bash
 
 # Agentic SDLC System Startup Script
-# Version: 1.0
+# Version: 1.1
 # Description: Complete startup script for the Agentic SDLC orchestrator
 
-set -e
+set -euo pipefail
+
+# PID file for orchestrator process
+PID_FILE=".orchestrator.pid"
 
 # Colors for output
 RED='\033[0;31m'
@@ -54,7 +57,7 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Function to wait for a service to be ready
+# Function to wait for a service to be ready (platform-independent)
 wait_for_service() {
     local service=$1
     local port=$2
@@ -64,7 +67,9 @@ wait_for_service() {
     print_status "Waiting for $service to be ready on port $port..."
 
     while [ $attempt -le $max_attempts ]; do
-        if nc -z localhost $port 2>/dev/null; then
+        # Use /dev/tcp which works on bash without external dependencies
+        if timeout 1 bash -c "cat < /dev/null > /dev/tcp/localhost/$port" 2>/dev/null; then
+            echo ""
             print_success "$service is ready!"
             return 0
         fi
@@ -75,6 +80,39 @@ wait_for_service() {
 
     echo ""
     print_error "$service failed to start on port $port"
+    return 1
+}
+
+# Function to wait for orchestrator health check
+wait_for_orchestrator_health() {
+    local max_attempts=60
+    local attempt=1
+    local health_url="http://localhost:3000/api/v1/health"
+
+    print_status "Waiting for orchestrator health check..."
+
+    while [ $attempt -le $max_attempts ]; do
+        if command_exists curl; then
+            if curl -sf "$health_url" > /dev/null 2>&1; then
+                echo ""
+                print_success "Orchestrator is healthy!"
+                return 0
+            fi
+        else
+            # Fallback to basic port check if curl not available
+            if timeout 1 bash -c "cat < /dev/null > /dev/tcp/localhost/3000" 2>/dev/null; then
+                echo ""
+                print_success "Orchestrator is responding on port 3000"
+                return 0
+            fi
+        fi
+        echo -n "."
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+
+    echo ""
+    print_error "Orchestrator health check failed"
     return 1
 }
 
@@ -144,6 +182,7 @@ if [ ! -f .env ]; then
     if [ -f .env.example ]; then
         print_status "Creating .env file from template..."
         cp .env.example .env
+        chmod 600 .env
         print_warning "Please update .env with your API keys"
         echo -e "${YELLOW}Press Enter to continue after updating .env...${NC}"
         read
@@ -153,6 +192,25 @@ if [ ! -f .env ]; then
     fi
 else
     print_success ".env file exists"
+
+    # Check and fix .env file permissions for security
+    if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # Get file permissions (works on both macOS and Linux)
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            PERMS=$(stat -f "%OLp" .env 2>/dev/null || echo "600")
+        else
+            PERMS=$(stat -c "%a" .env 2>/dev/null || echo "600")
+        fi
+
+        if [ "$PERMS" != "600" ]; then
+            print_warning ".env file has insecure permissions: $PERMS"
+            print_status "Setting .env permissions to 600 (read/write for owner only)..."
+            chmod 600 .env
+            print_success "Permissions updated"
+        else
+            print_success ".env permissions are secure (600)"
+        fi
+    fi
 fi
 
 echo ""
@@ -269,6 +327,11 @@ cleanup() {
     echo ""
     print_status "Shutting down..."
 
+    # Remove PID file if it exists
+    if [ -f "$PID_FILE" ]; then
+        rm -f "$PID_FILE"
+    fi
+
     echo -n "Stop infrastructure services? (y/N): "
     read -r stop_services
 
@@ -282,7 +345,26 @@ cleanup() {
     exit 0
 }
 
-trap cleanup INT TERM
+trap cleanup INT TERM EXIT
 
-# Start the orchestrator
-pnpm orchestrator:dev
+# Start the orchestrator in background
+pnpm orchestrator:dev &
+ORCHESTRATOR_PID=$!
+
+# Save PID to file
+echo $ORCHESTRATOR_PID > "$PID_FILE"
+print_status "Orchestrator started with PID: $ORCHESTRATOR_PID"
+
+# Wait for orchestrator to be healthy
+wait_for_orchestrator_health
+
+if [ $? -eq 0 ]; then
+    echo ""
+    echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+    echo -e "${GREEN}           ✅ System Started Successfully! ✅${NC}"
+    echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+    echo ""
+fi
+
+# Wait for orchestrator process
+wait $ORCHESTRATOR_PID

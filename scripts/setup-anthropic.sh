@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # Anthropic API Key Setup Script
-# Version: 1.0
+# Version: 1.1
 # Description: Configures Anthropic API key for the Agentic SDLC system
+
+set -euo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -59,14 +61,23 @@ fi
 
 # Update .env file
 if grep -q "^ANTHROPIC_API_KEY=" .env; then
-    # Update existing key
-    sed -i.bak "s/^ANTHROPIC_API_KEY=.*/ANTHROPIC_API_KEY=$api_key/" .env
+    # Update existing key (cross-platform sed)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '.bak' "s/^ANTHROPIC_API_KEY=.*/ANTHROPIC_API_KEY=$api_key/" .env
+    else
+        sed -i.bak "s/^ANTHROPIC_API_KEY=.*/ANTHROPIC_API_KEY=$api_key/" .env
+    fi
+    # Clean up backup file
+    rm -f .env.bak
 else
     # Add new key
     echo "ANTHROPIC_API_KEY=$api_key" >> .env
 fi
 
+# Set secure permissions on .env file
+chmod 600 .env
 echo -e "${GREEN}✅ API key configured successfully!${NC}"
+echo -e "${GREEN}✅ .env file permissions set to 600 (secure)${NC}"
 
 # Test the key (optional)
 echo ""

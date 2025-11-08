@@ -384,8 +384,23 @@ export class IntegrationAgent extends BaseAgent {
   /**
    * Generate trace ID for request tracking
    */
-  private generateTraceId(): string {
+  protected generateTraceId(): string {
     return `int-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+  }
+
+  /**
+   * Execute method required by BaseAgent
+   * Wraps executeTask for compatibility
+   */
+  async execute(task: any): Promise<any> {
+    const result = await this.executeTask(task);
+    return {
+      task_id: task.task_id || this.generateTraceId(),
+      workflow_id: task.workflow_id || 'integration-workflow',
+      status: result.result.success ? 'success' : 'failure',
+      output: result,
+      errors: result.result.success ? [] : ['Task execution failed']
+    };
   }
 
   /**

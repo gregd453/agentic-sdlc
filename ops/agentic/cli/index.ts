@@ -6,11 +6,48 @@
 import { runDecisionsCLI } from './decisions';
 import { runClarifyCLI } from './clarify';
 
+const VERSION = '1.0.0';
+
 const COMMANDS = {
   decisions: 'Decision evaluation and management',
   clarify: 'Clarification requests and answers',
   help: 'Show this help message',
 };
+
+// Global CLI options
+export interface GlobalOptions {
+  quiet?: boolean;
+  verbose?: boolean;
+}
+
+// Logger utility that respects quiet/verbose flags
+export const logger = {
+  log: (message: string, options: GlobalOptions = {}) => {
+    if (!options.quiet) {
+      console.log(message);
+    }
+  },
+  error: (message: string, options: GlobalOptions = {}) => {
+    // Always show errors unless explicitly quiet
+    if (!options.quiet) {
+      console.error(message);
+    }
+  },
+  verbose: (message: string, options: GlobalOptions = {}) => {
+    if (options.verbose && !options.quiet) {
+      console.log(`[VERBOSE] ${message}`);
+    }
+  },
+  debug: (message: string, data: any, options: GlobalOptions = {}) => {
+    if (options.verbose && !options.quiet) {
+      console.log(`[DEBUG] ${message}`, data);
+    }
+  }
+};
+
+function showVersion(): void {
+  console.log(`cc-agentic version ${VERSION}`);
+}
 
 function showHelp(): void {
   console.log(`
@@ -18,6 +55,12 @@ Agentic SDLC CLI - Decision & Clarification System
 ${'='.repeat(60)}
 
 Usage: cc-agentic <command> [subcommand] [options]
+
+Global Options:
+  -v, --version      Show version number
+  -q, --quiet        Suppress output (errors only)
+  -V, --verbose      Show verbose output
+  -h, --help         Show this help message
 
 Commands:
 ${Object.entries(COMMANDS)
@@ -54,24 +97,49 @@ For more information, visit: https://docs.agentic-sdlc.local
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
-  if (args.length === 0 || args[0] === 'help' || args[0] === '--help' || args[0] === '-h') {
+  // Handle version flag
+  if (args.includes('--version') || args.includes('-v')) {
+    showVersion();
+    process.exit(0);
+  }
+
+  // Handle help flag
+  if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     showHelp();
     process.exit(0);
   }
 
-  const command = args[0];
-  const subcommand = args[1];
+  // Extract global options
+  const globalOptions: GlobalOptions = {
+    quiet: args.includes('--quiet') || args.includes('-q'),
+    verbose: args.includes('--verbose') || args.includes('-V')
+  };
+
+  // Remove global flags from args
+  const filteredArgs = args.filter(arg =>
+    !['-q', '--quiet', '-V', '--verbose', '-v', '--version', '-h', '--help'].includes(arg)
+  );
+
+  const command = filteredArgs[0];
+  const subcommand = filteredArgs[1];
 
   // Parse arguments into object
   const argsObj: Record<string, string> = {};
-  for (let i = 2; i < args.length; i++) {
-    if (args[i].startsWith('--')) {
-      const key = args[i].slice(2);
-      const value = args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : 'true';
+  for (let i = 2; i < filteredArgs.length; i++) {
+    if (filteredArgs[i].startsWith('--')) {
+      const key = filteredArgs[i].slice(2);
+      const value = filteredArgs[i + 1] && !filteredArgs[i + 1].startsWith('--') ? filteredArgs[i + 1] : 'true';
       argsObj[key] = value;
       if (value !== 'true') i++; // Skip next arg if it was a value
     }
   }
+
+  // Add global options to argsObj
+  argsObj._quiet = globalOptions.quiet ? 'true' : 'false';
+  argsObj._verbose = globalOptions.verbose ? 'true' : 'false';
+
+  logger.verbose(`CLI started with options: quiet=${globalOptions.quiet}, verbose=${globalOptions.verbose}`, globalOptions);
+  logger.verbose(`Command: ${command}, Subcommand: ${subcommand}`, globalOptions);
 
   let exitCode = 0;
 
@@ -79,31 +147,36 @@ async function main(): Promise<void> {
     switch (command) {
       case 'decisions':
         if (!subcommand) {
-          console.error('Missing subcommand for decisions');
-          console.log('Available subcommands: evaluate, show, policy');
+          logger.error('Missing subcommand for decisions', globalOptions);
+          logger.log('Available subcommands: evaluate, show, policy', globalOptions);
           exitCode = 1;
         } else {
+          logger.verbose(`Running decisions command: ${subcommand}`, globalOptions);
           exitCode = await runDecisionsCLI(subcommand, argsObj);
         }
         break;
 
       case 'clarify':
         if (!subcommand) {
-          console.error('Missing subcommand for clarify');
-          console.log('Available subcommands: evaluate, create, answer, show');
+          logger.error('Missing subcommand for clarify', globalOptions);
+          logger.log('Available subcommands: evaluate, create, answer, show', globalOptions);
           exitCode = 1;
         } else {
+          logger.verbose(`Running clarify command: ${subcommand}`, globalOptions);
           exitCode = await runClarifyCLI(subcommand, argsObj);
         }
         break;
 
       default:
-        console.error(`Unknown command: ${command}`);
-        showHelp();
+        logger.error(`Unknown command: ${command}`, globalOptions);
+        if (!globalOptions.quiet) {
+          showHelp();
+        }
         exitCode = 1;
     }
   } catch (error) {
-    console.error('Fatal error:', error);
+    logger.error(`Fatal error: ${error}`, globalOptions);
+    logger.debug('Error details', error, globalOptions);
     exitCode = 1;
   }
 

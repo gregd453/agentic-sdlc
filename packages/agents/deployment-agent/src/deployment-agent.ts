@@ -48,11 +48,11 @@ export class DeploymentAgent extends BaseAgent {
     this.ecsService = new ECSService(
       process.env.AWS_REGION || 'us-east-1'
     );
+    this.healthCheckService = new HealthCheckService();
     this.deploymentStrategy = new DeploymentStrategyService(
       this.ecsService,
       this.healthCheckService
     );
-    this.healthCheckService = new HealthCheckService();
   }
 
   /**
@@ -190,8 +190,7 @@ export class DeploymentAgent extends BaseAgent {
       // Create repository if needed
       if (task.create_repository) {
         await this.ecrService.createRepositoryIfNotExists(
-          task.repository_name,
-          task.lifecycle_policy
+          task.repository_name
         );
       }
 
@@ -431,8 +430,30 @@ export class DeploymentAgent extends BaseAgent {
   /**
    * Generate trace ID for request tracking
    */
-  private generateTraceId(): string {
+  protected generateTraceId(): string {
     return `dep-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+  }
+
+  /**
+   * Execute method required by BaseAgent
+   * Wraps executeTask for compatibility
+   */
+  async execute(task: any): Promise<any> {
+    const result = await this.executeTask(task);
+    // Determine success based on result type
+    const success = 'success' in result.result
+      ? result.result.success
+      : 'healthy' in result.result
+        ? result.result.healthy
+        : true;
+
+    return {
+      task_id: task.task_id || this.generateTraceId(),
+      workflow_id: task.workflow_id || 'deployment-workflow',
+      status: success ? 'success' : 'failure',
+      output: result,
+      errors: success ? [] : ['Task execution failed']
+    };
   }
 
   /**

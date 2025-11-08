@@ -1,0 +1,79 @@
+# Multi-stage build for production
+# Stage 1: Dependencies
+FROM node:20.11.0-alpine AS deps
+
+# Install pnpm
+RUN npm install -g pnpm@8
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/orchestrator/package.json ./packages/orchestrator/
+COPY packages/agents/base-agent/package.json ./packages/agents/base-agent/
+COPY packages/agents/scaffold-agent/package.json ./packages/agents/scaffold-agent/
+COPY packages/agents/validation-agent/package.json ./packages/agents/validation-agent/
+COPY packages/agents/e2e-agent/package.json ./packages/agents/e2e-agent/
+COPY packages/agents/integration-agent/package.json ./packages/agents/integration-agent/
+COPY packages/agents/deployment-agent/package.json ./packages/agents/deployment-agent/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --prod
+
+# Stage 2: Build
+FROM node:20.11.0-alpine AS builder
+
+# Install pnpm
+RUN npm install -g pnpm@8
+
+WORKDIR /app
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./package.json
+COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+
+# Copy source code
+COPY . .
+
+# Build all packages
+RUN pnpm build
+
+# Stage 3: Production image
+FROM node:20.11.0-alpine AS runner
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S agentic -u 1001
+
+WORKDIR /app
+
+# Copy built application
+COPY --from=builder --chown=agentic:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=agentic:nodejs /app/packages ./packages
+COPY --from=builder --chown=agentic:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=agentic:nodejs /app/ecosystem.config.js ./ecosystem.config.js
+
+# Create logs directory
+RUN mkdir -p logs && chown -R agentic:nodejs logs
+
+# Switch to non-root user
+USER agentic
+
+# Expose ports
+EXPOSE 3000 3001 3002 9090
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Start with dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start orchestrator by default
+CMD ["node", "packages/orchestrator/dist/index.js"]
