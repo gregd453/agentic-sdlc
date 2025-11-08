@@ -20,6 +20,7 @@ export class EventBus {
   private redis: Redis;
   private subscriber: Redis;
   private subscriptions = new Map<string, Set<(event: Event) => Promise<void>>>();
+  private running = true; // Cancellation flag for consumer loops
 
   constructor(redisUrl: string) {
     this.redis = new Redis(redisUrl);
@@ -101,8 +102,8 @@ export class EventBus {
     eventType: string,
     handler: (event: Event) => Promise<void>
   ): Promise<void> {
-    // Remove local subscription
-    this.emitter.off(eventType, handler);
+    // Remove local subscription (cast to any to avoid type issues)
+    this.emitter.off(eventType, handler as any);
 
     // Remove Redis subscription
     const channel = `event:${eventType}`;
@@ -142,7 +143,7 @@ export class EventBus {
     consumer: string,
     handler: (event: Event) => Promise<void>
   ): Promise<void> {
-    while (true) {
+    while (this.running) {
       try {
         const messages = await this.redis.xreadgroup(
           'GROUP', consumer, consumer,
@@ -165,10 +166,14 @@ export class EventBus {
           }
         }
       } catch (error) {
+        // Exit loop if we're shutting down
+        if (!this.running) break;
+
         logger.error('Stream consumption error', { error, stream, consumer });
         await this.sleep(5000);
       }
     }
+    logger.info('Stream consumer stopped', { stream, consumer });
   }
 
   private sleep(ms: number): Promise<void> {
@@ -176,9 +181,19 @@ export class EventBus {
   }
 
   async disconnect(): Promise<void> {
+    // Stop all consumer loops
+    this.running = false;
+
+    // Remove all event listeners
+    this.emitter.removeAllListeners();
+    if (typeof this.subscriber.removeAllListeners === 'function') {
+      this.subscriber.removeAllListeners();
+    }
+
+    // Disconnect Redis clients
     await this.redis.quit();
     await this.subscriber.quit();
-    this.emitter.removeAllListeners();
+
     logger.info('Event bus disconnected');
   }
 }

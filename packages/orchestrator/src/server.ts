@@ -7,7 +7,11 @@ import { EventBus } from './events/event-bus';
 import { WorkflowRepository } from './repositories/workflow.repository';
 import { WorkflowService } from './services/workflow.service';
 import { WorkflowStateMachineService } from './state-machine/workflow-state-machine';
+import { PipelineExecutorService } from './services/pipeline-executor.service';
+import { QualityGateService } from './services/quality-gate.service';
 import { workflowRoutes } from './api/routes/workflow.routes';
+import { pipelineRoutes } from './api/routes/pipeline.routes';
+import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
 import { logger } from './utils/logger';
 import { metrics } from './utils/metrics';
 
@@ -47,6 +51,7 @@ export async function createServer() {
       ],
       tags: [
         { name: 'workflows', description: 'Workflow management operations' },
+        { name: 'pipelines', description: 'Pipeline execution and control operations' },
         { name: 'health', description: 'Health check endpoints' }
       ]
     }
@@ -85,8 +90,26 @@ export async function createServer() {
     agentDispatcher
   );
 
+  // Initialize pipeline services
+  const qualityGateService = new QualityGateService();
+  const pipelineExecutor = new PipelineExecutorService(
+    eventBus,
+    agentDispatcher,
+    qualityGateService
+  );
+
+  // Initialize WebSocket handler
+  const pipelineWebSocketHandler = new PipelineWebSocketHandler(eventBus);
+
+  // Register WebSocket support
+  await fastify.register(require('@fastify/websocket'));
+
+  // Register WebSocket handler
+  await pipelineWebSocketHandler.register(fastify);
+
   // Register routes
   await fastify.register(workflowRoutes, { workflowService });
+  await fastify.register(pipelineRoutes, { pipelineExecutor });
 
   // Add hooks for logging
   fastify.addHook('onRequest', async (request, reply) => {
@@ -140,6 +163,10 @@ export async function createServer() {
     logger.info(`Received signal ${signal}, shutting down gracefully...`);
 
     await fastify.close();
+    await pipelineExecutor.cleanup();
+    await pipelineWebSocketHandler.cleanup();
+    await workflowService.cleanup();
+    await agentDispatcher.disconnect();
     await eventBus.disconnect();
     await prisma.$disconnect();
 

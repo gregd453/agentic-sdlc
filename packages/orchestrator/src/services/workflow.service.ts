@@ -11,6 +11,7 @@ import { NotFoundError } from '../utils/errors';
 
 export class WorkflowService {
   private decisionGateService: DecisionGateService;
+  private eventHandlers: Map<string, (event: any) => Promise<void>> = new Map();
 
   constructor(
     private repository: WorkflowRepository,
@@ -24,18 +25,42 @@ export class WorkflowService {
 
   private setupEventHandlers(): void {
     // Subscribe to task completion events
-    this.eventBus.subscribe('TASK_COMPLETED', async (event) => {
+    const taskCompletedHandler = async (event: any) => {
       logger.info('Task completed event received', { event });
       // Handle task completion and trigger next stage
       await this.handleTaskCompletion(event);
-    });
+    };
+    this.eventHandlers.set('TASK_COMPLETED', taskCompletedHandler);
+    this.eventBus.subscribe('TASK_COMPLETED', taskCompletedHandler);
 
     // Subscribe to task failure events
-    this.eventBus.subscribe('TASK_FAILED', async (event) => {
+    const taskFailedHandler = async (event: any) => {
       logger.error('Task failed event received', { event });
       // Handle task failure
       await this.handleTaskFailure(event);
-    });
+    };
+    this.eventHandlers.set('TASK_FAILED', taskFailedHandler);
+    this.eventBus.subscribe('TASK_FAILED', taskFailedHandler);
+  }
+
+  /**
+   * Cleanup event subscriptions and resources
+   */
+  async cleanup(): Promise<void> {
+    logger.info('Cleaning up WorkflowService');
+
+    // Unsubscribe from all events
+    for (const [eventType, handler] of this.eventHandlers.entries()) {
+      await this.eventBus.unsubscribe(eventType, handler);
+    }
+    this.eventHandlers.clear();
+
+    // Disconnect agent dispatcher if present
+    if (this.agentDispatcher) {
+      await this.agentDispatcher.disconnect();
+    }
+
+    logger.info('WorkflowService cleanup completed');
   }
 
   async createWorkflow(request: CreateWorkflowRequest): Promise<WorkflowResponse> {

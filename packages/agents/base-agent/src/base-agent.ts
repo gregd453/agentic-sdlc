@@ -188,15 +188,23 @@ export abstract class BaseAgent implements AgentLifecycle {
   async cleanup(): Promise<void> {
     this.logger.info('Cleaning up agent');
 
+    // Deregister from orchestrator FIRST (while Redis is still connected)
+    await this.deregisterFromOrchestrator();
+
     // Unsubscribe from channels
     await this.redisSubscriber.unsubscribe();
+
+    // Remove all listeners to prevent leaks
+    if (typeof this.redisSubscriber.removeAllListeners === 'function') {
+      this.redisSubscriber.removeAllListeners();
+    }
+    if (typeof this.redisPublisher.removeAllListeners === 'function') {
+      this.redisPublisher.removeAllListeners();
+    }
 
     // Disconnect from Redis
     await this.redisSubscriber.quit();
     await this.redisPublisher.quit();
-
-    // Deregister from orchestrator (do before disconnecting publisher)
-    await this.deregisterFromOrchestrator();
 
     this.logger.info('Agent cleanup completed');
   }
