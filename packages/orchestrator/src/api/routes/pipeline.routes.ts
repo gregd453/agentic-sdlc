@@ -1,11 +1,10 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import {
   PipelineDefinitionSchema,
-  PipelineControlSchema,
   PipelineWebhookSchema,
   PipelineDefinition,
-  PipelineControl,
-  PipelineWebhook
+  PipelineWebhook,
+  PipelineControl
 } from '../../types/pipeline.types';
 import { PipelineExecutorService } from '../../services/pipeline-executor.service';
 import { logger } from '../../utils/logger';
@@ -66,7 +65,18 @@ export async function pipelineRoutes(
         }
       }
     },
-    async (request: FastifyRequest<{ Body: any }>, reply: FastifyReply) => {
+    async (
+      request: FastifyRequest<{
+        Body: PipelineDefinition & {
+          trigger?: 'manual' | 'webhook' | 'schedule' | 'event';
+          triggered_by?: string;
+          commit_sha?: string;
+          branch?: string;
+          metadata?: Record<string, unknown>;
+        };
+      }>,
+      reply: FastifyReply
+    ) => {
       const startTime = Date.now();
 
       try {
@@ -250,7 +260,7 @@ export async function pipelineRoutes(
     async (
       request: FastifyRequest<{
         Params: { executionId: string };
-        Body: { action: 'pause' | 'resume' | 'cancel' | 'retry'; stage_id?: string; reason?: string };
+        Body: Omit<PipelineControl, 'execution_id'>;
       }>,
       reply: FastifyReply
     ) => {

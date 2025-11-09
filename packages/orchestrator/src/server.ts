@@ -9,8 +9,11 @@ import { WorkflowService } from './services/workflow.service';
 import { WorkflowStateMachineService } from './state-machine/workflow-state-machine';
 import { PipelineExecutorService } from './services/pipeline-executor.service';
 import { QualityGateService } from './services/quality-gate.service';
+import { HealthCheckService } from './services/health-check.service';
+import { GracefulShutdownService } from './services/graceful-shutdown.service';
 import { workflowRoutes } from './api/routes/workflow.routes';
 import { pipelineRoutes } from './api/routes/pipeline.routes';
+import { healthRoutes } from './api/routes/health.routes';
 import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
 import { logger } from './utils/logger';
 import { metrics } from './utils/metrics';
@@ -64,12 +67,12 @@ export async function createServer() {
       deepLinking: false
     },
     uiHooks: {
-      onRequest: function (request, reply, next) { next() },
-      preHandler: function (request, reply, next) { next() }
+      onRequest: function (_request, _reply, next) { next() },
+      preHandler: function (_request, _reply, next) { next() }
     },
     staticCSP: true,
     transformStaticCSP: (header) => header,
-    transformSpecification: (swaggerObject, request, reply) => { return swaggerObject },
+    transformSpecification: (swaggerObject, _request, _reply) => { return swaggerObject },
     transformSpecificationClone: true
   });
 
@@ -101,6 +104,9 @@ export async function createServer() {
   // Initialize WebSocket handler
   const pipelineWebSocketHandler = new PipelineWebSocketHandler(eventBus);
 
+  // Initialize health check service
+  const healthCheckService = new HealthCheckService(prisma, eventBus, agentDispatcher);
+
   // Register WebSocket support
   await fastify.register(require('@fastify/websocket'));
 
@@ -108,11 +114,12 @@ export async function createServer() {
   await pipelineWebSocketHandler.register(fastify);
 
   // Register routes
+  await fastify.register(healthRoutes, { healthCheckService });
   await fastify.register(workflowRoutes, { workflowService });
   await fastify.register(pipelineRoutes, { pipelineExecutor });
 
   // Add hooks for logging
-  fastify.addHook('onRequest', async (request, reply) => {
+  fastify.addHook('onRequest', async (request, _reply) => {
     logger.info('Incoming request', {
       method: request.method,
       url: request.url,
@@ -158,24 +165,19 @@ export async function createServer() {
     });
   });
 
-  // Graceful shutdown
-  const closeGracefully = async (signal: string) => {
-    logger.info(`Received signal ${signal}, shutting down gracefully...`);
+  // Initialize graceful shutdown service
+  const gracefulShutdown = new GracefulShutdownService(
+    fastify,
+    prisma,
+    eventBus,
+    agentDispatcher,
+    pipelineExecutor,
+    pipelineWebSocketHandler,
+    workflowService
+  );
 
-    await fastify.close();
-    await pipelineExecutor.cleanup();
-    await pipelineWebSocketHandler.cleanup();
-    await workflowService.cleanup();
-    await agentDispatcher.disconnect();
-    await eventBus.disconnect();
-    await prisma.$disconnect();
-
-    logger.info('Server shut down successfully');
-    process.exit(0);
-  };
-
-  process.on('SIGINT', () => closeGracefully('SIGINT'));
-  process.on('SIGTERM', () => closeGracefully('SIGTERM'));
+  // Initialize shutdown handlers
+  gracefulShutdown.initialize();
 
   return fastify;
 }

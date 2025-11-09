@@ -1,15 +1,15 @@
 import { BaseAgent } from '@agentic-sdlc/base-agent';
 import {
-  DeploymentAgentTask,
-  DeploymentAgentResult,
-  DeploymentAgentTaskSchema,
-  DeploymentAgentResultSchema,
-  BuildDockerImageTask,
-  PushToECRTask,
-  DeployToECSTask,
-  RollbackDeploymentTask,
-  HealthCheckTask
-} from './types';
+  DeploymentTask,
+  DeploymentResultType,
+  DeploymentTaskSchema,
+  DeploymentResultSchemaExtended,
+  BuildDockerImagePayload,
+  PushToECRPayload,
+  DeployToECSPayload,
+  RollbackDeploymentPayload,
+  HealthCheckPayload
+} from '@agentic-sdlc/shared-types';
 import { DockerService } from './services/docker.service';
 import { ECRService } from './services/ecr.service';
 import { ECSService } from './services/ecs.service';
@@ -58,14 +58,16 @@ export class DeploymentAgent extends BaseAgent {
   /**
    * Execute deployment agent task
    */
-  async executeTask(task: DeploymentAgentTask): Promise<DeploymentAgentResult> {
+  async executeTask(task: DeploymentTask): Promise<DeploymentResultType> {
     const startTime = Date.now();
     const traceId = this.generateTraceId();
 
     // Validate task
-    const validatedTask = DeploymentAgentTaskSchema.parse(task);
+    const validatedTask = DeploymentTaskSchema.parse(task);
 
     this.logger.info('Executing deployment task', {
+      task_id: validatedTask.task_id,
+      workflow_id: validatedTask.workflow_id,
       action: validatedTask.action,
       trace_id: traceId
     });
@@ -75,23 +77,23 @@ export class DeploymentAgent extends BaseAgent {
 
       switch (validatedTask.action) {
         case 'build_docker_image':
-          result = await this.handleBuildDockerImage(validatedTask);
+          result = await this.handleBuildDockerImage(validatedTask.payload as BuildDockerImagePayload);
           break;
 
         case 'push_to_ecr':
-          result = await this.handlePushToECR(validatedTask);
+          result = await this.handlePushToECR(validatedTask.payload as PushToECRPayload);
           break;
 
         case 'deploy_to_ecs':
-          result = await this.handleDeployToECS(validatedTask);
+          result = await this.handleDeployToECS(validatedTask.payload as DeployToECSPayload);
           break;
 
         case 'rollback_deployment':
-          result = await this.handleRollbackDeployment(validatedTask);
+          result = await this.handleRollbackDeployment(validatedTask.payload as RollbackDeploymentPayload);
           break;
 
         case 'health_check':
-          result = await this.handleHealthCheck(validatedTask);
+          result = await this.handleHealthCheck(validatedTask.payload as HealthCheckPayload);
           break;
 
         default:
@@ -101,18 +103,28 @@ export class DeploymentAgent extends BaseAgent {
       const duration = Date.now() - startTime;
 
       this.logger.info('Deployment task completed', {
+        task_id: validatedTask.task_id,
+        workflow_id: validatedTask.workflow_id,
         action: validatedTask.action,
         duration_ms: duration,
         trace_id: traceId
       });
 
-      return DeploymentAgentResultSchema.parse({
+      return DeploymentResultSchemaExtended.parse({
+        task_id: validatedTask.task_id,
+        workflow_id: validatedTask.workflow_id,
+        agent_type: 'deployment',
         action: validatedTask.action,
-        result
+        status: 'success',
+        result,
+        timestamp: new Date().toISOString(),
+        duration_ms: duration
       });
 
     } catch (error) {
       this.logger.error('Deployment task failed', {
+        task_id: validatedTask.task_id,
+        workflow_id: validatedTask.workflow_id,
         action: validatedTask.action,
         error: error instanceof Error ? error.message : 'Unknown error',
         trace_id: traceId
@@ -125,25 +137,25 @@ export class DeploymentAgent extends BaseAgent {
   /**
    * Handle Docker image build
    */
-  private async handleBuildDockerImage(task: BuildDockerImageTask) {
+  private async handleBuildDockerImage(payload: BuildDockerImagePayload) {
     this.logger.info('Building Docker image', {
-      image_name: task.image_name,
-      image_tag: task.image_tag,
-      dockerfile: task.dockerfile_path
+      image_name: payload.image_name,
+      image_tag: payload.image_tag,
+      dockerfile: payload.dockerfile_path
     });
 
     const buildStartTime = Date.now();
 
     try {
       const imageInfo = await this.dockerService.buildImage({
-        dockerfilePath: task.dockerfile_path,
-        contextPath: task.context_path,
-        imageName: task.image_name,
-        imageTag: task.image_tag,
-        buildArgs: task.build_args,
-        target: task.target,
-        cacheFrom: task.cache_from,
-        noCache: task.no_cache
+        dockerfilePath: payload.dockerfile_path,
+        contextPath: payload.context_path,
+        imageName: payload.image_name,
+        imageTag: payload.image_tag,
+        buildArgs: payload.build_args,
+        target: payload.target,
+        cacheFrom: payload.cache_from,
+        noCache: payload.no_cache
       });
 
       const buildDuration = Date.now() - buildStartTime;
@@ -179,18 +191,18 @@ export class DeploymentAgent extends BaseAgent {
   /**
    * Handle ECR push
    */
-  private async handlePushToECR(task: PushToECRTask) {
+  private async handlePushToECR(payload: PushToECRPayload) {
     this.logger.info('Pushing image to ECR', {
-      repository: task.repository_name,
-      image: `${task.image_name}:${task.image_tag}`,
-      region: task.aws_region
+      repository: payload.repository_name,
+      image: `${payload.image_name}:${payload.image_tag}`,
+      region: payload.aws_region
     });
 
     try {
       // Create repository if needed
-      if (task.create_repository) {
+      if (payload.create_repository) {
         await this.ecrService.createRepositoryIfNotExists(
-          task.repository_name
+          payload.repository_name
         );
       }
 
@@ -205,11 +217,11 @@ export class DeploymentAgent extends BaseAgent {
       );
 
       // Tag image for ECR
-      const repositoryUri = await this.ecrService.getRepositoryUri(task.repository_name);
-      const imageUri = `${repositoryUri}:${task.image_tag}`;
+      const repositoryUri = await this.ecrService.getRepositoryUri(payload.repository_name);
+      const imageUri = `${repositoryUri}:${payload.image_tag}`;
 
       await this.dockerService.tagImage(
-        `${task.image_name}:${task.image_tag}`,
+        `${payload.image_name}:${payload.image_tag}`,
         imageUri
       );
 
@@ -243,51 +255,51 @@ export class DeploymentAgent extends BaseAgent {
   /**
    * Handle ECS deployment
    */
-  private async handleDeployToECS(task: DeployToECSTask) {
+  private async handleDeployToECS(payload: DeployToECSPayload) {
     this.logger.info('Deploying to ECS', {
-      cluster: task.cluster_name,
-      service: task.service_name,
-      strategy: task.deployment_strategy
+      cluster: payload.cluster_name,
+      service: payload.service_name,
+      strategy: payload.deployment_strategy
     });
 
     try {
       // Execute deployment based on strategy
       let result;
 
-      switch (task.deployment_strategy) {
+      switch (payload.deployment_strategy) {
         case 'blue-green':
-          result = await this.deploymentStrategy.executeBlueGreen(task);
+          result = await this.deploymentStrategy.executeBlueGreen(payload);
           break;
 
         case 'rolling':
-          result = await this.deploymentStrategy.executeRolling(task);
+          result = await this.deploymentStrategy.executeRolling(payload);
           break;
 
         case 'canary':
-          result = await this.deploymentStrategy.executeCanary(task);
+          result = await this.deploymentStrategy.executeCanary(payload);
           break;
 
         case 'recreate':
-          result = await this.deploymentStrategy.executeRecreate(task);
+          result = await this.deploymentStrategy.executeRecreate(payload);
           break;
 
         default:
-          throw new Error(`Unknown deployment strategy: ${task.deployment_strategy}`);
+          throw new Error(`Unknown deployment strategy: ${payload.deployment_strategy}`);
       }
 
       // Wait for stable if requested
-      if (task.wait_for_stable) {
+      if (payload.wait_for_stable) {
         await this.ecsService.waitForServiceStable(
-          task.cluster_name,
-          task.service_name,
-          task.timeout_minutes || 30
+          payload.cluster_name,
+          payload.service_name,
+          payload.timeout_minutes || 30
         );
       }
 
       // Perform health check
-      if (task.load_balancer) {
+      if (payload.load_balancer) {
         const healthCheck = await this.healthCheckService.checkEndpoint(
-          `http://${task.load_balancer.target_group_arn}`,
+          `http://${payload.load_balancer.target_group_arn}`,
           {
             timeout: 30000,
             expectedStatus: 200
@@ -299,8 +311,8 @@ export class DeploymentAgent extends BaseAgent {
           this.logger.error('Health check failed, initiating rollback');
 
           await this.ecsService.rollbackDeployment(
-            task.cluster_name,
-            task.service_name
+            payload.cluster_name,
+            payload.service_name
           );
 
           return {
@@ -327,8 +339,8 @@ export class DeploymentAgent extends BaseAgent {
       // Attempt rollback
       try {
         await this.ecsService.rollbackDeployment(
-          task.cluster_name,
-          task.service_name
+          payload.cluster_name,
+          payload.service_name
         );
       } catch (rollbackError) {
         this.logger.error('Rollback also failed', {
@@ -338,7 +350,7 @@ export class DeploymentAgent extends BaseAgent {
 
       return {
         success: false,
-        desired_count: task.desired_count,
+        desired_count: payload.desired_count,
         running_count: 0,
         rollback_info: {
           rollback_triggered: true,
@@ -351,20 +363,20 @@ export class DeploymentAgent extends BaseAgent {
   /**
    * Handle deployment rollback
    */
-  private async handleRollbackDeployment(task: RollbackDeploymentTask) {
+  private async handleRollbackDeployment(payload: RollbackDeploymentPayload) {
     this.logger.info('Rolling back deployment', {
-      cluster: task.cluster_name,
-      service: task.service_name,
-      reason: task.reason
+      cluster: payload.cluster_name,
+      service: payload.service_name,
+      reason: payload.reason
     });
 
     const startTime = Date.now();
 
     try {
       const result = await this.ecsService.rollbackDeployment(
-        task.cluster_name,
-        task.service_name,
-        task.target_deployment_id
+        payload.cluster_name,
+        payload.service_name,
+        payload.target_deployment_id
       );
 
       const duration = Date.now() - startTime;
@@ -395,19 +407,19 @@ export class DeploymentAgent extends BaseAgent {
   /**
    * Handle health check
    */
-  private async handleHealthCheck(task: HealthCheckTask) {
+  private async handleHealthCheck(payload: HealthCheckPayload) {
     this.logger.info('Performing health check', {
-      cluster: task.cluster_name,
-      service: task.service_name,
-      endpoint: task.endpoint
+      cluster: payload.cluster_name,
+      service: payload.service_name,
+      endpoint: payload.endpoint
     });
 
     try {
       const result = await this.healthCheckService.checkEndpoint(
-        task.endpoint,
+        payload.endpoint,
         {
-          timeout: task.timeout_seconds * 1000,
-          expectedStatus: task.expected_status
+          timeout: payload.timeout_seconds * 1000,
+          expectedStatus: payload.expected_status
         }
       );
 

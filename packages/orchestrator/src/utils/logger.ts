@@ -17,7 +17,7 @@ export const logger = pino({
       }
     : undefined,
   formatters: {
-    level(label, number) {
+    level(label, _number) {
       return { level: label };
     }
   },

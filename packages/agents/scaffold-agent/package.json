@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@agentic-sdlc/base-agent": "workspace:*",
+    "@agentic-sdlc/shared-types": "workspace:*",
     "@anthropic-ai/sdk": "^0.24.3",
     "dotenv": "^16.4.5",
     "fs-extra": "^11.2.0",
@@ -25,6 +26,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@agentic-sdlc/test-utils": "workspace:*",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.30",
     "@vitest/coverage-v8": "^1.4.0",

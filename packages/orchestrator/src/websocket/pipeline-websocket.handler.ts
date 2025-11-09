@@ -50,21 +50,23 @@ export class PipelineWebSocketHandler {
    * Register WebSocket routes
    */
   async register(fastify: FastifyInstance): Promise<void> {
+    // TODO: Fix WebSocket integration with @fastify/websocket
+    // Current implementation uses simplified approach with type assertions
     fastify.get(
       '/ws/pipelines',
-      { websocket: true },
-      (connection, request) => {
+      { websocket: true } as any,
+      (connection: any, request: any) => {
         const { socket } = connection;
         const clientId = this.generateClientId();
 
         logger.info('WebSocket connection established', {
           client_id: clientId,
-          remote_address: request.ip
+          remote_address: request.socket?.remoteAddress || 'unknown'
         });
 
         // Create connection record
         const wsConnection: PipelineWebSocketConnection = {
-          ws: socket,
+          ws: socket as WebSocket,
           subscriptions: new Set(),
           authenticated: false, // TODO: Implement authentication
           client_id: clientId,
@@ -88,7 +90,7 @@ export class PipelineWebSocketHandler {
         });
 
         // Handle errors
-        socket.on('error', (error) => {
+        socket.on('error', (error: Error) => {
           logger.error('WebSocket error', {
             client_id: clientId,
             error: error.message
@@ -96,7 +98,7 @@ export class PipelineWebSocketHandler {
         });
 
         // Send welcome message
-        this.sendMessage(socket, {
+        this.sendMessage(socket as WebSocket, {
           type: 'connected',
           client_id: clientId,
           timestamp: new Date().toISOString()
@@ -313,10 +315,10 @@ export class PipelineWebSocketHandler {
       type: update.type
     });
 
-    metrics.recordValue('websocket.pipeline.broadcast.recipients', successCount);
+    metrics.gauge('websocket.pipeline.broadcast.recipients', successCount);
 
     if (failureCount > 0) {
-      metrics.recordValue('websocket.pipeline.broadcast.failures', failureCount);
+      metrics.gauge('websocket.pipeline.broadcast.failures', failureCount);
     }
   }
 

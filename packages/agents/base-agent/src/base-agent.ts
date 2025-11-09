@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import Anthropic from '@anthropic-ai/sdk';
 import pino from 'pino';
 import Redis from 'ioredis';
+import { retry, RetryPresets, CircuitBreaker } from '@agentic-sdlc/shared-utils';
 import {
   AgentLifecycle,
   AgentCapabilities,
@@ -22,6 +23,7 @@ export abstract class BaseAgent implements AgentLifecycle {
   protected readonly redisPublisher: Redis;    // For publishing results and registration
   protected readonly agentId: string;
   protected readonly capabilities: AgentCapabilities;
+  protected readonly claudeCircuitBreaker: CircuitBreaker;
 
   private startTime: number;
   private tasksProcessed: number = 0;
@@ -63,6 +65,25 @@ export abstract class BaseAgent implements AgentLifecycle {
 
     this.redisSubscriber = new Redis(redisConfig);
     this.redisPublisher = new Redis(redisConfig);
+
+    // Initialize circuit breaker for Claude API calls
+    this.claudeCircuitBreaker = new CircuitBreaker({
+      failureThreshold: 5,
+      minimumRequests: 10,
+      failureRateThreshold: 50,
+      openDurationMs: 60000, // 1 minute
+      halfOpenSuccessThreshold: 2,
+      timeoutMs: 30000, // 30 second timeout for Claude calls
+      onOpen: () => {
+        this.logger.warn('Claude API circuit breaker opened - too many failures');
+      },
+      onClose: () => {
+        this.logger.info('Claude API circuit breaker closed - service recovered');
+      },
+      onHalfOpen: () => {
+        this.logger.info('Claude API circuit breaker half-open - testing recovery');
+      }
+    });
 
     this.startTime = Date.now();
   }
@@ -113,10 +134,19 @@ export abstract class BaseAgent implements AgentLifecycle {
       // Validate task
       const task = this.validateTask(message.payload);
 
-      // Execute task
-      const result = await this.executeWithRetry(
+      // Execute task with retry (using new retry utility)
+      const result = await retry(
         () => this.execute(task),
-        3
+        {
+          ...RetryPresets.standard,
+          onRetry: (error, attempt, delayMs) => {
+            this.logger.warn('Task execution failed, retrying', {
+              attempt,
+              delayMs,
+              error: error instanceof Error ? error.message : String(error)
+            });
+          }
+        }
       );
 
       // Report result
@@ -222,88 +252,77 @@ export abstract class BaseAgent implements AgentLifecycle {
     };
   }
 
-  // Helper: Execute with retry logic
+  // Helper: Execute with retry logic (uses new retry utility)
   protected async executeWithRetry<T>(
     operation: () => Promise<T>,
     maxRetries: number = 3
   ): Promise<T> {
-    let lastError: Error;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        return await operation();
-      } catch (error) {
-        lastError = error as Error;
-
+    return retry(operation, {
+      maxAttempts: maxRetries,
+      ...RetryPresets.standard,
+      onRetry: (error, attempt, delayMs) => {
         this.logger.warn('Operation failed, retrying', {
           agent_id: this.agentId,
           attempt,
           maxRetries,
-          error: lastError.message
+          delayMs,
+          error: error instanceof Error ? error.message : String(error)
         });
-
-        if (attempt < maxRetries) {
-          // Exponential backoff
-          const delayMs = Math.min(1000 * Math.pow(2, attempt - 1), 30000);
-          await this.sleep(delayMs);
-        }
+      },
+      onMaxRetriesReached: (error, attempts) => {
+        this.logger.error('Operation failed after all retries', {
+          agent_id: this.agentId,
+          attempts,
+          error: error instanceof Error ? error.message : String(error)
+        });
       }
-    }
-
-    throw new AgentError(
-      `Operation failed after ${maxRetries} attempts`,
-      'RETRY_EXHAUSTED',
-      { cause: lastError! }
-    );
+    });
   }
 
-  // Helper: Call Claude API
+  // Helper: Call Claude API (with circuit breaker protection)
   protected async callClaude(
     prompt: string,
     systemPrompt?: string,
     maxTokens: number = 4096
   ): Promise<string> {
-    try {
-      const response = await this.anthropic.messages.create({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: maxTokens,
-        temperature: 0.3,
-        system: systemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
-      });
+    return this.claudeCircuitBreaker.execute(async () => {
+      try {
+        const response = await this.anthropic.messages.create({
+          model: 'claude-3-haiku-20240307',
+          max_tokens: maxTokens,
+          temperature: 0.3,
+          system: systemPrompt,
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        });
 
-      // Extract text from response
-      const textContent = response.content.find(c => c.type === 'text');
-      if (!textContent || textContent.type !== 'text') {
-        throw new AgentError('No text content in Claude response', 'API_ERROR');
-      }
+        // Extract text from response
+        const textContent = response.content.find(c => c.type === 'text');
+        if (!textContent || textContent.type !== 'text') {
+          throw new AgentError('No text content in Claude response', 'API_ERROR');
+        }
 
-      return textContent.text;
-    } catch (error) {
-      if (error instanceof Anthropic.APIError) {
-        throw new AgentError(
-          `Claude API error: ${error.message}`,
-          'ANTHROPIC_API_ERROR',
-          { cause: error }
-        );
+        return textContent.text;
+      } catch (error) {
+        if (error instanceof Anthropic.APIError) {
+          throw new AgentError(
+            `Claude API error: ${error.message}`,
+            'ANTHROPIC_API_ERROR',
+            { cause: error }
+          );
+        }
+        throw error;
       }
-      throw error;
-    }
+    });
   }
 
   // Helper: Generate trace ID
   protected generateTraceId(): string {
     return `trace_${randomUUID()}`;
-  }
-
-  // Helper: Sleep for specified milliseconds
-  private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   // Register agent with orchestrator

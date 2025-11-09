@@ -225,11 +225,11 @@ export class WorkflowService {
       payload: {
         stage,
         workflow_id: workflowId
-      },
+      } as any,
       retry_count: 0,
       max_retries: 3,
       timeout_ms: 300000
-    });
+    } as any);
 
     // Create task assignment message
     const taskAssignment: TaskAssignment = {

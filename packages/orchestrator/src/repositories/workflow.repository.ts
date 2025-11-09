@@ -109,10 +109,37 @@ export class WorkflowRepository {
 
     const updated = await this.prisma.workflow.update({
       where: { id },
-      data
+      data: data as any
     });
 
     logger.info('Workflow updated', {
+      workflow_id: id,
+      updates: data
+    });
+
+    return updated;
+  }
+
+  async updateState(
+    id: string,
+    data: Partial<{
+      current_stage: string;
+      progress: number;
+      completed_at: Date | null;
+      metadata: Record<string, any>;
+    }>
+  ): Promise<Workflow> {
+    const existing = await this.findById(id);
+    if (!existing) {
+      throw new NotFoundError(`Workflow ${id} not found`);
+    }
+
+    const updated = await this.prisma.workflow.update({
+      where: { id },
+      data: data as any
+    });
+
+    logger.info('Workflow state updated', {
       workflow_id: id,
       updates: data
     });
@@ -144,7 +171,7 @@ export class WorkflowRepository {
 
   async createTask(task: Omit<AgentTask, 'id'>): Promise<AgentTask> {
     return await this.prisma.agentTask.create({
-      data: task
+      data: task as any
     });
   }
 
@@ -154,7 +181,7 @@ export class WorkflowRepository {
   ): Promise<AgentTask> {
     return await this.prisma.agentTask.update({
       where: { task_id: taskId },
-      data: updates
+      data: updates as any
     });
   }
 

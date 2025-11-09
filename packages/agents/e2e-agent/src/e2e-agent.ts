@@ -84,7 +84,8 @@ export class E2EAgent extends BaseAgent {
         Array.from(pageObjectFiles.keys()).map(name => ({
           name: name.replace('.page.ts', ''),
           url: '/',
-          selectors: {}
+          selectors: {},
+          methods: []
         }))
       );
       await storage.storeTestFiles(
@@ -175,27 +176,25 @@ export class E2EAgent extends BaseAgent {
       return {
         task_id: task.task_id,
         workflow_id: task.workflow_id,
-        agent_id: this.agentId,
         status: report.overall_status === 'failed' ? 'failure' : 'success',
-        output: formattedReport,
-        artifacts: {
-          test_files: testArtifacts.map(a => a.path),
-          page_objects: pageObjectArtifacts.map(a => a.path),
-          screenshots: playwrightArtifacts?.screenshots.map(a => a.path) || [],
-          videos: playwrightArtifacts?.videos.map(a => a.path) || [],
-          html_report: playwrightArtifacts?.reports[0]?.path
-        },
-        metrics: {
+        output: {
+          report: formattedReport,
           scenarios_generated: scenariosGenerated,
           test_files_created: testFiles.size,
           page_objects_created: pageObjectFiles.size,
-          generation_time_ms: generationTime,
-          execution_time_ms: execution?.total_duration_ms || 0,
-          total_duration_ms: Date.now() - startTime,
-          pass_rate: execution ? calculatePassRate(execution.results) : 0
+          artifacts: {
+            test_files: testArtifacts.map(a => a.path),
+            page_objects: pageObjectArtifacts.map(a => a.path),
+            screenshots: playwrightArtifacts?.screenshots.map(a => a.path) || [],
+            videos: playwrightArtifacts?.videos.map(a => a.path) || [],
+            html_report: playwrightArtifacts?.reports[0]?.path
+          }
         },
-        next_stage: nextStage,
-        timestamp: new Date().toISOString()
+        metrics: {
+          duration_ms: Date.now() - startTime,
+          api_calls: 1  // Claude API call for test generation
+        },
+        next_stage: nextStage
       };
     } catch (error) {
       this.logger.error('E2E test task failed', { error, task_id: task.task_id });
@@ -203,12 +202,11 @@ export class E2EAgent extends BaseAgent {
       return {
         task_id: task.task_id,
         workflow_id: task.workflow_id,
-        agent_id: this.agentId,
         status: 'failure',
-        output: `E2E test failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        errors: [error instanceof Error ? error.message : 'Unknown error'],
-        next_stage: 'failed',
-        timestamp: new Date().toISOString()
+        output: {
+          error: `E2E test failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        },
+        errors: [error instanceof Error ? error.message : 'Unknown error']
       };
     }
   }

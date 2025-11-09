@@ -159,7 +159,7 @@ export class DecisionGateService {
   /**
    * Determine if a stage requires a decision gate
    */
-  shouldEvaluateDecision(stage: string, workflowType: string): boolean {
+  shouldEvaluateDecision(stage: string, _workflowType: string): boolean {
     // Decision gates for stages that might be high-impact
     const decisionGateStages = [
       'scaffolding',      // Architectural decisions

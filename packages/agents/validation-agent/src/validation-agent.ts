@@ -1,9 +1,12 @@
 import { BaseAgent, TaskAssignment, TaskResult, AgentError } from '@agentic-sdlc/base-agent';
 import {
-  ValidationTaskContext,
-  ValidationTaskContextSchema,
+  ValidationTask,
+  SchemaRegistry
+} from '@agentic-sdlc/shared-types';
+import {
   ValidationCheckResult,
-  PolicyConfig
+  PolicyConfig,
+  ValidationTaskContext
 } from './types';
 import { loadPolicyConfig, getDefaultPolicy } from './utils/policy-loader';
 import { generateValidationReport, formatReportAsText } from './utils/report-generator';
@@ -65,8 +68,19 @@ export class ValidationAgent extends BaseAgent {
     });
 
     try {
-      // Parse and validate task context
-      const context = this.parseTaskContext(task);
+      // Validate and parse the task using schema registry
+      const validationTask = SchemaRegistry.validate<ValidationTask>(
+        'validation.task',
+        task
+      );
+
+      // Extract context from validated task
+      const context = {
+        project_path: validationTask.payload.working_directory || process.cwd(),
+        validation_types: validationTask.payload.validation_types.map(v => v as 'typescript' | 'eslint' | 'coverage' | 'security'),
+        coverage_threshold: validationTask.payload.thresholds?.coverage,
+        package_manager: 'pnpm' as const,
+      };
 
       // Run validation checks
       const validationChecks = await this.runValidationChecks(context);
@@ -150,20 +164,6 @@ export class ValidationAgent extends BaseAgent {
     }
   }
 
-  /**
-   * Parse and validate task context
-   */
-  private parseTaskContext(task: TaskAssignment): ValidationTaskContext {
-    try {
-      return ValidationTaskContextSchema.parse(task.context);
-    } catch (error) {
-      throw new AgentError(
-        'Invalid validation task context',
-        'INVALID_CONTEXT',
-        { cause: error instanceof Error ? error : undefined }
-      );
-    }
-  }
 
   /**
    * Run all validation checks based on context

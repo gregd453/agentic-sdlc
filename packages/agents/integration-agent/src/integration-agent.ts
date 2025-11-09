@@ -1,14 +1,14 @@
 import { BaseAgent } from '@agentic-sdlc/base-agent';
 import {
-  IntegrationAgentTask,
-  IntegrationAgentResult,
-  IntegrationAgentTaskSchema,
-  IntegrationAgentResultSchema,
-  MergeBranchTask,
-  ResolveConflictTask,
-  UpdateDependenciesTask,
-  RunIntegrationTestsTask
-} from './types';
+  IntegrationTask,
+  IntegrationResult,
+  IntegrationTaskSchema,
+  IntegrationResultSchema,
+  MergeBranchPayload,
+  ResolveConflictPayload,
+  UpdateDependenciesPayload,
+  RunIntegrationTestsPayload
+} from '@agentic-sdlc/shared-types';
 import { GitService } from './services/git.service';
 import { ConflictResolverService } from './services/conflict-resolver.service';
 import { DependencyUpdaterService } from './services/dependency-updater.service';
@@ -45,12 +45,12 @@ export class IntegrationAgent extends BaseAgent {
   /**
    * Execute integration agent task
    */
-  async executeTask(task: IntegrationAgentTask): Promise<IntegrationAgentResult> {
+  async executeTask(task: IntegrationTask): Promise<IntegrationResult> {
     const startTime = Date.now();
     const traceId = this.generateTraceId();
 
     // Validate task
-    const validatedTask = IntegrationAgentTaskSchema.parse(task);
+    const validatedTask = IntegrationTaskSchema.parse(task);
 
     this.logger.info('Executing integration task', {
       action: validatedTask.action,
@@ -62,19 +62,19 @@ export class IntegrationAgent extends BaseAgent {
 
       switch (validatedTask.action) {
         case 'merge_branch':
-          result = await this.handleMergeBranch(validatedTask);
+          result = await this.handleMergeBranch(validatedTask.payload as MergeBranchPayload);
           break;
 
         case 'resolve_conflict':
-          result = await this.handleResolveConflict(validatedTask);
+          result = await this.handleResolveConflict(validatedTask.payload as ResolveConflictPayload);
           break;
 
         case 'update_dependencies':
-          result = await this.handleUpdateDependencies(validatedTask);
+          result = await this.handleUpdateDependencies(validatedTask.payload as UpdateDependenciesPayload);
           break;
 
         case 'run_integration_tests':
-          result = await this.handleRunIntegrationTests(validatedTask);
+          result = await this.handleRunIntegrationTests(validatedTask.payload as RunIntegrationTestsPayload);
           break;
 
         default:
@@ -89,9 +89,15 @@ export class IntegrationAgent extends BaseAgent {
         trace_id: traceId
       });
 
-      return IntegrationAgentResultSchema.parse({
+      return IntegrationResultSchema.parse({
+        task_id: validatedTask.task_id,
+        workflow_id: validatedTask.workflow_id,
+        agent_type: 'integration',
         action: validatedTask.action,
-        result
+        status: 'completed',
+        result,
+        timestamp: new Date().toISOString(),
+        duration_ms: duration
       });
 
     } catch (error) {
@@ -108,20 +114,20 @@ export class IntegrationAgent extends BaseAgent {
   /**
    * Handle branch merge task
    */
-  private async handleMergeBranch(task: MergeBranchTask) {
+  private async handleMergeBranch(payload: MergeBranchPayload) {
     this.logger.info('Starting branch merge', {
-      source: task.source_branch,
-      target: task.target_branch,
-      strategy: task.strategy
+      source: payload.source_branch,
+      target: payload.target_branch,
+      strategy: payload.strategy
     });
 
     // Create backup branch before merge
-    const backupBranch = `backup/${task.source_branch}-${Date.now()}`;
+    const backupBranch = `backup/${payload.source_branch}-${Date.now()}`;
     await this.gitService.createBranch(backupBranch);
 
     try {
       // Run tests before merge if requested
-      if (task.run_tests_before_merge) {
+      if (payload.run_tests_before_merge) {
         const testResult = await this.testRunner.runTests();
         if (!testResult.success) {
           throw new Error('Tests failed before merge');
@@ -130,13 +136,13 @@ export class IntegrationAgent extends BaseAgent {
 
       // Attempt merge
       const mergeResult = await this.gitService.mergeBranch(
-        task.source_branch,
-        task.target_branch,
-        task.strategy
+        payload.source_branch,
+        payload.target_branch,
+        payload.strategy
       );
 
       // Handle conflicts if any
-      if (mergeResult.conflicts.length > 0 && task.auto_resolve_conflicts) {
+      if (mergeResult.conflicts.length > 0 && payload.auto_resolve_conflicts) {
         this.logger.info('Conflicts detected, attempting resolution', {
           count: mergeResult.conflicts.length
         });
@@ -147,7 +153,7 @@ export class IntegrationAgent extends BaseAgent {
         for (const conflict of mergeResult.conflicts) {
           const resolution = await this.conflictResolver.resolveConflict(
             conflict,
-            task.conflict_strategy
+            payload.conflict_strategy
           );
 
           if (resolution.confidence >= 85) {
@@ -159,7 +165,7 @@ export class IntegrationAgent extends BaseAgent {
             resolvedConflicts.push({
               file_path: conflict.file_path,
               resolution: resolution.resolved_content,
-              strategy_used: task.conflict_strategy,
+              strategy_used: payload.conflict_strategy,
               confidence: resolution.confidence
             });
           } else {
@@ -171,7 +177,7 @@ export class IntegrationAgent extends BaseAgent {
         // If all conflicts resolved, commit
         if (unresolvedConflicts.length === 0) {
           await this.gitService.createCommit(
-            `Merge ${task.source_branch} into ${task.target_branch} with AI-resolved conflicts`
+            `Merge ${payload.source_branch} into ${payload.target_branch} with AI-resolved conflicts`
           );
 
           return {
@@ -198,8 +204,8 @@ export class IntegrationAgent extends BaseAgent {
       // No conflicts or auto-resolve disabled
       if (mergeResult.conflicts.length === 0) {
         // Delete source branch if requested
-        if (task.delete_source_after_merge) {
-          await this.gitService.deleteBranch(task.source_branch);
+        if (payload.delete_source_after_merge) {
+          await this.gitService.deleteBranch(payload.source_branch);
         }
 
         return {
@@ -242,20 +248,20 @@ export class IntegrationAgent extends BaseAgent {
   /**
    * Handle conflict resolution task
    */
-  private async handleResolveConflict(task: ResolveConflictTask) {
+  private async handleResolveConflict(payload: ResolveConflictPayload) {
     this.logger.info('Resolving conflicts', {
-      count: task.conflicts.length,
-      strategy: task.strategy
+      count: payload.conflicts.length,
+      strategy: payload.strategy
     });
 
     const resolvedConflicts = [];
     const unresolvedConflicts = [];
 
-    for (const conflict of task.conflicts) {
+    for (const conflict of payload.conflicts) {
       try {
         const resolution = await this.conflictResolver.resolveConflict(
           conflict,
-          task.strategy
+          payload.strategy
         );
 
         if (resolution.confidence >= 70) {
@@ -267,7 +273,7 @@ export class IntegrationAgent extends BaseAgent {
           resolvedConflicts.push({
             file_path: conflict.file_path,
             resolution: resolution.resolved_content,
-            strategy_used: task.strategy,
+            strategy_used: payload.strategy,
             confidence: resolution.confidence
           });
         } else {
@@ -285,7 +291,7 @@ export class IntegrationAgent extends BaseAgent {
     // Commit resolved conflicts
     if (resolvedConflicts.length > 0 && unresolvedConflicts.length === 0) {
       await this.gitService.createCommit(
-        task.commit_message || 'Resolve conflicts using AI'
+        payload.commit_message || 'Resolve conflicts using AI'
       );
     }
 
@@ -299,10 +305,10 @@ export class IntegrationAgent extends BaseAgent {
   /**
    * Handle dependency update task
    */
-  private async handleUpdateDependencies(task: UpdateDependenciesTask) {
+  private async handleUpdateDependencies(payload: UpdateDependenciesPayload) {
     this.logger.info('Updating dependencies', {
-      package_manager: task.package_manager,
-      update_type: task.update_type
+      package_manager: payload.package_manager,
+      update_type: payload.update_type
     });
 
     // Get current commit SHA for potential rollback
@@ -311,13 +317,13 @@ export class IntegrationAgent extends BaseAgent {
     try {
       // Perform updates
       const updates = await this.dependencyUpdater.updateDependencies(
-        task.package_manager,
-        task.update_type,
-        task.packages
+        payload.package_manager,
+        payload.update_type,
+        payload.packages
       );
 
       // Run tests if requested
-      if (task.run_tests) {
+      if (payload.run_tests) {
         const testResult = await this.testRunner.runTests();
 
         if (!testResult.success) {
@@ -334,17 +340,17 @@ export class IntegrationAgent extends BaseAgent {
 
       // Create PR if requested
       let prUrl;
-      if (task.create_pull_request) {
+      if (payload.create_pull_request) {
         prUrl = await this.dependencyUpdater.createPullRequest(
           updates,
-          task.update_type
+          payload.update_type
         );
       }
 
       return {
         success: true,
         updates,
-        tests_passed: task.run_tests,
+        tests_passed: payload.run_tests,
         pull_request_url: prUrl
       };
 
@@ -363,18 +369,18 @@ export class IntegrationAgent extends BaseAgent {
   /**
    * Handle integration test execution task
    */
-  private async handleRunIntegrationTests(task: RunIntegrationTestsTask) {
+  private async handleRunIntegrationTests(payload: RunIntegrationTestsPayload) {
     this.logger.info('Running integration tests', {
-      environment: task.environment,
-      test_suite: task.test_suite
+      environment: payload.environment,
+      test_suite: payload.test_suite
     });
 
     const result = await this.testRunner.runTests(
-      task.test_suite,
-      task.environment,
+      payload.test_suite,
+      payload.environment,
       {
-        timeout: task.timeout_ms,
-        failFast: task.fail_fast
+        timeout: payload.timeout_ms,
+        failFast: payload.fail_fast
       }
     );
 

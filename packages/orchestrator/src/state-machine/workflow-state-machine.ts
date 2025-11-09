@@ -1,4 +1,4 @@
-import { createMachine, interpret, State } from 'xstate';
+import { createMachine, interpret } from 'xstate';
 import { logger } from '../utils/logger';
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
@@ -35,7 +35,8 @@ export const createWorkflowStateMachine = (
   repository: WorkflowRepository,
   eventBus: EventBus
 ) => {
-  return createMachine<WorkflowContext, WorkflowEvent>({
+  // TODO: Update xstate type arguments for newer version compatibility
+  return createMachine({
     id: 'workflow',
     initial: 'initiated',
     context,
@@ -108,7 +109,7 @@ export const createWorkflowStateMachine = (
         always: [
           {
             target: 'completed',
-            cond: 'isWorkflowComplete',
+            guard: 'isWorkflowComplete',
             actions: ['markComplete']
           },
           {

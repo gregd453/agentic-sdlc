@@ -61,10 +61,15 @@ export const PolicyThresholdSchema = z.object({
   description: z.string(),
 });
 
+export const EscalationRuleSchema = z.object({
+  route: z.string(),
+  description: z.string(),
+}).passthrough(); // Allow additional fields like 'under', 'over_amount', 'categories'
+
 export const PolicySchema = z.object({
   decisions: z.object({
     thresholds: z.record(PolicyThresholdSchema),
-    escalation: z.record(z.unknown()),
+    escalation: z.record(EscalationRuleSchema),
     timeout: z.object({
       interactive_seconds: z.number(),
       non_interactive_fail_immediately: z.boolean(),
@@ -85,6 +90,7 @@ export type DecisionOption = z.infer<typeof DecisionOptionSchema>;
 export type DecisionStatus = z.infer<typeof DecisionStatusSchema>;
 export type DecisionResult = z.infer<typeof DecisionResultSchema>;
 export type PolicyThreshold = z.infer<typeof PolicyThresholdSchema>;
+export type EscalationRule = z.infer<typeof EscalationRuleSchema>;
 export type Policy = z.infer<typeof PolicySchema>;
 
 // Decision Request Input

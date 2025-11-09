@@ -1,0 +1,27 @@
+{
+  "name": "@agentic-sdlc/contracts",
+  "version": "1.0.0",
+  "description": "Contract testing and schema version compatibility validation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@agentic-sdlc/shared-types": "workspace:*",
+    "zod": "^3.25.76",
+    "semver": "^7.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/semver": "^7.5.6",
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.0"
+  }
+}

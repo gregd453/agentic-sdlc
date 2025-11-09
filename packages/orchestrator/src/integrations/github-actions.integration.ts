@@ -1,4 +1,4 @@
-import { PipelineDefinition, PipelineWebhook, PipelineExecution } from '../types/pipeline.types';
+import { PipelineDefinition, PipelineWebhook, PipelineExecution, PipelineStage } from '../types/pipeline.types';
 import { logger } from '../utils/logger';
 import { metrics } from '../utils/metrics';
 import crypto from 'crypto';
@@ -104,7 +104,7 @@ export class GitHubActionsIntegration {
       commit_message: commitMessage,
       author,
       timestamp: new Date().toISOString(),
-      payload: payload as Record<string, unknown>
+      payload: payload as unknown as Record<string, unknown>
     };
 
     logger.info('Parsed GitHub webhook', {
@@ -190,12 +190,12 @@ export class GitHubActionsIntegration {
   /**
    * Determine pipeline stages based on context
    */
-  private determinePipelineStages(webhook: PipelineWebhook): any[] {
+  private determinePipelineStages(webhook: PipelineWebhook): PipelineStage[] {
     const isProduction = this.isMainBranch(`refs/heads/${webhook.branch}`);
     const isPullRequest = webhook.event === 'pull_request';
 
     // Base stages for all pipelines
-    const stages = [
+    const stages: PipelineStage[] = [
       {
         id: 'build',
         name: 'Build',
@@ -205,7 +205,9 @@ export class GitHubActionsIntegration {
         parameters: {},
         dependencies: [],
         quality_gates: [],
-        timeout_ms: 600000
+        timeout_ms: 600000,
+        artifacts: [],
+        continue_on_failure: false
       },
       {
         id: 'unit_test',
@@ -227,7 +229,9 @@ export class GitHubActionsIntegration {
             description: 'Minimum 80% code coverage'
           }
         ],
-        timeout_ms: 300000
+        timeout_ms: 300000,
+        artifacts: [],
+        continue_on_failure: false
       },
       {
         id: 'lint',
@@ -238,7 +242,9 @@ export class GitHubActionsIntegration {
         parameters: {},
         dependencies: [{ stage_id: 'build', required: true, condition: 'success' }],
         quality_gates: [],
-        timeout_ms: 120000
+        timeout_ms: 120000,
+        artifacts: [],
+        continue_on_failure: false
       }
     ];
 
@@ -257,7 +263,9 @@ export class GitHubActionsIntegration {
           { stage_id: 'unit_test', required: true, condition: 'success' }
         ],
         quality_gates: [],
-        timeout_ms: 600000
+        timeout_ms: 600000,
+        artifacts: [],
+        continue_on_failure: false
       });
     }
 
@@ -271,12 +279,14 @@ export class GitHubActionsIntegration {
         action: 'test',
         parameters: {
           browsers: ['chromium', 'firefox']
-        },
+        } as Record<string, unknown>,
         dependencies: [
           { stage_id: 'integration_test', required: true, condition: 'success' }
         ],
         quality_gates: [],
-        timeout_ms: 900000
+        timeout_ms: 900000,
+        artifacts: [],
+        continue_on_failure: false
       });
 
       // Add security scan
@@ -286,7 +296,7 @@ export class GitHubActionsIntegration {
         description: 'Run security vulnerability scan',
         agent_type: 'validation',
         action: 'security_scan',
-        parameters: {},
+        parameters: {} as Record<string, unknown>,
         dependencies: [
           { stage_id: 'build', required: true, condition: 'success' }
         ],
@@ -300,7 +310,9 @@ export class GitHubActionsIntegration {
             description: 'Zero critical vulnerabilities'
           }
         ],
-        timeout_ms: 300000
+        timeout_ms: 300000,
+        artifacts: [],
+        continue_on_failure: false
       });
 
       // Add deployment stage
@@ -313,13 +325,15 @@ export class GitHubActionsIntegration {
         parameters: {
           environment: 'production',
           strategy: 'blue-green'
-        },
+        } as Record<string, unknown>,
         dependencies: [
           { stage_id: 'e2e_test', required: true, condition: 'success' },
           { stage_id: 'security_scan', required: true, condition: 'success' }
         ],
         quality_gates: [],
-        timeout_ms: 1200000
+        timeout_ms: 1200000,
+        artifacts: [],
+        continue_on_failure: false
       });
     }
 
@@ -370,7 +384,7 @@ export class GitHubActionsIntegration {
   /**
    * Extract author from webhook payload
    */
-  private extractAuthor(event: GitHubEvent, payload: GitHubWebhookPayload): string {
+  private extractAuthor(_event: GitHubEvent, payload: GitHubWebhookPayload): string {
     if (payload.sender) {
       return payload.sender.login;
     }
@@ -402,7 +416,7 @@ export class GitHubActionsIntegration {
    */
   async reportStatus(
     execution: PipelineExecution,
-    githubToken?: string
+    _githubToken?: string
   ): Promise<void> {
     // This would use GitHub's Commit Status API
     // or Checks API to report pipeline status
@@ -416,5 +430,6 @@ export class GitHubActionsIntegration {
 
     // TODO: Implement GitHub API call to create/update status
     // https://docs.github.com/en/rest/commits/statuses
+    // Will use _githubToken when implemented
   }
 }

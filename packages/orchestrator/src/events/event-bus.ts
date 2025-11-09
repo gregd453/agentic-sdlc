@@ -153,7 +153,8 @@ export class EventBus {
         );
 
         if (messages) {
-          for (const [, entries] of messages) {
+          // Cast to correct type for Redis stream messages
+          for (const [, entries] of messages as any) {
             for (const [id, fields] of entries) {
               try {
                 const event = JSON.parse(fields[1]);
@@ -178,6 +179,19 @@ export class EventBus {
 
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Ping Redis to verify connectivity
+   */
+  async ping(): Promise<boolean> {
+    try {
+      const result = await this.redis.ping();
+      return result === 'PONG';
+    } catch (error) {
+      logger.error('Redis ping failed', { error });
+      return false;
+    }
   }
 
   async disconnect(): Promise<void> {
