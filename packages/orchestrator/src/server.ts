@@ -17,6 +17,11 @@ import { healthRoutes } from './api/routes/health.routes';
 import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
 import { logger } from './utils/logger';
 import { metrics } from './utils/metrics';
+import {
+  registerObservabilityMiddleware,
+  createMetricsEndpoint,
+  createMetricsSummaryEndpoint
+} from './middleware/observability.middleware';
 
 export async function createServer() {
   // Initialize Fastify
@@ -55,7 +60,8 @@ export async function createServer() {
       tags: [
         { name: 'workflows', description: 'Workflow management operations' },
         { name: 'pipelines', description: 'Pipeline execution and control operations' },
-        { name: 'health', description: 'Health check endpoints' }
+        { name: 'health', description: 'Health check endpoints' },
+        { name: 'metrics', description: 'Metrics and observability endpoints' }
       ]
     }
   });
@@ -113,57 +119,45 @@ export async function createServer() {
   // Register WebSocket handler
   await pipelineWebSocketHandler.register(fastify);
 
+  // Register observability middleware (logging, metrics, tracing)
+  registerObservabilityMiddleware(fastify);
+
   // Register routes
   await fastify.register(healthRoutes, { healthCheckService });
   await fastify.register(workflowRoutes, { workflowService });
   await fastify.register(pipelineRoutes, { pipelineExecutor });
 
-  // Add hooks for logging
-  fastify.addHook('onRequest', async (request, _reply) => {
-    logger.info('Incoming request', {
-      method: request.method,
-      url: request.url,
-      headers: request.headers,
-      request_id: request.id
-    });
-  });
+  // Metrics endpoints
+  fastify.get('/metrics', {
+    schema: {
+      tags: ['metrics'],
+      summary: 'Prometheus metrics endpoint',
+      description: 'Returns metrics in Prometheus exposition format for scraping',
+      response: {
+        200: {
+          type: 'string',
+          description: 'Prometheus metrics in text format'
+        }
+      }
+    }
+  }, createMetricsEndpoint());
 
-  fastify.addHook('onResponse', async (request, reply) => {
-    logger.info('Request completed', {
-      method: request.method,
-      url: request.url,
-      status_code: reply.statusCode,
-      request_id: request.id,
-      duration_ms: reply.getResponseTime()
-    });
-
-    // Record metrics
-    metrics.recordDuration('http.request.duration', reply.getResponseTime(), {
-      method: request.method,
-      path: request.routerPath || request.url,
-      status_code: reply.statusCode.toString()
-    });
-  });
-
-  // Error handler
-  fastify.setErrorHandler((error, request, reply) => {
-    logger.error('Request error', {
-      error: error.message,
-      stack: error.stack,
-      request_id: request.id
-    });
-
-    metrics.increment('http.request.errors', {
-      method: request.method,
-      path: request.routerPath || request.url
-    });
-
-    const statusCode = error.statusCode || 500;
-    reply.status(statusCode).send({
-      error: statusCode < 500 ? error.message : 'Internal server error',
-      request_id: request.id
-    });
-  });
+  fastify.get('/metrics/summary', {
+    schema: {
+      tags: ['metrics'],
+      summary: 'Metrics summary (JSON)',
+      description: 'Returns metrics summary in JSON format with percentiles',
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            timestamp: { type: 'string', format: 'date-time' },
+            metrics: { type: 'object' }
+          }
+        }
+      }
+    }
+  }, createMetricsSummaryEndpoint());
 
   // Initialize graceful shutdown service
   const gracefulShutdown = new GracefulShutdownService(
