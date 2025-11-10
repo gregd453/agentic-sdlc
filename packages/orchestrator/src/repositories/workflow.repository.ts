@@ -100,6 +100,7 @@ export class WorkflowRepository {
       current_stage: string;
       progress: number;
       completed_at: Date | null;
+      stage_outputs: any;
     }>
   ): Promise<Workflow> {
     const existing = await this.findById(id);

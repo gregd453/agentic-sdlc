@@ -21,6 +21,7 @@ model Workflow {
   priority         Priority
   progress         Int              @default(0)
   version          Int              @default(1)
+  stage_outputs    Json?            @default("{}")
   created_at       DateTime         @default(now())
   updated_at       DateTime         @updatedAt
   completed_at     DateTime?

@@ -352,6 +352,20 @@ export class WorkflowService {
     const taskId = randomUUID();
     const agentType = this.getAgentTypeForStage(stage);
 
+    // SESSION #30: Read workflow context for stage-specific payloads
+    const workflow = await this.repository.findById(workflowId);
+    if (!workflow) {
+      logger.error('Workflow not found for task creation', { workflowId, stage });
+      throw new Error(`Workflow ${workflowId} not found`);
+    }
+
+    const stageOutputs = typeof workflow.stage_outputs === 'object' && workflow.stage_outputs !== null
+      ? workflow.stage_outputs as Record<string, any>
+      : {};
+
+    // Build stage-specific payload with context from previous stages
+    const stagePayload = this.buildStagePayload(stage, stageOutputs, workflowData, workflow);
+
     // Create task in database
     await this.repository.createTask({
       task_id: taskId,
@@ -361,7 +375,8 @@ export class WorkflowService {
       priority: 'medium',
       payload: {
         stage,
-        workflow_id: workflowId
+        workflow_id: workflowId,
+        ...stagePayload
       } as any,
       retry_count: 0,
       max_retries: 3,
@@ -379,7 +394,8 @@ export class WorkflowService {
         action: `execute_${stage}`,
         parameters: {
           workflow_id: workflowId,
-          stage
+          stage,
+          ...stagePayload
         }
       },
       constraints: {
@@ -393,6 +409,13 @@ export class WorkflowService {
         trace_id: generateTraceId()
       }
     };
+
+    logger.info('[SESSION #30] Task created with context', {
+      task_id: taskId,
+      workflow_id: workflowId,
+      stage,
+      payload_keys: Object.keys(stagePayload)
+    });
 
     // Publish task assignment event
     await this.eventBus.publish({
@@ -442,6 +465,9 @@ export class WorkflowService {
         task_id: payload.task_id,
         final_stage_value: completedStage
       });
+
+      // SESSION #30: Store stage output before transitioning
+      await this.storeStageOutput(result.workflow_id, completedStage, payload.output);
 
       await this.handleTaskCompletion({
         payload: {
@@ -721,6 +747,207 @@ export class WorkflowService {
           error
         });
       }
+    }
+  }
+
+  /**
+   * SESSION #30: Store stage output for context passing to next stages
+   */
+  private async storeStageOutput(workflowId: string, stage: string, output: any): Promise<void> {
+    try {
+      // Get current workflow
+      const workflow = await this.repository.findById(workflowId);
+      if (!workflow) {
+        logger.error('Workflow not found for storing stage output', { workflowId, stage });
+        return;
+      }
+
+      // Parse existing stage_outputs or initialize
+      const stageOutputs = typeof workflow.stage_outputs === 'object' && workflow.stage_outputs !== null
+        ? workflow.stage_outputs as Record<string, any>
+        : {};
+
+      // Extract relevant fields based on stage
+      const stageOutput = this.extractStageOutput(stage, output, workflowId);
+
+      // Store under stage name
+      stageOutputs[stage] = {
+        ...stageOutput,
+        completed_at: new Date().toISOString()
+      };
+
+      // Update workflow with new stage outputs
+      await this.repository.update(workflowId, {
+        stage_outputs: stageOutputs as any
+      });
+
+      logger.info('[SESSION #30] Stage output stored', {
+        workflow_id: workflowId,
+        stage,
+        output_keys: Object.keys(stageOutput)
+      });
+    } catch (error) {
+      logger.error('Failed to store stage output', {
+        workflow_id: workflowId,
+        stage,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+
+  /**
+   * SESSION #30: Build stage-specific payload with context from previous stages
+   */
+  private buildStagePayload(
+    stage: string,
+    stageOutputs: Record<string, any>,
+    workflowData: any,
+    workflow: any
+  ): Record<string, any> {
+    const basePayload = {
+      workflow_type: workflow.type,
+      workflow_name: workflow.name,
+      workflow_description: workflow.description
+    };
+
+    switch (stage) {
+      case 'initialization':
+      case 'scaffolding':
+        // Scaffolding gets workflow data
+        return {
+          ...basePayload,
+          ...workflowData
+        };
+
+      case 'validation': {
+        // Validation needs paths from scaffolding
+        const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectPath = scaffoldOutput.output_path ||
+                           `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
+
+        return {
+          ...basePayload,
+          working_directory: projectPath,
+          validation_types: ['typescript', 'eslint'],
+          thresholds: {
+            coverage: 80
+          },
+          previous_outputs: scaffoldOutput
+        };
+      }
+
+      case 'e2e_testing': {
+        // E2E needs code paths and validation results
+        const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
+        const validationOutput = stageOutputs.validation || {};
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectPath = scaffoldOutput.output_path ||
+                           `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
+
+        return {
+          ...basePayload,
+          working_directory: projectPath,
+          entry_points: scaffoldOutput.entry_points || [],
+          validation_passed: validationOutput.overall_status === 'pass',
+          previous_outputs: {
+            scaffold: scaffoldOutput,
+            validation: validationOutput
+          }
+        };
+      }
+
+      case 'integration': {
+        // Integration needs all previous context
+        const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
+        const e2eOutput = stageOutputs.e2e_testing || {};
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectPath = scaffoldOutput.output_path ||
+                           `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
+
+        return {
+          ...basePayload,
+          working_directory: projectPath,
+          test_results: e2eOutput.test_results,
+          previous_outputs: stageOutputs
+        };
+      }
+
+      case 'deployment': {
+        // Deployment needs everything
+        const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectPath = scaffoldOutput.output_path ||
+                           `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
+
+        return {
+          ...basePayload,
+          working_directory: projectPath,
+          deployment_target: 'docker',
+          previous_outputs: stageOutputs
+        };
+      }
+
+      default:
+        return basePayload;
+    }
+  }
+
+  /**
+   * SESSION #30: Extract relevant fields from stage output
+   */
+  private extractStageOutput(stage: string, output: any, workflowId: string): Record<string, any> {
+    if (!output) return {};
+
+    switch (stage) {
+      case 'initialization':
+      case 'scaffolding': {
+        // Extract actual project path from the scaffold result
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectName = output.structure?.root_path?.split('/').pop() || output.project_name;
+        const actualPath = `${projectRoot}/${workflowId}/${projectName}`;
+
+        return {
+          output_path: actualPath,
+          files_generated: output.files_generated || [],
+          structure: output.structure,
+          project_name: projectName,
+          entry_points: output.structure?.entry_points || []
+        };
+      }
+
+      case 'validation':
+        return {
+          overall_status: output.overall_status,
+          passed_checks: output.summary?.passed_checks,
+          failed_checks: output.summary?.failed_checks,
+          quality_gates: output.quality_gates
+        };
+
+      case 'e2e_testing':
+        return {
+          tests_generated: output.tests_generated || [],
+          test_results: output.test_results,
+          screenshots: output.screenshots,
+          videos: output.videos
+        };
+
+      case 'integration':
+        return {
+          integration_results: output.integration_results,
+          api_tests: output.api_tests
+        };
+
+      case 'deployment':
+        return {
+          deployment_url: output.deployment_url,
+          container_id: output.container_id,
+          deployment_status: output.deployment_status
+        };
+
+      default:
+        // Return everything for unknown stages
+        return output;
     }
   }
 
