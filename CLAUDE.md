@@ -1,6 +1,6 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 6.6 | **Last Updated:** 2025-11-10 06:15 UTC | **Status:** Session #21 COMPLETE - Ready for Session #22
+**Version:** 6.7 | **Last Updated:** 2025-11-10 13:30 UTC | **Status:** Session #22 DEBUG IN PROGRESS - Stage Progression Logging Complete
 
 ---
 
@@ -31,6 +31,25 @@
 ./scripts/run-pipeline-test.sh "Calculator"    # Run test
 ./scripts/env/stop-dev.sh                      # Stop environment
 ```
+
+---
+
+## 🎯 SESSION #22 STATUS - Stage Progression Logic Debugging (🔄 IN PROGRESS)
+
+### Current Investigation: Stage Jump Bug
+
+**Problem:** Workflow jumps from `initialization` → `e2e_testing` (indices 0 → 3), skipping `scaffolding` and `validation`
+
+**Debug Progress:**
+1. ✅ Added enhanced logging to stage computation logic
+2. ✅ Added CRITICAL error detection for missing stages
+3. ✅ Confirmed stage IS being found in array (no errors)
+4. ✅ Ruled out: whitespace, type mismatches, stages array corruption
+5. 🔄 **Next:** Investigate how context.current_stage is updated between transitions
+
+**Key Discovery:** The fact that no "CRITICAL: Current stage not found" errors appear means `indexOf()` is successfully finding the stage. The bug must be in how context.current_stage transitions between evaluations.
+
+**Documentation:** See `SESSION-22-DEBUG-FINDINGS.md` for full investigation details
 
 ---
 
