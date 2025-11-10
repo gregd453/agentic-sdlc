@@ -465,12 +465,18 @@ export class WorkflowService {
   private async handleTaskCompletion(event: any): Promise<void> {
     const { task_id, workflow_id } = event.payload;
     const completedStage = event.payload?.stage;
+    const eventTimestamp = new Date().toISOString();
+    const workerId = process.env.WORKER_ID || 'default-worker';
 
+    // ============================================================================
+    // PHASE 2 INVESTIGATION: Truth table logging - comprehensive event diagnostics
+    // ============================================================================
     logger.info('[WF:HANDLE_COMPLETION:ENTRY] handleTaskCompletion invoked', {
       task_id,
       workflow_id,
       stage: completedStage,
-      timestamp: new Date().toISOString()
+      timestamp: eventTimestamp,
+      worker_id: workerId
     });
 
     // ============================================================================
@@ -511,17 +517,42 @@ export class WorkflowService {
 
     try {
       // ============================================================================
-      // PHASE 1 HARDENING: Defensive transition gate - stage mismatch detection
+      // PHASE 2 INVESTIGATION: Context load verification with stale detection
       // ============================================================================
       const workflow = await this.repository.findById(workflow_id);
       if (!workflow) {
-        logger.error('[SESSION #25 P1.5] Workflow not found during completion handling', {
+        logger.error('[SESSION #25 P2.4] Workflow not found during completion handling', {
           workflow_id,
           task_id
         });
         return;
       }
 
+      // ============================================================================
+      // PHASE 2 INVESTIGATION: Truth table logging - detailed state snapshot
+      // ============================================================================
+      logger.info('[SESSION #25 P2.1] Truth table entry - event and context state', {
+        timestamp: eventTimestamp,
+        task_id,
+        workflow_id,
+        worker_id: workerId,
+        // Event source values
+        event_type: 'STAGE_COMPLETE',
+        event_payload_stage: completedStage,
+        // Database current state
+        database_current_stage: workflow.current_stage,
+        database_status: workflow.status,
+        database_progress: workflow.progress,
+        database_type: workflow.type,
+        // Mismatch check
+        stage_match: workflow.current_stage === completedStage ? 'YES' : 'NO',
+        // Critical for debugging
+        severity: workflow.current_stage === completedStage ? 'INFO' : 'CRITICAL'
+      });
+
+      // ============================================================================
+      // PHASE 1 HARDENING: Defensive transition gate - stage mismatch detection
+      // ============================================================================
       if (workflow.current_stage !== completedStage) {
         logger.warn('[SESSION #25 P1.5] Stage mismatch detected - defensive gate triggered', {
           task_id,
