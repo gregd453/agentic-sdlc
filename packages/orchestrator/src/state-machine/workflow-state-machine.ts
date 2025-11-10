@@ -110,26 +110,54 @@ export const createWorkflowStateMachine = (
       evaluating: {
         entry: assign({
           nextStage: ({ context }) => {
+            // CRITICAL: Always compute from current_stage in context, even if stale
+            // The database sync happens in transitionToNextStage
             const stages = getStagesForType(context.type);
-            const currentIndex = stages.indexOf(context.current_stage);
+            const currentStage = context.current_stage;
+            const currentIndex = stages.indexOf(currentStage);
 
-            logger.info('Computing next stage', {
+            logger.info('SESSION #22 DEBUG: Computing next stage', {
               workflow_id: context.workflow_id,
-              current_stage: context.current_stage,
+              context_type: context.type,
+              all_stages: JSON.stringify(stages),
+              current_stage: currentStage,
+              current_stage_trimmed: currentStage?.trim(),
               currentIndex,
-              totalStages: stages.length
+              totalStages: stages.length,
+              is_valid_index: currentIndex >= 0 && currentIndex < stages.length
             });
+
+            // Check if current stage not found - this is the critical issue
+            if (currentIndex === -1) {
+              logger.error('CRITICAL: Current stage not found!', {
+                workflow_id: context.workflow_id,
+                current_stage: currentStage,
+                current_stage_length: currentStage?.length,
+                available_stages: JSON.stringify(stages),
+                context_type: context.type
+              });
+              // Return undefined to signal workflow complete (safest option)
+              return undefined;
+            }
 
             // If at last stage, workflow is complete
             if (currentIndex === stages.length - 1) {
-              return undefined; // Signal completion
+              logger.info('SESSION #22 DEBUG: At last stage - workflow complete', {
+                workflow_id: context.workflow_id,
+                current_stage: currentStage,
+                stageIndex: currentIndex
+              });
+              return undefined;
             }
 
             // Otherwise, return the next stage
             const next = stages[currentIndex + 1];
-            logger.info('Next stage computed', {
+            logger.info('SESSION #22 DEBUG: Next stage computed', {
               workflow_id: context.workflow_id,
-              nextStage: next
+              from_stage: currentStage,
+              from_index: currentIndex,
+              to_stage: next,
+              to_index: currentIndex + 1
             });
             return next;
           }
@@ -137,7 +165,16 @@ export const createWorkflowStateMachine = (
         invoke: {
           id: 'advanceStage',
           src: fromPromise(async ({ input }: { input: any }) => {
-            logger.info('Invoked service starting: moveToNextStage', {
+            logger.info('SESSION #22 DEBUG: Invoked service executing', {
+              workflow_id: input.workflow_id,
+              currentStage: input.currentStage,
+              nextStage: input.nextStage,
+              type: input.type,
+              timestamp: new Date().toISOString()
+            });
+            // Simulate async work (stage transition already computed)
+            await new Promise(resolve => setTimeout(resolve, 10));
+            logger.info('SESSION #22 DEBUG: Invoked service completed', {
               workflow_id: input.workflow_id,
               nextStage: input.nextStage
             });
@@ -252,23 +289,52 @@ export const createWorkflowStateMachine = (
       transitionToNextStage: async ({ context }) => {
         // At this point, context.nextStage is guaranteed to be defined and valid
         // (it was computed in the entry action and passed through the invoked service)
-        logger.info('Transitioning to next stage via invoked service completion', {
+        logger.info('SESSION #22 DEBUG: Transitioning to next stage via invoked service completion', {
           workflow_id: context.workflow_id,
           from_stage: context.current_stage,
-          to_stage: context.nextStage
+          to_stage: context.nextStage,
+          context_type: context.type,
+          timestamp: new Date().toISOString()
         });
 
         if (context.nextStage) {
+          const oldStage = context.current_stage;
+
+          // CRITICAL: Verify we're reading the current stage from database BEFORE updating
+          // to ensure we don't have a stale value in context
+          const dbWorkflow = await repository.findById(context.workflow_id);
+          if (dbWorkflow && dbWorkflow.current_stage !== context.current_stage) {
+            logger.warn('SESSION #22 DEBUG: Context stage mismatch detected!', {
+              workflow_id: context.workflow_id,
+              context_stage: context.current_stage,
+              db_stage: dbWorkflow.current_stage
+            });
+            // Use database as source of truth - this is critical
+            context.current_stage = dbWorkflow.current_stage;
+          }
+
           context.current_stage = context.nextStage;
           context.nextStage = undefined; // Reset for next cycle
+
+          logger.info('SESSION #22 DEBUG: Context updated in memory', {
+            workflow_id: context.workflow_id,
+            old_stage: oldStage,
+            new_stage: context.current_stage
+          });
 
           await repository.update(context.workflow_id, {
             current_stage: context.current_stage
           });
 
-          logger.info('Database updated with new stage', {
+          logger.info('SESSION #22 DEBUG: Database updated with new stage', {
             workflow_id: context.workflow_id,
-            new_stage: context.current_stage
+            new_stage: context.current_stage,
+            update_confirmed: true
+          });
+        } else {
+          logger.warn('SESSION #22 DEBUG: transitionToNextStage called but nextStage is undefined!', {
+            workflow_id: context.workflow_id,
+            current_stage: context.current_stage
           });
         }
       },
