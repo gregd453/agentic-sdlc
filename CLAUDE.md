@@ -1,22 +1,22 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 6.5 | **Last Updated:** 2025-11-10 06:10 UTC | **Status:** Session #21 IN PROGRESS - Invoked Service Pattern + Polling Fix Deployed
+**Version:** 6.6 | **Last Updated:** 2025-11-10 06:15 UTC | **Status:** Session #21 COMPLETE - Ready for Session #22
 
 ---
 
 ## ⚡ QUICK REFERENCE (START HERE)
 
-### Current Focus: Session #20 - Multi-Stage Task Creation Pattern
+### Current Focus: Session #22 - Stage Progression Logic Debugging
 
 | Item | Status | Details |
 |------|--------|---------|
-| **Initialization Blocker** | ✅ FIXED | Workflows now properly dispatch initialization task (commit e584802) |
-| **Handler Persistence** | ✅ FIXED | Removed auto-cleanup, handlers persist across all stages (commit 9e297b2) |
-| **Task Creation Pattern** | ❌ NEW ISSUE | No scaffolding task created after initialization completes |
-| **Stage Progression** | ⚠️ PARTIAL | Init→Scaffolding transition works, but scaffolding task never created |
-| **Pipeline Tests** | ⚠️ PARTIAL PASS | Initialization stage completes, but no scaffolding task dispatched |
+| **Double Invocation Bug** | ✅ FIXED | Replaced `always` with invoked service pattern (commit 5c00fff) |
+| **Database Polling** | ✅ FIXED | Added intelligent polling for state machine updates (commit 5c00fff) |
+| **Task Creation** | ✅ WORKING | Tasks are now created after stage transitions |
+| **Stage Progression** | ⚠️ NEEDS DEBUG | Workflow skips stages (init→e2e_testing instead of sequential) |
+| **Pipeline Tests** | ⚠️ TIMEOUT | Test still exceeds 300s - need stage logic investigation |
 | **Build Status** | ✅ PASSING | All modules compile successfully |
-| **Next Action** | ➡️ IMPLEMENT | Create task for current stage after state machine transitions |
+| **Next Action** | ➡️ DEBUG | Add detailed logging to identify why stages are skipped |
 
 ### Key Documentation
 - **CALCULATOR-SLATE-INTEGRATION.md** - Template details & integration
@@ -34,9 +34,9 @@
 
 ---
 
-## 🎯 SESSION #21 STATUS - Invoked Service Pattern + Polling Fix
+## 🎯 SESSION #21 STATUS - Invoked Service Pattern + Polling Fix (✅ COMPLETE)
 
-### ✅ COMPLETED: XState Double-Invocation Fix
+### ✅ PRIMARY FIX COMPLETED: XState Double-Invocation Bug Resolved
 
 **Implementation Complete (commit 5c00fff):**
 1. **Replaced `always` block with `invoke` pattern** in "evaluating" state
