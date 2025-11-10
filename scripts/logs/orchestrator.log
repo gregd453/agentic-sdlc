@@ -2049,3 +2049,807 @@ prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "
 [14:23:52 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
     request_id: "df35147a-2eec-4bbd-9a21-27de5aaa5ad5"
     trace_id: "trace-1762784632286-r9pqlyump"
+10:02:49 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:02:49 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:02:49 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:02:49 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[ioredis] Unhandled error event: Error: Connection in subscriber mode, only subscriber commands may be used
+    at EventEmitter.sendCommand (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:338:28)
+    at EventEmitter.info (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/utils/Commander.js:90:25)
+    at EventEmitter._readyCheck (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:655:14)
+    at /Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/redis/event_handler.js:82:22
+    at <anonymous>
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:02:50 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:02:50 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+10:02:54 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:02:54 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:02:54 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:02:54 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:02:55 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:02:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+10:03:00 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:03:00 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:03:00 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:03:00 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:03:00 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:01 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+10:03:10 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:03:10 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:03:10 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:03:10 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:03:11 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:11 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+10:03:28 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:03:28 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:03:28 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:03:28 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:03:29 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:29 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+10:03:50 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:03:50 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:03:50 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:03:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[ioredis] Unhandled error event: Error: Connection in subscriber mode, only subscriber commands may be used
+    at EventEmitter.sendCommand (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:338:28)
+    at EventEmitter.info (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/utils/Commander.js:90:25)
+    at EventEmitter._readyCheck (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:655:14)
+    at /Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/redis/event_handler.js:82:22
+    at <anonymous>
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:03:51 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[METRIC] server.started{}: 1
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:03:51 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+10:04:01 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:04:01 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:04:01 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:04:01 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[ioredis] Unhandled error event: Error: Connection in subscriber mode, only subscriber commands may be used
+    at EventEmitter.sendCommand (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:338:28)
+    at EventEmitter.info (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/utils/Commander.js:90:25)
+    at EventEmitter._readyCheck (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:655:14)
+    at /Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/redis/event_handler.js:82:22
+    at <anonymous>
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:04:02 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[METRIC] server.started{}: 1
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:04:02 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+10:04:11 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:04:11 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:04:11 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:04:11 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[ioredis] Unhandled error event: Error: Connection in subscriber mode, only subscriber commands may be used
+    at EventEmitter.sendCommand (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:338:28)
+    at EventEmitter.info (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/utils/Commander.js:90:25)
+    at EventEmitter._readyCheck (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:655:14)
+    at /Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/redis/event_handler.js:82:22
+    at <anonymous>
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:04:12 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[METRIC] server.started{}: 1
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:04:12 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+10:04:18 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:04:18 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:04:18 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:04:18 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:04:19 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+10:04:25 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:04:25 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:04:25 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[ioredis] Unhandled error event: Error: Connection in subscriber mode, only subscriber commands may be used
+    at EventEmitter.sendCommand (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:338:28)
+    at EventEmitter.info (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/utils/Commander.js:90:25)
+    at EventEmitter._readyCheck (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:655:14)
+    at /Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/redis/event_handler.js:82:22
+    at <anonymous>
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:04:25 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:04:25 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:04:26 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:04:26 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:04:26 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:04:26 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+10:04:29 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:04:29 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:04:29 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:04:29 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[ioredis] Unhandled error event: Error: Connection in subscriber mode, only subscriber commands may be used
+    at EventEmitter.sendCommand (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:338:28)
+    at EventEmitter.info (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/utils/Commander.js:90:25)
+    at EventEmitter._readyCheck (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:655:14)
+    at /Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/redis/event_handler.js:82:22
+    at <anonymous>
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:04:30 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:04:30 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+10:04:34 AM [tsx] change in ./src/services/workflow.service.ts Restarting...
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mAgent dispatcher disconnected[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[15:04:34 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: Error: Connection is closed.[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[15:04:34 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[15:04:34 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+cprisma:info Starting a postgresql pool with 29 connections.
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m🚀 INITIALIZING AGENT DISPATCHER SERVICE[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m✅ REDIS CLIENTS CREATED[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m🔌 SETTING UP REDIS SUBSCRIPTION[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m✅ RESULT LISTENER SET UP[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[15:04:35 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m🔗 REDIS SUBSCRIBER CONNECTED[39m
+[METRIC] server.started{}: 1
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[15:04:35 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m

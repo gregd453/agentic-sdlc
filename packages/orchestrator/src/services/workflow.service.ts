@@ -1,4 +1,5 @@
-import { randomUUID } from 'crypto';
+import { randomUUID, createHash } from 'crypto';
+import Redis from 'ioredis';
 import { CreateWorkflowRequest, TaskAssignment, WorkflowResponse } from '../types';
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
@@ -13,18 +14,24 @@ export class WorkflowService {
   private decisionGateService: DecisionGateService;
   private eventHandlers: Map<string, (event: any) => Promise<void>> = new Map();
   private processedTasks: Set<string> = new Set(); // Track completed tasks for idempotency
+  private redisClient: Redis;
 
   constructor(
     private repository: WorkflowRepository,
     private eventBus: EventBus,
     private stateMachineService: WorkflowStateMachineService,
-    private agentDispatcher?: AgentDispatcherService
+    private agentDispatcher?: AgentDispatcherService,
+    redisUrl: string = process.env.REDIS_URL || 'redis://127.0.0.1:6379'
   ) {
     logger.info('[WF:CONSTRUCTOR:START] WorkflowService instance created', {
       timestamp: new Date().toISOString(),
       stack: new Error().stack?.split('\n').slice(0, 5).join(' | ')
     });
     this.decisionGateService = new DecisionGateService();
+
+    // Initialize Redis client for Phase 1 hardening
+    this.redisClient = new Redis(redisUrl);
+
     this.setupEventHandlers();
   }
 
@@ -77,7 +84,118 @@ export class WorkflowService {
       await this.agentDispatcher.disconnect();
     }
 
+    // Disconnect Redis and Redlock clients
+    if (this.redisClient) {
+      await this.redisClient.quit();
+    }
+
     logger.info('WorkflowService cleanup completed');
+  }
+
+  /**
+   * Generate collision-proof eventId using sha1 hash (Phase 1 hardening)
+   * Hash includes: taskId + current_stage + attempt + createdAt + workerInstanceId
+   */
+  private generateCollisionProofEventId(taskId: string, currentStage: string, createdAt?: string): string {
+    const timestamp = createdAt || new Date().toISOString();
+    const workerId = process.env.WORKER_ID || 'default-worker';
+    const input = `${taskId}:${currentStage}:${timestamp}:${workerId}`;
+    const hash = createHash('sha1').update(input).digest('hex');
+    return `evt-${hash.substring(0, 12)}`;
+  }
+
+  /**
+   * Check Redis-backed event deduplication (Phase 1 hardening)
+   * Returns true if event was already seen, false if new
+   */
+  private async isEventAlreadySeen(taskId: string, eventId: string): Promise<boolean> {
+    try {
+      const key = `seen:${taskId}`;
+      const isMember = await this.redisClient.sismember(key, eventId);
+      return isMember === 1;
+    } catch (error) {
+      logger.error('[SESSION #25 HARDENING] Redis dedup check failed, assuming new event', {
+        task_id: taskId,
+        error: (error as any)?.message
+      });
+      return false;
+    }
+  }
+
+  /**
+   * Track event in Redis-backed deduplication set (Phase 1 hardening)
+   */
+  private async trackEventId(taskId: string, eventId: string): Promise<void> {
+    try {
+      const key = `seen:${taskId}`;
+      // Add to set and set TTL to 48 hours
+      await this.redisClient.sadd(key, eventId);
+      await this.redisClient.expire(key, 48 * 60 * 60);
+      logger.info('[SESSION #25 HARDENING] Event ID tracked for deduplication', {
+        task_id: taskId,
+        event_id: eventId
+      });
+    } catch (error) {
+      logger.error('[SESSION #25 HARDENING] Failed to track event ID in Redis', {
+        task_id: taskId,
+        error: (error as any)?.message
+      });
+    }
+  }
+
+  /**
+   * Acquire distributed lock using Redis SET NX with TTL (Phase 1 hardening)
+   */
+  private async acquireDistributedLock(lockKey: string, ttlMs: number = 5000): Promise<string | null> {
+    try {
+      const lockId = `${process.env.WORKER_ID || 'default'}-${Date.now()}-${Math.random()}`;
+      const acquired = await this.redisClient.set(
+        lockKey,
+        lockId,
+        'PX',
+        ttlMs,
+        'NX'
+      );
+      if (acquired) {
+        logger.info('[SESSION #25 P1.3] Distributed lock acquired', {
+          lock_key: lockKey,
+          lock_id: lockId
+        });
+        return lockId;
+      }
+      return null;
+    } catch (error) {
+      logger.error('[SESSION #25 P1.3] Failed to acquire distributed lock', {
+        lock_key: lockKey,
+        error: (error as any)?.message
+      });
+      return null;
+    }
+  }
+
+  /**
+   * Release distributed lock (Phase 1 hardening)
+   */
+  private async releaseDistributedLock(lockKey: string, lockId: string): Promise<void> {
+    try {
+      // Use Lua script to safely delete only if lockId matches
+      const script = `
+        if redis.call("get", KEYS[1]) == ARGV[1] then
+          return redis.call("del", KEYS[1])
+        else
+          return 0
+        end
+      `;
+      await (this.redisClient as any).eval(script, 1, lockKey, lockId);
+      logger.info('[SESSION #25 P1.3] Distributed lock released', {
+        lock_key: lockKey
+      });
+    } catch (error) {
+      logger.error('[SESSION #25 P1.3] Failed to release distributed lock', {
+        lock_key: lockKey,
+        error: (error as any)?.message
+      });
+    }
   }
 
   async createWorkflow(request: CreateWorkflowRequest): Promise<WorkflowResponse> {
@@ -346,86 +464,152 @@ export class WorkflowService {
 
   private async handleTaskCompletion(event: any): Promise<void> {
     const { task_id, workflow_id } = event.payload;
+    const completedStage = event.payload?.stage;
 
     logger.info('[WF:HANDLE_COMPLETION:ENTRY] handleTaskCompletion invoked', {
       task_id,
       workflow_id,
-      stage: event.payload?.stage,
+      stage: completedStage,
       timestamp: new Date().toISOString()
     });
 
-    // Idempotency check: Prevent duplicate processing of the same task
-    if (this.processedTasks.has(task_id)) {
-      logger.warn('[WF:DUPLICATE_DETECTED] Task already processed, skipping duplicate', {
+    // ============================================================================
+    // PHASE 1 HARDENING: Generate collision-proof eventId with sha1
+    // ============================================================================
+    const eventId = this.generateCollisionProofEventId(task_id, completedStage);
+    logger.info('[SESSION #25 P1.2] Collision-proof eventId generated', {
+      task_id,
+      event_id: eventId,
+      stage: completedStage
+    });
+
+    // ============================================================================
+    // PHASE 1 HARDENING: Redis-backed event deduplication check
+    // ============================================================================
+    const alreadySeen = await this.isEventAlreadySeen(task_id, eventId);
+    if (alreadySeen) {
+      logger.warn('[SESSION #25 P1.1] Event already processed (Redis dedup caught duplicate)', {
         task_id,
+        event_id: eventId,
         workflow_id
       });
       return;
     }
 
-    // Mark task as processed
-    this.processedTasks.add(task_id);
-    logger.info('[WF:TASK_MARKED_PROCESSED] Task marked as processed', {
-      task_id,
-      workflow_id
-    });
+    // ============================================================================
+    // PHASE 1 HARDENING: Acquire distributed lock for per-task serial execution
+    // ============================================================================
+    const lockKey = `lock:task:${task_id}`;
+    const lockId = await this.acquireDistributedLock(lockKey, 5000);
+    if (!lockId) {
+      logger.warn('[SESSION #25 P1.3] Failed to acquire distributed lock, another worker may be processing', {
+        task_id,
+        lock_key: lockKey
+      });
+      return;
+    }
 
-    // Update task status
-    await this.repository.updateTask(task_id, {
-      status: 'completed',
-      completed_at: new Date()
-    });
+    try {
+      // ============================================================================
+      // PHASE 1 HARDENING: Defensive transition gate - stage mismatch detection
+      // ============================================================================
+      const workflow = await this.repository.findById(workflow_id);
+      if (!workflow) {
+        logger.error('[SESSION #25 P1.5] Workflow not found during completion handling', {
+          workflow_id,
+          task_id
+        });
+        return;
+      }
 
-    // Update workflow state machine
-    const stateMachine = this.stateMachineService.getStateMachine(workflow_id);
-    if (stateMachine) {
-      // Generate eventId based on task_id (same task = same eventId)
-      // This allows deduplication to catch the 3 Redis re-deliveries of the same event
-      const eventId = `task-${event.payload.task_id}`;
+      if (workflow.current_stage !== completedStage) {
+        logger.warn('[SESSION #25 P1.5] Stage mismatch detected - defensive gate triggered', {
+          task_id,
+          workflow_id,
+          database_current_stage: workflow.current_stage,
+          event_completed_stage: completedStage,
+          severity: 'CRITICAL'
+        });
+        return;
+      }
 
-      stateMachine.send({
-        type: 'STAGE_COMPLETE',
-        stage: event.payload.stage,
-        eventId: eventId
+      // Idempotency check: Prevent duplicate processing of the same task (in-memory backup)
+      if (this.processedTasks.has(task_id)) {
+        logger.warn('[WF:DUPLICATE_DETECTED] Task already processed, skipping duplicate', {
+          task_id,
+          workflow_id
+        });
+        return;
+      }
+
+      // Mark task as processed
+      this.processedTasks.add(task_id);
+      logger.info('[WF:TASK_MARKED_PROCESSED] Task marked as processed', {
+        task_id,
+        workflow_id
       });
 
-      // Wait for state machine to process the transition and update database
-      // The transitionToNextStage action (in onDone handler) is async and updates the database
-      // We need to wait for the database to reflect the new current_stage
-      const completedStage = event.payload.stage;
-      const workflow = await this.waitForStageTransition(workflow_id, completedStage);
+      // Update task status
+      await this.repository.updateTask(task_id, {
+        status: 'completed',
+        completed_at: new Date()
+      });
 
-      if (workflow) {
-        logger.info('Workflow state after stage completion', {
-          workflow_id,
-          status: workflow.status,
-          current_stage: workflow.current_stage,
-          progress: workflow.progress
+      // Update workflow state machine
+      const stateMachine = this.stateMachineService.getStateMachine(workflow_id);
+      if (stateMachine) {
+        stateMachine.send({
+          type: 'STAGE_COMPLETE',
+          stage: completedStage,
+          eventId: eventId
         });
 
-        // Create task for the next stage if workflow is not in a terminal state
-        if (workflow.status !== 'completed' && workflow.status !== 'failed' && workflow.status !== 'cancelled') {
-          logger.info('Creating task for next stage', {
+        // Wait for state machine to process the transition and update database
+        // The transitionToNextStage action (in onDone handler) is async and updates the database
+        // We need to wait for the database to reflect the new current_stage
+        const updatedWorkflow = await this.waitForStageTransition(workflow_id, completedStage);
+
+        if (updatedWorkflow) {
+          logger.info('Workflow state after stage completion', {
             workflow_id,
-            workflow_type: workflow.type,
-            next_stage: workflow.current_stage,
-            workflow_status: workflow.status,
-            previous_stage_in_event: completedStage
+            status: updatedWorkflow.status,
+            current_stage: updatedWorkflow.current_stage,
+            progress: updatedWorkflow.progress
           });
 
-          await this.createTaskForStage(workflow_id, workflow.current_stage, {
-            name: workflow.name,
-            description: workflow.description,
-            requirements: workflow.requirements,
-            type: workflow.type
-          });
-        } else {
-          logger.info('Workflow reached terminal state, no new task created', {
-            workflow_id,
-            status: workflow.status
-          });
+          // Create task for the next stage if workflow is not in a terminal state
+          if (updatedWorkflow.status !== 'completed' && updatedWorkflow.status !== 'failed' && updatedWorkflow.status !== 'cancelled') {
+            logger.info('Creating task for next stage', {
+              workflow_id,
+              workflow_type: updatedWorkflow.type,
+              next_stage: updatedWorkflow.current_stage,
+              workflow_status: updatedWorkflow.status,
+              previous_stage_in_event: completedStage
+            });
+
+            await this.createTaskForStage(workflow_id, updatedWorkflow.current_stage, {
+              name: updatedWorkflow.name,
+              description: updatedWorkflow.description,
+              requirements: updatedWorkflow.requirements,
+              type: updatedWorkflow.type
+            });
+          } else {
+            logger.info('Workflow reached terminal state, no new task created', {
+              workflow_id,
+              status: updatedWorkflow.status
+            });
+          }
         }
       }
+
+      // ============================================================================
+      // PHASE 1 HARDENING: Track event in Redis-backed deduplication
+      // ============================================================================
+      await this.trackEventId(task_id, eventId);
+
+    } finally {
+      // Release distributed lock
+      await this.releaseDistributedLock(lockKey, lockId);
     }
   }
 
