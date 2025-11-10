@@ -104,7 +104,7 @@ export class WorkflowService {
       });
 
       // Create initial task for the first stage
-      await this.createTaskForStage(workflow.id, 'scaffolding', {
+      await this.createTaskForStage(workflow.id, 'initialization', {
         name: workflow.name,
         description: workflow.description,
         requirements: workflow.requirements,
@@ -303,6 +303,13 @@ export class WorkflowService {
           stage: result.stage
         }
       });
+
+      // Re-register handler for next stage (workflow might not be complete)
+      if (this.agentDispatcher) {
+        this.agentDispatcher.onResult(result.workflow_id, async (nextResult) => {
+          await this.handleAgentResult(nextResult);
+        });
+      }
     } else {
       await this.handleTaskFailure({
         payload: {

@@ -23,3 +23,10 @@ export {
   type CircuitBreakerOptions,
   type CircuitStats
 } from './circuit-breaker';
+
+// Redis subscription
+export {
+  RobustRedisSubscriber,
+  createRobustRedisSubscriber,
+  type RedisSubscriptionConfig
+} from './redis-subscription';

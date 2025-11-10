@@ -12,8 +12,6 @@ export class AgentDispatcherService {
   private resultHandlers: Map<string, (result: any) => void> = new Map();
   private handlerTimeouts: Map<string, NodeJS.Timeout> = new Map();
   private readonly HANDLER_TIMEOUT_MS = 3600000; // 1 hour
-  private lastMessageTime: number = Date.now();
-  private healthCheckInterval: NodeJS.Timeout | null = null;
 
   constructor(redisUrl: string) {
     logger.info('🚀 INITIALIZING AGENT DISPATCHER SERVICE', {
@@ -50,8 +48,6 @@ export class AgentDispatcherService {
       logger.info('🔗 REDIS SUBSCRIBER CONNECTED', {
         timestamp: new Date().toISOString()
       });
-      // Reset health check when reconnecting
-      this.lastMessageTime = Date.now();
     });
 
     // Log any subscription/connection errors
@@ -75,7 +71,6 @@ export class AgentDispatcherService {
 
     // Main message handler
     this.redisSubscriber.on('message', (channel, message) => {
-      this.lastMessageTime = Date.now(); // Update last message time
       logger.info('📨 RAW MESSAGE RECEIVED FROM REDIS', {
         channel,
         messageLength: message.length,
@@ -102,7 +97,7 @@ export class AgentDispatcherService {
    * Subscribe to agent results channel with reconnection logic
    */
   private setupResultListener(): void {
-    logger.info('🔌 SETTING UP REDIS SUBSCRIPTION WITH HEALTH CHECK', {
+    logger.info('🔌 SETTING UP REDIS SUBSCRIPTION', {
       channel: 'orchestrator:results',
       subscriberState: 'connecting'
     });
@@ -114,23 +109,8 @@ export class AgentDispatcherService {
           channel: 'orchestrator:results',
           subscriberReady: true
         });
-        // Start health check - verify messages are arriving
-        this.startHealthCheck();
       },
       (err: any) => {
-        // Log to both console and logger for visibility
-        console.error('❌ SUBSCRIPTION ERROR (Raw):', {
-          type: typeof err,
-          constructor: err?.constructor?.name,
-          message: err?.message,
-          code: err?.code,
-          errno: err?.errno,
-          syscall: err?.syscall,
-          address: err?.address,
-          port: err?.port,
-          string: String(err)
-        });
-
         logger.error('❌ SUBSCRIPTION FAILED', {
           channel: 'orchestrator:results',
           errorMessage: err?.message || String(err),
@@ -146,46 +126,6 @@ export class AgentDispatcherService {
         setTimeout(() => this.setupResultListener(), 5000);
       }
     );
-  }
-
-  /**
-   * Health check to ensure messages are being received
-   * If no messages arrive within 60 seconds, force reconnect
-   */
-  private startHealthCheck(): void {
-    // Clear any existing health check
-    if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval);
-    }
-
-    this.lastMessageTime = Date.now();
-
-    this.healthCheckInterval = setInterval(() => {
-      const timeSinceLastMessage = Date.now() - this.lastMessageTime;
-      const noMessageTimeoutMs = 60000; // 60 seconds
-
-      if (timeSinceLastMessage > noMessageTimeoutMs) {
-        logger.warn('⚠️ NO MESSAGES RECEIVED IN 60 SECONDS - RESETTING SUBSCRIBER CONNECTION', {
-          timeSinceLastMessage,
-          timestamp: new Date().toISOString()
-        });
-
-        // Clear the health check interval
-        if (this.healthCheckInterval) {
-          clearInterval(this.healthCheckInterval);
-          this.healthCheckInterval = null;
-        }
-
-        // Force disconnect and reconnect
-        this.redisSubscriber.disconnect();
-        setTimeout(() => {
-          logger.info('🔄 ATTEMPTING TO RECONNECT REDIS SUBSCRIBER', {
-            timestamp: new Date().toISOString()
-          });
-          this.setupResultListener();
-        }, 2000);
-      }
-    }, 30000); // Check every 30 seconds
   }
 
   /**
@@ -382,12 +322,6 @@ export class AgentDispatcherService {
    * Cleanup
    */
   async disconnect(): Promise<void> {
-    // Clear health check interval
-    if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval);
-      this.healthCheckInterval = null;
-    }
-
     // Clear all handler timeouts
     for (const timeout of this.handlerTimeouts.values()) {
       clearTimeout(timeout);

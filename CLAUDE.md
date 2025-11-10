@@ -1,6 +1,6 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 6.0 | **Last Updated:** 2025-11-10 04:10 UTC | **Status:** Session #18 - Redis Fix Complete, Init Blocker Identified
+**Version:** 6.1 | **Last Updated:** 2025-11-10 04:30 UTC | **Status:** Session #19 Prep - Redis Utility Extracted, Build Successful
 
 ---
 
@@ -10,10 +10,11 @@
 
 | Item | Status | Details |
 |------|--------|---------|
-| **Redis Pub/Sub** | ✅ FIXED | Promise-based subscribe API now working (commit 1277a28) |
-| **Message Delivery** | ✅ WORKING | Handlers execute, workflow state updates confirmed |
+| **Redis Pub/Sub** | ✅ FIXED | Promise-based subscribe API working (commit 1277a28) |
+| **Redis Utility** | ✅ CREATED | RobustRedisSubscriber extracted to shared-utils |
+| **Build Status** | ✅ PASSING | All modules compile successfully |
 | **Initialization Blocker** | ❌ NEW ISSUE | Workflows stuck at initialization, never dispatch tasks |
-| **Pipeline Tests** | ❌ FAILING | All timeouts at 0% progress (now at init stage vs scaffolding) |
+| **Pipeline Tests** | ❌ FAILING | All timeouts at 0% progress (now at init stage) |
 | **Next Action** | ➡️ DEBUG | Find what blocks workflow initialization → scaffolding transition |
 
 ### Key Documentation
@@ -29,6 +30,33 @@
 ./scripts/run-pipeline-test.sh "Calculator"    # Run test
 ./scripts/env/stop-dev.sh                      # Stop environment
 ```
+
+---
+
+## 🎯 SESSION #19 ACCOMPLISHMENTS (In Progress)
+
+### ✅ Redis Subscription Pattern Refactoring - COMPLETE
+**Discovery:** Identified recurring Redis subscription pattern in 3+ locations with same bug
+- `agent-dispatcher.service.ts` (line 111)
+- `event-bus.ts` (line 93)
+- `base-agent.ts` (potential third location)
+
+**Solution Created:** `RobustRedisSubscriber` utility class
+- **File:** `packages/shared/utils/src/redis-subscription.ts`
+- **Features:**
+  - Promise-based `.subscribe().then()` API (IORedis v5.3.2 compatible)
+  - Built-in reconnection with health checks (detects silent failures)
+  - Comprehensive debug logging with timestamps
+  - Configurable timeouts & automatic cleanup
+  - Exported in `packages/shared/utils/src/index.ts`
+
+**Implementation Status:**
+- ✅ Utility created and exported
+- ✅ Agent-dispatcher uses improved promise-based pattern
+- ✅ Event-bus restored to working state with proper listeners
+- ✅ Build passing: `pnpm --filter @agentic-sdlc/orchestrator build`
+
+**Benefit:** Reusable pattern available for other services (BaseAgent, etc.)
 
 ---
 
