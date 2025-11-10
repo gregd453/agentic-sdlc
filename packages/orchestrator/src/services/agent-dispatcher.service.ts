@@ -169,19 +169,12 @@ export class AgentDispatcherService {
       const handler = this.resultHandlers.get(result.workflow_id);
       if (handler) {
         logger.info('✅ HANDLER FOUND - Executing callback', {
-          workflow_id: result.workflow_id
+          workflow_id: result.workflow_id,
+          taskStatus: result.payload?.status
         });
         await handler(result);
-
-        // Auto-cleanup handler after result is processed
-        // (workflow is complete or failed)
-        const status = result.payload?.status;
-        if (status === 'success' || status === 'failure') {
-          logger.info('Auto-removing result handler for completed workflow', {
-            workflow_id: result.workflow_id
-          });
-          this.offResult(result.workflow_id);
-        }
+        // NOTE: Handler cleanup is now responsibility of workflow service
+        // (only remove when workflow reaches terminal state, not per-stage)
       } else {
         logger.warn('❌ NO HANDLER FOUND FOR WORKFLOW', {
           workflow_id: result.workflow_id,

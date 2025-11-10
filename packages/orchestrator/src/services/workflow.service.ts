@@ -303,13 +303,6 @@ export class WorkflowService {
           stage: result.stage
         }
       });
-
-      // Re-register handler for next stage (workflow might not be complete)
-      if (this.agentDispatcher) {
-        this.agentDispatcher.onResult(result.workflow_id, async (nextResult) => {
-          await this.handleAgentResult(nextResult);
-        });
-      }
     } else {
       await this.handleTaskFailure({
         payload: {
