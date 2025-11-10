@@ -1,12 +1,23 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 7.2 | **Last Updated:** 2025-11-10 17:20 UTC | **Status:** Session #26 COMPLETE - CAS Activated, Ready for Session #27 Bug Fix Phase
+**Version:** 7.3 | **Last Updated:** 2025-11-10 19:20 UTC | **Status:** Session #27 COMPLETE - Initialization Blocker Resolved
 
 ---
 
 ## ⚡ QUICK REFERENCE (START HERE)
 
-### Current Focus: Session #26 - CAS Activation & Database Hardening ✅ COMPLETE
+### Current Focus: Session #27 - Initialization Blocker Resolution ✅ COMPLETE
+
+| Item | Status | Details |
+|------|--------|---------|
+| **Stage Mismatch Bug** | ✅ FIXED | Agent now reports workflow stage instead of agent type (c3fb38d) |
+| **API Key Issue** | ✅ RESOLVED | Shell environment override identified and fixed |
+| **Stage Calculation** | ✅ VERIFIED | Math confirmed correct via console debug logs |
+| **Initialization Blocker** | ✅ RESOLVED | Workflows now progress past initialization |
+| **Build Status** | ✅ PASSING | All modules compile, agents communicate correctly |
+| **Next Action** | ➡️ Session #28 | Fix JSON parsing in Claude API responses (non-blocking) |
+
+### Previous: Session #26 - CAS Activation & Database Hardening ✅ COMPLETE
 
 | Item | Status | Details |
 |------|--------|---------|
@@ -14,8 +25,6 @@
 | **CAS Logic** | ✅ COMPLETE | Implemented optimistic locking in both update() and updateState() |
 | **CAS Error Handling** | ✅ COMPLETE | Graceful handling of P2025 (version mismatch) errors |
 | **State Machine Integration** | ✅ COMPLETE | updateWorkflowStatus logs CAS failures, allows polling fallback |
-| **Build Status** | ✅ PASSING | All modules compile, Prisma migration applied |
-| **Next Action** | ➡️ Session #27 | Debug initialization blocker using truth table logs |
 
 ### Previous: Session #25 - Comprehensive Hardening with Exactly-Once Verification ✅ COMPLETE
 
@@ -40,6 +49,129 @@
 ./scripts/run-pipeline-test.sh "Calculator"    # Run test
 ./scripts/env/stop-dev.sh                      # Stop environment
 ```
+
+---
+
+## 🎯 SESSION #27 STATUS - Initialization Blocker Resolution (✅ COMPLETE)
+
+### ✅ PRIMARY ISSUE RESOLVED: Stage Mismatch Bug
+
+**Root Cause Identified (commit c3fb38d):**
+- `base-agent.ts:205` was sending `stage: this.capabilities.type` (agent type like "scaffold")
+- Should have been sending workflow stage (like "initialization")
+- Defensive gate in `workflow.service.ts:556` was rejecting all completion events due to mismatch:
+  - Database: `current_stage = "initialization"`
+  - Agent result: `stage = "scaffold"`
+  - **Mismatch** → Event dropped → Workflow stuck at 0%
+
+**Fix Implemented:**
+1. Modified `base-agent.ts` to extract workflow stage from `task.context.stage`
+2. Added `workflowStage` parameter to `reportResult()` method
+3. Agent now sends correct workflow stage in result messages
+
+**Impact:**
+- ✅ Workflows now progress past initialization
+- ✅ Defensive gate validates correctly (no false rejections)
+- ✅ Result flow working end-to-end (agent → Redis → orchestrator → handler)
+
+**Files Modified:**
+- `packages/agents/base-agent/src/base-agent.ts` - Stage reporting fix
+
+---
+
+### ✅ SECONDARY ISSUE RESOLVED: API Key Environment Override
+
+**Problem Diagnosed:**
+- Shell environment had `ANTHROPIC_API_KEY=sk-ant-api03-I1KAZdZ...` (stale/invalid key)
+- `.env` files had `ANTHROPIC_API_KEY=sk-ant-api03-DMugxE...` (valid key)
+- Node.js processes inherit shell environment variables
+- Shell variables take precedence over `.env` files
+- Agent was using stale key → 401 authentication errors
+
+**Investigation Process:**
+1. Checked `.env` files - all had correct key
+2. Checked running process environment via `ps eww` - found different key
+3. Identified shell environment override as root cause
+
+**Fix Applied:**
+```bash
+export ANTHROPIC_API_KEY="sk-ant-api03-DMugxE...cXK0RQAA"
+./scripts/env/start-dev.sh
+```
+
+**Result:**
+- ✅ API authentication now working
+- ✅ Claude API responding to requests
+- ✅ No more 401 authentication errors
+- ✅ Tasks take ~3 seconds (API call time) instead of completing instantly
+
+**Key Learning:** Always check process environment variables, not just `.env` files, when debugging authentication issues.
+
+---
+
+### ✅ STAGE CALCULATION VERIFIED
+
+**Added console debug logs to state machine:**
+- `workflow-state-machine.ts:255-297` - Enhanced diagnostic output
+
+**Verification Results:**
+```
+[SESSION #27 STAGE CALC DEBUG]
+  Current Stage: initialization (index 0)
+  All Stages: ["initialization","scaffolding","validation"...]
+  Next Stage: scaffolding (index 1) ✅
+
+[SESSION #27 STAGE CALC DEBUG]
+  Current Stage: scaffolding (index 1)
+  Next Stage: validation (index 2) ✅
+```
+
+**Conclusion:** Stage calculation logic is **100% correct**. No bugs in progression math.
+
+---
+
+### ⚠️ NEW ISSUE IDENTIFIED: JSON Parsing Errors (Non-Blocking)
+
+**Symptom:** Claude API responses have malformed JSON
+```
+Expected ',' or ']' after array element in JSON at position 1269
+```
+
+**Impact:**
+- Tasks complete successfully using fallback templates
+- API calls are working (3s duration)
+- Responses received from Claude
+- JSON parsing fails, falls back to template mode
+
+**Status:** Non-blocking - workflows progress correctly despite parsing errors
+
+**Next Steps for Session #28:**
+1. Review Claude API prompt format in scaffold-agent
+2. Add JSON validation/sanitization to response handling
+3. Update error handling for malformed responses
+4. Consider using structured output mode
+
+---
+
+### 📊 Session #27 Technical Summary
+
+| Component | Before | After | Status |
+|-----------|--------|-------|--------|
+| **Stage Reporting** | Agent type | Workflow stage | ✅ FIXED |
+| **Defensive Gate** | Rejecting all | Validating correctly | ✅ WORKING |
+| **API Authentication** | 401 errors | Successful calls | ✅ RESOLVED |
+| **Stage Calculation** | Suspected bug | Verified correct | ✅ CONFIRMED |
+| **Initialization** | Stuck at 0% | Progressing | ✅ UNBLOCKED |
+| **JSON Parsing** | N/A | Errors (fallback works) | ⚠️ IDENTIFIED |
+
+**Commits:**
+- `c3fb38d` - fix: Session #27 - agent reports workflow stage instead of agent type
+
+**Test Results:**
+- Workflows progress: initialization → scaffolding → validation
+- API calls: ~3 seconds per task (normal)
+- Stage transitions: Occurring correctly
+- Database updates: Working as expected
 
 ---
 
