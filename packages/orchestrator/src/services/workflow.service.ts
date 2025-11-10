@@ -331,6 +331,41 @@ export class WorkflowService {
         type: 'STAGE_COMPLETE',
         stage: event.payload.stage
       });
+
+      // Wait for state machine to process the transition and update database
+      // The moveToNextStage action will update the workflow's current_stage in the database
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Query the updated workflow to get the next stage
+      const workflow = await this.repository.findById(workflow_id);
+      if (workflow) {
+        logger.info('Workflow state after stage completion', {
+          workflow_id,
+          status: workflow.status,
+          current_stage: workflow.current_stage,
+          progress: workflow.progress
+        });
+
+        // Create task for the next stage if workflow is not in a terminal state
+        if (workflow.status !== 'completed' && workflow.status !== 'failed' && workflow.status !== 'cancelled') {
+          logger.info('Creating task for next stage', {
+            workflow_id,
+            next_stage: workflow.current_stage
+          });
+
+          await this.createTaskForStage(workflow_id, workflow.current_stage, {
+            name: workflow.name,
+            description: workflow.description,
+            requirements: workflow.requirements,
+            type: workflow.type
+          });
+        } else {
+          logger.info('Workflow reached terminal state, no new task created', {
+            workflow_id,
+            status: workflow.status
+          });
+        }
+      }
     }
   }
 
