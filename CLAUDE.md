@@ -1,21 +1,22 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 6.2 | **Last Updated:** 2025-11-10 05:25 UTC | **Status:** Session #19 COMPLETE - Initialization Blocker FIXED, Handler Re-registration Added
+**Version:** 6.3 | **Last Updated:** 2025-11-10 05:40 UTC | **Status:** Session #19 COMPLETE - Initialization Fixed, Multi-Stage Task Creation Issue Identified
 
 ---
 
 ## ⚡ QUICK REFERENCE (START HERE)
 
-### Current Focus: Session #20 - Resolve Handler Re-registration & Multi-Stage Task Dispatch
+### Current Focus: Session #20 - Multi-Stage Task Creation Pattern
 
 | Item | Status | Details |
 |------|--------|---------|
 | **Initialization Blocker** | ✅ FIXED | Workflows now properly dispatch initialization task (commit e584802) |
-| **Stage Progression** | ✅ PARTIAL | Init→Scaffolding transition working, but scaffolding→next stalled |
-| **Handler Re-registration** | ⚠️ IN PROGRESS | Added re-registration logic, but needs validation for multi-stage workflows |
-| **Pipeline Tests** | ⚠️ PARTIAL PASS | Now progresses to scaffolding (was stuck at init), timeouts at scaffolding |
+| **Handler Persistence** | ✅ FIXED | Removed auto-cleanup, handlers persist across all stages (commit 9e297b2) |
+| **Task Creation Pattern** | ❌ NEW ISSUE | No scaffolding task created after initialization completes |
+| **Stage Progression** | ⚠️ PARTIAL | Init→Scaffolding transition works, but scaffolding task never created |
+| **Pipeline Tests** | ⚠️ PARTIAL PASS | Initialization stage completes, but no scaffolding task dispatched |
 | **Build Status** | ✅ PASSING | All modules compile successfully |
-| **Next Action** | ➡️ DEBUG | Verify handler re-registration works for scaffolding stage results |
+| **Next Action** | ➡️ IMPLEMENT | Create task for current stage after state machine transitions |
 
 ### Key Documentation
 - **CALCULATOR-SLATE-INTEGRATION.md** - Template details & integration
@@ -94,10 +95,32 @@ if (status === 'success' || status === 'failure') {
 8. Agent completes scaffolding task, publishes result
 9. ❌ Orchestrator handler NOT found (was removed after init) → STUCK
 
-**What Needs Fixing (Session #20):**
-- Verify handler re-registration is actually being called
-- Ensure new handler is registered before scaffolding result arrives
-- Check that state machine properly creates scaffolding task with correct task_id
+### ⚠️ TERTIARY ISSUE: Multi-Stage Task Creation Gap
+
+**Problem Discovered (Testing commit 9e297b2):**
+- Initialization task is created and completes successfully
+- State machine transitions from "initialization" → "scaffolding"
+- But NO scaffolding task is created or dispatched
+- Tests timeout at scaffolding stage (0% progress, waiting indefinitely)
+
+**Root Cause:**
+- `createWorkflow()` creates the initialization task (line 107 in workflow.service.ts)
+- `handleTaskCompletion()` only sends `STAGE_COMPLETE` event to state machine
+- State machine transitions to "scaffolding" but no task creation mechanism is triggered
+- No scaffolding task exists to dispatch to agent
+
+**Solution Pattern (for Session #20):**
+After state machine transitions to a new stage:
+1. Query current workflow stage
+2. Create task for that stage via `createTaskForStage()`
+3. Dispatch to appropriate agent
+4. Repeat for each subsequent stage until workflow completes
+
+**Implementation Approach:**
+- Modify `handleTaskCompletion()` to create task for new stage AFTER sending STAGE_COMPLETE
+- OR: Modify `handleAgentResult()` to create next task after completing current one
+- Need to get next stage name from workflow or state machine
+- Call `createTaskForStage()` for scaffolding after initialization completes
 
 ---
 
