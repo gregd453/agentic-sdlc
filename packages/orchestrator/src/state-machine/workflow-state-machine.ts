@@ -1,4 +1,4 @@
-import { createMachine, interpret } from 'xstate';
+import { createMachine, interpret, fromPromise, assign } from 'xstate';
 import { logger } from '../utils/logger';
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
@@ -7,6 +7,7 @@ export interface WorkflowContext {
   workflow_id: string;
   type: string;
   current_stage: string;
+  nextStage?: string; // Computed next stage for the invoked service
   progress: number;
   error?: Error;
   metadata: Record<string, any>;
@@ -14,7 +15,6 @@ export interface WorkflowContext {
   clarification_id?: string;
   pending_decision?: boolean;
   pending_clarification?: boolean;
-  _stageTransitionInProgress?: boolean; // Internal flag to prevent double invocation of moveToNextStage
 }
 
 export type WorkflowEvent =
@@ -108,18 +108,63 @@ export const createWorkflowStateMachine = (
         }
       },
       evaluating: {
-        always: [
-          {
-            target: 'completed',
-            guard: 'isWorkflowComplete',
-            actions: ['markComplete']
-          },
-          {
-            target: 'running',
-            guard: 'isNotTransitioningAlready', // Prevent double invocation
-            actions: ['setTransitionInProgress', 'moveToNextStage']
+        entry: assign({
+          nextStage: ({ context }) => {
+            const stages = getStagesForType(context.type);
+            const currentIndex = stages.indexOf(context.current_stage);
+
+            logger.info('Computing next stage', {
+              workflow_id: context.workflow_id,
+              current_stage: context.current_stage,
+              currentIndex,
+              totalStages: stages.length
+            });
+
+            // If at last stage, workflow is complete
+            if (currentIndex === stages.length - 1) {
+              return undefined; // Signal completion
+            }
+
+            // Otherwise, return the next stage
+            const next = stages[currentIndex + 1];
+            logger.info('Next stage computed', {
+              workflow_id: context.workflow_id,
+              nextStage: next
+            });
+            return next;
           }
-        ]
+        }),
+        invoke: {
+          id: 'advanceStage',
+          src: fromPromise(async ({ input }: { input: any }) => {
+            logger.info('Invoked service starting: moveToNextStage', {
+              workflow_id: input.workflow_id,
+              nextStage: input.nextStage
+            });
+            return input.nextStage;
+          }),
+          input: ({ context }: { context: WorkflowContext }) => ({
+            workflow_id: context.workflow_id,
+            nextStage: context.nextStage,
+            type: context.type,
+            currentStage: context.current_stage
+          }),
+          onDone: [
+            {
+              guard: ({ context }: { context: WorkflowContext }) => context.nextStage === undefined,
+              target: 'completed',
+              actions: ['markComplete']
+            },
+            {
+              target: 'running',
+              actions: ['transitionToNextStage']
+            }
+          ],
+          onError: {
+            target: 'error',
+            actions: ['logStageTransitionError']
+          }
+        }
       },
       paused: {
         on: {
@@ -148,6 +193,10 @@ export const createWorkflowStateMachine = (
       completed: {
         type: 'final',
         entry: ['notifyCompletion']
+      },
+      error: {
+        type: 'final',
+        entry: ['notifyError']
       },
       cancelled: {
         type: 'final',
@@ -200,59 +249,36 @@ export const createWorkflowStateMachine = (
           workflow_id: context.workflow_id
         });
       },
-      setTransitionInProgress: ({ context }) => {
-        logger.debug('Setting transition flag to prevent double invocation', {
-          workflow_id: context.workflow_id
-        });
-        context._stageTransitionInProgress = true;
-      },
-      clearTransitionInProgress: ({ context }) => {
-        logger.debug('Clearing transition flag', {
+      transitionToNextStage: async ({ context }) => {
+        // At this point, context.nextStage is guaranteed to be defined and valid
+        // (it was computed in the entry action and passed through the invoked service)
+        logger.info('Transitioning to next stage via invoked service completion', {
           workflow_id: context.workflow_id,
-          was_in_progress: context._stageTransitionInProgress
-        });
-        context._stageTransitionInProgress = false;
-      },
-      moveToNextStage: async ({ context }) => {
-        const stages = getStagesForType(context.type);
-        const currentIndex = stages.indexOf(context.current_stage);
-
-        logger.info('moveToNextStage action called', {
-          workflow_id: context.workflow_id,
-          workflow_type: context.type,
-          current_stage: context.current_stage,
-          currentIndex: currentIndex,
-          all_stages: JSON.stringify(stages),
-          stages_length: stages.length
+          from_stage: context.current_stage,
+          to_stage: context.nextStage
         });
 
-        if (currentIndex < stages.length - 1) {
-          const nextStage = stages[currentIndex + 1];
-          logger.info('Transitioning to next stage', {
-            workflow_id: context.workflow_id,
-            from_stage: context.current_stage,
-            to_stage: nextStage,
-            at_index: currentIndex,
-            next_index: currentIndex + 1
-          });
+        if (context.nextStage) {
+          context.current_stage = context.nextStage;
+          context.nextStage = undefined; // Reset for next cycle
 
-          context.current_stage = nextStage;
           await repository.update(context.workflow_id, {
-            current_stage: nextStage
+            current_stage: context.current_stage
           });
 
           logger.info('Database updated with new stage', {
             workflow_id: context.workflow_id,
-            new_stage: nextStage
-          });
-        } else {
-          logger.info('Already at last stage, not moving', {
-            workflow_id: context.workflow_id,
-            current_stage: context.current_stage,
-            currentIndex: currentIndex,
-            stages_length: stages.length
+            new_stage: context.current_stage
           });
         }
+      },
+      logStageTransitionError: ({ context, event }: any) => {
+        logger.error('Stage transition service failed', {
+          workflow_id: context.workflow_id,
+          current_stage: context.current_stage,
+          nextStage: context.nextStage,
+          error: event.data
+        });
       },
       markComplete: async ({ context }) => {
         context.progress = 100;
@@ -273,6 +299,20 @@ export const createWorkflowStateMachine = (
         });
         logger.info('Workflow completed', {
           workflow_id: context.workflow_id
+        });
+      },
+      notifyError: async ({ context }) => {
+        await eventBus.publish({
+          id: `event-${Date.now()}`,
+          type: 'WORKFLOW_ERROR',
+          workflow_id: context.workflow_id,
+          payload: { workflow_id: context.workflow_id, error: context.error?.message },
+          timestamp: new Date().toISOString(),
+          trace_id: `trace-${context.workflow_id}`
+        });
+        logger.error('Workflow error state reached', {
+          workflow_id: context.workflow_id,
+          error: context.error
         });
       },
       notifyCancellation: async ({ context }) => {
@@ -354,23 +394,7 @@ export const createWorkflowStateMachine = (
         }
       }
     },
-    guards: {
-      isWorkflowComplete: ({ context }) => {
-        const stages = getStagesForType(context.type);
-        const currentIndex = stages.indexOf(context.current_stage);
-        return currentIndex === stages.length - 1;
-      },
-      isNotTransitioningAlready: ({ context }) => {
-        // Prevent the always transition if we're already in the middle of transitioning
-        const isNotTransitioning = !context._stageTransitionInProgress;
-        logger.debug('isNotTransitioningAlready guard check', {
-          workflow_id: context.workflow_id,
-          _stageTransitionInProgress: context._stageTransitionInProgress,
-          result: isNotTransitioning
-        });
-        return isNotTransitioning;
-      }
-    }
+    guards: {}
   });
 };
 

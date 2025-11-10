@@ -358,11 +358,11 @@ export class WorkflowService {
       });
 
       // Wait for state machine to process the transition and update database
-      // The moveToNextStage action will update the workflow's current_stage in the database
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // The transitionToNextStage action (in onDone handler) is async and updates the database
+      // We need to wait for the database to reflect the new current_stage
+      const completedStage = event.payload.stage;
+      const workflow = await this.waitForStageTransition(workflow_id, completedStage);
 
-      // Query the updated workflow to get the next stage
-      const workflow = await this.repository.findById(workflow_id);
       if (workflow) {
         logger.info('Workflow state after stage completion', {
           workflow_id,
@@ -378,7 +378,7 @@ export class WorkflowService {
             workflow_type: workflow.type,
             next_stage: workflow.current_stage,
             workflow_status: workflow.status,
-            previous_stage_in_event: event.payload.stage
+            previous_stage_in_event: completedStage
           });
 
           await this.createTaskForStage(workflow_id, workflow.current_stage, {
@@ -395,6 +395,50 @@ export class WorkflowService {
         }
       }
     }
+  }
+
+  /**
+   * Wait for the workflow's current_stage to change from the completed stage
+   * This ensures the state machine's async actions have completed and the database is updated
+   */
+  private async waitForStageTransition(workflow_id: string, previousStage: string): Promise<any> {
+    const maxAttempts = 50; // 5 seconds with 100ms polling
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      const workflow = await this.repository.findById(workflow_id);
+
+      if (!workflow) {
+        logger.error('Workflow not found while waiting for stage transition', {
+          workflow_id
+        });
+        return null;
+      }
+
+      // If the stage has changed, the state machine transition is complete
+      if (workflow.current_stage !== previousStage) {
+        logger.info('Stage transition detected in database', {
+          workflow_id,
+          from_stage: previousStage,
+          to_stage: workflow.current_stage,
+          attempts
+        });
+        return workflow;
+      }
+
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+
+    logger.warn('Timeout waiting for stage transition in database', {
+      workflow_id,
+      previous_stage: previousStage,
+      attempts: maxAttempts
+    });
+
+    // Return the workflow anyway - it might be in terminal state
+    return await this.repository.findById(workflow_id);
   }
 
   private async handleTaskFailure(event: any): Promise<void> {
