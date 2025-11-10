@@ -18,6 +18,9 @@ import { metrics } from '../utils/metrics';
  * - Performance monitoring
  */
 
+// Use WeakMap to store request context (Fastify v4 compatible)
+const requestContextMap = new WeakMap<FastifyRequest, any>();
+
 /**
  * Register observability middleware
  */
@@ -41,8 +44,8 @@ export function registerObservabilityMiddleware(fastify: FastifyInstance): void 
       startTime: Date.now()
     });
 
-    // Store context for the request
-    (request as any).context = context;
+    // Store context for the request using WeakMap
+    requestContextMap.set(request, context);
 
     // Run the rest of the request processing within this context
     // This ensures all logs from this request include the context
@@ -50,7 +53,7 @@ export function registerObservabilityMiddleware(fastify: FastifyInstance): void 
 
   // Request logging
   fastify.addHook('onRequest', async (request: FastifyRequest, _reply: FastifyReply) => {
-    const context = (request as any).context;
+    const context = requestContextMap.get(request);
 
     runWithContext(context, () => {
       logger.info('Incoming request', {
@@ -77,7 +80,7 @@ export function registerObservabilityMiddleware(fastify: FastifyInstance): void 
 
   // Response logging and metrics
   fastify.addHook('onResponse', async (request: FastifyRequest, reply: FastifyReply) => {
-    const context = (request as any).context;
+    const context = requestContextMap.get(request);
     const duration = Date.now() - context.startTime;
 
     runWithContext(context, () => {
@@ -129,7 +132,7 @@ export function registerObservabilityMiddleware(fastify: FastifyInstance): void 
 
   // Error logging
   fastify.setErrorHandler((error, request, reply) => {
-    const context = (request as any).context;
+    const context = requestContextMap.get(request);
     const duration = context ? Date.now() - context.startTime : 0;
 
     const logFn = context
@@ -172,7 +175,7 @@ export function registerObservabilityMiddleware(fastify: FastifyInstance): void 
 
   // Add trace ID to response headers
   fastify.addHook('onSend', async (request: FastifyRequest, reply: FastifyReply, _payload) => {
-    const context = (request as any).context;
+    const context = requestContextMap.get(request);
     if (context) {
       reply.header('x-request-id', context.requestId);
       reply.header('x-trace-id', context.traceId);

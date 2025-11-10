@@ -1,0 +1,49 @@
+{
+  "id": "msg-001",
+  "type": "task",
+  "agent_id": "orchestrator",
+  "workflow_id": "test-workflow-001",
+  "stage": "scaffolding",
+  "payload": {
+    "task_id": "test-scaffold-001",
+    "workflow_id": "test-workflow-001",
+    "agent_type": "scaffold",
+    "action": "generate_structure",
+    "status": "pending",
+    "priority": 50,
+    "payload": {
+      "project_type": "app",
+      "name": "hello-world-react",
+      "description": "Simple React Hello World single-page application",
+      "tech_stack": {
+        "framework": "react",
+        "language": "typescript",
+        "runtime": "node",
+        "testing": "vitest",
+        "bundler": "vite",
+        "package_manager": "pnpm",
+        "ui_library": "react"
+      },
+      "requirements": [
+        "Create a React app with Hello World component",
+        "Display 'Hello, World!' message",
+        "Use Vite for bundling",
+        "Include basic styling",
+        "Add npm scripts for dev and build"
+      ],
+      "template": {
+        "type": "app-ui",
+        "include_examples": true,
+        "include_tests": true,
+        "include_docs": true
+      }
+    },
+    "version": "1.0.0",
+    "timeout_ms": 120000,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2025-11-09T16:30:00.000Z"
+  },
+  "timestamp": "2025-11-09T16:30:00.000Z",
+  "trace_id": "trace-001"
+}

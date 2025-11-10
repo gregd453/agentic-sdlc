@@ -1,0 +1,243 @@
+# {{name}} Backend
+
+{{description}} - Backend API
+
+## Technology Stack
+
+This backend strictly follows Zyp platform architectural policies:
+
+- **Fastify 5.6.1** - High-performance web framework
+- **Prisma 5.14.0** - Type-safe ORM (NO raw SQL allowed)
+- **PostgreSQL 16** - Isolated database (one per app)
+- **Zod 3.23.0** - Input validation at all API boundaries
+- **TypeScript 5.4.5** - Type safety
+
+## Key Architectural Patterns
+
+### ✅ Required Patterns
+- **Envelope Response Pattern**: All API responses use `{ success: true, data: T }` or `{ success: false, error: {...} }`
+- **Exact Version Pinning**: No `^` or `~` in package.json
+- **Prisma Only**: All database operations through Prisma ORM
+- **Zod Validation**: Input validation at all API boundaries
+- **Trust x-user-id**: Authentication via trusted header from gateway
+
+### ❌ Prohibited Patterns
+- **NO JWT Signing**: Apps return sessionPayload for Shell-BFF to sign
+- **NO Raw SQL**: All queries through Prisma
+- **NO jsonwebtoken**: No JWT libraries allowed in app
+- **NO Shared Databases**: Each app has isolated database
+- **NO Direct App Communication**: Apps are isolated
+
+## Quick Start
+
+### 1. Setup Environment
+
+```bash
+# Copy environment variables
+cp .env.example .env
+
+# Edit .env with your configuration
+# Note: DATABASE_URL should point to isolated database
+```
+
+### 2. Start Database
+
+```bash
+# Start PostgreSQL
+docker-compose up -d
+
+# Verify it's running
+docker-compose ps
+```
+
+### 3. Install Dependencies
+
+```bash
+# Install with exact versions
+npm install
+```
+
+### 4. Setup Database
+
+```bash
+# Generate Prisma client
+npm run db:generate
+
+# Run migrations
+npm run db:migrate
+
+# (Optional) Seed database
+npm run db:seed
+```
+
+### 5. Start Development Server
+
+```bash
+# Start with hot reload
+npm run dev
+
+# Server runs on http://localhost:3000
+```
+
+## API Endpoints
+
+### Health Checks
+- `GET /api/health` - Basic health check
+- `GET /api/health/live` - Liveness probe (k8s)
+- `GET /api/health/ready` - Readiness probe (k8s)
+
+### Hello Endpoints
+- `GET /api/hello` - Get hello message with visit count
+- `GET /api/hello/messages` - List all messages (paginated)
+- `POST /api/hello` - Create new message
+- `PUT /api/hello/:id` - Update message
+- `DELETE /api/hello/:id` - Delete message
+
+### Authentication Pattern
+- `POST /api/hello/session` - Create session payload for Shell-BFF
+
+All endpoints return responses in envelope format:
+
+```json
+{
+  "success": true,
+  "data": { ... },
+  "meta": {
+    "timestamp": "2025-11-09T12:00:00Z",
+    "requestId": "uuid",
+    "version": "1.0.0"
+  }
+}
+```
+
+## Authentication
+
+This app follows Zyp's authentication pattern:
+
+1. **Trust x-user-id Header**: The app trusts the `x-user-id` header from authenticated requests
+2. **No JWT Signing**: The app NEVER signs JWTs
+3. **Session Payload**: Returns sessionPayload for Shell-BFF to sign into JWT
+
+Example:
+```bash
+# Make authenticated request
+curl http://localhost:3000/api/hello \
+  -H "x-user-id: user-123"
+
+# Create session payload (for Shell-BFF)
+curl -X POST http://localhost:3000/api/hello/session \
+  -H "x-user-id: user-123"
+```
+
+## Database
+
+The app uses an isolated PostgreSQL database with Prisma ORM:
+
+```prisma
+model HelloMessage {
+  id        String   @id @default(uuid())
+  message   String
+  count     Int      @default(0)
+  userId    String?  @map("user_id")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+### Migrations
+
+```bash
+# Create new migration
+npx prisma migrate dev --name your_migration_name
+
+# Apply migrations
+npm run db:migrate
+
+# View database in Prisma Studio
+npx prisma studio
+```
+
+## Testing
+
+```bash
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+## Production Build
+
+```bash
+# Build TypeScript
+npm run build
+
+# Start production server
+npm start
+```
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| NODE_ENV | Environment (development/production) | development |
+| PORT | Server port | 3000 |
+| HOST | Server host | 0.0.0.0 |
+| DATABASE_URL | PostgreSQL connection string | Required |
+| FRONTEND_URL | Frontend URL for CORS | http://localhost:5173 |
+| LOG_LEVEL | Log level (debug/info/warn/error) | info |
+| API_VERSION | API version | 1.0.0 |
+
+## Monitoring
+
+The app includes:
+- Structured logging with request IDs
+- Health check endpoints
+- Request/response time tracking
+- Error tracking with stack traces (dev only)
+
+## Security
+
+- **Helmet**: Security headers
+- **CORS**: Configured for frontend
+- **Input Validation**: Zod schemas on all inputs
+- **SQL Injection Prevention**: Prisma ORM only
+- **No JWT Handling**: Delegated to Shell-BFF
+
+## Deployment
+
+### Docker
+
+```bash
+# Build image
+docker build -t {{name}}-backend .
+
+# Run container
+docker run -p 3000:3000 --env-file .env {{name}}-backend
+```
+
+### Kubernetes
+
+Use the health check endpoints for probes:
+- Liveness: `/api/health/live`
+- Readiness: `/api/health/ready`
+
+## Troubleshooting
+
+### Database Connection Issues
+- Verify PostgreSQL is running: `docker-compose ps`
+- Check DATABASE_URL in .env
+- Ensure database exists and migrations are run
+
+### Port Already in Use
+- Change PORT in .env
+- Or stop other services on port 3000
+
+### TypeScript Errors
+- Ensure TypeScript version is exactly 5.4.5
+- Run `npm run db:generate` after schema changes
+
+## License
+
+{{name}} - {{description}}

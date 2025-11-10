@@ -1,0 +1,46 @@
+import { z } from 'zod';
+
+/**
+ * Zod schemas for Hello endpoints
+ * All input validation must use Zod as per Zyp platform policies
+ */
+
+// Response schemas
+export const HelloMessageSchema = z.object({
+  id: z.string().uuid(),
+  message: z.string(),
+  count: z.number().int().positive().or(z.literal(0)),
+  userId: z.string().optional().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+export const HelloResponseSchema = z.object({
+  message: z.string(),
+  timestamp: z.string().datetime(),
+  count: z.number().int(),
+  messages: z.array(HelloMessageSchema).optional(),
+});
+
+// Request schemas
+export const CreateHelloSchema = z.object({
+  message: z.string().min(1).max(500),
+});
+
+export const UpdateHelloSchema = z.object({
+  message: z.string().min(1).max(500).optional(),
+  incrementCount: z.boolean().optional(),
+});
+
+export const QueryHelloSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+  offset: z.coerce.number().int().min(0).default(0),
+  userId: z.string().optional(),
+});
+
+// Type exports
+export type HelloMessage = z.infer<typeof HelloMessageSchema>;
+export type HelloResponse = z.infer<typeof HelloResponseSchema>;
+export type CreateHello = z.infer<typeof CreateHelloSchema>;
+export type UpdateHello = z.infer<typeof UpdateHelloSchema>;
+export type QueryHello = z.infer<typeof QueryHelloSchema>;

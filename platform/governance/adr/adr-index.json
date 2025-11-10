@@ -1,0 +1,527 @@
+{
+  "$schema": "https://schema.agentic-sdlc.local/adr-index.schema.json",
+  "meta": {
+    "version": "1.0.0",
+    "last_updated": "2025-11-10T00:00:00Z",
+    "total_adrs": 12,
+    "status": "active",
+    "maintained_by": "Architecture Board",
+    "review_cadence": "quarterly"
+  },
+
+  "adr_registry": [
+    {
+      "id": "0001",
+      "title": "Architecture Guardrails",
+      "status": "accepted",
+      "phase": ["Plan"],
+      "date_approved": "2025-11-10",
+      "file": "0001-architecture-guardrails.md",
+      "enforced_by": [
+        {
+          "system": "scaffold-agent",
+          "component": "template-selector",
+          "check": "allowed_frameworks"
+        }
+      ],
+      "exports": {
+        "architecture.monorepo.structure": "pnpm-workspace",
+        "architecture.layering": ["shell", "bff", "app"],
+        "architecture.isolation.strict": true
+      }
+    },
+
+    {
+      "id": "0002",
+      "title": "Contract Standards (Zod/OpenAPI)",
+      "status": "accepted",
+      "phase": ["Plan", "Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0002-contract-standards.md",
+      "enforced_by": [
+        {
+          "system": "pre-commit",
+          "script": "validate-zod-contracts.ts",
+          "check": "schema_versioning"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Build",
+          "script": "validate-openapi-contracts.ts"
+        }
+      ],
+      "exports": {
+        "contracts.zod.version": "3.23.0",
+        "contracts.openapi.version": "3.1.0",
+        "contracts.envelope.pattern": {
+          "success": "{ success: true, data: T }",
+          "error": "{ success: false, error: { code, message, details } }"
+        },
+        "contracts.versioning.policy": "N-2"
+      }
+    },
+
+    {
+      "id": "0003",
+      "title": "Testing Thresholds & Quality Gates",
+      "status": "accepted",
+      "phase": ["Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0003-testing-thresholds.md",
+      "enforced_by": [
+        {
+          "system": "ci-pipeline",
+          "stage": "Unit",
+          "script": "validate-coverage.ts",
+          "condition": "every_commit"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Integration",
+          "script": "validate-integration-tests.ts"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "E2E",
+          "script": "validate-e2e-tests.ts"
+        }
+      ],
+      "exports": {
+        "quality.coverage.minimum": 0.80,
+        "quality.coverage.target": 0.90,
+        "quality.gates": [
+          "type_check",
+          "lint",
+          "unit_tests",
+          "integration_tests",
+          "e2e_tests",
+          "security_scan",
+          "performance_check"
+        ],
+        "quality.gate_block_merge": true
+      }
+    },
+
+    {
+      "id": "0004",
+      "title": "Priority & Sprint Planning Policy",
+      "status": "accepted",
+      "phase": ["Plan"],
+      "date_approved": "2025-11-10",
+      "file": "0004-priority-policy.md",
+      "enforced_by": [
+        {
+          "system": "sprint-planning-agent",
+          "component": "priority-calculator",
+          "check": "scoring_weights"
+        },
+        {
+          "system": "orchestrator",
+          "component": "queue-manager",
+          "check": "wip_limits"
+        }
+      ],
+      "exports": {
+        "planning.priority.weights": {
+          "business_value": 0.4,
+          "risk_reduction": 0.3,
+          "dependency": 0.2,
+          "effort": 0.1
+        },
+        "planning.wip_limit": 5,
+        "planning.sprint_duration_days": 10
+      }
+    },
+
+    {
+      "id": "0005",
+      "title": "Scaffolding Templates & Naming Conventions",
+      "status": "accepted",
+      "phase": ["Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0005-scaffold-templates.md",
+      "enforced_by": [
+        {
+          "system": "scaffold-agent",
+          "component": "file-generator",
+          "check": "template_conformance"
+        },
+        {
+          "system": "pre-commit",
+          "script": "validate-naming.ts",
+          "check": "file_naming_patterns"
+        }
+      ],
+      "exports": {
+        "scaffold.templates": [
+          "app/react-spa",
+          "app/calculator-slate",
+          "app/fastify-api",
+          "service/backend",
+          "capability/shared"
+        ],
+        "scaffold.naming.component": "PascalCase",
+        "scaffold.naming.file": "kebab-case",
+        "scaffold.naming.constant": "UPPER_SNAKE_CASE"
+      }
+    },
+
+    {
+      "id": "0006",
+      "title": "Layering & Import Rules (Cross-Layer Isolation)",
+      "status": "accepted",
+      "phase": ["Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0006-layering-and-import-rules.md",
+      "enforced_by": [
+        {
+          "system": "pre-commit",
+          "script": "validate-imports.ts",
+          "check": "forbidden_imports"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Build",
+          "script": "eslint-layers-plugin"
+        }
+      ],
+      "exports": {
+        "layers": {
+          "shell": {
+            "can_import": ["bff", "shared"],
+            "forbidden": ["app", "service"]
+          },
+          "bff": {
+            "can_import": ["app", "service", "shared"],
+            "forbidden": ["shell"]
+          },
+          "app": {
+            "can_import": ["shared"],
+            "forbidden": ["shell", "bff", "other_apps"]
+          }
+        },
+        "import_rules.no_circular": true,
+        "import_rules.no_relative_parent": true
+      }
+    },
+
+    {
+      "id": "0007",
+      "title": "TypeScript & Linting Standards",
+      "status": "accepted",
+      "phase": ["Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0007-lint-ts-standards.md",
+      "enforced_by": [
+        {
+          "system": "pre-commit",
+          "script": "typescript-strict-check.ts"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Build",
+          "script": "tsc --noEmit"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Build",
+          "script": "eslint ."
+        }
+      ],
+      "exports": {
+        "typescript.version": "5.4.5",
+        "typescript.strict": true,
+        "typescript.strictNullChecks": true,
+        "typescript.noImplicitAny": true,
+        "typescript.noUnusedLocals": true,
+        "eslint.extends": "eslint:recommended"
+      }
+    },
+
+    {
+      "id": "0008",
+      "title": "Dependency Pinning & Version Policy",
+      "status": "accepted",
+      "phase": ["Plan", "Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0008-dependency-pinning.md",
+      "enforced_by": [
+        {
+          "system": "pre-commit",
+          "script": "validate-versions.ts",
+          "check": "no_semver_ranges"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Build",
+          "script": "validate-package-json.ts"
+        }
+      ],
+      "exports": {
+        "dependencies.pinning": "exact_only",
+        "dependencies.no_caret_tilde": true,
+        "dependencies.frozen_versions": {
+          "react": "19.2.0",
+          "vite": "6.0.11",
+          "fastify": "5.6.1",
+          "prisma": "5.14.0",
+          "typescript": "5.4.5",
+          "zod": "3.23.0"
+        },
+        "dependencies.workspace_overrides": true
+      }
+    },
+
+    {
+      "id": "0009",
+      "title": "Database Isolation & ORM Policy",
+      "status": "accepted",
+      "phase": ["Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0009-database-isolation.md",
+      "enforced_by": [
+        {
+          "system": "scaffold-agent",
+          "component": "backend-generator",
+          "check": "database_per_app"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Build",
+          "script": "validate-prisma-only.ts"
+        }
+      ],
+      "exports": {
+        "database.isolation.strict": true,
+        "database.per_app": true,
+        "database.orm_only": "prisma",
+        "database.no_raw_sql": true,
+        "prisma.version": "5.14.0"
+      }
+    },
+
+    {
+      "id": "0010",
+      "title": "Security Baseline (OWASP Policy)",
+      "status": "accepted",
+      "phase": ["Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0010-security-policy.md",
+      "enforced_by": [
+        {
+          "system": "ci-pipeline",
+          "stage": "Security",
+          "script": "npm audit"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Security",
+          "script": "trivy scan"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Security",
+          "script": "owasp-dependency-check"
+        }
+      ],
+      "exports": {
+        "security.owasp.enabled": true,
+        "security.npm_audit.block_on_high": true,
+        "security.jwt.no_signing_in_apps": true,
+        "security.auth_model": "x-user-id_header_from_bff",
+        "security.sql_injection.prevention": "prisma_only"
+      }
+    },
+
+    {
+      "id": "0011",
+      "title": "Performance Budgets & Optimization",
+      "status": "accepted",
+      "phase": ["Dev/Pipeline"],
+      "date_approved": "2025-11-10",
+      "file": "0011-performance-budgets.md",
+      "enforced_by": [
+        {
+          "system": "ci-pipeline",
+          "stage": "Performance",
+          "script": "bundle-size-check.ts"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Performance",
+          "script": "lighthouse-check.ts"
+        }
+      ],
+      "exports": {
+        "performance.bundle_size_limit_kb": 500,
+        "performance.gzip_limit_kb": 150,
+        "performance.lighthouse_min_score": 80,
+        "performance.first_contentful_paint_ms": 1000
+      }
+    },
+
+    {
+      "id": "0020",
+      "title": "Agent↔Pipeline API Contract",
+      "status": "accepted",
+      "phase": ["Integration"],
+      "date_approved": "2025-11-10",
+      "file": "0020-agent-pipeline-api.md",
+      "enforced_by": [
+        {
+          "system": "ci-pipeline",
+          "stage": "Integration",
+          "script": "contract-test.ts"
+        },
+        {
+          "system": "orchestrator",
+          "component": "api-gateway",
+          "check": "schema_validation"
+        }
+      ],
+      "exports": {
+        "api.version": "v1",
+        "api.base_path": "/api/v1",
+        "api.auth": "bearer_token",
+        "api.endpoints.workflows": "POST|GET|PATCH",
+        "api.endpoints.agents": "POST|GET",
+        "api.response.envelope": "{ success, data|error }"
+      }
+    },
+
+    {
+      "id": "0021",
+      "title": "Eventing & Schema Versioning",
+      "status": "accepted",
+      "phase": ["Integration"],
+      "date_approved": "2025-11-10",
+      "file": "0021-eventing-and-schema.md",
+      "enforced_by": [
+        {
+          "system": "orchestrator",
+          "component": "event-bus",
+          "check": "schema_compliance"
+        },
+        {
+          "system": "ci-pipeline",
+          "stage": "Integration",
+          "script": "validate-event-schemas.ts"
+        }
+      ],
+      "exports": {
+        "events.version": "v1",
+        "events.versioning_policy": "N-2",
+        "events.topics": [
+          "workflow.created",
+          "workflow.updated",
+          "workflow.completed",
+          "task.assigned",
+          "task.completed",
+          "agent.registered"
+        ],
+        "events.payload.schema": "json_schema"
+      }
+    }
+  ],
+
+  "enforcement_registry": {
+    "pre_commit": {
+      "enabled": true,
+      "scripts": [
+        "validate-versions.ts",
+        "validate-naming.ts",
+        "validate-imports.ts",
+        "typescript-strict-check.ts"
+      ]
+    },
+    "ci_pipeline_stages": {
+      "Build": [
+        "tsc --noEmit",
+        "eslint .",
+        "validate-package-json.ts",
+        "validate-zod-contracts.ts"
+      ],
+      "Unit": [
+        "validate-coverage.ts"
+      ],
+      "Integration": [
+        "validate-integration-tests.ts",
+        "contract-test.ts",
+        "validate-event-schemas.ts"
+      ],
+      "E2E": [
+        "validate-e2e-tests.ts"
+      ],
+      "Security": [
+        "npm audit",
+        "trivy scan",
+        "owasp-dependency-check"
+      ],
+      "Performance": [
+        "bundle-size-check.ts",
+        "lighthouse-check.ts"
+      ]
+    },
+    "orchestrator_checks": {
+      "template_selector": ["0001"],
+      "priority_calculator": ["0004"],
+      "queue_manager": ["0004"],
+      "api_gateway": ["0020"],
+      "event_bus": ["0021"]
+    }
+  },
+
+  "policies_export": {
+    "architecture": {
+      "frameworks": [
+        {
+          "type": "frontend",
+          "framework": "React",
+          "version": "19.2.0",
+          "bundler": "Vite",
+          "bundler_version": "6.0.11"
+        },
+        {
+          "type": "backend",
+          "framework": "Fastify",
+          "version": "5.6.1",
+          "orm": "Prisma",
+          "orm_version": "5.14.0"
+        }
+      ],
+      "database": {
+        "provider": "PostgreSQL",
+        "isolation": "strict_per_app",
+        "orm": "Prisma"
+      }
+    },
+    "quality": {
+      "coverage_minimum": 0.80,
+      "gates_block_merge": true,
+      "gates": [
+        "type_check",
+        "lint",
+        "unit_tests",
+        "integration_tests",
+        "e2e_tests",
+        "security_scan",
+        "performance_check"
+      ]
+    },
+    "security": {
+      "owasp_enabled": true,
+      "jwt_policy": "no_signing_in_apps",
+      "sql_injection_prevention": "prisma_only"
+    },
+    "performance": {
+      "bundle_size_limit_kb": 500,
+      "lighthouse_min_score": 80
+    }
+  },
+
+  "deprecation_schedule": {
+    "note": "ADRs follow a N-2 compatibility policy. Superseded ADRs are marked deprecated and sunset after 6 months.",
+    "superseded_adrs": [],
+    "deprecated_adrs": []
+  }
+}

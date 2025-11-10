@@ -1,0 +1,191 @@
+import { prisma } from '../server.js';
+import type { CreateHello, UpdateHello, QueryHello } from '../schemas/hello.schema.js';
+
+/**
+ * Hello Service
+ * All database operations use Prisma ORM (NO raw SQL)
+ * This follows Zyp platform policies for database access
+ */
+class HelloService {
+  /**
+   * Get or create a hello message for the current session
+   */
+  async getOrCreateHello(userId?: string) {
+    // Try to find existing message for this user
+    if (userId) {
+      const existing = await prisma.helloMessage.findFirst({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      if (existing) {
+        // Increment count
+        const updated = await prisma.helloMessage.update({
+          where: { id: existing.id },
+          data: { count: { increment: 1 } },
+        });
+
+        return {
+          message: `Hello World! You've visited ${updated.count} times.`,
+          timestamp: new Date().toISOString(),
+          count: updated.count,
+        };
+      }
+    }
+
+    // Create new message
+    const created = await prisma.helloMessage.create({
+      data: {
+        message: 'Hello World from Zyp-compliant backend!',
+        count: 1,
+        userId,
+      },
+    });
+
+    return {
+      message: 'Hello World! This is your first visit.',
+      timestamp: new Date().toISOString(),
+      count: created.count,
+    };
+  }
+
+  /**
+   * List all hello messages with pagination
+   */
+  async listMessages(query: QueryHello) {
+    const { limit, offset, userId } = query;
+
+    const where = userId ? { userId } : undefined;
+
+    const [messages, total] = await Promise.all([
+      prisma.helloMessage.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.helloMessage.count({ where }),
+    ]);
+
+    return {
+      messages,
+      total,
+      limit,
+      offset,
+      hasMore: offset + limit < total,
+    };
+  }
+
+  /**
+   * Create a new hello message
+   */
+  async createMessage(data: CreateHello & { userId?: string }) {
+    const message = await prisma.helloMessage.create({
+      data: {
+        message: data.message,
+        userId: data.userId,
+      },
+    });
+
+    return message;
+  }
+
+  /**
+   * Update a hello message
+   */
+  async updateMessage(id: string, data: UpdateHello, userId?: string) {
+    // First check if message exists and user has access
+    const existing = await prisma.helloMessage.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return null;
+    }
+
+    // If userId is provided, check ownership
+    if (userId && existing.userId && existing.userId !== userId) {
+      return null; // User doesn't own this message
+    }
+
+    const updateData: any = {};
+    if (data.message !== undefined) {
+      updateData.message = data.message;
+    }
+    if (data.incrementCount) {
+      updateData.count = { increment: 1 };
+    }
+
+    const updated = await prisma.helloMessage.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return updated;
+  }
+
+  /**
+   * Delete a hello message
+   */
+  async deleteMessage(id: string, userId?: string) {
+    // First check if message exists and user has access
+    const existing = await prisma.helloMessage.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return false;
+    }
+
+    // If userId is provided, check ownership
+    if (userId && existing.userId && existing.userId !== userId) {
+      return false; // User doesn't own this message
+    }
+
+    await prisma.helloMessage.delete({
+      where: { id },
+    });
+
+    return true;
+  }
+
+  /**
+   * Create a session payload for Shell-BFF to sign
+   * This demonstrates the auth pattern: NO JWT signing in app
+   */
+  async createSessionPayload(userId: string) {
+    // Get user's hello message stats
+    const stats = await prisma.helloMessage.aggregate({
+      where: { userId },
+      _count: true,
+      _sum: { count: true },
+    });
+
+    // Create session payload (NOT a JWT!)
+    const sessionPayload = await prisma.sessionPayload.create({
+      data: {
+        userId,
+        payload: {
+          userId,
+          totalMessages: stats._count,
+          totalVisits: stats._sum.count || 0,
+          timestamp: new Date().toISOString(),
+          // Add any other session data needed
+          // Shell-BFF will sign this into a JWT
+        },
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      },
+    });
+
+    return {
+      id: sessionPayload.id,
+      payload: sessionPayload.payload,
+      expiresAt: sessionPayload.expiresAt.toISOString(),
+      // DO NOT include any JWT or signature here
+      // Shell-BFF handles all JWT signing
+    };
+  }
+}
+
+// Export singleton instance
+export const helloService = new HelloService();

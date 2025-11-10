@@ -269,12 +269,13 @@ export class WorkflowService {
 
     // Dispatch task directly to agent via Redis
     if (this.agentDispatcher) {
-      await this.agentDispatcher.dispatchTask(taskAssignment, workflowData);
-
-      // Register handler for agent result
+      // Register handler for agent result FIRST (before dispatching task)
       this.agentDispatcher.onResult(workflowId, async (result) => {
         await this.handleAgentResult(result);
       });
+
+      // THEN dispatch the task
+      await this.agentDispatcher.dispatchTask(taskAssignment, workflowData);
     }
 
     logger.info('Task created and dispatched to agent', {

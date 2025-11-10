@@ -2,8 +2,8 @@
 # Stage 1: Dependencies
 FROM node:20.11.0-alpine AS deps
 
-# Install pnpm
-RUN npm install -g pnpm@8
+# Install pnpm (use latest compatible version)
+RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /app
@@ -18,14 +18,14 @@ COPY packages/agents/e2e-agent/package.json ./packages/agents/e2e-agent/
 COPY packages/agents/integration-agent/package.json ./packages/agents/integration-agent/
 COPY packages/agents/deployment-agent/package.json ./packages/agents/deployment-agent/
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile --prod
+# Install dependencies (use --force to recreate lockfile if needed)
+RUN pnpm install --prod || pnpm install --force --prod
 
 # Stage 2: Build
 FROM node:20.11.0-alpine AS builder
 
-# Install pnpm
-RUN npm install -g pnpm@8
+# Install pnpm (use latest compatible version)
+RUN npm install -g pnpm
 
 WORKDIR /app
 

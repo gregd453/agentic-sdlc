@@ -91,14 +91,21 @@ export class TemplateEngine {
       return this.templates.get(name)!;
     }
 
-    // Try to load from file
-    const templatePath = path.join(this.templatesDir, `${name}.hbs`);
+    // Try multiple path strategies for template loading
+    const possiblePaths = [
+      path.join(this.templatesDir, `${name}.hbs`),
+      path.join(this.templatesDir, name.replace(/\//g, path.sep) + '.hbs'),
+      // For nested templates like app/react-spa/package.json
+      path.join(this.templatesDir, name.replace(/\//g, path.sep)),
+    ];
 
-    if (fs.existsSync(templatePath)) {
-      const templateSource = fs.readFileSync(templatePath, 'utf-8');
-      const compiled = Handlebars.compile(templateSource);
-      this.templates.set(name, compiled);
-      return compiled;
+    for (const templatePath of possiblePaths) {
+      if (fs.existsSync(templatePath)) {
+        const templateSource = fs.readFileSync(templatePath, 'utf-8');
+        const compiled = Handlebars.compile(templateSource);
+        this.templates.set(name, compiled);
+        return compiled;
+      }
     }
 
     // Fall back to inline templates for common files
@@ -108,6 +115,9 @@ export class TemplateEngine {
       this.templates.set(name, compiled);
       return compiled;
     }
+
+    // If still not found, log available templates for debugging
+    console.warn(`Template not found: ${name}. Available templates in ${this.templatesDir}`);
 
     throw new TemplateError(`Template not found: ${name}`, name);
   }

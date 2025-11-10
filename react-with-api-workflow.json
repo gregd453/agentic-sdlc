@@ -1,0 +1,7 @@
+{
+  "type": "app",
+  "name": "hello-world-fullstack",
+  "description": "Full-stack React application with Express API backend",
+  "priority": "high",
+  "requirements": "Create a full-stack application with:\n\n**Frontend (React + Vite):**\n- React single-page application\n- Display 'Hello, World!' heading\n- Fetch and display a message from the backend API\n- Show loading state while fetching\n- Display error if API call fails\n- Use TypeScript\n- Include basic styling with CSS\n\n**Backend (Express API):**\n- Express server running on port 3001\n- GET /api/message endpoint that returns JSON: {\"message\": \"Hi from API\"}\n- CORS enabled for frontend (port 5173)\n- TypeScript support\n- Basic error handling\n\n**Project Structure:**\n- Monorepo setup with separate client/ and server/ directories\n- Shared types between frontend and backend\n- Concurrent dev script to run both client and server\n- Environment variables for API URL\n\n**Additional Requirements:**\n- Use fetch API for HTTP requests\n- Display both static 'Hello, World!' and dynamic API message\n- Include README with setup instructions\n- Add npm scripts for development and production builds"
+}

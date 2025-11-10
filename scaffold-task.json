@@ -1,0 +1,17 @@
+{
+  "task_id": "test-task-001",
+  "workflow_id": "8e124ba9-6f57-4418-bd97-165a04290faa",
+  "agent_type": "scaffold",
+  "action": "generate",
+  "priority": "medium",
+  "payload": {
+    "scaffold_type": "app",
+    "app_type": "react-spa",
+    "name": "hello-world-react",
+    "description": "Simple React Hello World application",
+    "requirements": "Create a React app with:\n- Single Hello World component\n- Displays 'Hello, World!' message\n- Uses Vite for bundling\n- Includes basic styling\n- Has npm scripts for dev and build",
+    "output_directory": "/tmp/agentic-sdlc-output"
+  },
+  "created_at": "2025-11-09T15:20:00Z",
+  "version": "1.0.0"
+}

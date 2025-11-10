@@ -1,0 +1,81 @@
+import type { FastifyError, FastifyRequest, FastifyReply } from 'fastify';
+import { ZodError } from 'zod';
+import { errorEnvelope } from '../types/envelope.js';
+
+/**
+ * Global error handler for Fastify
+ * Ensures all errors follow the envelope pattern
+ */
+export async function errorHandler(
+  error: FastifyError,
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const requestId = request.id;
+
+  // Log error
+  request.log.error(error, 'Request error');
+
+  // Handle Zod validation errors
+  if (error instanceof ZodError) {
+    reply.code(400);
+    return errorEnvelope(
+      'VALIDATION_ERROR',
+      'Request validation failed',
+      error.errors,
+      requestId
+    );
+  }
+
+  // Handle Fastify validation errors
+  if (error.validation) {
+    reply.code(400);
+    return errorEnvelope(
+      'VALIDATION_ERROR',
+      error.message,
+      error.validation,
+      requestId
+    );
+  }
+
+  // Handle known HTTP errors
+  if (error.statusCode) {
+    reply.code(error.statusCode);
+
+    const errorCode = getErrorCode(error.statusCode);
+    return errorEnvelope(
+      errorCode,
+      error.message,
+      process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      requestId
+    );
+  }
+
+  // Handle unknown errors
+  reply.code(500);
+  return errorEnvelope(
+    'INTERNAL_ERROR',
+    'An unexpected error occurred',
+    process.env.NODE_ENV === 'development' ? error.stack : undefined,
+    requestId
+  );
+}
+
+function getErrorCode(statusCode: number): string {
+  const errorCodes: Record<number, string> = {
+    400: 'BAD_REQUEST',
+    401: 'UNAUTHORIZED',
+    403: 'FORBIDDEN',
+    404: 'NOT_FOUND',
+    405: 'METHOD_NOT_ALLOWED',
+    409: 'CONFLICT',
+    422: 'UNPROCESSABLE_ENTITY',
+    429: 'TOO_MANY_REQUESTS',
+    500: 'INTERNAL_ERROR',
+    502: 'BAD_GATEWAY',
+    503: 'SERVICE_UNAVAILABLE',
+    504: 'GATEWAY_TIMEOUT',
+  };
+
+  return errorCodes[statusCode] || 'UNKNOWN_ERROR';
+}

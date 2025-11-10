@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Hello Message model for demo purposes
+model HelloMessage {
+  id        String   @id @default(uuid())
+  message   String
+  count     Int      @default(0)
+  userId    String?  @map("user_id") // From x-user-id header
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("hello_messages")
+}
+
+// Session model for auth pattern (NO JWT signing in app)
+// This stores session payloads that Shell-BFF will sign
+model SessionPayload {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  payload   Json     // Session data to be signed by Shell-BFF
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("session_payloads")
+}

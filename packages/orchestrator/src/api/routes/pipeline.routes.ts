@@ -37,13 +37,22 @@ export async function pipelineRoutes(
       schema: {
         description: 'Start a new pipeline execution',
         tags: ['pipelines'],
-        body: PipelineDefinitionSchema.extend({
-          trigger: PipelineDefinitionSchema.shape.workflow_id.optional(),
-          triggered_by: PipelineDefinitionSchema.shape.workflow_id.optional(),
-          commit_sha: PipelineDefinitionSchema.shape.workflow_id.optional(),
-          branch: PipelineDefinitionSchema.shape.workflow_id.optional(),
-          metadata: PipelineDefinitionSchema.shape.metadata.optional()
-        }),
+        body: {
+          type: 'object',
+          required: ['id', 'workflow_id', 'name', 'stages'],
+          properties: {
+            id: { type: 'string', format: 'uuid' },
+            workflow_id: { type: 'string', format: 'uuid' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            stages: { type: 'array' },
+            trigger: { type: 'string', enum: ['manual', 'webhook', 'schedule', 'event'] },
+            triggered_by: { type: 'string' },
+            commit_sha: { type: 'string' },
+            branch: { type: 'string' },
+            metadata: { type: 'object' }
+          }
+        },
         response: {
           201: {
             type: 'object',
@@ -329,7 +338,21 @@ export async function pipelineRoutes(
       schema: {
         description: 'Receive pipeline webhook from CI/CD providers',
         tags: ['pipelines'],
-        body: PipelineWebhookSchema,
+        body: {
+          type: 'object',
+          required: ['source', 'event', 'repository', 'branch', 'commit_sha', 'author', 'timestamp', 'payload'],
+          properties: {
+            source: { type: 'string', enum: ['github', 'gitlab', 'manual'] },
+            event: { type: 'string' },
+            repository: { type: 'string' },
+            branch: { type: 'string' },
+            commit_sha: { type: 'string' },
+            commit_message: { type: 'string' },
+            author: { type: 'string' },
+            timestamp: { type: 'string', format: 'date-time' },
+            payload: { type: 'object' }
+          }
+        },
         response: {
           202: {
             type: 'object',

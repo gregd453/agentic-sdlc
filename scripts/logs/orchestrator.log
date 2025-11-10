@@ -1,0 +1,1178 @@
+
+> @agentic-sdlc/orchestrator@0.1.0 dev
+> tsx watch src/index.ts
+
+prisma:info Starting a postgresql pool with 29 connections.
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[METRIC] server.started{}: 1
+[02:08:05 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mSubscribed to event[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mSubscribed to event[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mSubscribed to event[39m
+[02:08:05 UTC] [32mINFO[39m (orchestrator): [36mSubscribed to orchestrator:results channel[39m
+[METRIC] http_requests_total{method="GET",path="/api/v1/health"}: 1
+(node:38230) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/health",status_code="200"}: 5
+[METRIC] http_responses_total{method="GET",path="/api/v1/health",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/health"}: 59
+(node:38230) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+[02:08:06 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "a875f998-f491-41f2-93ff-c1778eddedbd"
+    trace_id: "trace-1762740486230-acbrx199u"
+[02:08:06 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "a875f998-f491-41f2-93ff-c1778eddedbd"
+    trace_id: "trace-1762740486230-acbrx199u"
+[METRIC] http_requests_total{method="GET",path="/api/v1/health"}: 1
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/health",status_code="200"}: 0
+[METRIC] http_responses_total{method="GET",path="/api/v1/health",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/health"}: 59
+[METRIC] http_requests_total{method="POST",path="/api/v1/workflows"}: 1
+prisma:query BEGIN
+prisma:query INSERT INTO "public"."Workflow" ("id","type","name","description","requirements","status","current_stage","priority","progress","created_at","updated_at","created_by") VALUES ($1,CAST($2::text AS "public"."WorkflowType"),$3,$4,$5,CAST($6::text AS "public"."WorkflowStatus"),$7,CAST($8::text AS "public"."Priority"),$9,$10,$11,$12) RETURNING "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by"
+prisma:query INSERT INTO "public"."WorkflowEvent" ("id","workflow_id","event_type","payload","timestamp","trace_id") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id"
+prisma:query INSERT INTO "public"."WorkflowStage" ("status","workflow_id","id","name","retry_count") VALUES (CAST($1::text AS "public"."StageStatus"),$2,$3,$4,$5), (CAST($6::text AS "public"."StageStatus"),$7,$8,$9,$10), (CAST($11::text AS "public"."StageStatus"),$12,$13,$14,$15), (CAST($16::text AS "public"."StageStatus"),$17,$18,$19,$20), (CAST($21::text AS "public"."StageStatus"),$22,$23,$24,$25), (CAST($26::text AS "public"."StageStatus"),$27,$28,$29,$30), (CAST($31::text AS "public"."StageStatus"),$32,$33,$34,$35)
+prisma:query COMMIT
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+prisma:query UPDATE "public"."Workflow" SET "current_stage" = $1, "updated_at" = $2 WHERE ("public"."Workflow"."id" = $3 AND 1=1) RETURNING "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by"
+prisma:query INSERT INTO "public"."AgentTask" ("id","task_id","workflow_id","agent_type","status","priority","payload","assigned_at","retry_count","max_retries","timeout_ms") VALUES ($1,$2,$3,CAST($4::text AS "public"."AgentType"),CAST($5::text AS "public"."TaskStatus"),CAST($6::text AS "public"."Priority"),$7,$8,$9,$10,$11) RETURNING "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms"
+[METRIC] workflow.creation{type="app"}: 19
+[METRIC] workflows.created{type="app"}: 1
+[METRIC] http_request_duration_ms{method="POST",path="/api/v1/workflows",status_code="200"}: 20
+[METRIC] http_responses_total{method="POST",path="/api/v1/workflows",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="POST",path="/api/v1/workflows"}: 244
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 4
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 212
+prisma:query UPDATE "public"."AgentTask" SET "status" = CAST($1::text AS "public"."TaskStatus"), "completed_at" = $2 WHERE ("public"."AgentTask"."task_id" = $3 AND 1=1) RETURNING "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms"
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+prisma:query UPDATE "public"."Workflow" SET "current_stage" = $1, "updated_at" = $2 WHERE ("public"."Workflow"."id" = $3 AND 1=1) RETURNING "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by"
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "f55640dc-5440-4685-a319-41d4b5b47eef"
+    trace_id: "trace-1762740494440-hfv4ns0gb"
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "f55640dc-5440-4685-a319-41d4b5b47eef"
+    trace_id: "trace-1762740494440-hfv4ns0gb"
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "fa8cc27b-90d3-40bc-8677-d5ca71c74208"
+    trace_id: "trace-1762740494480-jo5rn3dkl"
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mCreating workflow[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mWorkflow created[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mWorkflow state transition[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mEvent published[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mWorkflow updated[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mEvent published[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mTask dispatched to agent[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mTask created and dispatched to agent[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "fa8cc27b-90d3-40bc-8677-d5ca71c74208"
+    trace_id: "trace-1762740494480-jo5rn3dkl"
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "7c08e139-c07c-4d24-89f6-7d10df079b8e"
+    trace_id: "trace-1762740494511-veb0d0w26"
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "7c08e139-c07c-4d24-89f6-7d10df079b8e"
+    trace_id: "trace-1762740494511-veb0d0w26"
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mReceived agent result[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mHandling agent result[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mStage completed[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mAuto-removing result handler for completed workflow[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:14 UTC] [32mINFO[39m (orchestrator): [36mWorkflow updated[39m
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:16 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "2b217912-bf69-4abd-88ca-13b506628f64"
+    trace_id: "trace-1762740496565-rkvfzy68b"
+[02:08:16 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:16 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:16 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:16 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:16 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "2b217912-bf69-4abd-88ca-13b506628f64"
+    trace_id: "trace-1762740496565-rkvfzy68b"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:18 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "2adbd5bf-c937-4c6b-805c-8f3306639ffe"
+    trace_id: "trace-1762740498627-ryzoc5gak"
+[02:08:18 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:18 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:18 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:18 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:18 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "2adbd5bf-c937-4c6b-805c-8f3306639ffe"
+    trace_id: "trace-1762740498627-ryzoc5gak"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 4
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:20 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "d87cf844-96ec-4ad4-a3e8-b08e0312d10d"
+    trace_id: "trace-1762740500687-g0dq74w4f"
+[02:08:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:20 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "d87cf844-96ec-4ad4-a3e8-b08e0312d10d"
+    trace_id: "trace-1762740500687-g0dq74w4f"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:22 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "bcd1af0d-cd47-4f84-911f-fa02ea381e88"
+    trace_id: "trace-1762740502740-tb4ytyc69"
+[02:08:22 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:22 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:22 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:22 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:22 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "bcd1af0d-cd47-4f84-911f-fa02ea381e88"
+    trace_id: "trace-1762740502740-tb4ytyc69"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:24 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "a2df3f7c-780f-49a0-9047-075d55684b29"
+    trace_id: "trace-1762740504804-b69fh10b2"
+[02:08:24 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:24 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:24 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:24 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:24 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "a2df3f7c-780f-49a0-9047-075d55684b29"
+    trace_id: "trace-1762740504804-b69fh10b2"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:26 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "4d16afa5-1ba8-4ac0-9832-181990170024"
+    trace_id: "trace-1762740506864-buf1ap9aq"
+[02:08:26 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:26 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:26 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:26 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:26 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "4d16afa5-1ba8-4ac0-9832-181990170024"
+    trace_id: "trace-1762740506864-buf1ap9aq"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:28 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "b832dd1d-cf2f-452d-b9aa-1e1234e6525a"
+    trace_id: "trace-1762740508937-rd244c11i"
+[02:08:28 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:28 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:28 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:28 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:28 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "b832dd1d-cf2f-452d-b9aa-1e1234e6525a"
+    trace_id: "trace-1762740508937-rd244c11i"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:30 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "48f41001-6c5c-41ae-a19c-7bb7bfe0340f"
+    trace_id: "trace-1762740510999-4gyvxln2i"
+[02:08:31 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:31 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:31 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:31 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:31 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:31 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "48f41001-6c5c-41ae-a19c-7bb7bfe0340f"
+    trace_id: "trace-1762740510999-4gyvxln2i"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 5
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:33 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "10a58308-f6a6-45d0-8415-e4806c268e52"
+    trace_id: "trace-1762740513048-05fxvttx2"
+[02:08:33 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:33 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:33 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:33 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:33 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "10a58308-f6a6-45d0-8415-e4806c268e52"
+    trace_id: "trace-1762740513048-05fxvttx2"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 5
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:35 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "4a89988c-88ef-4001-85a5-7abd282eb5dc"
+    trace_id: "trace-1762740515081-aqmrvak1z"
+[02:08:35 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:35 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:35 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:35 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:35 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "4a89988c-88ef-4001-85a5-7abd282eb5dc"
+    trace_id: "trace-1762740515081-aqmrvak1z"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 4
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:37 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "5ecd4e21-d923-4546-8575-4b059b87d29b"
+    trace_id: "trace-1762740517122-vpy28723u"
+[02:08:37 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:37 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:37 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:37 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:37 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "5ecd4e21-d923-4546-8575-4b059b87d29b"
+    trace_id: "trace-1762740517122-vpy28723u"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:39 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "83716fc8-6a8d-427a-9aa0-80a1404964e9"
+    trace_id: "trace-1762740519181-3hl7kezkh"
+[02:08:39 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:39 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:39 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:39 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:39 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "83716fc8-6a8d-427a-9aa0-80a1404964e9"
+    trace_id: "trace-1762740519181-3hl7kezkh"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:41 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "e91554ec-7cc9-4877-8772-98d3d22694a6"
+    trace_id: "trace-1762740521256-rgnm7805g"
+[02:08:41 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:41 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:41 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:41 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:41 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "e91554ec-7cc9-4877-8772-98d3d22694a6"
+    trace_id: "trace-1762740521256-rgnm7805g"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:43 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "b4253f8f-4862-4c61-879e-1d593a975e9a"
+    trace_id: "trace-1762740523331-09vvkbp8y"
+[02:08:43 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:43 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:43 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:43 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:43 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "b4253f8f-4862-4c61-879e-1d593a975e9a"
+    trace_id: "trace-1762740523331-09vvkbp8y"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:45 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "2ae6d36e-d35b-4138-a37f-18eba8a89728"
+    trace_id: "trace-1762740525395-yseov5kp6"
+[02:08:45 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:45 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:45 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:45 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:45 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "2ae6d36e-d35b-4138-a37f-18eba8a89728"
+    trace_id: "trace-1762740525395-yseov5kp6"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 11
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:47 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "3b786742-6122-40bb-839c-afe96a8c6823"
+    trace_id: "trace-1762740527462-y32usipwv"
+[02:08:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:47 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "3b786742-6122-40bb-839c-afe96a8c6823"
+    trace_id: "trace-1762740527462-y32usipwv"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:49 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "13713f71-194b-485a-94e9-12acb1292f4f"
+    trace_id: "trace-1762740529533-cdyslceb2"
+[02:08:49 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:49 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:49 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:49 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:49 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "13713f71-194b-485a-94e9-12acb1292f4f"
+    trace_id: "trace-1762740529533-cdyslceb2"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:51 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "be257bae-3ad8-4334-b1e4-ade6061ee8fc"
+    trace_id: "trace-1762740531600-nkq63iiti"
+[02:08:51 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:51 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:51 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:51 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:51 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "be257bae-3ad8-4334-b1e4-ade6061ee8fc"
+    trace_id: "trace-1762740531600-nkq63iiti"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 6
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:53 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "37bc6193-2dce-49e2-b4ee-95367af228ab"
+    trace_id: "trace-1762740533665-2qaaz6sub"
+[02:08:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:53 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "37bc6193-2dce-49e2-b4ee-95367af228ab"
+    trace_id: "trace-1762740533665-2qaaz6sub"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:55 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "4c340a90-2aa0-4f0f-bc4a-10d56ce9e01f"
+    trace_id: "trace-1762740535735-c5limakkc"
+[02:08:55 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:55 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:55 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:55 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:55 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "4c340a90-2aa0-4f0f-bc4a-10d56ce9e01f"
+    trace_id: "trace-1762740535735-c5limakkc"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:57 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "f07cb91b-e6d2-4a5c-8582-516864c6810d"
+    trace_id: "trace-1762740537804-xc78u1om8"
+[02:08:57 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:57 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:57 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:57 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:57 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "f07cb91b-e6d2-4a5c-8582-516864c6810d"
+    trace_id: "trace-1762740537804-xc78u1om8"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:08:59 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "9a7a2e84-9922-4b3d-9203-5f46b7e032b0"
+    trace_id: "trace-1762740539862-esoa1jweu"
+[02:08:59 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:59 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:59 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:59 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:08:59 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "9a7a2e84-9922-4b3d-9203-5f46b7e032b0"
+    trace_id: "trace-1762740539862-esoa1jweu"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:01 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "15e3bf72-75e4-4faa-aa97-d5a9e9772a48"
+    trace_id: "trace-1762740541920-fv8owgq2j"
+[02:09:01 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:01 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:01 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:01 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:01 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "15e3bf72-75e4-4faa-aa97-d5a9e9772a48"
+    trace_id: "trace-1762740541920-fv8owgq2j"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 11
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:03 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "35b63ec4-2b4a-489c-bb6d-81db59b7fe4a"
+    trace_id: "trace-1762740543985-j6fd9v82w"
+[02:09:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:03 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "35b63ec4-2b4a-489c-bb6d-81db59b7fe4a"
+    trace_id: "trace-1762740543985-j6fd9v82w"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 5
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:06 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "012335ba-88f3-4f13-bfc6-9db17779d0ef"
+    trace_id: "trace-1762740546063-08gfg638u"
+[02:09:06 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:06 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:06 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:06 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:06 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "012335ba-88f3-4f13-bfc6-9db17779d0ef"
+    trace_id: "trace-1762740546063-08gfg638u"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:08 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "dcc64a89-537a-4248-90f7-0acca3ccda6c"
+    trace_id: "trace-1762740548121-8oq28jcvc"
+[02:09:08 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:08 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:08 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:08 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:08 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "dcc64a89-537a-4248-90f7-0acca3ccda6c"
+    trace_id: "trace-1762740548121-8oq28jcvc"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 4
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:10 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "8249ee16-fe63-4769-92aa-c7684708b141"
+    trace_id: "trace-1762740550187-f1202qysn"
+[02:09:10 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:10 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:10 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:10 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:10 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "8249ee16-fe63-4769-92aa-c7684708b141"
+    trace_id: "trace-1762740550187-f1202qysn"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:12 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "3b398e6f-1888-4546-8e06-f51293aaba09"
+    trace_id: "trace-1762740552244-vmoi5rl5y"
+[02:09:12 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:12 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:12 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:12 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:12 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "3b398e6f-1888-4546-8e06-f51293aaba09"
+    trace_id: "trace-1762740552244-vmoi5rl5y"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:14 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "a3e5eec1-c3e4-4012-9fe8-6a825a6bddc4"
+    trace_id: "trace-1762740554313-74zj5s052"
+[02:09:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:14 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:14 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "a3e5eec1-c3e4-4012-9fe8-6a825a6bddc4"
+    trace_id: "trace-1762740554313-74zj5s052"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 6
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:16 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "4d505d79-894b-49ad-a21d-51cea9323458"
+    trace_id: "trace-1762740556365-oy28nlnfv"
+[02:09:16 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:16 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:16 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:16 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:16 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "4d505d79-894b-49ad-a21d-51cea9323458"
+    trace_id: "trace-1762740556365-oy28nlnfv"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:18 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "12ec9be5-6544-401d-8703-5d819a6ab51b"
+    trace_id: "trace-1762740558417-8igsye75y"
+[02:09:18 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:18 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:18 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:18 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:18 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "12ec9be5-6544-401d-8703-5d819a6ab51b"
+    trace_id: "trace-1762740558417-8igsye75y"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 5
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:20 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "9f614fe1-3143-42f1-82be-fcadc3565ced"
+    trace_id: "trace-1762740560459-lgrxs3mmp"
+[02:09:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:20 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:20 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "9f614fe1-3143-42f1-82be-fcadc3565ced"
+    trace_id: "trace-1762740560459-lgrxs3mmp"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 6
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:22 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "a4fbb10f-1d1e-4c58-b3a1-43df0a39d9aa"
+    trace_id: "trace-1762740562509-9edk3p0r5"
+[02:09:22 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:22 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:22 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:22 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:22 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "a4fbb10f-1d1e-4c58-b3a1-43df0a39d9aa"
+    trace_id: "trace-1762740562509-9edk3p0r5"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:24 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "057b2b12-5df8-4088-9a36-d01c71ed84bd"
+    trace_id: "trace-1762740564573-88muyjzdv"
+[02:09:24 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:24 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:24 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:24 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:24 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "057b2b12-5df8-4088-9a36-d01c71ed84bd"
+    trace_id: "trace-1762740564573-88muyjzdv"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:26 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "e4a86297-eb67-4864-b2c2-f478c02cae99"
+    trace_id: "trace-1762740566639-ausw3y6ut"
+[02:09:26 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:26 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:26 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:26 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:26 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "e4a86297-eb67-4864-b2c2-f478c02cae99"
+    trace_id: "trace-1762740566639-ausw3y6ut"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:28 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "5994f0bd-d46d-49b9-ae27-3e925a2c4424"
+    trace_id: "trace-1762740568706-56s4bjygi"
+[02:09:28 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:28 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:28 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:28 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:28 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "5994f0bd-d46d-49b9-ae27-3e925a2c4424"
+    trace_id: "trace-1762740568706-56s4bjygi"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:30 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "8ac0e841-33c6-4dc1-ad22-f0e4cd9dd67d"
+    trace_id: "trace-1762740570775-vargh670a"
+[02:09:30 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:30 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:30 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:30 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:30 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "8ac0e841-33c6-4dc1-ad22-f0e4cd9dd67d"
+    trace_id: "trace-1762740570775-vargh670a"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 6
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:32 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "ee3afca5-caa1-408b-91e1-cee22329d0f4"
+    trace_id: "trace-1762740572840-ypjnrt7dq"
+[02:09:32 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:32 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:32 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:32 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:32 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "ee3afca5-caa1-408b-91e1-cee22329d0f4"
+    trace_id: "trace-1762740572840-ypjnrt7dq"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:34 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "194fd6dc-dde3-47f5-8fac-0b1a1a763b85"
+    trace_id: "trace-1762740574901-hqrincqwa"
+[02:09:34 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:34 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:34 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:34 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:34 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "194fd6dc-dde3-47f5-8fac-0b1a1a763b85"
+    trace_id: "trace-1762740574901-hqrincqwa"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:36 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "f46be62a-3667-4ce8-ad35-a98924335d7d"
+    trace_id: "trace-1762740576964-763vh4p6y"
+[02:09:36 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:36 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:36 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:36 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:36 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:36 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "f46be62a-3667-4ce8-ad35-a98924335d7d"
+    trace_id: "trace-1762740576964-763vh4p6y"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:39 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "62883ace-19fe-43b0-b428-1f6c3a9dc832"
+    trace_id: "trace-1762740579036-ev2eermog"
+[02:09:39 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:39 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:39 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:39 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:39 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "62883ace-19fe-43b0-b428-1f6c3a9dc832"
+    trace_id: "trace-1762740579036-ev2eermog"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 9
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:41 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "521aaa2f-8222-4bc0-8b8e-d2445ee57a9b"
+    trace_id: "trace-1762740581104-clalhnh63"
+[02:09:41 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:41 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:41 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:41 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:41 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "521aaa2f-8222-4bc0-8b8e-d2445ee57a9b"
+    trace_id: "trace-1762740581104-clalhnh63"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:43 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "d7fe95a4-865e-41f8-88a5-b624690a9ad2"
+    trace_id: "trace-1762740583161-ntcfpz34w"
+[02:09:43 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:43 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:43 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:43 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:43 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "d7fe95a4-865e-41f8-88a5-b624690a9ad2"
+    trace_id: "trace-1762740583161-ntcfpz34w"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:45 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "2858cced-ccb2-46a2-bf5e-16b2b0ee9150"
+    trace_id: "trace-1762740585213-km4m0f7uj"
+[02:09:45 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:45 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:45 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:45 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:45 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "2858cced-ccb2-46a2-bf5e-16b2b0ee9150"
+    trace_id: "trace-1762740585213-km4m0f7uj"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:47 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "4d4bf364-e6ae-45c4-be81-da0194f1d2b6"
+    trace_id: "trace-1762740587264-jqovhiicq"
+[02:09:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:47 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:47 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "4d4bf364-e6ae-45c4-be81-da0194f1d2b6"
+    trace_id: "trace-1762740587264-jqovhiicq"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:49 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "9fff799c-f393-41dc-a787-65ad08c649bf"
+    trace_id: "trace-1762740589317-zlvq6nzjg"
+[02:09:49 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:49 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:49 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:49 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:49 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "9fff799c-f393-41dc-a787-65ad08c649bf"
+    trace_id: "trace-1762740589317-zlvq6nzjg"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:51 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "6fc4decc-4f4d-44a4-83a0-090f1b1ea26e"
+    trace_id: "trace-1762740591367-gxblh1923"
+[02:09:51 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:51 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:51 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:51 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:51 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "6fc4decc-4f4d-44a4-83a0-090f1b1ea26e"
+    trace_id: "trace-1762740591367-gxblh1923"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:53 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "2424c129-2743-4773-8e50-ad0eabb29fdb"
+    trace_id: "trace-1762740593416-bascbzg8x"
+[02:09:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:53 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:53 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "2424c129-2743-4773-8e50-ad0eabb29fdb"
+    trace_id: "trace-1762740593416-bascbzg8x"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:55 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "296ee46a-a63d-4382-9f89-ed2a19230409"
+    trace_id: "trace-1762740595468-w7s535wef"
+[02:09:55 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:55 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:55 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:55 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:55 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "296ee46a-a63d-4382-9f89-ed2a19230409"
+    trace_id: "trace-1762740595468-w7s535wef"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:57 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "4a9f6aa2-37a3-45e9-a73d-45a54a4b8db4"
+    trace_id: "trace-1762740597516-chygav26q"
+[02:09:57 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:57 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:57 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:57 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:57 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "4a9f6aa2-37a3-45e9-a73d-45a54a4b8db4"
+    trace_id: "trace-1762740597516-chygav26q"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 6
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:09:59 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "eddfc825-b431-4691-866b-382c849c0bbd"
+    trace_id: "trace-1762740599564-3gg7ky59a"
+[02:09:59 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:59 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:59 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:59 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:09:59 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "eddfc825-b431-4691-866b-382c849c0bbd"
+    trace_id: "trace-1762740599564-3gg7ky59a"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:10:01 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "f9d350b4-da6e-4c56-b1c3-af4abccf22c0"
+    trace_id: "trace-1762740601613-hsv9koaqk"
+[02:10:01 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:01 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:01 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:01 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:01 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "f9d350b4-da6e-4c56-b1c3-af4abccf22c0"
+    trace_id: "trace-1762740601613-hsv9koaqk"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 6
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:10:03 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "ff2db120-6275-4025-a4ed-82eb13c6a2d6"
+    trace_id: "trace-1762740603662-8xg6vhsqe"
+[02:10:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:03 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:03 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "ff2db120-6275-4025-a4ed-82eb13c6a2d6"
+    trace_id: "trace-1762740603662-8xg6vhsqe"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:10:05 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "42ece1b9-064b-414a-9a57-e5fe1335fb69"
+    trace_id: "trace-1762740605714-o8z700sp6"
+[02:10:05 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:05 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:05 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:05 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:05 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "42ece1b9-064b-414a-9a57-e5fe1335fb69"
+    trace_id: "trace-1762740605714-o8z700sp6"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 8
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:10:07 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "b31800fb-488f-4adc-a5d1-a437ec879b32"
+    trace_id: "trace-1762740607764-pv2f46b5e"
+[02:10:07 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:07 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:07 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:07 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:07 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "b31800fb-488f-4adc-a5d1-a437ec879b32"
+    trace_id: "trace-1762740607764-pv2f46b5e"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:10:09 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "a97bc623-b9b1-4636-ad7e-e129d4918edd"
+    trace_id: "trace-1762740609812-o2g6gwqet"
+[02:10:09 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:09 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:09 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:09 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:09 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:09 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "a97bc623-b9b1-4636-ad7e-e129d4918edd"
+    trace_id: "trace-1762740609812-o2g6gwqet"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 7
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:10:11 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "eb41d342-e514-4a95-b42c-a8294a779aa8"
+    trace_id: "trace-1762740611860-y4vsahbcb"
+[02:10:11 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:11 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:11 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:11 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:11 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "eb41d342-e514-4a95-b42c-a8294a779aa8"
+    trace_id: "trace-1762740611860-y4vsahbcb"
+[METRIC] http_requests_total{method="GET",path="/api/v1/workflows/:id"}: 1
+prisma:query SELECT "public"."Workflow"."id", "public"."Workflow"."type"::text, "public"."Workflow"."name", "public"."Workflow"."description", "public"."Workflow"."requirements", "public"."Workflow"."status"::text, "public"."Workflow"."current_stage", "public"."Workflow"."priority"::text, "public"."Workflow"."progress", "public"."Workflow"."created_at", "public"."Workflow"."updated_at", "public"."Workflow"."completed_at", "public"."Workflow"."created_by" FROM "public"."Workflow" WHERE ("public"."Workflow"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."WorkflowStage"."id", "public"."WorkflowStage"."workflow_id", "public"."WorkflowStage"."name", "public"."WorkflowStage"."status"::text, "public"."WorkflowStage"."started_at", "public"."WorkflowStage"."completed_at", "public"."WorkflowStage"."agent_id", "public"."WorkflowStage"."retry_count" FROM "public"."WorkflowStage" WHERE "public"."WorkflowStage"."workflow_id" IN ($1) ORDER BY "public"."WorkflowStage"."name" ASC OFFSET $2
+prisma:query SELECT "public"."WorkflowEvent"."id", "public"."WorkflowEvent"."workflow_id", "public"."WorkflowEvent"."event_type", "public"."WorkflowEvent"."payload", "public"."WorkflowEvent"."timestamp", "public"."WorkflowEvent"."trace_id" FROM "public"."WorkflowEvent" WHERE "public"."WorkflowEvent"."workflow_id" IN ($1) ORDER BY "public"."WorkflowEvent"."timestamp" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."AgentTask"."id", "public"."AgentTask"."task_id", "public"."AgentTask"."workflow_id", "public"."AgentTask"."agent_type"::text, "public"."AgentTask"."status"::text, "public"."AgentTask"."priority"::text, "public"."AgentTask"."payload", "public"."AgentTask"."result", "public"."AgentTask"."assigned_at", "public"."AgentTask"."started_at", "public"."AgentTask"."completed_at", "public"."AgentTask"."retry_count", "public"."AgentTask"."max_retries", "public"."AgentTask"."timeout_ms" FROM "public"."AgentTask" WHERE "public"."AgentTask"."workflow_id" IN ($1) ORDER BY "public"."AgentTask"."assigned_at" DESC LIMIT $2 OFFSET $3
+[METRIC] http_request_duration_ms{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 6
+[METRIC] http_responses_total{method="GET",path="/api/v1/workflows/:id",status_code="200"}: 1
+[METRIC] http_response_size_bytes{method="GET",path="/api/v1/workflows/:id"}: 209
+[02:10:13 UTC] [32mINFO[39m (orchestrator): [36mIncoming request[39m
+    request_id: "f604064d-3938-4ad4-88e3-5eaeebbfd05b"
+    trace_id: "trace-1762740613907-70qqk3nf5"
+[02:10:13 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:13 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:13 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:13 UTC] [34mDEBUG[39m (orchestrator): [36mDatabase query[39m
+[02:10:13 UTC] [32mINFO[39m (orchestrator): [36mRequest completed[39m
+    request_id: "f604064d-3938-4ad4-88e3-5eaeebbfd05b"
+    trace_id: "trace-1762740613907-70qqk3nf5"

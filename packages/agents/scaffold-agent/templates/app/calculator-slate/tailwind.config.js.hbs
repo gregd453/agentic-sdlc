@@ -1,0 +1,45 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Accent Colors
+        accent: '#38bdf8',           // Sky blue
+        accentHover: '#0ea5e9',      // Sky 500
+        accentActive: '#0284c7',     // Sky 600
+
+        // Background Colors
+        bgBase: '#0f172a',           // Slate 900
+        bgElevated: '#1e293b',       // Slate 800
+        bgSubtle: '#334155',         // Slate 700
+
+        // Text Colors
+        textPrimary: '#f1f5f9',      // Slate 100
+        textSecondary: '#cbd5e1',    // Slate 300
+        textMuted: '#94a3b8',        // Slate 400
+
+        // Border Colors
+        border: '#334155',           // Slate 700
+        borderSubtle: '#1e293b',     // Slate 800
+        borderFocus: '#38bdf8',      // Sky 400
+
+        // Semantic Colors
+        success: '#10b981',          // Emerald 500
+        warning: '#f59e0b',          // Amber 500
+        error: '#ef4444',            // Red 500
+      },
+      spacing: {
+        xs: '0.25rem',
+        sm: '0.5rem',
+        md: '1rem',
+        lg: '1.5rem',
+        xl: '2rem',
+      },
+    },
+  },
+  plugins: [],
+}

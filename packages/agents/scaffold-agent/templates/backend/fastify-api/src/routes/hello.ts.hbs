@@ -1,0 +1,226 @@
+import type { FastifyPluginAsync } from 'fastify';
+import { z } from 'zod';
+import { successEnvelope, errorEnvelope } from '../types/envelope.js';
+import { helloService } from '../services/hello.service.js';
+import {
+  CreateHelloSchema,
+  UpdateHelloSchema,
+  QueryHelloSchema,
+} from '../schemas/hello.schema.js';
+
+/**
+ * Hello routes demonstrating Zyp platform patterns:
+ * - Zod validation at all boundaries
+ * - Envelope pattern for responses
+ * - Prisma ORM (no raw SQL)
+ * - Trust x-user-id header
+ */
+export const helloRoutes: FastifyPluginAsync = async (fastify) => {
+  // GET /hello - Get hello message and count
+  fastify.get('/hello', async (request) => {
+    const requestId = request.id;
+    const userId = request.headers['x-user-id'] as string | undefined;
+
+    try {
+      // Get or create hello message
+      const result = await helloService.getOrCreateHello(userId);
+
+      return successEnvelope(result, requestId);
+    } catch (error) {
+      fastify.log.error(error, 'Failed to get hello message');
+      return errorEnvelope(
+        'INTERNAL_ERROR',
+        'Failed to get hello message',
+        error instanceof Error ? error.message : undefined,
+        requestId
+      );
+    }
+  });
+
+  // GET /hello/messages - List all hello messages
+  fastify.get('/hello/messages', async (request, reply) => {
+    const requestId = request.id;
+
+    try {
+      // Validate query parameters
+      const query = QueryHelloSchema.parse(request.query);
+
+      const messages = await helloService.listMessages(query);
+
+      return successEnvelope(messages, requestId);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        reply.code(400);
+        return errorEnvelope(
+          'VALIDATION_ERROR',
+          'Invalid query parameters',
+          error.errors,
+          requestId
+        );
+      }
+
+      fastify.log.error(error, 'Failed to list messages');
+      reply.code(500);
+      return errorEnvelope(
+        'INTERNAL_ERROR',
+        'Failed to list messages',
+        error instanceof Error ? error.message : undefined,
+        requestId
+      );
+    }
+  });
+
+  // POST /hello - Create a new hello message
+  fastify.post('/hello', async (request, reply) => {
+    const requestId = request.id;
+    const userId = request.headers['x-user-id'] as string | undefined;
+
+    try {
+      // Validate request body
+      const data = CreateHelloSchema.parse(request.body);
+
+      const message = await helloService.createMessage({
+        ...data,
+        userId,
+      });
+
+      reply.code(201);
+      return successEnvelope(message, requestId);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        reply.code(400);
+        return errorEnvelope(
+          'VALIDATION_ERROR',
+          'Invalid request body',
+          error.errors,
+          requestId
+        );
+      }
+
+      fastify.log.error(error, 'Failed to create message');
+      reply.code(500);
+      return errorEnvelope(
+        'INTERNAL_ERROR',
+        'Failed to create message',
+        error instanceof Error ? error.message : undefined,
+        requestId
+      );
+    }
+  });
+
+  // PUT /hello/:id - Update a hello message
+  fastify.put('/hello/:id', async (request, reply) => {
+    const requestId = request.id;
+    const userId = request.headers['x-user-id'] as string | undefined;
+    const { id } = request.params as { id: string };
+
+    try {
+      // Validate request body
+      const data = UpdateHelloSchema.parse(request.body);
+
+      const message = await helloService.updateMessage(id, data, userId);
+
+      if (!message) {
+        reply.code(404);
+        return errorEnvelope(
+          'NOT_FOUND',
+          'Message not found',
+          undefined,
+          requestId
+        );
+      }
+
+      return successEnvelope(message, requestId);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        reply.code(400);
+        return errorEnvelope(
+          'VALIDATION_ERROR',
+          'Invalid request body',
+          error.errors,
+          requestId
+        );
+      }
+
+      fastify.log.error(error, 'Failed to update message');
+      reply.code(500);
+      return errorEnvelope(
+        'INTERNAL_ERROR',
+        'Failed to update message',
+        error instanceof Error ? error.message : undefined,
+        requestId
+      );
+    }
+  });
+
+  // DELETE /hello/:id - Delete a hello message
+  fastify.delete('/hello/:id', async (request, reply) => {
+    const requestId = request.id;
+    const userId = request.headers['x-user-id'] as string | undefined;
+    const { id } = request.params as { id: string };
+
+    try {
+      const deleted = await helloService.deleteMessage(id, userId);
+
+      if (!deleted) {
+        reply.code(404);
+        return errorEnvelope(
+          'NOT_FOUND',
+          'Message not found or unauthorized',
+          undefined,
+          requestId
+        );
+      }
+
+      reply.code(204);
+      return;
+    } catch (error) {
+      fastify.log.error(error, 'Failed to delete message');
+      reply.code(500);
+      return errorEnvelope(
+        'INTERNAL_ERROR',
+        'Failed to delete message',
+        error instanceof Error ? error.message : undefined,
+        requestId
+      );
+    }
+  });
+
+  // POST /hello/session - Create session payload (for Shell-BFF to sign)
+  // This demonstrates the auth pattern: NO JWT signing in app
+  fastify.post('/hello/session', async (request, reply) => {
+    const requestId = request.id;
+    const userId = request.headers['x-user-id'] as string | undefined;
+
+    if (!userId) {
+      reply.code(401);
+      return errorEnvelope(
+        'UNAUTHORIZED',
+        'Missing x-user-id header',
+        undefined,
+        requestId
+      );
+    }
+
+    try {
+      const sessionPayload = await helloService.createSessionPayload(userId);
+
+      return successEnvelope(
+        {
+          sessionPayload,
+          message: 'Return this payload to Shell-BFF for JWT signing',
+        },
+        requestId
+      );
+    } catch (error) {
+      fastify.log.error(error, 'Failed to create session payload');
+      reply.code(500);
+      return errorEnvelope(
+        'INTERNAL_ERROR',
+        'Failed to create session payload',
+        error instanceof Error ? error.message : undefined,
+        requestId
+      );
+    }
+  });
+};

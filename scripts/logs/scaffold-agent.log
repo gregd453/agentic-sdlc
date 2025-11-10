@@ -1,0 +1,45 @@
+
+> @agentic-sdlc/scaffold-agent@0.1.0 start
+> tsx src/run-agent.ts
+
+🚀 Starting Scaffold Agent...
+✅ Scaffold Agent running and listening for tasks
+📡 Connected to Redis: redis://localhost:6380
+🔑 Using Anthropic API key: sk-ant-api03-I1KAZdZ...
+
+Agent is ready to receive tasks on channel: agent:scaffold:tasks
+Press Ctrl+C to stop
+
+[2025-11-10 02:08:06] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mScaffold agent schemas registered[39m
+[2025-11-10 02:08:06] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mInitializing agent[39m
+[2025-11-10 02:08:06] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mSubscribed to task channel[39m
+[2025-11-10 02:08:06] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mRegistered with orchestrator[39m
+[2025-11-10 02:08:06] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mAgent initialized successfully[39m
+❌ CLAUDE API ERROR: Claude API error: 401 {"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"},"request_id":"req_011CUyPmjWp2hsiiTiYpFGdE"}
+Full error object: {
+  "code": "ANTHROPIC_API_ERROR",
+  "name": "AgentError"
+}
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mTask received[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mExecuting scaffold task[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mAnalyzing requirements[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mCalling Claude API to analyze requirements[39m
+[2025-11-10 02:08:14] [31mERROR[39m (scaffold-d0cab3b3/38272): [36mFailed to analyze requirements with Claude API[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mGenerating project structure[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mCreating files[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mCreating project files[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [33mWARN[39m (scaffold-d0cab3b3/38272): [36mUsing absolute path[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mFiles created successfully[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mScaffold task completed successfully[39m
+[2025-11-10 02:08:14] [32mINFO[39m (scaffold-d0cab3b3/38272): [36mResult reported[39m

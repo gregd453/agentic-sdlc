@@ -1,0 +1,7 @@
+{
+  "type": "app",
+  "name": "Hello World React SPA",
+  "description": "Simple React single-page application with Hello World component",
+  "priority": "medium",
+  "requirements": "Create a React app with:\n- Single Hello World component\n- Displays 'Hello, World!' message\n- Uses Vite for bundling\n- Includes basic styling\n- Has npm scripts for dev and build"
+}

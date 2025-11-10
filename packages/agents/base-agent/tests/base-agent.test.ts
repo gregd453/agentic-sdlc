@@ -1,18 +1,28 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { BaseAgent } from '../src/base-agent';
-import { TaskAssignment, TaskResult } from '../src/types';
-import RedisMock from 'ioredis-mock';
-import Anthropic from '@anthropic-ai/sdk';
 
-// Mock Redis with ioredis-mock
-vi.mock('ioredis', () => {
+// Mock modules BEFORE imports
+vi.mock('ioredis', async () => {
+  const RedisMock = (await import('ioredis-mock')).default;
   return {
     default: RedisMock
   };
 });
 
-// Mock Anthropic
 vi.mock('@anthropic-ai/sdk');
+
+// Mock shared-utils to avoid circular dependency
+vi.mock('@agentic-sdlc/shared-utils', () => ({
+  retry: async <T>(fn: () => Promise<T>) => fn(),
+  RetryPresets: {
+    standard: { maxAttempts: 3, delayMs: 1000 }
+  },
+  CircuitBreaker: vi.fn()
+}));
+
+// Now import after mocks are set up
+import { BaseAgent } from '../src/base-agent';
+import { TaskAssignment, TaskResult } from '../src/types';
+import Anthropic from '@anthropic-ai/sdk';
 
 // Create a concrete implementation for testing
 class TestAgent extends BaseAgent {

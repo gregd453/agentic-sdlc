@@ -1,0 +1,42 @@
+import type { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify';
+
+/**
+ * Request logging middleware
+ * Adds structured logging for all requests
+ */
+export function requestLogger(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  done: HookHandlerDoneFunction
+) {
+  const userId = request.headers['x-user-id'] as string | undefined;
+
+  // Add user context to logger
+  request.log = request.log.child({
+    userId,
+    requestId: request.id,
+    method: request.method,
+    url: request.url,
+    ip: request.ip,
+    userAgent: request.headers['user-agent'],
+  });
+
+  // Log request
+  request.log.info('Request received');
+
+  // Add response time logging
+  const startTime = Date.now();
+
+  reply.addHook('onSend', (req, rep, payload, done) => {
+    const responseTime = Date.now() - startTime;
+
+    req.log.info({
+      statusCode: rep.statusCode,
+      responseTime,
+    }, 'Request completed');
+
+    done();
+  });
+
+  done();
+}

@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: {{name}}_postgres
+    environment:
+      POSTGRES_USER: {{name}}_user
+      POSTGRES_PASSWORD: {{name}}_password
+      POSTGRES_DB: {{name}}_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - {{name}}_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{name}}_user -d {{name}}_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  {{name}}_postgres_data:
+    name: {{name}}_postgres_data

@@ -1,0 +1,87 @@
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
+import { PrismaClient } from '@prisma/client';
+import { helloRoutes } from './routes/hello.js';
+import { healthRoutes } from './routes/health.js';
+import { errorHandler } from './middleware/error-handler.js';
+import { requestLogger } from './middleware/request-logger.js';
+import type { FastifyInstance } from 'fastify';
+
+// Initialize Prisma client
+export const prisma = new PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+});
+
+async function buildServer(): Promise<FastifyInstance> {
+  const fastify = Fastify({
+    logger: {
+      level: process.env.LOG_LEVEL || 'info',
+      transport: process.env.NODE_ENV === 'development'
+        ? { target: 'pino-pretty', options: { colorize: true } }
+        : undefined,
+    },
+    requestIdHeader: 'x-request-id',
+    requestIdLogLabel: 'requestId',
+    genReqId: (req) => req.headers['x-request-id'] as string || crypto.randomUUID(),
+  });
+
+  // Register middleware
+  await fastify.register(helmet, {
+    contentSecurityPolicy: process.env.NODE_ENV === 'production',
+  });
+
+  await fastify.register(cors, {
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+  });
+
+  // Custom middleware
+  fastify.addHook('onRequest', requestLogger);
+  fastify.setErrorHandler(errorHandler);
+
+  // Register routes
+  await fastify.register(healthRoutes, { prefix: '/api' });
+  await fastify.register(helloRoutes, { prefix: '/api' });
+
+  // Graceful shutdown
+  const closeHandlers = async () => {
+    fastify.log.info('Starting graceful shutdown...');
+
+    // Close database connection
+    await prisma.$disconnect();
+
+    // Close server
+    await fastify.close();
+
+    fastify.log.info('Graceful shutdown complete');
+    process.exit(0);
+  };
+
+  process.on('SIGINT', closeHandlers);
+  process.on('SIGTERM', closeHandlers);
+
+  return fastify;
+}
+
+async function start() {
+  const server = await buildServer();
+  const port = parseInt(process.env.PORT || '3000', 10);
+  const host = process.env.HOST || '0.0.0.0';
+
+  try {
+    // Test database connection
+    await prisma.$connect();
+    server.log.info('Database connected successfully');
+
+    // Start server
+    await server.listen({ port, host });
+    server.log.info(`Server listening on http://${host}:${port}`);
+  } catch (err) {
+    server.log.error(err);
+    process.exit(1);
+  }
+}
+
+// Start the server
+start();

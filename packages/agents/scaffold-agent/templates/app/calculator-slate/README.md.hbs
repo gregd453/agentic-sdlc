@@ -1,0 +1,113 @@
+# {{projectName}}
+
+A modern calculator application built with React, TypeScript, and Tailwind CSS using the **Slate Nightfall** design system.
+
+## Features
+
+- **Full Calculator Functionality**
+  - Basic arithmetic operations (+, −, ×, ÷)
+  - Decimal point support
+  - Clear and backspace controls
+  - Calculation history (last 5)
+
+- **Keyboard Support**
+  - Number keys (0-9)
+  - Operations: +, −, *, /
+  - Enter for equals (=)
+  - Escape for clear
+  - Backspace for delete
+
+- **Beautiful Dark Theme**
+  - Slate Nightfall design system
+  - Sky blue accent colors
+  - Responsive layout
+  - Smooth animations
+
+- **User Experience**
+  - Real-time display of expressions
+  - Visual feedback on operations
+  - Calculation history panel
+  - Focus-friendly keyboard navigation
+
+## Design System
+
+This calculator uses the **Slate Nightfall** theme:
+- **Base Color**: Deep slate (#0f172a)
+- **Elevated Surfaces**: Slate 800 (#1e293b)
+- **Accent Color**: Sky blue (#38bdf8)
+- **Text**: Light slate (#f1f5f9)
+- **Borders**: Slate 700 (#334155)
+
+## Technology Stack
+
+- **React** 19.2.0
+- **TypeScript** 5.4.5
+- **Vite** 6.0.11
+- **Tailwind CSS** 3.4.1
+
+## Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Project Structure
+
+```
+{{projectName}}/
+├── src/
+│   ├── App.tsx          # Main calculator component
+│   ├── App.css          # Tailwind styles and animations
+│   └── main.tsx         # React entry point
+├── index.html           # HTML template
+├── vite.config.ts       # Vite configuration
+├── tailwind.config.js   # Tailwind theme configuration
+├── tsconfig.json        # TypeScript configuration
+└── package.json         # Dependencies and scripts
+```
+
+## Calculation Examples
+
+```
+5 + 3 = 8
+100 - 25 = 75
+12 × 6 = 72
+80 ÷ 4 = 20
+7.5 + 2.5 = 10
+```
+
+## Browser Support
+
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+- Mobile browsers
+
+## Development
+
+The calculator uses React hooks for state management:
+- `useState` for display, operations, and history
+- `useCallback` for memoized event handlers
+- `useEffect` for keyboard event listening
+
+### Key Functions
+
+- **handleNumberClick**: Process number and decimal inputs
+- **handleOperation**: Execute calculations and store history
+- **handleClear**: Reset calculator state
+- **handleBackspace**: Delete last character
+- **handleKeyDown**: Keyboard event handling
+
+## License
+
+MIT

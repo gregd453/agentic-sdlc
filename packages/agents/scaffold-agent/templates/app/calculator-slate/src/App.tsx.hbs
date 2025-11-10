@@ -1,0 +1,222 @@
+import React, { useState, useCallback } from 'react'
+import './App.css'
+
+type Operation = '+' | '-' | '*' | '/' | '='
+
+interface HistoryItem {
+  expression: string
+  result: number
+}
+
+export function App() {
+  const [display, setDisplay] = useState('0')
+  const [previousValue, setPreviousValue] = useState<number | null>(null)
+  const [operation, setOperation] = useState<Operation | null>(null)
+  const [shouldResetDisplay, setShouldResetDisplay] = useState(false)
+  const [history, setHistory] = useState<HistoryItem[]>([])
+
+  const handleNumberClick = useCallback((num: string) => {
+    setDisplay((prev) => {
+      if (shouldResetDisplay) {
+        setShouldResetDisplay(false)
+        return num === '.' ? '0.' : num
+      }
+      if (num === '.') {
+        return prev.includes('.') ? prev : prev + num
+      }
+      return prev === '0' ? num : prev + num
+    })
+  }, [shouldResetDisplay])
+
+  const handleOperation = useCallback((op: Operation) => {
+    const currentValue = parseFloat(display)
+
+    if (previousValue !== null && operation && !shouldResetDisplay) {
+      const result = calculate(previousValue, currentValue, operation)
+      setDisplay(String(result))
+      setPreviousValue(result)
+    } else {
+      setPreviousValue(currentValue)
+    }
+
+    setOperation(op === '=' ? null : op)
+    setShouldResetDisplay(true)
+
+    if (op === '=' && previousValue !== null && operation) {
+      const result = calculate(previousValue, currentValue, operation)
+      addHistory(`${previousValue} ${operation} ${currentValue}`, result)
+    }
+  }, [display, previousValue, operation, shouldResetDisplay])
+
+  const calculate = (prev: number, current: number, op: Operation): number => {
+    switch (op) {
+      case '+':
+        return prev + current
+      case '-':
+        return prev - current
+      case '*':
+        return prev * current
+      case '/':
+        return current !== 0 ? prev / current : 0
+      default:
+        return current
+    }
+  }
+
+  const addHistory = (expression: string, result: number) => {
+    setHistory((prev) => [{ expression, result }, ...prev].slice(0, 5))
+  }
+
+  const handleClear = useCallback(() => {
+    setDisplay('0')
+    setPreviousValue(null)
+    setOperation(null)
+    setShouldResetDisplay(false)
+  }, [])
+
+  const handleBackspace = useCallback(() => {
+    setDisplay((prev) => (prev.length === 1 ? '0' : prev.slice(0, -1)))
+  }, [])
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key >= '0' && e.key <= '9') handleNumberClick(e.key)
+      else if (e.key === '.') handleNumberClick('.')
+      else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+        e.preventDefault()
+        handleOperation(e.key as Operation)
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        handleOperation('=')
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        handleClear()
+      } else if (e.key === 'Backspace') {
+        e.preventDefault()
+        handleBackspace()
+      }
+    },
+    [handleNumberClick, handleOperation, handleClear, handleBackspace]
+  )
+
+  React.useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
+  return (
+    <div className="min-h-screen bg-bgBase flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Calculator */}
+          <div className="bg-bgElevated rounded-2xl shadow-2xl p-6 border border-border">
+            <h1 className="text-2xl font-bold text-textPrimary mb-6 text-center">
+              Calculator
+            </h1>
+
+            {/* Display */}
+            <div className="bg-bgBase rounded-lg p-6 mb-6 border border-borderSubtle">
+              <div className="text-right">
+                <div className="text-textMuted text-sm h-5">
+                  {previousValue !== null && operation ? `${previousValue} ${operation}` : ''}
+                </div>
+                <div className="text-4xl font-bold text-accent break-words">
+                  {display}
+                </div>
+              </div>
+            </div>
+
+            {/* Buttons Grid */}
+            <div className="grid grid-cols-4 gap-3">
+              {/* Row 1: Controls */}
+              <button
+                onClick={handleClear}
+                className="col-span-2 bg-error hover:bg-red-600 active:bg-red-700 text-white rounded-lg py-3 font-semibold transition-colors"
+              >
+                Clear
+              </button>
+              <button
+                onClick={handleBackspace}
+                className="col-span-1 bg-bgSubtle hover:bg-border text-textPrimary rounded-lg py-3 font-semibold transition-colors"
+              >
+                ←
+              </button>
+              <button
+                onClick={() => handleOperation('/')}
+                className="col-span-1 bg-accent hover:bg-accentHover active:bg-accentActive text-white rounded-lg py-3 font-semibold transition-colors"
+              >
+                ÷
+              </button>
+
+              {/* Rows 2-4: Numbers */}
+              {['7', '8', '9', '*', '4', '5', '6', '-', '1', '2', '3', '+'].map((btn) => (
+                <button
+                  key={btn}
+                  onClick={() => {
+                    if (['+', '-', '*'].includes(btn)) {
+                      handleOperation(btn as Operation)
+                    } else {
+                      handleNumberClick(btn)
+                    }
+                  }}
+                  className={`rounded-lg py-3 font-semibold transition-colors ${
+                    ['+', '-', '*'].includes(btn)
+                      ? 'bg-accent hover:bg-accentHover active:bg-accentActive text-white'
+                      : 'bg-bgSubtle hover:bg-border active:bg-bgBase text-textPrimary'
+                  }`}
+                >
+                  {btn}
+                </button>
+              ))}
+
+              {/* Row 5: 0, . and = */}
+              <button
+                onClick={() => handleNumberClick('0')}
+                className="col-span-2 bg-bgSubtle hover:bg-border active:bg-bgBase text-textPrimary rounded-lg py-3 font-semibold transition-colors"
+              >
+                0
+              </button>
+              <button
+                onClick={() => handleNumberClick('.')}
+                className="bg-bgSubtle hover:bg-border active:bg-bgBase text-textPrimary rounded-lg py-3 font-semibold transition-colors"
+              >
+                .
+              </button>
+              <button
+                onClick={() => handleOperation('=')}
+                className="bg-success hover:bg-emerald-600 active:bg-emerald-700 text-white rounded-lg py-3 font-semibold transition-colors"
+              >
+                =
+              </button>
+            </div>
+
+            {/* Keyboard Hints */}
+            <div className="mt-6 text-center text-textMuted text-xs space-y-1">
+              <p>Keyboard: Numbers 0-9 • Operations +−×÷</p>
+              <p>Enter = Equals • Esc = Clear • Backspace = Delete</p>
+            </div>
+          </div>
+
+          {/* History */}
+          <div className="bg-bgElevated rounded-2xl shadow-2xl p-6 border border-border flex flex-col">
+            <h2 className="text-xl font-bold text-textPrimary mb-4">History</h2>
+            <div className="flex-1 overflow-y-auto space-y-2">
+              {history.length === 0 ? (
+                <div className="text-textMuted text-center py-8">
+                  No calculations yet
+                </div>
+              ) : (
+                history.map((item, idx) => (
+                  <div key={idx} className="bg-bgBase rounded-lg p-3 border border-borderSubtle">
+                    <div className="text-textSecondary text-sm">{item.expression}</div>
+                    <div className="text-accent font-semibold text-lg">= {item.result}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

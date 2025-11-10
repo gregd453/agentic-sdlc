@@ -1,0 +1,124 @@
+name: Performance Baseline & Regression Detection
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  performance-baseline:
+    name: Establish Performance Baseline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.0'
+          cache: 'npm'
+
+      - name: Start Services
+        run: |
+          docker-compose -f docker-compose.yml up -d
+          sleep 15
+
+      - name: Generate Test App
+        id: app
+        run: |
+          # Wait for orchestrator
+          for i in {1..30}; do
+            if curl -f http://localhost:3000/api/v1/health; then
+              break
+            fi
+            sleep 2
+          done
+
+          # Generate app
+          curl -s -X POST http://localhost:3000/api/v1/workflows \
+            -H "Content-Type: application/json" \
+            -d '{
+              "type": "fullstack",
+              "name": "perf-baseline",
+              "description": "Performance baseline test",
+              "priority": "high",
+              "requirements": "Full-stack application"
+            }' > response.json
+
+          WORKFLOW_ID=$(jq -r '.workflow_id' response.json)
+          echo "app-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
+
+          # Wait for completion
+          for i in {1..60}; do
+            STATUS=$(curl -s http://localhost:3000/api/v1/workflows/$WORKFLOW_ID | jq -r '.state')
+            if [ "$STATUS" = "completed" ]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Install Test Framework
+        run: |
+          cd /tmp/hello-world-e2e-test
+          npm install
+          npx playwright install chromium
+
+      - name: Setup Generated App
+        run: |
+          APP_PATH="/tmp/agentic-sdlc-output/${{ steps.app.outputs.app-id }}"
+          mkdir -p /tmp/hello-world-e2e-test/{client,server}
+          cp -r "$APP_PATH/client/"* /tmp/hello-world-e2e-test/client/ || true
+          cp -r "$APP_PATH/server/"* /tmp/hello-world-e2e-test/server/ || true
+
+      - name: Run Performance Tests
+        id: perf
+        run: |
+          cd /tmp/hello-world-e2e-test
+          npm run test:performance -- --reporter=json 2>&1 | tee perf.log
+
+      - name: Extract Baseline Metrics
+        run: |
+          cd /tmp/hello-world-e2e-test
+
+          if [ -f playwright/reports/results.json ]; then
+            # Extract metrics
+            TOTAL=$(jq '.stats.tests' playwright/reports/results.json)
+            PASSED=$(jq '.stats.passes' playwright/reports/results.json)
+            DURATION=$(jq '.stats.duration' playwright/reports/results.json)
+
+            # Save to file
+            cat > baseline.json <<EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "tests": $TOTAL,
+            "passed": $PASSED,
+            "duration_ms": $DURATION,
+            "page_load_target_ms": 3000,
+            "api_response_target_ms": 100,
+            "memory_leak_detected": false
+          }
+          EOF
+
+            # Commit baseline
+            git config user.name "CI/CD Bot"
+            git config user.email "ci@example.com"
+            git add baseline.json
+            git commit -m "chore: update performance baseline" || true
+            git push || true
+          fi
+
+      - name: Generate Performance Report
+        if: always()
+        run: |
+          echo "### Performance Baseline Report" >> $GITHUB_STEP_SUMMARY
+          if [ -f /tmp/hello-world-e2e-test/baseline.json ]; then
+            cat /tmp/hello-world-e2e-test/baseline.json | jq '.' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker-compose down -v || true

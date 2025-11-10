@@ -193,6 +193,11 @@ export async function startServer() {
 
     return server;
   } catch (error) {
+    console.error('=================== SERVER START ERROR ===================');
+    console.error('Error:', error);
+    console.error('Message:', error instanceof Error ? error.message : String(error));
+    console.error('Stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('==========================================================');
     logger.error('Failed to start server', { error });
     process.exit(1);
   }

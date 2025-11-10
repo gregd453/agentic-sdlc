@@ -7,6 +7,14 @@ vi.mock('simple-git', () => ({
   default: vi.fn()
 }));
 
+// Mock fs/promises
+vi.mock('fs/promises', () => ({
+  default: {
+    writeFile: vi.fn()
+  },
+  writeFile: vi.fn()
+}));
+
 describe('GitService', () => {
   let gitService: GitService;
   let mockGit: any;
@@ -146,11 +154,16 @@ describe('GitService', () => {
 
   describe('applyResolution', () => {
     it('should write resolved content and stage file', async () => {
-      const fs = await import('fs/promises');
-      vi.spyOn(fs, 'writeFile').mockResolvedValue(undefined);
+      const { writeFile } = await import('fs/promises');
+      vi.mocked(writeFile).mockResolvedValue(undefined);
 
       await gitService.applyResolution('src/index.ts', 'resolved code');
 
+      expect(writeFile).toHaveBeenCalledWith(
+        expect.stringContaining('src/index.ts'),
+        'resolved code',
+        'utf-8'
+      );
       expect(mockGit.add).toHaveBeenCalledWith('src/index.ts');
     });
   });
