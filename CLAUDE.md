@@ -1,20 +1,20 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 5.5 | **Last Updated:** 2025-11-10 22:00 UTC | **Status:** Session #16 Prep Complete
+**Version:** 6.0 | **Last Updated:** 2025-11-10 04:10 UTC | **Status:** Session #18 - Redis Fix Complete, Init Blocker Identified
 
 ---
 
 ## ⚡ QUICK REFERENCE (START HERE)
 
-### Current Focus: Session #17 - Execution & Implementation
+### Current Focus: Session #19 - Fix Workflow Initialization Blocker
 
 | Item | Status | Details |
 |------|--------|---------|
-| **Calculator Template** | ✅ Ready | 10 files, 71% Zyp-compliant, auto-generated |
-| **Zyp Analysis** | ✅ Complete | 44+ pages, compliance roadmap defined |
-| **ADR Framework** | ✅ Designed | adr-index.json written, NOT YET OPERATIONAL |
-| **Pipeline Testing** | ✅ Ready | 8 test cases, environment scripts working |
-| **Next Action** | ➡️ Execute | Validate calculator, implement ADR enforcement |
+| **Redis Pub/Sub** | ✅ FIXED | Promise-based subscribe API now working (commit 1277a28) |
+| **Message Delivery** | ✅ WORKING | Handlers execute, workflow state updates confirmed |
+| **Initialization Blocker** | ❌ NEW ISSUE | Workflows stuck at initialization, never dispatch tasks |
+| **Pipeline Tests** | ❌ FAILING | All timeouts at 0% progress (now at init stage vs scaffolding) |
+| **Next Action** | ➡️ DEBUG | Find what blocks workflow initialization → scaffolding transition |
 
 ### Key Documentation
 - **CALCULATOR-SLATE-INTEGRATION.md** - Template details & integration
@@ -29,6 +29,50 @@
 ./scripts/run-pipeline-test.sh "Calculator"    # Run test
 ./scripts/env/stop-dev.sh                      # Stop environment
 ```
+
+---
+
+## 🎯 SESSION #18 ACCOMPLISHMENTS & FINDINGS
+
+### ✅ Redis Pub/Sub Message Delivery - FIXED
+**Problem:** Agent results never reached orchestrator handlers, causing workflow timeouts
+**Root Cause:** IORedis v5.3.2 callback-based `subscribe()` API doesn't work correctly
+**Solution:** Switched to promise-based API in `agent-dispatcher.service.ts`
+
+**Code Changes:**
+- File: `packages/orchestrator/src/services/agent-dispatcher.service.ts`
+- Refactored `setupResultListener()` to use `.subscribe().then()`
+- Separated event listeners into `setupEventListeners()` (called once in constructor)
+- Added comprehensive error logging with error object properties
+- Added health check mechanism for silent failure detection
+
+**Verification:**
+```
+✅ REDIS SUBSCRIBER CONNECTED
+✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL
+📨 RAW MESSAGE RECEIVED FROM REDIS
+✅ HANDLER FOUND - Executing callback
+Stage completed
+Workflow updated
+```
+
+**Commit:** `1277a28` - "fix: use promise-based IORedis subscribe API to fix message delivery"
+
+### ❌ NEW ISSUE DISCOVERED: Initialization Stage Blocker
+**Symptom:** Tests timeout at **initialization stage** (0% progress) instead of scaffolding stage
+**Pattern:** Workflows never progress from "initialization" → "scaffolding"
+**Impact:** No task dispatch occurs, workflow stuck indefinitely
+
+**Test Data from 3 runs:**
+- Test 1: Initialization timeout (300s)
+- Test 2: Test parser error (multi-word name parsing bug)
+- Test 3: Initialization timeout (300s)
+
+**Key Observations:**
+- Database queries continue (repeated workflow status polls)
+- No dispatch logs appearing: "PUBLISHING TASK TO AGENT CHANNEL" never fires
+- Stage status: stuck at "initiated" forever
+- Earlier in session (commit analysis): dispatch WAS working before initialization became blocker
 
 ---
 
@@ -73,27 +117,62 @@
 
 ---
 
-## 📋 SESSION #17 ACTION ITEMS
+## 📋 SESSION #19 ACTION ITEMS - FIX INITIALIZATION BLOCKER
 
-1. **Validate Calculator Generation**
-   - `./scripts/env/start-dev.sh`
-   - `./scripts/run-pipeline-test.sh "Slate Nightfall Calculator"`
-   - Verify output, features, styling
+**Priority:** CRITICAL - Blocks all pipeline tests from progressing
 
-2. **Implement ADR Operational Integration** (16-24h)
-   - Write validation scripts reading adr-index.json
-   - Wire pre-commit hooks + CI/CD validators
-   - Update agents to consume ADR policies
+### Phase 1: Diagnosis (2-3 hours)
+1. **Identify initialization logic**
+   - Find where "initialization" stage is created/handled
+   - Locate the code that should transition "initialization" → "scaffolding"
+   - Check for error handling in initialization phase
 
-3. **Enhance Calculator** (2-4 weeks)
-   - Add ESLint, Prettier configurations
-   - Create Vitest test setup + templates
-   - Reach 100% Zyp compliance
+2. **Collect diagnostic data**
+   - Add enhanced logging to initialization stage handler
+   - Check for failed agent registrations
+   - Look for failed prerequisite checks
+   - Verify agent readiness status
 
-4. **Run Remaining Tests**
-   - Execute 7 other pipeline test cases
-   - Identify pipeline communication issues
-   - Fix any kinks in workflow execution
+3. **Check scaffold-agent logs**
+   - Confirm agent is running and listening for tasks
+   - Check if agent receives task dispatch messages
+   - Look for subscription/connection issues
+
+### Phase 2: Fix (2-4 hours)
+4. **Identify and fix initialization blocker**
+   - Once root cause found, implement fix
+   - Add validation/error messages for debugging
+   - Ensure proper state transition
+
+5. **Test progression**
+   - Verify workflow moves from initialization to scaffolding
+   - Confirm tasks are dispatched
+   - Check message delivery through Redis
+
+### Phase 3: Secondary Fixes (1-2 hours)
+6. **Fix test script parsing**
+   - Handle multi-word test names (e.g., "Hello World API")
+   - Update `run-pipeline-test.sh` argument parsing
+
+7. **Validate all tests**
+   - Run all 8 pipeline tests
+   - Confirm none timeout
+   - Check for new issues
+
+### Reference Data for Session 19
+- **Issue Files:** SPRINT-18-ROOT-CAUSE-ANALYSIS.md, SPRINT-18-PREP.md
+- **Fixed File:** packages/orchestrator/src/services/agent-dispatcher.service.ts
+- **Test Command:** `./scripts/run-pipeline-test.sh "Hello World API"`
+- **Logs Location:** scripts/logs/orchestrator.log, scripts/logs/scaffold-agent.log
+- **Key Search Terms:** "initialization", "stage", "status", "workflow created"
+
+---
+
+## 📋 SESSION #17 ACTION ITEMS (COMPLETED)
+
+✅ Session #17 successfully set foundation for testing framework
+✅ All pipeline test infrastructure ready
+⚠️ Pipeline tests blocked by initialization issue (discovered in Session #18)
 
 ---
 
