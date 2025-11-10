@@ -200,10 +200,41 @@ export const createWorkflowStateMachine = (
       moveToNextStage: async ({ context }) => {
         const stages = getStagesForType(context.type);
         const currentIndex = stages.indexOf(context.current_stage);
+
+        logger.info('moveToNextStage action called', {
+          workflow_id: context.workflow_id,
+          workflow_type: context.type,
+          current_stage: context.current_stage,
+          currentIndex: currentIndex,
+          all_stages: JSON.stringify(stages),
+          stages_length: stages.length
+        });
+
         if (currentIndex < stages.length - 1) {
-          context.current_stage = stages[currentIndex + 1];
+          const nextStage = stages[currentIndex + 1];
+          logger.info('Transitioning to next stage', {
+            workflow_id: context.workflow_id,
+            from_stage: context.current_stage,
+            to_stage: nextStage,
+            at_index: currentIndex,
+            next_index: currentIndex + 1
+          });
+
+          context.current_stage = nextStage;
           await repository.update(context.workflow_id, {
-            current_stage: context.current_stage
+            current_stage: nextStage
+          });
+
+          logger.info('Database updated with new stage', {
+            workflow_id: context.workflow_id,
+            new_stage: nextStage
+          });
+        } else {
+          logger.info('Already at last stage, not moving', {
+            workflow_id: context.workflow_id,
+            current_stage: context.current_stage,
+            currentIndex: currentIndex,
+            stages_length: stages.length
           });
         }
       },

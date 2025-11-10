@@ -12,6 +12,7 @@ import { NotFoundError } from '../utils/errors';
 export class WorkflowService {
   private decisionGateService: DecisionGateService;
   private eventHandlers: Map<string, (event: any) => Promise<void>> = new Map();
+  private processedTasks: Set<string> = new Set(); // Track completed tasks for idempotency
 
   constructor(
     private repository: WorkflowRepository,
@@ -67,10 +68,12 @@ export class WorkflowService {
     const startTime = Date.now();
     const traceId = generateTraceId();
 
-    logger.info('Creating workflow', {
+    logger.info('Creating workflow - Full request details', {
       type: request.type,
       name: request.name,
-      trace_id: traceId
+      trace_id: traceId,
+      request_keys: Object.keys(request),
+      full_request: JSON.stringify(request)
     });
 
     try {
@@ -292,15 +295,25 @@ export class WorkflowService {
     logger.info('Handling agent result', {
       workflow_id: result.workflow_id,
       task_id: payload.task_id,
-      status: payload.status
+      status: payload.status,
+      stage_from_result: result.stage,
+      payload_stage: payload.stage
     });
 
     if (payload.status === 'success') {
+      // Use payload.stage if available, fallback to result.stage
+      const completedStage = payload.stage || result.stage;
+      logger.info('Task completed - determining stage', {
+        workflow_id: result.workflow_id,
+        task_id: payload.task_id,
+        final_stage_value: completedStage
+      });
+
       await this.handleTaskCompletion({
         payload: {
           task_id: payload.task_id,
           workflow_id: result.workflow_id,
-          stage: result.stage
+          stage: completedStage
         }
       });
     } else {
@@ -317,6 +330,18 @@ export class WorkflowService {
 
   private async handleTaskCompletion(event: any): Promise<void> {
     const { task_id, workflow_id } = event.payload;
+
+    // Idempotency check: Prevent duplicate processing of the same task
+    if (this.processedTasks.has(task_id)) {
+      logger.warn('Task already processed, skipping duplicate', {
+        task_id,
+        workflow_id
+      });
+      return;
+    }
+
+    // Mark task as processed
+    this.processedTasks.add(task_id);
 
     // Update task status
     await this.repository.updateTask(task_id, {
@@ -350,7 +375,10 @@ export class WorkflowService {
         if (workflow.status !== 'completed' && workflow.status !== 'failed' && workflow.status !== 'cancelled') {
           logger.info('Creating task for next stage', {
             workflow_id,
-            next_stage: workflow.current_stage
+            workflow_type: workflow.type,
+            next_stage: workflow.current_stage,
+            workflow_status: workflow.status,
+            previous_stage_in_event: event.payload.stage
           });
 
           await this.createTaskForStage(workflow_id, workflow.current_stage, {
