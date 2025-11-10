@@ -82,11 +82,149 @@ The triple-fire fix successfully prevents Redis from invoking handlers 3 times, 
 - Should compute "scaffolding" (index 1)
 - Suggests bug in `getStagesForType()`, `indexOf()`, or stage context corruption
 
-**Next Session (#25) Action Items:**
-1. Debug `getStagesForType()` to verify correct stage array
-2. Trace `indexOf(context.current_stage)` to see actual index value
-3. Check if stage context is being pre-corrupted before computation
-4. Investigate if there's another mechanism changing stage values
+**Critical Gaps Identified (Session #25 Focus):**
+1. **Dedup durability**: `_seenEventIds` is in-memory, lost on restart; needs Redis-backed tracking
+2. **Event ID collisions**: taskId alone risks collisions across stages/attempts; needs robust hash
+3. **Exactly-once guarantee**: Redis pub/sub is at-least-once; must add idempotent transitions + CAS
+4. **Stage skipping root cause**: Likely `indexOf(current_stage)` returning -1 (string mismatch) or stale context race
+5. **No defensive barriers**: Missing assert/throw on invalid stage transitions and CAS failures
+
+**Session #25 Strategy:**
+- Immediate hardening: enum-based stages, durable dedup keys, per-task Redlock, CAS updates
+- Targeted investigation: truth table logging, unit tests, stage string normalization
+- Verification: synthetic load with 3× duplicates, CAS failure injection, stage mismatch detection
+
+---
+
+## 🎯 SESSION #25 PLAN - Idempotent Transitions & Stage Identity Hardening (📋 PLANNED)
+
+### Phase 1: Immediate Hardening (Low-Risk, High-Impact)
+
+**1.1 Durable & Collision-Proof Event Deduplication**
+- Move from in-memory `_seenEventIds` to Redis-backed tracking
+- New eventId: `sha1(taskId + current_stage + attempt + createdAt + workerInstanceId)`
+- Track in Redis SET: `seen:<taskId>` with TTL 48h
+- Replace guard check: `redis.sismember(seen:${taskId}, eventId)` instead of Set lookup
+
+**1.2 Per-Task Serial Execution with Redlock**
+- Install `redlock` library for Redis-based distributed locking
+- Before transition: acquire lock `lock:task:<taskId>` with TTL 5s
+- Hold only around: context load → stage compute → persist → emit
+- Prevents concurrent handleTaskCompletion for same task
+- Renew lock if operation exceeds 3s
+
+**1.3 Compare-And-Swap (CAS) on Stage Update**
+- Change: `UPDATE workflow SET current_stage = ? WHERE id = ?`
+- To: `UPDATE workflow SET current_stage = ?, updated_at = NOW() WHERE id = ? AND current_stage = ?`
+- Assert rows affected = 1; if 0, log WARN "CAS failed: concurrent update, dropping"
+- This prevents stale writes from overwriting newer stage values
+
+**1.4 Defensive Transition Gate**
+- Before mutation, assert:
+  ```
+  if (context.current_stage !== payload.stageCompleted) {
+    log.warn({task_id, context_stage, payload_stage}, 'stage mismatch');
+    return; // drop event
+  }
+  ```
+- Surface mismatches immediately with clear error logs
+
+### Phase 2: Targeted Investigation (Truth Table Logging & Tests)
+
+**2.1 Truth Table Logging**
+- Add comprehensive event-level log:
+  ```
+  t=<timestamp> task=<taskId> ev=<eventId> type=<type>
+  ctx.stage=<current_stage> payload.stage=<stageCompleted>
+  stages=[<array>] idx.ctx=<indexOf result> next=<nextStage>
+  cas.ok=<true|false> source=<redis|...> worker=<instanceId>
+  ```
+- Parse logs to find:
+  - Any `idx.ctx=-1` entries (stage string mismatch)
+  - CAS failures (concurrent updates)
+  - Duplicate eventIds (dedup failure)
+
+**2.2 Unit Tests (Table-Driven)**
+```typescript
+describe('Stage Progression', () => {
+  it('should return correct stage array for each type', () => {
+    expect(getStagesForType('app')).toEqual([
+      'initialization', 'scaffolding', 'validation', ...
+    ]);
+  });
+
+  it('should compute next stage for all valid pairs', () => {
+    const stages = getStagesForType('app');
+    expect(getNextStage('initialization', stages)).toBe('scaffolding');
+    expect(getNextStage('e2e_testing', stages)).toBe(null); // final
+  });
+
+  it('should throw on unknown stage', () => {
+    const stages = getStagesForType('app');
+    expect(() => getNextStage('unknown_stage', stages)).toThrow();
+  });
+});
+```
+
+**2.3 Stage String Normalization**
+- Create Stage enum (single source of truth):
+  ```typescript
+  const StageEnum = z.enum([
+    'initialization', 'scaffolding', 'validation', 'e2e_testing',
+    'integration', 'deployment', 'monitoring'
+  ]);
+  ```
+- Validate all external inputs at boundaries (event decode, DB read)
+- Ban dynamic strings; always use enum value
+
+**2.4 Context Load Verification**
+- Inside the task lock: reload workflow from DB fresh (not cache)
+- Add assertion:
+  ```
+  const fresh = await repo.getWorkflow(taskId);
+  assert(fresh.current_stage === ctx.current_stage,
+    'context stale: db=${fresh.stage} cache=${ctx.stage}');
+  ```
+
+### Phase 3: Verification (Synthetic Load & Failure Injection)
+
+**3.1 Synthetic Duplicate Load Test**
+- Fire 3× identical STAGE_COMPLETE events for same task
+- Expect:
+  - Exactly 1 transition applied (dedup + CAS)
+  - Logs show 2 dropped duplicates
+  - Final stage matches expected next
+
+**3.2 CAS Failure Injection**
+- Simulate concurrent update: write different stage to DB before CAS fires
+- Expect: transition rejected, log warns, event dropped gracefully
+
+**3.3 Stage Mismatch Injection**
+- Send STAGE_COMPLETE(stage='unknown')
+- Expect: assertion fails, log warns, event dropped
+
+### Key Files to Modify
+
+| File | Change | Risk |
+|------|--------|------|
+| `workflow.service.ts` | Add Redlock, CAS, dedup tracking, truth table logging | Medium |
+| `workflow-state-machine.ts` | Remove in-memory `_seenEventIds`, use Redis check | Low |
+| `types.ts` or new `stages.ts` | Add Stage enum + validation functions | Low |
+| `test/` | Add unit tests (stages, transitions, lock behavior) | Low |
+| `redis.ts` or new `redlock.ts` | Configure Redlock client | Low |
+
+### Expected Outcome
+
+After Phase 1 + 2, we should observe:
+- ✅ No more 3× duplicate transitions (dedup + CAS)
+- ✅ No stage mismatches in logs (assertion catches them)
+- ✅ Clear failure modes and error messages
+- ✅ Deterministic, idempotent stage progression
+
+If stage skipping persists after this:
+- Truth table logs will pinpoint exact failure: idx=-1, CAS fail, stale context, etc.
+- Unit tests validate stage logic in isolation
+- Narrowed scope: issue is not event bus, but stage identity or race condition
 
 ---
 
