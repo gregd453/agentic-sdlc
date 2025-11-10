@@ -14,26 +14,96 @@ export class AgentDispatcherService {
   private readonly HANDLER_TIMEOUT_MS = 3600000; // 1 hour
 
   constructor(redisUrl: string) {
+    logger.info('🚀 INITIALIZING AGENT DISPATCHER SERVICE', {
+      redisUrl,
+      timestamp: new Date().toISOString()
+    });
+
     this.redisPublisher = new Redis(redisUrl);
     this.redisSubscriber = new Redis(redisUrl);
+
+    logger.info('✅ REDIS CLIENTS CREATED', {
+      publisherState: 'connecting',
+      subscriberState: 'connecting',
+      timestamp: new Date().toISOString()
+    });
+
     this.setupResultListener();
+
+    logger.info('✅ RESULT LISTENER SET UP', {
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
    * Subscribe to agent results channel
    */
   private setupResultListener(): void {
-    this.redisSubscriber.subscribe('orchestrator:results', (err) => {
-      if (err) {
-        logger.error('Failed to subscribe to orchestrator:results', { error: err });
-        return;
-      }
-      logger.info('Subscribed to orchestrator:results channel');
+    logger.info('🔌 SETTING UP REDIS SUBSCRIPTION', {
+      channel: 'orchestrator:results',
+      subscriberState: 'connecting'
     });
 
+    this.redisSubscriber.subscribe('orchestrator:results', (err) => {
+      if (err) {
+        logger.error('❌ SUBSCRIPTION FAILED', {
+          channel: 'orchestrator:results',
+          error: err,
+          errorCode: (err as any)?.code
+        });
+        return;
+      }
+      logger.info('✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL', {
+        channel: 'orchestrator:results',
+        subscriberReady: true
+      });
+    });
+
+    // Log subscription confirmation
+    this.redisSubscriber.on('subscribe', (channel, count) => {
+      logger.info('📡 REDIS SUBSCRIPTION CONFIRMED', {
+        channel,
+        subscriptionCount: count,
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    // Log any subscription errors
+    this.redisSubscriber.on('error', (err) => {
+      logger.error('❌ REDIS SUBSCRIBER ERROR', {
+        error: err,
+        errorCode: (err as any)?.code,
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    // Log connection status
+    this.redisSubscriber.on('connect', () => {
+      logger.info('🔗 REDIS SUBSCRIBER CONNECTED', {
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    // Main message handler
     this.redisSubscriber.on('message', (channel, message) => {
+      logger.info('📨 RAW MESSAGE RECEIVED FROM REDIS', {
+        channel,
+        messageLength: message.length,
+        messagePreview: message.substring(0, 100),
+        timestamp: new Date().toISOString()
+      });
+
       if (channel === 'orchestrator:results') {
+        logger.info('✅ MESSAGE IS FOR ORCHESTRATOR:RESULTS CHANNEL - PROCESSING', {
+          channel,
+          timestamp: new Date().toISOString()
+        });
         this.handleAgentResult(message);
+      } else {
+        logger.warn('⚠️ MESSAGE RECEIVED ON UNEXPECTED CHANNEL', {
+          expectedChannel: 'orchestrator:results',
+          actualChannel: channel
+        });
       }
     });
   }
@@ -42,18 +112,45 @@ export class AgentDispatcherService {
    * Handle result from agent
    */
   private async handleAgentResult(message: string): Promise<void> {
-    try {
-      const result = JSON.parse(message);
+    logger.info('🔍 PARSING AGENT RESULT MESSAGE', {
+      messageLength: message.length,
+      messageType: typeof message,
+      timestamp: new Date().toISOString()
+    });
 
-      logger.info('Received agent result', {
+    try {
+      let result: any;
+      try {
+        result = JSON.parse(message);
+        logger.info('✅ SUCCESSFULLY PARSED JSON MESSAGE', {
+          keys: Object.keys(result),
+          hasWorkflowId: !!result.workflow_id,
+          hasPayload: !!result.payload,
+          timestamp: new Date().toISOString()
+        });
+      } catch (parseErr) {
+        logger.error('❌ FAILED TO PARSE JSON', {
+          parseError: (parseErr as Error).message,
+          message: message.substring(0, 200),
+          timestamp: new Date().toISOString()
+        });
+        throw parseErr;
+      }
+
+      logger.info('🔔 RECEIVED AGENT RESULT MESSAGE', {
         agent_id: result.agent_id,
         workflow_id: result.workflow_id,
-        status: result.payload?.status
+        status: result.payload?.status,
+        registered_handlers: Array.from(this.resultHandlers.keys()),
+        timestamp: new Date().toISOString()
       });
 
       // Call registered result handler if exists
       const handler = this.resultHandlers.get(result.workflow_id);
       if (handler) {
+        logger.info('✅ HANDLER FOUND - Executing callback', {
+          workflow_id: result.workflow_id
+        });
         await handler(result);
 
         // Auto-cleanup handler after result is processed
@@ -65,6 +162,11 @@ export class AgentDispatcherService {
           });
           this.offResult(result.workflow_id);
         }
+      } else {
+        logger.warn('❌ NO HANDLER FOUND FOR WORKFLOW', {
+          workflow_id: result.workflow_id,
+          available_handlers: Array.from(this.resultHandlers.keys())
+        });
       }
 
     } catch (error) {
@@ -104,7 +206,24 @@ export class AgentDispatcherService {
       };
 
       // Publish to agent channel
-      await this.redisPublisher.publish(agentChannel, JSON.stringify(agentMessage));
+      logger.info('📤 PUBLISHING TASK TO AGENT CHANNEL', {
+        channel: agentChannel,
+        workflow_id: task.workflow_id,
+        task_id: task.task_id,
+        messageSize: JSON.stringify(agentMessage).length,
+        timestamp: new Date().toISOString()
+      });
+
+      const publishResult = await this.redisPublisher.publish(agentChannel, JSON.stringify(agentMessage));
+
+      logger.info('✅ TASK PUBLISHED TO REDIS', {
+        channel: agentChannel,
+        subscribersReceived: publishResult,
+        task_id: task.task_id,
+        workflow_id: task.workflow_id,
+        agent_type: task.agent_type,
+        timestamp: new Date().toISOString()
+      });
 
       logger.info('Task dispatched to agent', {
         task_id: task.task_id,
@@ -128,6 +247,10 @@ export class AgentDispatcherService {
    * Handlers are automatically cleaned up after 1 hour
    */
   onResult(workflowId: string, handler: (result: any) => void): void {
+    logger.info('📝 REGISTERING RESULT HANDLER', {
+      workflow_id: workflowId,
+      total_handlers_after: (this.resultHandlers.size + 1)
+    });
     this.resultHandlers.set(workflowId, handler);
 
     // Clear any existing timeout

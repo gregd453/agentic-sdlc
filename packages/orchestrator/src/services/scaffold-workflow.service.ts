@@ -75,7 +75,17 @@ export class ScaffoldWorkflowService {
         request.options
       );
 
-      // Dispatch to scaffold agent
+      // Register result handler BEFORE dispatching to avoid race condition
+      // Handler key MUST be workflow_id to match agent dispatcher's result lookup
+      this.agentDispatcher.onResult(workflow.workflow_id, async (result) => {
+        logger.info('🎯 SCAFFOLD RESULT HANDLER CALLED', {
+          workflow_id: workflow.workflow_id,
+          status: result.status
+        });
+        await this.handleScaffoldResult(result);
+      });
+
+      // Dispatch to scaffold agent (now handler is ready)
       await this.dispatchScaffoldTask(scaffoldTask);
 
       logger.info('Scaffold workflow created and task dispatched', {
@@ -188,26 +198,38 @@ export class ScaffoldWorkflowService {
 
   /**
    * Handle scaffold task result
+   * Result structure: { workflow_id, payload: { status, ... }, ... }
    */
   async handleScaffoldResult(result: any): Promise<void> {
-    logger.info('Handling scaffold result', {
+    // Extract actual result from agent message wrapper
+    const taskResult = result.payload;
+    const success = taskResult?.status === 'success';
+
+    logger.info('💾 HANDLING SCAFFOLD RESULT', {
       workflow_id: result.workflow_id,
-      success: result.success
+      success,
+      status: taskResult?.status
     });
 
     try {
       // Update workflow state
-      await this.repository.updateState(result.workflow_id, {
-        current_stage: result.success ? 'validating' : 'failed',
-        progress: result.success ? 25 : 0,
-        completed_at: result.success ? null : new Date(),
+      const updated = await this.repository.updateState(result.workflow_id, {
+        current_stage: success ? 'validating' : 'failed',
+        progress: success ? 25 : 0,
+        completed_at: success ? null : new Date(),
         metadata: {
-          scaffold_result: result
+          scaffold_result: taskResult
         }
       });
 
+      logger.info('✅ WORKFLOW STATUS UPDATED', {
+        workflow_id: result.workflow_id,
+        new_stage: updated.current_stage,
+        new_progress: updated.progress
+      });
+
       // If successful, trigger next stage (validation)
-      if (result.success && result.next_stage === 'validation') {
+      if (success && taskResult?.next_stage === 'validation') {
         logger.info('Scaffold successful, triggering validation', {
           workflow_id: result.workflow_id
         });
