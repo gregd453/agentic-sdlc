@@ -1,21 +1,21 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 6.1 | **Last Updated:** 2025-11-10 04:30 UTC | **Status:** Session #19 Prep - Redis Utility Extracted, Build Successful
+**Version:** 6.2 | **Last Updated:** 2025-11-10 05:25 UTC | **Status:** Session #19 COMPLETE - Initialization Blocker FIXED, Handler Re-registration Added
 
 ---
 
 ## ⚡ QUICK REFERENCE (START HERE)
 
-### Current Focus: Session #19 - Fix Workflow Initialization Blocker
+### Current Focus: Session #20 - Resolve Handler Re-registration & Multi-Stage Task Dispatch
 
 | Item | Status | Details |
 |------|--------|---------|
-| **Redis Pub/Sub** | ✅ FIXED | Promise-based subscribe API working (commit 1277a28) |
-| **Redis Utility** | ✅ CREATED | RobustRedisSubscriber extracted to shared-utils |
+| **Initialization Blocker** | ✅ FIXED | Workflows now properly dispatch initialization task (commit e584802) |
+| **Stage Progression** | ✅ PARTIAL | Init→Scaffolding transition working, but scaffolding→next stalled |
+| **Handler Re-registration** | ⚠️ IN PROGRESS | Added re-registration logic, but needs validation for multi-stage workflows |
+| **Pipeline Tests** | ⚠️ PARTIAL PASS | Now progresses to scaffolding (was stuck at init), timeouts at scaffolding |
 | **Build Status** | ✅ PASSING | All modules compile successfully |
-| **Initialization Blocker** | ❌ NEW ISSUE | Workflows stuck at initialization, never dispatch tasks |
-| **Pipeline Tests** | ❌ FAILING | All timeouts at 0% progress (now at init stage) |
-| **Next Action** | ➡️ DEBUG | Find what blocks workflow initialization → scaffolding transition |
+| **Next Action** | ➡️ DEBUG | Verify handler re-registration works for scaffolding stage results |
 
 ### Key Documentation
 - **CALCULATOR-SLATE-INTEGRATION.md** - Template details & integration
@@ -33,7 +33,75 @@
 
 ---
 
-## 🎯 SESSION #19 ACCOMPLISHMENTS (In Progress)
+## 🎯 SESSION #19 ACCOMPLISHMENTS & FINDINGS
+
+### ✅ PRIMARY FIX: Initialization Task Dispatch Bug - COMPLETE
+
+**Problem Identified:**
+- Line 107 in `workflow.service.ts` was creating a `'scaffolding'` task instead of `'initialization'` task
+- First workflow stage is always "initialization", but code was skipping it
+- Caused workflows to get stuck at initialization forever, never transitioning to scaffolding
+
+**Solution Implemented (commit e584802):**
+```typescript
+// BEFORE (BROKEN):
+await this.createTaskForStage(workflow.id, 'scaffolding', { ... });
+
+// AFTER (FIXED):
+await this.createTaskForStage(workflow.id, 'initialization', { ... });
+```
+
+**Result:**
+- ✅ Workflows now properly dispatch initialization task
+- ✅ Initialization stage completes and workflow transitions to scaffolding
+- ✅ Tests now progress from 0% (initialization) → next stage (was stuck indefinitely)
+
+### ⚠️ SECONDARY ISSUE DISCOVERED: Handler Re-registration Bug
+
+**Problem Identified During Testing:**
+- `agent-dispatcher.service.ts` (lines 177-184): Result handlers are auto-removed after first stage completes
+- Code comment says "Auto-cleanup handler after result is processed (workflow is complete or failed)"
+- But handler is removed even for intermediate stages, not just final workflow completion
+- Causes scaffolding (and subsequent stages) to have NO HANDLER registered when results arrive
+- Workflow gets stuck at scaffolding stage (0% progress, never completes)
+
+**Root Cause:**
+```typescript
+// In agent-dispatcher.service.ts handleAgentResult():
+const status = result.payload?.status;
+if (status === 'success' || status === 'failure') {
+  this.offResult(result.workflow_id);  // ← BUG: Removes handler after EVERY stage
+}
+```
+
+**Partial Fix Implemented:**
+- Added handler re-registration in `workflow.service.ts` (lines 307-312)
+- After each successful stage, re-registers the handler for next stage
+- Prevents handler from being permanently removed
+
+**Status:** Partially working - needs validation that re-registration is executing correctly for scaffolding and beyond
+
+### 🔍 Key Findings - Workflow Message Flow
+
+**Correct Flow (Currently):**
+1. Workflow created → initialization task dispatched
+2. Scaffold agent receives task, completes successfully
+3. Agent publishes result to `orchestrator:results` Redis channel
+4. Orchestrator receives result, calls handler
+5. Handler sends `STAGE_COMPLETE` event to state machine
+6. ✅ State machine transitions: initialization → scaffolding
+7. Scaffolding task created and dispatched
+8. Agent completes scaffolding task, publishes result
+9. ❌ Orchestrator handler NOT found (was removed after init) → STUCK
+
+**What Needs Fixing (Session #20):**
+- Verify handler re-registration is actually being called
+- Ensure new handler is registered before scaffolding result arrives
+- Check that state machine properly creates scaffolding task with correct task_id
+
+---
+
+## 🎯 SESSION #19 ACCOMPLISHMENTS (In Progress - MOVED BELOW)
 
 ### ✅ Redis Subscription Pattern Refactoring - COMPLETE
 **Discovery:** Identified recurring Redis subscription pattern in 3+ locations with same bug
