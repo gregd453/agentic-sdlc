@@ -61,19 +61,18 @@ export class EventBus {
         'data', JSON.stringify(validated)
       );
 
-      // Publish to Redis pub/sub for real-time subscribers
+      // FIX: Publish ONLY to Redis pub/sub (removed local emitter.emit)
+      // This prevents double-invocation where handlers were called via both local emitter AND Redis
       await this.redis.publish(`event:${validated.type}`, JSON.stringify(validated));
 
-      // Emit for local subscribers
-      this.emitter.emit(validated.type, validated);
-
-      logger.info('Event published', {
+      logger.info('[EB:PUBLISHED] Event published to Redis', {
         type: validated.type,
         id: validated.id,
-        workflow_id: validated.workflow_id
+        workflow_id: validated.workflow_id,
+        channel: `event:${validated.type}`
       });
     } catch (error) {
-      logger.error('Failed to publish event', { error, event });
+      logger.error('[EB:PUBLISH_ERROR] Failed to publish event', { error, event });
       throw error;
     }
   }
@@ -82,20 +81,25 @@ export class EventBus {
     eventType: string,
     handler: (event: Event) => Promise<void>
   ): Promise<void> {
-    // Local subscription
-    this.emitter.on(eventType, handler);
+    // FIX: Use ONLY Redis pub/sub, NOT local emitter
+    // This prevents double-invocation of handlers when events are published
+    // (was calling handler via both local emitter AND Redis subscriptions)
 
-    // Redis subscription
     const channel = `event:${eventType}`;
 
     if (!this.subscriptions.has(channel)) {
       this.subscriptions.set(channel, new Set());
       await this.subscriber.subscribe(channel);
+      logger.info('[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel', { channel });
     }
 
     this.subscriptions.get(channel)!.add(handler);
 
-    logger.info('Subscribed to event', { eventType });
+    logger.info('[EB:HANDLER_REGISTERED] Handler registered for event', {
+      eventType,
+      channel,
+      handlerCount: this.subscriptions.get(channel)!.size
+    });
   }
 
   async unsubscribe(

@@ -15,11 +15,13 @@ export interface WorkflowContext {
   clarification_id?: string;
   pending_decision?: boolean;
   pending_clarification?: boolean;
+  _advanceInFlight?: boolean; // Single-flight guard for transitionToNextStage
+  _seenEventIds?: Set<string>; // Deduplication: track processed event IDs to prevent triple-fire
 }
 
 export type WorkflowEvent =
   | { type: 'START' }
-  | { type: 'STAGE_COMPLETE'; stage: string }
+  | { type: 'STAGE_COMPLETE'; stage: string; eventId?: string }
   | { type: 'STAGE_FAILED'; stage: string; error: Error }
   | { type: 'PAUSE' }
   | { type: 'RESUME' }
@@ -53,10 +55,26 @@ export const createWorkflowStateMachine = (
       running: {
         entry: ['clearTransitionInProgress'], // Clear the flag when entering running state
         on: {
-          STAGE_COMPLETE: {
-            target: 'evaluating',
-            actions: ['updateProgress', 'logStageComplete']
-          },
+          STAGE_COMPLETE: [
+            {
+              // Guard: only process if this event ID hasn't been seen before (deduplication)
+              guard: ({ context, event }: { context: WorkflowContext; event: any }) => {
+                if (event.type !== 'STAGE_COMPLETE') return false;
+                if (!context._seenEventIds) {
+                  context._seenEventIds = new Set();
+                }
+                const eventId = event.eventId;
+                if (!eventId) return true; // No eventId, allow processing
+                return !context._seenEventIds.has(eventId);
+              },
+              target: 'evaluating',
+              actions: ['updateProgress', 'logStageComplete', 'computeNextStageOnEvent', 'trackEventId']
+            },
+            {
+              // Fallback: if event was already seen, log and stay in running state
+              actions: ['logDuplicateEvent']
+            }
+          ],
           STAGE_FAILED: {
             target: 'failed',
             actions: ['logError', 'updateWorkflowStatus']
@@ -108,83 +126,25 @@ export const createWorkflowStateMachine = (
         }
       },
       evaluating: {
-        entry: assign({
-          nextStage: ({ context }) => {
-            // CRITICAL: Always compute from current_stage in context, even if stale
-            // The database sync happens in transitionToNextStage
-            const stages = getStagesForType(context.type);
-            const currentStage = context.current_stage;
-            const currentIndex = stages.indexOf(currentStage);
-
-            logger.info('SESSION #22 DEBUG: Computing next stage', {
-              workflow_id: context.workflow_id,
-              context_type: context.type,
-              all_stages: JSON.stringify(stages),
-              current_stage: currentStage,
-              current_stage_trimmed: currentStage?.trim(),
-              currentIndex,
-              totalStages: stages.length,
-              is_valid_index: currentIndex >= 0 && currentIndex < stages.length
-            });
-
-            // Check if current stage not found - this is the critical issue
-            if (currentIndex === -1) {
-              logger.error('CRITICAL: Current stage not found!', {
-                workflow_id: context.workflow_id,
-                current_stage: currentStage,
-                current_stage_length: currentStage?.length,
-                available_stages: JSON.stringify(stages),
-                context_type: context.type
-              });
-              // Return undefined to signal workflow complete (safest option)
-              return undefined;
-            }
-
-            // If at last stage, workflow is complete
-            if (currentIndex === stages.length - 1) {
-              logger.info('SESSION #22 DEBUG: At last stage - workflow complete', {
-                workflow_id: context.workflow_id,
-                current_stage: currentStage,
-                stageIndex: currentIndex
-              });
-              return undefined;
-            }
-
-            // Otherwise, return the next stage
-            const next = stages[currentIndex + 1];
-            logger.info('SESSION #22 DEBUG: Next stage computed', {
-              workflow_id: context.workflow_id,
-              from_stage: currentStage,
-              from_index: currentIndex,
-              to_stage: next,
-              to_index: currentIndex + 1
-            });
-            return next;
-          }
-        }),
+        entry: 'logEvaluatingEntry', // Just log, don't recompute
         invoke: {
           id: 'advanceStage',
           src: fromPromise(async ({ input }: { input: any }) => {
-            logger.info('SESSION #22 DEBUG: Invoked service executing', {
+            logger.info('SESSION #23 FIX: Invoked service executing', {
               workflow_id: input.workflow_id,
-              currentStage: input.currentStage,
-              nextStage: input.nextStage,
-              type: input.type,
-              timestamp: new Date().toISOString()
+              next_stage_input: input.nextStage
             });
             // Simulate async work (stage transition already computed)
             await new Promise(resolve => setTimeout(resolve, 10));
-            logger.info('SESSION #22 DEBUG: Invoked service completed', {
+            logger.info('SESSION #23 FIX: Invoked service completed', {
               workflow_id: input.workflow_id,
-              nextStage: input.nextStage
+              next_stage: input.nextStage
             });
             return input.nextStage;
           }),
           input: ({ context }: { context: WorkflowContext }) => ({
             workflow_id: context.workflow_id,
-            nextStage: context.nextStage,
-            type: context.type,
-            currentStage: context.current_stage
+            nextStage: context.nextStage
           }),
           onDone: [
             {
@@ -194,7 +154,7 @@ export const createWorkflowStateMachine = (
             },
             {
               target: 'running',
-              actions: ['transitionToNextStage']
+              actions: ['transitionToNextStageAbsolute']
             }
           ],
           onError: {
@@ -268,6 +228,58 @@ export const createWorkflowStateMachine = (
           });
         }
       },
+      computeNextStageOnEvent: assign({
+        nextStage: ({ context }) => {
+          // CRITICAL FIX: Compute the next stage ONCE on the event, BEFORE entering evaluating
+          // This prevents re-evaluation in the evaluating entry action
+          const stages = getStagesForType(context.type);
+          const currentIndex = stages.indexOf(context.current_stage);
+
+          logger.info('SESSION #23 FIX: Computing nextStage on STAGE_COMPLETE event (pre-computed)', {
+            workflow_id: context.workflow_id,
+            current_stage: context.current_stage,
+            current_index: currentIndex,
+            total_stages: stages.length
+          });
+
+          // Check if current stage not found
+          if (currentIndex === -1) {
+            logger.error('CRITICAL: Current stage not found in stages array!', {
+              workflow_id: context.workflow_id,
+              current_stage: context.current_stage,
+              available_stages: JSON.stringify(stages)
+            });
+            return undefined;
+          }
+
+          // If at last stage, workflow is complete
+          if (currentIndex === stages.length - 1) {
+            logger.info('SESSION #23 FIX: At last stage - workflow will complete', {
+              workflow_id: context.workflow_id,
+              current_stage: context.current_stage
+            });
+            return undefined;
+          }
+
+          // Compute the ABSOLUTE next stage
+          const nextStage = stages[currentIndex + 1];
+          logger.info('SESSION #23 FIX: Next stage COMPUTED on event (ABSOLUTE value)', {
+            workflow_id: context.workflow_id,
+            from_stage: context.current_stage,
+            from_index: currentIndex,
+            to_stage: nextStage,
+            to_index: currentIndex + 1
+          });
+          return nextStage;
+        }
+      }),
+      logEvaluatingEntry: ({ context }) => {
+        logger.info('SESSION #23 FIX: Evaluating state entered (nextStage pre-computed)', {
+          workflow_id: context.workflow_id,
+          current_stage: context.current_stage,
+          next_stage: context.nextStage
+        });
+      },
       logError: ({ context, event }) => {
         if (event.type === 'STAGE_FAILED') {
           context.error = event.error;
@@ -286,56 +298,59 @@ export const createWorkflowStateMachine = (
           workflow_id: context.workflow_id
         });
       },
-      transitionToNextStage: async ({ context }) => {
-        // At this point, context.nextStage is guaranteed to be defined and valid
-        // (it was computed in the entry action and passed through the invoked service)
-        logger.info('SESSION #22 DEBUG: Transitioning to next stage via invoked service completion', {
-          workflow_id: context.workflow_id,
-          from_stage: context.current_stage,
-          to_stage: context.nextStage,
-          context_type: context.type,
-          timestamp: new Date().toISOString()
-        });
+      transitionToNextStageAbsolute: async ({ context }) => {
+        // FIX: Single-flight guard to prevent multiple invocations in one microstep
+        if (context._advanceInFlight) {
+          logger.error('SESSION #23 FIX: DOUBLE INVOCATION DETECTED! Ignoring second call.', {
+            workflow_id: context.workflow_id,
+            current_stage: context.current_stage,
+            next_stage: context.nextStage
+          });
+          throw new Error('transitionToNextStageAbsolute called while already in flight');
+        }
 
-        if (context.nextStage) {
+        context._advanceInFlight = true;
+
+        try {
           const oldStage = context.current_stage;
 
-          // CRITICAL: Verify we're reading the current stage from database BEFORE updating
-          // to ensure we don't have a stale value in context
-          const dbWorkflow = await repository.findById(context.workflow_id);
-          if (dbWorkflow && dbWorkflow.current_stage !== context.current_stage) {
-            logger.warn('SESSION #22 DEBUG: Context stage mismatch detected!', {
+          logger.info('SESSION #23 FIX: Transitioning to next stage (ABSOLUTE assignment)', {
+            workflow_id: context.workflow_id,
+            from_stage: oldStage,
+            to_stage: context.nextStage,
+            in_flight_guard: true
+          });
+
+          if (!context.nextStage) {
+            logger.warn('SESSION #23 FIX: nextStage is undefined!', {
               workflow_id: context.workflow_id,
-              context_stage: context.current_stage,
-              db_stage: dbWorkflow.current_stage
+              current_stage: oldStage
             });
-            // Use database as source of truth - this is critical
-            context.current_stage = dbWorkflow.current_stage;
+            return;
           }
 
+          // ABSOLUTE assignment: use the pre-computed value
+          // Do NOT recompute from context.current_stage
           context.current_stage = context.nextStage;
           context.nextStage = undefined; // Reset for next cycle
 
-          logger.info('SESSION #22 DEBUG: Context updated in memory', {
+          logger.info('SESSION #23 FIX: Context updated in memory (ABSOLUTE)', {
             workflow_id: context.workflow_id,
             old_stage: oldStage,
             new_stage: context.current_stage
           });
 
+          // Persist to database
           await repository.update(context.workflow_id, {
             current_stage: context.current_stage
           });
 
-          logger.info('SESSION #22 DEBUG: Database updated with new stage', {
+          logger.info('SESSION #23 FIX: Database persisted', {
             workflow_id: context.workflow_id,
-            new_stage: context.current_stage,
-            update_confirmed: true
+            new_stage: context.current_stage
           });
-        } else {
-          logger.warn('SESSION #22 DEBUG: transitionToNextStage called but nextStage is undefined!', {
-            workflow_id: context.workflow_id,
-            current_stage: context.current_stage
-          });
+        } finally {
+          context._advanceInFlight = false;
         }
       },
       logStageTransitionError: ({ context, event }: any) => {
@@ -456,6 +471,31 @@ export const createWorkflowStateMachine = (
           logger.info('Clarification complete - workflow resumed', {
             workflow_id: context.workflow_id,
             clarification_id: event.clarification_id
+          });
+        }
+      },
+      trackEventId: ({ context, event }) => {
+        if (event.type === 'STAGE_COMPLETE' && event.eventId) {
+          if (!context._seenEventIds) {
+            context._seenEventIds = new Set();
+          }
+          context._seenEventIds.add(event.eventId);
+          logger.info('SESSION #24 FIX: Event ID tracked for deduplication', {
+            workflow_id: context.workflow_id,
+            eventId: event.eventId,
+            stage: event.stage,
+            seenCount: context._seenEventIds.size
+          });
+        }
+      },
+      logDuplicateEvent: ({ context, event }) => {
+        if (event.type === 'STAGE_COMPLETE') {
+          logger.warn('SESSION #24 FIX: DUPLICATE STAGE_COMPLETE EVENT FILTERED', {
+            workflow_id: context.workflow_id,
+            eventId: event.eventId,
+            stage: event.stage,
+            current_stage: context.current_stage,
+            message: 'Event was already processed - skipping to prevent triple-fire'
           });
         }
       }

@@ -20,18 +20,34 @@ export class WorkflowService {
     private stateMachineService: WorkflowStateMachineService,
     private agentDispatcher?: AgentDispatcherService
   ) {
+    logger.info('[WF:CONSTRUCTOR:START] WorkflowService instance created', {
+      timestamp: new Date().toISOString(),
+      stack: new Error().stack?.split('\n').slice(0, 5).join(' | ')
+    });
     this.decisionGateService = new DecisionGateService();
     this.setupEventHandlers();
   }
 
   private setupEventHandlers(): void {
+    logger.info('[WF:SETUP_HANDLERS] Registering event handlers', {
+      timestamp: new Date().toISOString()
+    });
+
     // Subscribe to task completion events
     const taskCompletedHandler = async (event: any) => {
-      logger.info('Task completed event received', { event });
+      logger.info('[WF:TASK_COMPLETED:RECV] Task completed event received', {
+        workflow_id: event.payload?.workflow_id,
+        task_id: event.payload?.task_id,
+        stage: event.payload?.stage,
+        timestamp: new Date().toISOString()
+      });
       // Handle task completion and trigger next stage
       await this.handleTaskCompletion(event);
     };
     this.eventHandlers.set('TASK_COMPLETED', taskCompletedHandler);
+    logger.info('[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED', {
+      timestamp: new Date().toISOString()
+    });
     this.eventBus.subscribe('TASK_COMPLETED', taskCompletedHandler);
 
     // Subscribe to task failure events
@@ -331,9 +347,16 @@ export class WorkflowService {
   private async handleTaskCompletion(event: any): Promise<void> {
     const { task_id, workflow_id } = event.payload;
 
+    logger.info('[WF:HANDLE_COMPLETION:ENTRY] handleTaskCompletion invoked', {
+      task_id,
+      workflow_id,
+      stage: event.payload?.stage,
+      timestamp: new Date().toISOString()
+    });
+
     // Idempotency check: Prevent duplicate processing of the same task
     if (this.processedTasks.has(task_id)) {
-      logger.warn('Task already processed, skipping duplicate', {
+      logger.warn('[WF:DUPLICATE_DETECTED] Task already processed, skipping duplicate', {
         task_id,
         workflow_id
       });
@@ -342,6 +365,10 @@ export class WorkflowService {
 
     // Mark task as processed
     this.processedTasks.add(task_id);
+    logger.info('[WF:TASK_MARKED_PROCESSED] Task marked as processed', {
+      task_id,
+      workflow_id
+    });
 
     // Update task status
     await this.repository.updateTask(task_id, {
@@ -352,9 +379,14 @@ export class WorkflowService {
     // Update workflow state machine
     const stateMachine = this.stateMachineService.getStateMachine(workflow_id);
     if (stateMachine) {
+      // Generate eventId based on task_id (same task = same eventId)
+      // This allows deduplication to catch the 3 Redis re-deliveries of the same event
+      const eventId = `task-${event.payload.task_id}`;
+
       stateMachine.send({
         type: 'STAGE_COMPLETE',
-        stage: event.payload.stage
+        stage: event.payload.stage,
+        eventId: eventId
       });
 
       // Wait for state machine to process the transition and update database
