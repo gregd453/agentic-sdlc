@@ -1,12 +1,32 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 7.3 | **Last Updated:** 2025-11-10 19:20 UTC | **Status:** Session #27 COMPLETE - Initialization Blocker Resolved
+**Version:** 7.5 | **Last Updated:** 2025-11-10 21:00 UTC | **Status:** Session #29 IN-PROGRESS - Multi-Agent Integration Testing
 
 ---
 
 ## ⚡ QUICK REFERENCE (START HERE)
 
-### Current Focus: Session #27 - Initialization Blocker Resolution ✅ COMPLETE
+### Current Focus: Session #29 - Multi-Agent Integration Testing ⚠️ BLOCKED
+
+| Item | Status | Details |
+|------|--------|---------|
+| **Validation Agent** | ✅ STARTED | Agent running and registered with orchestrator |
+| **E2E Agent** | ⏸️ PENDING | Build successful, not yet started |
+| **Multi-Agent Test** | ⚠️ BLOCKED | Validation fails - missing stage context passing |
+| **Critical Finding** | 🔴 BLOCKER | Scaffold → Validation transition doesn't pass file paths |
+| **Root Cause** | 🔍 IDENTIFIED | Task payload missing `working_directory` and generated code path |
+| **Impact** | HIGH | Validation agent cannot find generated code to validate |
+| **Next Action** | ➡️ Session #30 | Implement stage context passing mechanism |
+
+### Previous: Session #28 - JSON Parsing Enhancement ✅ COMPLETE
+
+| Item | Status | Details |
+|------|--------|---------|
+| **JSON Parsing Fix** | ✅ COMPLETE | Multi-strategy parser handles all Claude response formats (109a375) |
+| **Prompt Enhancement** | ✅ COMPLETE | Explicit 35-line JSON schema with structure specification |
+| **Production Testing** | ✅ VERIFIED | Workflow progressed, logs show "✅ SUCCESSFULLY PARSED JSON MESSAGE" |
+
+### Previous: Session #27 - Initialization Blocker Resolution ✅ COMPLETE
 
 | Item | Status | Details |
 |------|--------|---------|
@@ -14,8 +34,6 @@
 | **API Key Issue** | ✅ RESOLVED | Shell environment override identified and fixed |
 | **Stage Calculation** | ✅ VERIFIED | Math confirmed correct via console debug logs |
 | **Initialization Blocker** | ✅ RESOLVED | Workflows now progress past initialization |
-| **Build Status** | ✅ PASSING | All modules compile, agents communicate correctly |
-| **Next Action** | ➡️ Session #28 | Fix JSON parsing in Claude API responses (non-blocking) |
 
 ### Previous: Session #26 - CAS Activation & Database Hardening ✅ COMPLETE
 
@@ -49,6 +67,178 @@
 ./scripts/run-pipeline-test.sh "Calculator"    # Run test
 ./scripts/env/stop-dev.sh                      # Stop environment
 ```
+
+---
+
+## 🎯 SESSION #29 STATUS - Multi-Agent Integration Testing (⚠️ BLOCKED - Context Passing Issue)
+
+### ⚠️ CRITICAL BLOCKER DISCOVERED: Stage Context Not Passed Between Agents
+
+**Problem Identified:**
+When workflows transition from scaffolding → validation, the validation agent receives a task but **critical context is missing**:
+- No `working_directory` field (path to generated code)
+- No `validation_types` specified
+- No information about what was generated in previous stage
+
+**Test Results:**
+```
+✅ Scaffold Agent:     Successfully created files
+✅ Validation Agent:   Started and registered with orchestrator
+✅ Stage Transition:   initialization → scaffolding → validation
+❌ Validation Execute: Failed - missing required task fields
+❌ Workflow Progress:  Stuck at validation stage (0%)
+```
+
+**Root Cause Analysis:**
+1. Scaffold agent completes and generates files in `ai.output/{workflow_id}/{project_name}/`
+2. Scaffold result includes `output.files_generated` and `output.structure`
+3. State machine transitions to validation stage
+4. `createTaskForStage()` creates validation task with minimal payload:
+   ```typescript
+   payload: {
+     stage,
+     workflow_id: workflowId
+   }
+   ```
+5. Validation agent expects:
+   ```typescript
+   {
+     working_directory: string,      // ❌ MISSING
+     validation_types: string[],     // ❌ MISSING
+     thresholds?: { coverage: number } // ❌ MISSING
+   }
+   ```
+
+**File References:**
+- `packages/orchestrator/src/services/workflow.service.ts:362-384` - Task payload creation
+- `packages/agents/validation-agent/src/validation-agent.ts:72-83` - Payload extraction
+- `packages/orchestrator/src/state-machine/workflow-state-machine.ts` - Stage transitions
+
+### 🔍 Investigation Findings
+
+**What Works:**
+- ✅ Agent registration and discovery
+- ✅ Redis pub/sub messaging
+- ✅ Stage progression logic (initialization → scaffolding → validation)
+- ✅ Task dispatch to correct agents
+- ✅ Retry mechanism (validation retried 3 times)
+- ✅ Error reporting back to orchestrator
+
+**What's Broken:**
+- ❌ Context propagation between stages
+- ❌ Scaffold output not accessible to validation
+- ❌ No workflow-level state/context storage
+- ❌ Task payloads don't include previous stage results
+
+### 💡 Solution Design (For Session #30)
+
+**Option A: Workflow Context Storage (RECOMMENDED)**
+```typescript
+// Store context in database or Redis
+interface WorkflowContext {
+  workflow_id: string;
+  stages: {
+    [stage: string]: {
+      output_path?: string;
+      files_generated?: string[];
+      artifacts?: Record<string, any>;
+    }
+  };
+}
+
+// Update after each stage completion
+// Pass to next stage via task payload
+```
+
+**Option B: Pass Through Task Result**
+- Store last stage result in workflow table
+- Read previous result when creating next task
+- Include relevant fields in new task payload
+
+**Option C: Event Sourcing**
+- Store all stage events
+- Reconstruct context by replaying events
+- More complex but more auditable
+
+**Recommended: Start with Option B (simpler, sufficient for now)**
+
+### 📊 Session #29 Technical Summary
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| **Validation Agent** | ✅ BUILT | 4000+ lines, comprehensive validation checks |
+| **E2E Agent** | ✅ BUILT | Playwright integration, test generation |
+| **Agent Registration** | ✅ WORKING | Redis registry, proper discovery |
+| **Stage Transitions** | ✅ WORKING | State machine correctly advances stages |
+| **Context Passing** | ❌ MISSING | Critical blocker for multi-agent workflows |
+| **Task Creation** | ⚠️ INCOMPLETE | Creates tasks but missing context fields |
+
+**Time Investment:** 1.5 hours
+**Value Delivered:** Identified critical architectural gap
+**Next Session Focus:** Implement workflow context passing (2-3 hours estimated)
+
+---
+
+## 🎯 SESSION #28 STATUS - JSON Parsing Enhancement (✅ COMPLETE)
+
+### ✅ PRIMARY FIX COMPLETED: Multi-Strategy JSON Parser
+
+**Implementation Complete (commit 109a375):**
+
+1. **Enhanced Prompt Engineering**
+   - Added explicit 35-line JSON schema to prompt (lines 805-840)
+   - Specified exact structure with field types and examples
+   - Emphasized "ONLY valid JSON" with no markdown formatting
+   - Updated system prompt: "Return responses as pure JSON only - no markdown, no code blocks"
+
+2. **Multi-Strategy JSON Parsing Utility**
+   - Implemented `parseClaudeJsonResponse()` with 4 fallback strategies:
+     1. Direct `JSON.parse()` (fastest path for well-formed responses)
+     2. Extract from markdown code blocks (````json ... ````)
+     3. Extract JSON object by regex boundaries (`{ ... }`)
+     4. Extract JSON array by regex boundaries (`[ ... ]`)
+   - Lines 872-949: Complete parsing utility with comprehensive logging
+   - Each strategy logs debug info before attempting next fallback
+
+3. **Raw Response Logging**
+   - Added debug logging to capture full Claude API responses
+   - Logs response length and first 100 characters for preview
+   - Lines 197-202: Enables post-mortem analysis of parsing failures
+
+4. **Enhanced Error Recovery**
+   - Distinguish JSON parse errors from API errors
+   - Provide actionable error messages for debugging
+   - Enhanced fallback response with `error_type` field
+   - Lines 222-254: Improved error handling and reporting
+
+5. **Debug Logging Cleanup**
+   - Replaced Session #27 console.log statements with structured logging
+   - Converted to `logger.debug/info/error` calls
+   - Removed emoji console output
+   - Lines 255-291 in workflow-state-machine.ts
+
+**Test Results:**
+```
+✅ Build Status:      PASSING (both scaffold-agent and orchestrator)
+✅ Production Test:   Workflow progressed initialization → validation
+✅ JSON Parsing:      "✅ SUCCESSFULLY PARSED JSON MESSAGE" in logs
+✅ Error Rate:        ZERO JSON parsing errors encountered
+```
+
+**Key Technical Decisions:**
+- Chose multi-strategy parsing over Claude tool calling (simpler, equally reliable)
+- Claude 3.5 Sonnet performs excellently with explicit JSON schemas
+- Fallback strategies provide robust error handling without complexity
+- No external dependencies needed (pure TypeScript regex + JSON.parse)
+
+**Files Modified:**
+- `packages/agents/scaffold-agent/src/scaffold-agent.ts` (144 insertions, 21 deletions)
+- `packages/orchestrator/src/state-machine/workflow-state-machine.ts` (14 changes)
+
+**Impact Assessment:**
+- Before: JSON parsing failures, fallback to templates only
+- After: Multi-strategy parsing, production-tested and verified
+- Benefit: Reliable Claude API integration with graceful degradation
 
 ---
 
