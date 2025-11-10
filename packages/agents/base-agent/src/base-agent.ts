@@ -134,6 +134,10 @@ export abstract class BaseAgent implements AgentLifecycle {
       // Validate task
       const task = this.validateTask(message.payload);
 
+      // SESSION #27 FIX: Extract workflow stage from task context
+      // The dispatcher puts it in context.stage (from payload.parameters.stage)
+      const workflowStage = task.context?.stage as string | undefined;
+
       // Execute task with retry (using new retry utility)
       const result = await retry(
         () => this.execute(task),
@@ -149,14 +153,18 @@ export abstract class BaseAgent implements AgentLifecycle {
         }
       );
 
-      // Report result
-      await this.reportResult(result);
+      // Report result with workflow stage
+      await this.reportResult(result, workflowStage);
 
       this.tasksProcessed++;
       this.lastTaskAt = new Date().toISOString();
 
     } catch (error) {
       this.errorsCount++;
+
+      // SESSION #27 FIX: Extract workflow stage for error reporting
+      const task = message.payload as any;
+      const workflowStage = task.context?.stage as string | undefined;
 
       const errorResult: TaskResult = {
         task_id: message.payload.task_id as string || randomUUID(),
@@ -166,7 +174,7 @@ export abstract class BaseAgent implements AgentLifecycle {
         errors: [error instanceof Error ? error.message : String(error)]
       };
 
-      await this.reportResult(errorResult);
+      await this.reportResult(errorResult, workflowStage);
 
       this.logger.error('Task execution failed', {
         error,
@@ -189,9 +197,13 @@ export abstract class BaseAgent implements AgentLifecycle {
 
   abstract execute(task: TaskAssignment): Promise<TaskResult>;
 
-  async reportResult(result: TaskResult): Promise<void> {
+  async reportResult(result: TaskResult, workflowStage?: string): Promise<void> {
     // Validate result
     const validatedResult = TaskResultSchema.parse(result);
+
+    // Use workflow stage if provided, otherwise fall back to agent type
+    // SESSION #27 FIX: Send workflow stage (e.g., "initialization") not agent type (e.g., "scaffold")
+    const stage = workflowStage || this.capabilities.type;
 
     // Publish result to Redis using publisher client
     const resultChannel = 'orchestrator:results';
@@ -202,7 +214,7 @@ export abstract class BaseAgent implements AgentLifecycle {
         type: 'result',
         agent_id: this.agentId,
         workflow_id: validatedResult.workflow_id,
-        stage: this.capabilities.type,
+        stage: stage,
         payload: validatedResult,
         timestamp: new Date().toISOString(),
         trace_id: randomUUID()
@@ -211,7 +223,8 @@ export abstract class BaseAgent implements AgentLifecycle {
 
     this.logger.info('Result reported', {
       task_id: validatedResult.task_id,
-      status: validatedResult.status
+      status: validatedResult.status,
+      workflow_stage: stage
     });
   }
 
