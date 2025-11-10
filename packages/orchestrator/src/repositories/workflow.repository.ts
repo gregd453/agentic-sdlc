@@ -107,17 +107,42 @@ export class WorkflowRepository {
       throw new NotFoundError(`Workflow ${id} not found`);
     }
 
-    const updated = await this.prisma.workflow.update({
-      where: { id },
-      data: data as any
-    });
+    // SESSION #26: Compare-And-Swap (CAS) for atomic stage updates
+    // Only update if version matches (prevents stale writes from concurrent updates)
+    const currentVersion = existing.version;
 
-    logger.info('Workflow updated', {
-      workflow_id: id,
-      updates: data
-    });
+    try {
+      const updated = await this.prisma.workflow.update({
+        where: {
+          id,
+          version: currentVersion  // CAS condition: only update if version unchanged
+        },
+        data: {
+          ...data,
+          version: { increment: 1 }  // Increment version on successful update
+        } as any
+      });
 
-    return updated;
+      logger.info('[SESSION #26 CAS] Workflow updated successfully (CAS check passed)', {
+        workflow_id: id,
+        updates: data,
+        version: currentVersion,
+        new_version: currentVersion + 1
+      });
+
+      return updated;
+    } catch (error: any) {
+      // If update failed, it means version mismatch (another process updated it)
+      if (error.code === 'P2025') {
+        logger.warn('[SESSION #26 CAS] Update rejected - version mismatch (concurrent update detected)', {
+          workflow_id: id,
+          expected_version: currentVersion,
+          attempted_updates: data
+        });
+        throw new Error(`CAS failed for workflow ${id}: concurrent update detected`);
+      }
+      throw error;
+    }
   }
 
   async updateState(
@@ -134,17 +159,40 @@ export class WorkflowRepository {
       throw new NotFoundError(`Workflow ${id} not found`);
     }
 
-    const updated = await this.prisma.workflow.update({
-      where: { id },
-      data: data as any
-    });
+    // SESSION #26: Compare-And-Swap (CAS) for atomic stage updates
+    const currentVersion = existing.version;
 
-    logger.info('Workflow state updated', {
-      workflow_id: id,
-      updates: data
-    });
+    try {
+      const updated = await this.prisma.workflow.update({
+        where: {
+          id,
+          version: currentVersion  // CAS condition
+        },
+        data: {
+          ...data,
+          version: { increment: 1 }  // Increment version on success
+        } as any
+      });
 
-    return updated;
+      logger.info('[SESSION #26 CAS] Workflow state updated successfully (CAS check passed)', {
+        workflow_id: id,
+        updates: data,
+        version: currentVersion,
+        new_version: currentVersion + 1
+      });
+
+      return updated;
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        logger.warn('[SESSION #26 CAS] State update rejected - version mismatch (concurrent update detected)', {
+          workflow_id: id,
+          expected_version: currentVersion,
+          attempted_updates: data
+        });
+        throw new Error(`CAS failed for workflow ${id}: concurrent update detected`);
+      }
+      throw error;
+    }
   }
 
   async updateStage(

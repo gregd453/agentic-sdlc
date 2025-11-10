@@ -211,9 +211,26 @@ export const createWorkflowStateMachine = (
       },
       updateWorkflowStatus: async ({ context }) => {
         // Status updates are handled by specific actions (markComplete, etc.)
-        await repository.update(context.workflow_id, {
-          current_stage: context.current_stage
-        });
+        try {
+          await repository.update(context.workflow_id, {
+            current_stage: context.current_stage
+          });
+          logger.info('[SESSION #26] Workflow status updated successfully', {
+            workflow_id: context.workflow_id,
+            current_stage: context.current_stage
+          });
+        } catch (error: any) {
+          if (error.message?.includes('CAS failed')) {
+            logger.warn('[SESSION #26 CAS] Workflow update rejected due to concurrent modification', {
+              workflow_id: context.workflow_id,
+              current_stage: context.current_stage,
+              error: error.message
+            });
+            // Log but don't throw - let polling detect the actual DB state
+          } else {
+            throw error;
+          }
+        }
       },
       updateProgress: ({ context, event }) => {
         if (event.type === 'STAGE_COMPLETE') {
