@@ -14,6 +14,7 @@ export interface WorkflowContext {
   clarification_id?: string;
   pending_decision?: boolean;
   pending_clarification?: boolean;
+  _stageTransitionInProgress?: boolean; // Internal flag to prevent double invocation of moveToNextStage
 }
 
 export type WorkflowEvent =
@@ -50,6 +51,7 @@ export const createWorkflowStateMachine = (
         }
       },
       running: {
+        entry: ['clearTransitionInProgress'], // Clear the flag when entering running state
         on: {
           STAGE_COMPLETE: {
             target: 'evaluating',
@@ -114,7 +116,8 @@ export const createWorkflowStateMachine = (
           },
           {
             target: 'running',
-            actions: ['moveToNextStage']
+            guard: 'isNotTransitioningAlready', // Prevent double invocation
+            actions: ['setTransitionInProgress', 'moveToNextStage']
           }
         ]
       },
@@ -196,6 +199,19 @@ export const createWorkflowStateMachine = (
         logger.info('Retrying workflow', {
           workflow_id: context.workflow_id
         });
+      },
+      setTransitionInProgress: ({ context }) => {
+        logger.debug('Setting transition flag to prevent double invocation', {
+          workflow_id: context.workflow_id
+        });
+        context._stageTransitionInProgress = true;
+      },
+      clearTransitionInProgress: ({ context }) => {
+        logger.debug('Clearing transition flag', {
+          workflow_id: context.workflow_id,
+          was_in_progress: context._stageTransitionInProgress
+        });
+        context._stageTransitionInProgress = false;
       },
       moveToNextStage: async ({ context }) => {
         const stages = getStagesForType(context.type);
@@ -343,6 +359,16 @@ export const createWorkflowStateMachine = (
         const stages = getStagesForType(context.type);
         const currentIndex = stages.indexOf(context.current_stage);
         return currentIndex === stages.length - 1;
+      },
+      isNotTransitioningAlready: ({ context }) => {
+        // Prevent the always transition if we're already in the middle of transitioning
+        const isNotTransitioning = !context._stageTransitionInProgress;
+        logger.debug('isNotTransitioningAlready guard check', {
+          workflow_id: context.workflow_id,
+          _stageTransitionInProgress: context._stageTransitionInProgress,
+          result: isNotTransitioning
+        });
+        return isNotTransitioning;
       }
     }
   });

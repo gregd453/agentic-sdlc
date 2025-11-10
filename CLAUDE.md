@@ -1,6 +1,6 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 6.3 | **Last Updated:** 2025-11-10 05:40 UTC | **Status:** Session #19 COMPLETE - Initialization Fixed, Multi-Stage Task Creation Issue Identified
+**Version:** 6.4 | **Last Updated:** 2025-11-10 05:53 UTC | **Status:** Session #20 IN PROGRESS - Double Invocation Fix Attempted
 
 ---
 
@@ -31,6 +31,38 @@
 ./scripts/run-pipeline-test.sh "Calculator"    # Run test
 ./scripts/env/stop-dev.sh                      # Stop environment
 ```
+
+---
+
+## 🎯 SESSION #20 STATUS - Double Invocation Investigation
+
+### ⚠️ Issue Under Investigation: moveToNextStage Double Invocation
+
+**Problem Confirmed:**
+- State machine's `always` transition block in "evaluating" state is triggering `moveToNextStage` multiple times
+- Test output shows workflow jumping from "initialization" → "validation", skipping "scaffolding"
+- This confirms the double invocation hypothesis from Session #19
+
+**Attempted Fix (Incomplete):**
+Added idempotency guard to prevent re-evaluation:
+- Added `_stageTransitionInProgress` flag to WorkflowContext
+- Added `setTransitionInProgress` and `clearTransitionInProgress` actions
+- Added `isNotTransitioningAlready` guard to prevent re-transition
+- Added entry action to `running` state to clear flag
+
+**Result:** Fix did NOT work - workflows still skip intermediate stages
+
+**Root Cause Analysis:**
+- Guard evaluation happens BEFORE action execution in xstate
+- Flag is set too late in the action lifecycle to prevent the issue
+- The always block may be re-evaluating AFTER the async moveToNextStage completes
+- The clearTransitionInProgress runs synchronously before moveToNextStage completes (async)
+
+**Next Steps for Session #21:**
+1. Try clearing flag INSIDE the moveToNextStage action after it completes
+2. Consider restructuring state machine to avoid always blocks with async actions
+3. Add detailed logging to track exactly when moveToNextStage is invoked
+4. Consider moving the stage transition logic OUT of the state machine action into a separate layer
 
 ---
 
