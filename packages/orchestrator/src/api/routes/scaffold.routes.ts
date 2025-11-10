@@ -1,7 +1,6 @@
 import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 import { ScaffoldWorkflowService } from '../../services/scaffold-workflow.service';
 import { WorkflowRepository } from '../../repositories/workflow.repository';
-import { AgentDispatcherService } from '../../services/agent-dispatcher.service';
 import { prisma } from '../../db/client';
 import { z } from 'zod';
 
@@ -32,10 +31,10 @@ const CreateScaffoldRequestSchema = z.object({
 
 type CreateScaffoldRequest = z.infer<typeof CreateScaffoldRequestSchema>;
 
-export const scaffoldRoutes: FastifyPluginAsync = async (fastify) => {
+export const scaffoldRoutes: FastifyPluginAsync<any> = async (fastify, options: any) => {
   const repository = new WorkflowRepository(prisma);
-  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-  const agentDispatcher = new AgentDispatcherService(redisUrl);
+  // Use the global agentDispatcher instance from server.ts instead of creating a new one
+  const agentDispatcher = options.agentDispatcher;
   const scaffoldService = new ScaffoldWorkflowService(repository, agentDispatcher);
 
   /**
@@ -48,7 +47,18 @@ export const scaffoldRoutes: FastifyPluginAsync = async (fastify) => {
       schema: {
         description: 'Create a new scaffold workflow',
         tags: ['scaffold'],
-        body: CreateScaffoldRequestSchema,
+        body: {
+          type: 'object',
+          required: ['name', 'description', 'project_type', 'requirements'],
+          properties: {
+            name: { type: 'string' },
+            description: { type: 'string' },
+            project_type: { type: 'string', enum: ['app', 'service', 'feature', 'capability'] },
+            requirements: { type: 'array', items: { type: 'string' } },
+            tech_stack: { type: 'object' },
+            options: { type: 'object' }
+          }
+        },
         response: {
           201: {
             description: 'Workflow created successfully',
@@ -195,10 +205,8 @@ export const scaffoldRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // Register result handler for scaffold workflows
-  agentDispatcher.onResult('scaffold', async (result) => {
-    await scaffoldService.handleScaffoldResult(result);
-  });
+  // Note: Result handlers are now registered per-workflow in scaffold-workflow.service.ts
+  // This ensures handlers are registered with the workflow_id key, not the agent type
 
   // Cleanup on close
   fastify.addHook('onClose', async () => {

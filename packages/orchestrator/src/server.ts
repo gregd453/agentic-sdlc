@@ -127,6 +127,10 @@ export async function createServer() {
   await fastify.register(workflowRoutes, { workflowService });
   await fastify.register(pipelineRoutes, { pipelineExecutor });
 
+  // Import and register scaffold routes with agentDispatcher dependency
+  const { scaffoldRoutes } = await import('./api/routes/scaffold.routes');
+  await fastify.register(scaffoldRoutes, { agentDispatcher });
+
   // Metrics endpoints
   fastify.get('/metrics', {
     schema: {
