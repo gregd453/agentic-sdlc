@@ -1,12 +1,25 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 7.6 | **Last Updated:** 2025-11-10 21:10 UTC | **Status:** Session #30 COMPLETE - Context Passing Implemented
+**Version:** 7.7 | **Last Updated:** 2025-11-10 21:30 UTC | **Status:** Session #31 COMPLETE - Critical Issues Identified
 
 ---
 
 ## ⚡ QUICK REFERENCE (START HERE)
 
-### Current Focus: Session #30 - Workflow Context Passing ✅ COMPLETE
+### Current Focus: Session #31 - Multi-Agent Pipeline Testing ⚠️ ISSUES FOUND
+
+| Item | Status | Details |
+|------|--------|---------|
+| **Session #30 Verification** | ✅ VERIFIED | Context passing works correctly - working_directory present |
+| **Stage Progression** | ✅ WORKING | Workflow advanced: initialization → scaffolding → validation |
+| **Agent Registration** | ✅ WORKING | Validation & E2E agents registered successfully |
+| **Critical Issue #1** | 🔴 BLOCKER | Scaffold agent not writing files to disk |
+| **Critical Issue #2** | 🟡 HIGH | Validation agent poor error reporting (no diagnostic details) |
+| **Critical Issue #3** | 🟡 MEDIUM | No validation results stored on failure |
+| **Build Status** | ✅ PASSING | All TypeScript compiles, no errors |
+| **Next Action** | ➡️ Session #32 | Fix scaffold file writing, enhance validation error logging |
+
+### Previous: Session #30 - Workflow Context Passing ✅ COMPLETE
 
 | Item | Status | Details |
 |------|--------|---------|
@@ -299,6 +312,128 @@ SUCCESS: Can validate generated code
 **Commits:** 1 (b694bc0)
 
 **Next Session Focus:** Test complete pipeline (validation → e2e → integration → deployment)
+
+---
+
+## 🎯 SESSION #31 STATUS - Multi-Agent Pipeline Testing (⚠️ CRITICAL ISSUES - File Writing & Error Reporting)
+
+### ✅ PRIMARY ACHIEVEMENT: Session #30 Context Passing VERIFIED
+
+**Testing Complete (Workflow ID: 5e17672b-ff16-4005-ba2a-5c6c45c2a619):**
+
+Session #31 successfully verified that **Session #30's context passing implementation works correctly**, but uncovered critical file generation issues that block the pipeline.
+
+**Evidence from database inspection:**
+```json
+{
+  "working_directory": "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/5e17672b-.../validation-test",
+  "validation_types": ["typescript", "eslint"],
+  "thresholds": {"coverage": 80},
+  "previous_outputs": {
+    "output_path": "/Users/Greg/.../validation-test",
+    "entry_points": ["src/index.ts"],
+    "files_generated": [10 files with complete metadata]
+  }
+}
+```
+
+**Verification Results:**
+- ✅ `working_directory` field present in validation task payload
+- ✅ `validation_types` array included
+- ✅ `previous_outputs` contains complete scaffolding context
+- ✅ Workflow progressed: initialization → scaffolding → validation
+- ✅ Stage transitions working correctly
+- ✅ Database `stage_outputs` populated for init & scaffolding
+
+### 🔴 CRITICAL ISSUE #1: Scaffold Agent Not Writing Files to Disk
+**Severity:** BLOCKER - Entire pipeline blocked
+**Impact:** Validation, E2E, Integration, Deployment all fail
+
+**Problem:**
+Scaffold agent reports success and stores complete file metadata in database, but **NO ACTUAL FILES are written to the filesystem**.
+
+**Evidence:**
+```bash
+# Database shows:
+output_path: "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/5e17672b-.../validation-test"
+files_generated: [10 files: package.json, tsconfig.json, src/App.tsx, etc.]
+
+# Filesystem shows:
+$ ls ai.output/5e17672b-ff16-4005-ba2a-5c6c45c2a619/
+ls: No such file or directory
+```
+
+**Impact Chain:**
+1. Scaffolding completes with "success"
+2. Context passes correctly to validation
+3. Validation agent looks for files at `working_directory`
+4. Files don't exist → validation fails
+5. Entire pipeline blocked
+
+**File to investigate:** `packages/agents/scaffold-agent/src/scaffold-agent.ts`
+**Focus:** File generation/writing logic, template copying operations
+
+### 🟡 CRITICAL ISSUE #2: Validation Agent Poor Error Reporting
+**Severity:** HIGH - Blocks debugging
+**Impact:** Cannot diagnose validation failures
+
+**Problem:**
+Validation agent fails with generic error messages that provide no diagnostic information.
+
+**Evidence from logs:**
+```
+[2025-11-10 20:21:10] INFO: Executing validation task
+[2025-11-10 20:21:10] ERROR: Validation task failed
+[2025-11-10 20:21:10] WARN: Task execution failed, retrying
+```
+
+**Missing Information:**
+- ❌ No error message text
+- ❌ No stack traces
+- ❌ No file paths being checked
+- ❌ No indication of "file not found" vs "validation check failed"
+
+**File to fix:** `packages/agents/validation-agent/src/validation-agent.ts`
+**Focus:** Error handling blocks (catch statements), add detailed logging
+
+### 🟡 CRITICAL ISSUE #3: No Validation Results Stored on Failure
+**Severity:** MEDIUM - Data consistency issue
+**Impact:** Pipeline state incomplete
+
+**Problem:**
+When validation fails, no results are stored in `stage_outputs` for the validation stage.
+
+**Database shows:**
+```json
+{
+  "stage_outputs": {
+    "initialization": {...},  // ✅ Present
+    "scaffolding": {...}      // ✅ Present
+    // ❌ "validation" key missing
+  }
+}
+```
+
+**Expected:** Even on failure, validation should store error details and failure status.
+
+### 📊 Session #31 Technical Summary
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| **Context Passing (Session #30)** | ✅ VERIFIED | working_directory, validation_types, previous_outputs all present |
+| **Stage Progression** | ✅ WORKING | init → scaffold → validation transitions correct |
+| **Agent Registration** | ✅ WORKING | Validation & E2E agents registered successfully |
+| **Scaffold Agent** | ❌ FILE WRITE BUG | Metadata correct, files not written to disk |
+| **Validation Agent** | ⚠️ POOR ERRORS | Receives context, fails with no diagnostic details |
+| **E2E Agent** | ⏸️ NOT TESTED | Blocked by validation failure |
+| **Build Status** | ✅ PASSING | All TypeScript compiles, no errors |
+
+**Time Investment:** ~1.75 hours
+**Value Delivered:** Verified Session #30 fix, identified 3 critical blockers
+**Files Modified:** 0 (testing only)
+**Documentation:** SESSION-31-FINDINGS.md (complete analysis)
+
+**Next Session Focus:** Fix scaffold file writing bug, enhance validation error reporting
 
 ---
 

@@ -15,6 +15,7 @@ import { validateESLint } from './validators/eslint-validator';
 import { validateCoverage } from './validators/coverage-validator';
 import { validateSecurity } from './validators/security-validator';
 import { evaluateQualityGates } from './validators/quality-gates';
+import * as fs from 'fs-extra';
 
 /**
  * ValidationAgent - Performs code validation with quality gate enforcement
@@ -81,6 +82,34 @@ export class ValidationAgent extends BaseAgent {
         coverage_threshold: validationTask.payload.thresholds?.coverage,
         package_manager: 'pnpm' as const,
       };
+
+      // SESSION #32: Check if working directory exists before validation
+      this.logger.info('[SESSION #32] Checking working directory existence', {
+        working_directory: context.project_path,
+        task_id: task.task_id
+      });
+
+      const workingDirExists = await fs.pathExists(context.project_path);
+
+      if (!workingDirExists) {
+        const errorMsg = `Working directory does not exist: ${context.project_path}`;
+        this.logger.error('[SESSION #32] Working directory not found', {
+          working_directory: context.project_path,
+          task_id: task.task_id,
+          workflow_id: task.workflow_id,
+          error: errorMsg
+        });
+
+        throw new AgentError(
+          errorMsg,
+          'WORKSPACE_ERROR',
+          { cause: new Error(`Path does not exist: ${context.project_path}`) }
+        );
+      }
+
+      this.logger.info('[SESSION #32] Working directory exists, proceeding with validation', {
+        working_directory: context.project_path
+      });
 
       // Run validation checks
       const validationChecks = await this.runValidationChecks(context);
@@ -150,12 +179,25 @@ export class ValidationAgent extends BaseAgent {
         next_stage: taskStatus === 'success' ? 'integration' : undefined
       };
     } catch (error) {
-      this.logger.error('Validation task failed', {
+      // SESSION #32: Enhanced error logging with detailed diagnostics
+      const errorDetails = {
         task_id: task.task_id,
-        error,
-        trace_id: traceId
-      });
+        workflow_id: task.workflow_id,
+        trace_id: traceId,
+        error_message: error instanceof Error ? error.message : String(error),
+        error_code: error instanceof AgentError ? error.code : 'UNKNOWN',
+        error_stack: error instanceof Error ? error.stack : undefined,
+        error_type: error instanceof Error ? error.constructor.name : typeof error
+      };
 
+      this.logger.error('[SESSION #32] Validation task failed with detailed diagnostics', errorDetails);
+
+      // If this is already an AgentError, re-throw it
+      if (error instanceof AgentError) {
+        throw error;
+      }
+
+      // Otherwise wrap in AgentError with context
       throw new AgentError(
         `Validation task failed: ${error instanceof Error ? error.message : String(error)}`,
         'VALIDATION_FAILED',
@@ -179,43 +221,108 @@ export class ValidationAgent extends BaseAgent {
       'security'
     ];
 
-    this.logger.info('Running validation checks', {
+    this.logger.info('[SESSION #32] Running validation checks', {
       project_path: context.project_path,
       validation_types: validationTypes
     });
 
     // Run TypeScript validation
     if (validationTypes.includes('typescript')) {
-      this.logger.info('Running TypeScript validation');
-      const tsResult = await validateTypeScript(context.project_path);
-      checks.push(tsResult);
+      this.logger.info('[SESSION #32] Running TypeScript validation', {
+        project_path: context.project_path
+      });
+      try {
+        const tsResult = await validateTypeScript(context.project_path);
+        this.logger.info('[SESSION #32] TypeScript validation completed', {
+          status: tsResult.status,
+          duration_ms: tsResult.duration_ms,
+          error_count: tsResult.errors?.length || 0
+        });
+        checks.push(tsResult);
+      } catch (error) {
+        this.logger.error('[SESSION #32] TypeScript validation threw exception', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined
+        });
+        throw error;
+      }
     }
 
     // Run ESLint validation
     if (validationTypes.includes('eslint')) {
-      this.logger.info('Running ESLint validation');
-      const eslintResult = await validateESLint(context.project_path);
-      checks.push(eslintResult);
+      this.logger.info('[SESSION #32] Running ESLint validation', {
+        project_path: context.project_path
+      });
+      try {
+        const eslintResult = await validateESLint(context.project_path);
+        this.logger.info('[SESSION #32] ESLint validation completed', {
+          status: eslintResult.status,
+          duration_ms: eslintResult.duration_ms,
+          error_count: eslintResult.errors?.length || 0
+        });
+        checks.push(eslintResult);
+      } catch (error) {
+        this.logger.error('[SESSION #32] ESLint validation threw exception', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined
+        });
+        throw error;
+      }
     }
 
     // Run coverage validation
     if (validationTypes.includes('coverage')) {
-      this.logger.info('Running coverage validation');
-      const coverageThreshold = context.coverage_threshold ||
-                                this.getCoverageThresholdFromPolicy();
-      const coverageResult = await validateCoverage(
-        context.project_path,
-        coverageThreshold
-      );
-      checks.push(coverageResult);
+      this.logger.info('[SESSION #32] Running coverage validation', {
+        project_path: context.project_path
+      });
+      try {
+        const coverageThreshold = context.coverage_threshold ||
+                                  this.getCoverageThresholdFromPolicy();
+        const coverageResult = await validateCoverage(
+          context.project_path,
+          coverageThreshold
+        );
+        this.logger.info('[SESSION #32] Coverage validation completed', {
+          status: coverageResult.status,
+          duration_ms: coverageResult.duration_ms
+        });
+        checks.push(coverageResult);
+      } catch (error) {
+        this.logger.error('[SESSION #32] Coverage validation threw exception', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined
+        });
+        throw error;
+      }
     }
 
     // Run security validation
     if (validationTypes.includes('security')) {
-      this.logger.info('Running security validation');
-      const securityResult = await validateSecurity(context.project_path);
-      checks.push(securityResult);
+      this.logger.info('[SESSION #32] Running security validation', {
+        project_path: context.project_path
+      });
+      try {
+        const securityResult = await validateSecurity(context.project_path);
+        this.logger.info('[SESSION #32] Security validation completed', {
+          status: securityResult.status,
+          duration_ms: securityResult.duration_ms
+        });
+        checks.push(securityResult);
+      } catch (error) {
+        this.logger.error('[SESSION #32] Security validation threw exception', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined
+        });
+        throw error;
+      }
     }
+
+    this.logger.info('[SESSION #32] All validation checks completed', {
+      total_checks: checks.length,
+      passed: checks.filter(c => c.status === 'passed').length,
+      failed: checks.filter(c => c.status === 'failed').length,
+      skipped: checks.filter(c => c.status === 'skipped').length
+    });
 
     return checks;
   }

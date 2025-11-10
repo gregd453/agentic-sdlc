@@ -477,6 +477,14 @@ export class WorkflowService {
         }
       });
     } else {
+      // SESSION #32: Store stage output even on failure for audit trail
+      const failedStage = result.stage;
+      await this.storeStageOutput(result.workflow_id, failedStage, {
+        ...payload.output,
+        status: 'failed',
+        errors: payload.errors
+      });
+
       await this.handleTaskFailure({
         payload: {
           task_id: payload.task_id,
