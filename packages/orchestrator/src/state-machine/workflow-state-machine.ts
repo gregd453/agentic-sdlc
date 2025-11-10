@@ -252,8 +252,10 @@ export const createWorkflowStateMachine = (
           const stages = getStagesForType(context.type);
           const currentIndex = stages.indexOf(context.current_stage);
 
-          logger.info('SESSION #23 FIX: Computing nextStage on STAGE_COMPLETE event (pre-computed)', {
+          // SESSION #28: Cleaned up debug logging (verified correct in Session #27)
+          logger.debug('Computing next stage from current stage', {
             workflow_id: context.workflow_id,
+            workflow_type: context.type,
             current_stage: context.current_stage,
             current_index: currentIndex,
             total_stages: stages.length
@@ -261,26 +263,26 @@ export const createWorkflowStateMachine = (
 
           // Check if current stage not found
           if (currentIndex === -1) {
-            logger.error('CRITICAL: Current stage not found in stages array!', {
+            logger.error('CRITICAL: Current stage not found in stages array', {
               workflow_id: context.workflow_id,
               current_stage: context.current_stage,
-              available_stages: JSON.stringify(stages)
+              available_stages: stages
             });
             return undefined;
           }
 
           // If at last stage, workflow is complete
           if (currentIndex === stages.length - 1) {
-            logger.info('SESSION #23 FIX: At last stage - workflow will complete', {
+            logger.info('Workflow at final stage - marking complete', {
               workflow_id: context.workflow_id,
               current_stage: context.current_stage
             });
             return undefined;
           }
 
-          // Compute the ABSOLUTE next stage
+          // Compute the next stage
           const nextStage = stages[currentIndex + 1];
-          logger.info('SESSION #23 FIX: Next stage COMPUTED on event (ABSOLUTE value)', {
+          logger.info('Stage transition computed', {
             workflow_id: context.workflow_id,
             from_stage: context.current_stage,
             from_index: currentIndex,

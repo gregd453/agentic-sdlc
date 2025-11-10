@@ -184,15 +184,25 @@ export class ScaffoldAgent extends BaseAgent {
         project_type: task.payload.project_type
       });
 
-      const response = await this.callClaude(prompt, 'Analyze project requirements and provide structured JSON analysis');
+      const response = await this.callClaude(
+        prompt,
+        'You are a software architect analyzing project requirements. Return responses as pure JSON only - no markdown, no code blocks, no explanatory text. Just the JSON object.'
+      );
 
       this.logger.info('Claude API response received', {
         response_length: response.length,
         task_id: task.task_id
       });
 
-      // Parse Claude's response
-      const analysis = JSON.parse(response);
+      // SESSION #28: Log raw response for debugging JSON parsing issues
+      this.logger.debug('Raw Claude API response', {
+        task_id: task.task_id,
+        raw_response: response,
+        first_100_chars: response.substring(0, 100)
+      });
+
+      // SESSION #28: Sanitize and parse Claude's response
+      const analysis = this.parseClaudeJsonResponse(response, task.task_id);
 
       this.logger.info('Requirements analysis completed successfully', {
         task_id: task.task_id,
@@ -212,18 +222,23 @@ export class ScaffoldAgent extends BaseAgent {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const errorStack = error instanceof Error ? error.stack : undefined;
-      const fullError = JSON.stringify(error, null, 2);
+      const isJsonParseError = errorMessage.includes('JSON') || errorMessage.includes('parse');
 
       this.logger.error('Failed to analyze requirements with Claude API', {
         error: errorMessage,
         error_stack: errorStack,
-        full_error: fullError,
+        error_type: isJsonParseError ? 'JSON_PARSE_ERROR' : 'API_ERROR',
         task_id: task.task_id
       });
 
-      // Also log to console for visibility
-      console.error('❌ CLAUDE API ERROR:', errorMessage);
-      if (fullError) console.error('Full error object:', fullError);
+      // SESSION #28: Enhanced error visibility for JSON parsing issues
+      if (isJsonParseError) {
+        console.error('❌ JSON PARSING ERROR:', errorMessage);
+        console.error('This likely means Claude returned non-JSON format despite instructions.');
+        console.error('Check logs for raw_response to see what Claude actually returned.');
+      } else {
+        console.error('❌ CLAUDE API ERROR:', errorMessage);
+      }
 
       // Return default analysis with flag indicating API failure
       return {
@@ -234,7 +249,8 @@ export class ScaffoldAgent extends BaseAgent {
         tokens_used: 0,
         api_calls: 0,
         claude_used: false,
-        fallback_reason: error instanceof Error ? error.message : 'Unknown error'
+        fallback_reason: errorMessage,
+        error_type: isJsonParseError ? 'JSON_PARSE_ERROR' : 'API_ERROR'
       };
     }
   }
@@ -802,13 +818,35 @@ Project Name: ${task.payload.name}
 Description: ${task.payload.description}
 Requirements: ${task.payload.requirements.join(', ')}
 
-Please provide:
-1. Component breakdown
-2. Technical architecture recommendations
-3. Required dependencies
-4. Complexity assessment (low, medium, high)
+Please provide a detailed analysis and return ONLY valid JSON with this exact structure (no markdown formatting, no code blocks, no explanatory text):
 
-Return response as JSON.`;
+{
+  "complexity": "low" | "medium" | "high",
+  "components": [
+    {
+      "name": "component name",
+      "purpose": "what it does",
+      "type": "frontend" | "backend" | "database" | "service"
+    }
+  ],
+  "architecture": {
+    "pattern": "architecture pattern (e.g., MVC, layered, microservices)",
+    "layers": ["list of architectural layers"],
+    "recommendations": ["key architectural decisions"]
+  },
+  "dependencies": {
+    "runtime": ["production dependencies with versions"],
+    "development": ["dev dependencies with versions"]
+  },
+  "technical_decisions": [
+    {
+      "decision": "decision description",
+      "rationale": "why this decision"
+    }
+  ]
+}
+
+IMPORTANT: Return ONLY the JSON object, no other text or formatting.`;
   }
 
   private extractDependencies(analysis: any): any[] {
@@ -831,5 +869,88 @@ Return response as JSON.`;
   private generateChecksum(content: string): string {
     // Simple checksum generation (in production, use crypto)
     return Buffer.from(content).toString('base64').substring(0, 8);
+  }
+
+  /**
+   * SESSION #28: Parse JSON from Claude API response with multiple fallback strategies
+   * Handles various response formats: pure JSON, markdown code blocks, text with JSON
+   */
+  private parseClaudeJsonResponse(response: string, taskId: string): any {
+    // Strategy 1: Try parsing as pure JSON first
+    try {
+      return JSON.parse(response);
+    } catch (firstError) {
+      this.logger.debug('Direct JSON parse failed, trying extraction strategies', {
+        task_id: taskId,
+        error: firstError instanceof Error ? firstError.message : 'Unknown error'
+      });
+    }
+
+    // Strategy 2: Extract JSON from markdown code blocks (```json ... ```)
+    const jsonCodeBlockMatch = response.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+    if (jsonCodeBlockMatch && jsonCodeBlockMatch[1]) {
+      try {
+        const extracted = jsonCodeBlockMatch[1].trim();
+        this.logger.debug('Extracted JSON from markdown code block', {
+          task_id: taskId,
+          extracted_length: extracted.length
+        });
+        return JSON.parse(extracted);
+      } catch (blockError) {
+        this.logger.debug('Failed to parse extracted code block', {
+          task_id: taskId,
+          error: blockError instanceof Error ? blockError.message : 'Unknown error'
+        });
+      }
+    }
+
+    // Strategy 3: Find JSON object/array by looking for { or [ boundaries
+    const jsonObjectMatch = response.match(/\{[\s\S]*\}/);
+    const jsonArrayMatch = response.match(/\[[\s\S]*\]/);
+
+    // Try object match first (most common for our use case)
+    if (jsonObjectMatch) {
+      try {
+        const extracted = jsonObjectMatch[0].trim();
+        this.logger.debug('Extracted JSON object from text', {
+          task_id: taskId,
+          extracted_length: extracted.length
+        });
+        return JSON.parse(extracted);
+      } catch (objError) {
+        this.logger.debug('Failed to parse extracted JSON object', {
+          task_id: taskId,
+          error: objError instanceof Error ? objError.message : 'Unknown error'
+        });
+      }
+    }
+
+    // Try array match
+    if (jsonArrayMatch) {
+      try {
+        const extracted = jsonArrayMatch[0].trim();
+        this.logger.debug('Extracted JSON array from text', {
+          task_id: taskId,
+          extracted_length: extracted.length
+        });
+        return JSON.parse(extracted);
+      } catch (arrError) {
+        this.logger.debug('Failed to parse extracted JSON array', {
+          task_id: taskId,
+          error: arrError instanceof Error ? arrError.message : 'Unknown error'
+        });
+      }
+    }
+
+    // Strategy 4: All strategies failed - throw with detailed error
+    const errorMsg = 'Failed to extract valid JSON from Claude response after trying all strategies';
+    this.logger.error(errorMsg, {
+      task_id: taskId,
+      response_preview: response.substring(0, 200),
+      response_length: response.length,
+      tried_strategies: ['direct_parse', 'code_block', 'object_boundaries', 'array_boundaries']
+    });
+
+    throw new Error(`${errorMsg}. Response preview: ${response.substring(0, 200)}`);
   }
 }
