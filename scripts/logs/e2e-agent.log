@@ -19,12 +19,9 @@
 ✅ Registered schema: integration.result (v1.0.0)
 ✅ Registered schema: deployment.task (v1.0.0)
 ✅ Registered schema: deployment.result (v1.0.0)
-📦 @agentic-sdlc/shared-types loaded
-📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
-🔖 Version: 1.0.0
 ✅ E2E test agent started successfully
 📡 Listening for E2E test tasks...
-[2025-11-11 19:03:29] [32mINFO[39m (e2e-1ed2c1e7/40278): [36mInitializing agent[39m
-[2025-11-11 19:03:29] [32mINFO[39m (e2e-1ed2c1e7/40278): [36mSubscribed to task channel[39m
-[2025-11-11 19:03:29] [32mINFO[39m (e2e-1ed2c1e7/40278): [36mRegistered with orchestrator[39m
-[2025-11-11 19:03:29] [32mINFO[39m (e2e-1ed2c1e7/40278): [36mAgent initialized successfully[39m
+[2025-11-11 22:04:36] [32mINFO[39m (e2e-97c7f11a/25125): [36mInitializing agent[39m
+[2025-11-11 22:04:36] [32mINFO[39m (e2e-97c7f11a/25125): [36mSubscribed to task channel[39m
+[2025-11-11 22:04:36] [32mINFO[39m (e2e-97c7f11a/25125): [36mRegistered with orchestrator[39m
+[2025-11-11 22:04:36] [32mINFO[39m (e2e-97c7f11a/25125): [36mAgent initialized successfully[39m
