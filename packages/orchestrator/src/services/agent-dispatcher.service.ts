@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import { createClient, type RedisClientType } from 'redis';
 import { REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
 import { TaskAssignment } from '../types';
 import { logger } from '../utils/logger';
@@ -6,131 +6,129 @@ import { logger } from '../utils/logger';
 /**
  * Agent Dispatcher Service
  * Handles bidirectional communication with agents via Redis
+ * Session #42: Migrated from ioredis to node-redis v4
  */
 export class AgentDispatcherService {
-  private redisPublisher: Redis;
-  private redisSubscriber: Redis;
+  private redisPublisher: any; // RedisClientType
+  private redisSubscriber: any; // RedisClientType
   private resultHandlers: Map<string, (result: any) => void> = new Map();
   private handlerTimeouts: Map<string, NodeJS.Timeout> = new Map();
   private readonly HANDLER_TIMEOUT_MS = 3600000; // 1 hour
 
   constructor(redisUrl: string) {
-    logger.info('🚀 INITIALIZING AGENT DISPATCHER SERVICE', {
+    logger.info('🚀 INITIALIZING AGENT DISPATCHER SERVICE (node-redis v4)', {
       redisUrl,
       timestamp: new Date().toISOString()
     });
 
-    this.redisPublisher = new Redis(redisUrl);
-    this.redisSubscriber = new Redis(redisUrl);
+    // Create clients (not connected yet)
+    this.redisPublisher = createClient({ url: redisUrl });
+    this.redisSubscriber = createClient({ url: redisUrl });
 
     logger.info('✅ REDIS CLIENTS CREATED', {
-      publisherState: 'connecting',
-      subscriberState: 'connecting',
+      publisherState: 'ready',
+      subscriberState: 'ready',
       timestamp: new Date().toISOString()
     });
 
-    // Setup event listeners once (don't repeat on reconnect)
-    this.setupEventListeners();
-
-    // Initial subscription attempt
-    this.setupResultListener();
-
-    logger.info('✅ RESULT LISTENER SET UP', {
-      timestamp: new Date().toISOString()
-    });
+    // Setup event listeners and connect
+    this.initializeClients();
   }
 
   /**
-   * Setup event listeners for Redis subscriber (called once during init)
+   * Initialize clients and setup listeners for node-redis v4
    */
-  private setupEventListeners(): void {
-    // Log connection status
-    this.redisSubscriber.on('connect', () => {
+  private async initializeClients(): Promise<void> {
+    try {
+      // Setup error handlers BEFORE connecting
+      this.redisPublisher.on('error', (err: any) => {
+        logger.error('❌ REDIS PUBLISHER ERROR', {
+          errorMessage: err?.message || String(err),
+          errorCode: err?.code,
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      this.redisSubscriber.on('error', (err: any) => {
+        logger.error('❌ REDIS SUBSCRIBER ERROR', {
+          errorMessage: err?.message || String(err),
+          errorCode: err?.code,
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      // Connect publisher
+      await this.redisPublisher.connect();
+      logger.info('🔗 REDIS PUBLISHER CONNECTED', {
+        timestamp: new Date().toISOString()
+      });
+
+      // Connect subscriber
+      await this.redisSubscriber.connect();
       logger.info('🔗 REDIS SUBSCRIBER CONNECTED', {
         timestamp: new Date().toISOString()
       });
-    });
 
-    // Log any subscription/connection errors
-    this.redisSubscriber.on('error', (err) => {
-      logger.error('❌ REDIS SUBSCRIBER ERROR', {
-        errorMessage: (err as any)?.message || String(err),
-        errorCode: (err as any)?.code,
-        fullError: String(err),
+      // Setup result listener (after connection)
+      await this.setupResultListener();
+
+      logger.info('✅ RESULT LISTENER SET UP', {
         timestamp: new Date().toISOString()
       });
-    });
-
-    // Log subscription confirmation
-    this.redisSubscriber.on('subscribe', (channel, count) => {
-      logger.info('📡 REDIS SUBSCRIPTION CONFIRMED', {
-        channel,
-        subscriptionCount: count,
+    } catch (error) {
+      logger.error('❌ FAILED TO INITIALIZE CLIENTS', {
+        error,
         timestamp: new Date().toISOString()
       });
-    });
+      // Retry after delay
+      setTimeout(() => this.initializeClients(), 5000);
+    }
+  }
 
-    // Main message handler
-    this.redisSubscriber.on('message', (channel, message) => {
-      logger.info('📨 RAW MESSAGE RECEIVED FROM REDIS', {
-        channel,
-        messageLength: message.length,
-        messagePreview: message.substring(0, 100),
-        timestamp: new Date().toISOString()
-      });
-
+  /**
+   * Subscribe to agent results channel
+   * Uses pSubscribe for pattern matching
+   */
+  private async setupResultListener(): Promise<void> {
+    try {
       // SESSION #37: Use constants for Redis channels
-      if (channel === REDIS_CHANNELS.ORCHESTRATOR_RESULTS) {
+      const channel = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
+
+      logger.info('🔌 SETTING UP REDIS SUBSCRIPTION', {
+        channel,
+        subscriberState: 'connected'
+      });
+
+      // Subscribe and setup message handler
+      // node-redis v4 callback signature: (message, channel)
+      await this.redisSubscriber.subscribe(channel, (message: string) => {
+        logger.info('📨 RAW MESSAGE RECEIVED FROM REDIS', {
+          channel,
+          messageLength: message.length,
+          messagePreview: message.substring(0, 100),
+          timestamp: new Date().toISOString()
+        });
+
         logger.info('✅ MESSAGE IS FOR ORCHESTRATOR:RESULTS CHANNEL - PROCESSING', {
           channel,
           timestamp: new Date().toISOString()
         });
         this.handleAgentResult(message);
-      } else {
-        logger.warn('⚠️ MESSAGE RECEIVED ON UNEXPECTED CHANNEL', {
-          expectedChannel: REDIS_CHANNELS.ORCHESTRATOR_RESULTS,
-          actualChannel: channel
-        });
-      }
-    });
-  }
+      });
 
-  /**
-   * Subscribe to agent results channel with reconnection logic
-   */
-  private setupResultListener(): void {
-    // SESSION #37: Use constants for Redis channels
-    const channel = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
-
-    logger.info('🔌 SETTING UP REDIS SUBSCRIPTION', {
-      channel,
-      subscriberState: 'connecting'
-    });
-
-    // Attempt subscription (use promise-based API)
-    this.redisSubscriber.subscribe(channel).then(
-      () => {
-        logger.info('✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL', {
-          channel,
-          subscriberReady: true
-        });
-      },
-      (err: any) => {
-        logger.error('❌ SUBSCRIPTION FAILED', {
-          channel,
-          errorMessage: err?.message || String(err),
-          errorCode: err?.code,
-          errno: err?.errno,
-          syscall: err?.syscall,
-          address: err?.address,
-          port: err?.port,
-          fullError: String(err),
-          timestamp: new Date().toISOString()
-        });
-        // Retry after delay
-        setTimeout(() => this.setupResultListener(), 5000);
-      }
-    );
+      logger.info('✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL', {
+        channel,
+        subscriberReady: true
+      });
+    } catch (error: any) {
+      logger.error('❌ SUBSCRIPTION FAILED', {
+        errorMessage: error?.message || String(error),
+        errorCode: error?.code,
+        timestamp: new Date().toISOString()
+      });
+      // Retry after delay
+      setTimeout(() => this.setupResultListener(), 5000);
+    }
   }
 
   /**
@@ -308,7 +306,7 @@ export class AgentDispatcherService {
       const agents = await this.redisPublisher.hgetall('agents:registry');
       return Object.entries(agents).map(([id, data]) => ({
         agent_id: id,
-        ...JSON.parse(data)
+        ...JSON.parse(data as string)
       }));
     } catch (error) {
       logger.error('Failed to get registered agents', { error });
@@ -320,17 +318,25 @@ export class AgentDispatcherService {
    * Cleanup
    */
   async disconnect(): Promise<void> {
-    // Clear all handler timeouts
-    for (const timeout of this.handlerTimeouts.values()) {
-      clearTimeout(timeout);
+    try {
+      // Clear all handler timeouts
+      for (const timeout of this.handlerTimeouts.values()) {
+        clearTimeout(timeout);
+      }
+      this.handlerTimeouts.clear();
+      this.resultHandlers.clear();
+
+      // Disconnect Redis clients (node-redis v4 uses quit() for graceful shutdown)
+      if (this.redisPublisher?.isReady) {
+        await this.redisPublisher.quit();
+      }
+      if (this.redisSubscriber?.isReady) {
+        await this.redisSubscriber.quit();
+      }
+
+      logger.info('Agent dispatcher disconnected');
+    } catch (error) {
+      logger.error('Error during disconnect', { error });
     }
-    this.handlerTimeouts.clear();
-    this.resultHandlers.clear();
-
-    // Disconnect Redis clients
-    await this.redisPublisher.quit();
-    await this.redisSubscriber.quit();
-
-    logger.info('Agent dispatcher disconnected');
   }
 }
