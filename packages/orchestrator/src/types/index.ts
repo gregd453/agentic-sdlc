@@ -15,13 +15,9 @@ export const TaskAssignmentSchema = z.object({
     'debug',
     'recovery'
   ]),
+  action: z.string().optional(), // SESSION #33: Add action at root level for agent schema compatibility
   priority: z.enum(['low', 'medium', 'high', 'critical']),
-  payload: z.object({
-    action: z.string(),
-    target: z.string().optional(),
-    parameters: z.record(z.unknown()),
-    context: z.record(z.unknown()).optional()
-  }),
+  payload: z.record(z.unknown()), // SESSION #33: Simplified to allow flexible payloads for different agents
   constraints: z.object({
     timeout_ms: z.number().default(300000),
     max_retries: z.number().default(3),

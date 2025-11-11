@@ -1,5 +1,6 @@
 import { randomUUID, createHash } from 'crypto';
 import Redis from 'ioredis';
+import { getAgentTypeForStage, WORKFLOW_STAGES } from '@agentic-sdlc/shared-types';
 import { CreateWorkflowRequest, TaskAssignment, WorkflowResponse } from '../types';
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
@@ -363,8 +364,16 @@ export class WorkflowService {
       ? workflow.stage_outputs as Record<string, any>
       : {};
 
-    // Build stage-specific payload with context from previous stages
-    const stagePayload = this.buildStagePayload(stage, stageOutputs, workflowData, workflow);
+    // SESSION #36: Build agent envelope (replaces TaskAssignment)
+    const envelope = this.buildAgentEnvelope(
+      taskId,
+      workflowId,
+      stage,
+      agentType,
+      stageOutputs,
+      workflowData,
+      workflow
+    );
 
     // Create task in database
     await this.repository.createTask({
@@ -373,48 +382,19 @@ export class WorkflowService {
       agent_type: agentType as any,
       status: 'pending',
       priority: 'medium',
-      payload: {
-        stage,
-        workflow_id: workflowId,
-        ...stagePayload
-      } as any,
+      payload: envelope as any, // Store envelope in database
       retry_count: 0,
       max_retries: 3,
       timeout_ms: 300000
     } as any);
 
-    // Create task assignment message
-    const taskAssignment: TaskAssignment = {
-      message_id: randomUUID(),
-      task_id: taskId,
-      workflow_id: workflowId,
-      agent_type: agentType as any,
-      priority: 'medium',
-      payload: {
-        action: `execute_${stage}`,
-        parameters: {
-          workflow_id: workflowId,
-          stage,
-          ...stagePayload
-        }
-      },
-      constraints: {
-        timeout_ms: 300000,
-        max_retries: 3,
-        required_confidence: 80
-      },
-      metadata: {
-        created_at: new Date().toISOString(),
-        created_by: 'orchestrator',
-        trace_id: generateTraceId()
-      }
-    };
-
-    logger.info('[SESSION #30] Task created with context', {
+    logger.info('[SESSION #36] Agent envelope created', {
       task_id: taskId,
       workflow_id: workflowId,
       stage,
-      payload_keys: Object.keys(stagePayload)
+      agent_type: agentType,
+      envelope_version: envelope.envelope_version,
+      has_workflow_context: !!envelope.workflow_context
     });
 
     // Publish task assignment event
@@ -422,23 +402,23 @@ export class WorkflowService {
       id: `event-${Date.now()}`,
       type: 'TASK_ASSIGNED',
       workflow_id: workflowId,
-      payload: taskAssignment,
+      payload: envelope,
       timestamp: new Date().toISOString(),
-      trace_id: taskAssignment.metadata.trace_id
+      trace_id: envelope.trace_id
     });
 
-    // Dispatch task directly to agent via Redis
+    // Dispatch envelope to agent via Redis
     if (this.agentDispatcher) {
       // Register handler for agent result FIRST (before dispatching task)
       this.agentDispatcher.onResult(workflowId, async (result) => {
         await this.handleAgentResult(result);
       });
 
-      // THEN dispatch the task
-      await this.agentDispatcher.dispatchTask(taskAssignment, workflowData);
+      // THEN dispatch the envelope
+      await this.agentDispatcher.dispatchTask(envelope, workflowData);
     }
 
-    logger.info('Task created and dispatched to agent', {
+    logger.info('[SESSION #36] Envelope dispatched to agent', {
       task_id: taskId,
       workflow_id: workflowId,
       stage,
@@ -806,6 +786,171 @@ export class WorkflowService {
   /**
    * SESSION #30: Build stage-specific payload with context from previous stages
    */
+  /**
+   * SESSION #36: Build agent envelope for a stage
+   * Replaces TaskAssignment with typed envelope format
+   */
+  private buildAgentEnvelope(
+    taskId: string,
+    workflowId: string,
+    stage: string,
+    agentType: string,
+    stageOutputs: Record<string, any>,
+    workflowData: any,
+    workflow: any
+  ): any {
+    const now = new Date().toISOString();
+    const traceId = generateTraceId();
+
+    // Common envelope metadata
+    const envelopeBase = {
+      task_id: taskId,
+      workflow_id: workflowId,
+      priority: 'medium' as const,
+      status: 'pending' as const,
+      retry_count: 0,
+      max_retries: 3,
+      timeout_ms: 300000,
+      created_at: now,
+      trace_id: traceId,
+      envelope_version: '1.0.0' as const,
+      workflow_context: {
+        workflow_type: workflow.type,
+        workflow_name: workflow.name,
+        current_stage: stage,
+        stage_outputs: stageOutputs
+      }
+    };
+
+    // Build agent-specific envelope based on type
+    switch (agentType) {
+      case 'scaffold': {
+        return {
+          ...envelopeBase,
+          agent_type: 'scaffold' as const,
+          payload: {
+            project_type: workflow.type,
+            name: workflow.name,
+            description: workflow.description || '',
+            requirements: (workflowData.requirements || '').split('. ').filter((r: string) => r.length > 0),
+            tech_stack: {
+              language: 'typescript',
+              runtime: 'node',
+              testing: 'vitest',
+              package_manager: 'pnpm',
+              bundler: workflowData.tech_stack === 'react' ? 'vite' : undefined,
+              ui_library: workflowData.tech_stack === 'react' ? 'react' : undefined,
+            },
+          }
+        };
+      }
+
+      case 'validation': {
+        const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectPath = scaffoldOutput.output_path ||
+                           `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
+
+        // Extract file paths from scaffolding output
+        const filePaths: string[] = [];
+        if (scaffoldOutput.files_generated && Array.isArray(scaffoldOutput.files_generated)) {
+          scaffoldOutput.files_generated.forEach((file: any) => {
+            if (file.path) {
+              filePaths.push(`${projectPath}/${file.path}`);
+            }
+          });
+        }
+
+        // If no files found, use wildcards
+        if (filePaths.length === 0) {
+          filePaths.push(`${projectPath}/**/*.ts`);
+          filePaths.push(`${projectPath}/**/*.tsx`);
+        }
+
+        logger.info('[SESSION #36] Building validation envelope', {
+          workflow_id: workflowId,
+          file_count: filePaths.length,
+          working_directory: projectPath
+        });
+
+        return {
+          ...envelopeBase,
+          agent_type: 'validation' as const,
+          payload: {
+            file_paths: filePaths,
+            working_directory: projectPath,
+            validation_types: ['typescript', 'eslint'] as const,
+            thresholds: {
+              coverage: 80,
+              complexity: 10,
+              errors: 0,
+              warnings: 10,
+              duplications: 5,
+            },
+          }
+        };
+      }
+
+      case 'e2e': {
+        const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectPath = scaffoldOutput.output_path ||
+                           `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
+
+        return {
+          ...envelopeBase,
+          agent_type: 'e2e' as const,
+          payload: {
+            working_directory: projectPath,
+            entry_points: scaffoldOutput.entry_points || [],
+            browser: 'chromium' as const,
+            headless: true,
+            screenshot_on_failure: true,
+            video: false,
+          }
+        };
+      }
+
+      case 'integration': {
+        const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectPath = scaffoldOutput.output_path ||
+                           `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
+
+        return {
+          ...envelopeBase,
+          agent_type: 'integration' as const,
+          payload: {
+            working_directory: projectPath,
+            api_endpoints: [],
+            test_database: true,
+            test_external_services: false,
+          }
+        };
+      }
+
+      case 'deployment': {
+        const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
+        const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
+        const projectPath = scaffoldOutput.output_path ||
+                           `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
+
+        return {
+          ...envelopeBase,
+          agent_type: 'deployment' as const,
+          payload: {
+            working_directory: projectPath,
+            deployment_target: 'docker' as const,
+            environment: 'development' as const,
+          }
+        };
+      }
+
+      default:
+        throw new Error(`Unknown agent type: ${agentType}`);
+    }
+  }
+
   private buildStagePayload(
     stage: string,
     stageOutputs: Record<string, any>,
@@ -834,9 +979,33 @@ export class WorkflowService {
         const projectPath = scaffoldOutput.output_path ||
                            `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
 
+        // SESSION #32 FIX: Extract file_paths from scaffolding output
+        const filePaths: string[] = [];
+        if (scaffoldOutput.files_generated && Array.isArray(scaffoldOutput.files_generated)) {
+          scaffoldOutput.files_generated.forEach((file: any) => {
+            if (file.path) {
+              // Build full path: working_directory + file.path
+              filePaths.push(`${projectPath}/${file.path}`);
+            }
+          });
+        }
+
+        // If no files found, use a wildcard to validate everything
+        if (filePaths.length === 0) {
+          filePaths.push(`${projectPath}/**/*.ts`);
+          filePaths.push(`${projectPath}/**/*.tsx`);
+        }
+
+        logger.info('[SESSION #32] Building validation payload with file_paths', {
+          workflow_id: workflow.id,
+          file_count: filePaths.length,
+          working_directory: projectPath
+        });
+
         return {
           ...basePayload,
           working_directory: projectPath,
+          file_paths: filePaths,
           validation_types: ['typescript', 'eslint'],
           thresholds: {
             coverage: 80
@@ -959,22 +1128,9 @@ export class WorkflowService {
     }
   }
 
+  // SESSION #37: Use constants for stage-to-agent mapping
   private getAgentTypeForStage(stage: string): string {
-    const stageToAgentMap: Record<string, string> = {
-      initialization: 'scaffold',
-      scaffolding: 'scaffold',
-      implementation: 'scaffold',
-      validation: 'validation',
-      testing: 'e2e_test',
-      e2e_testing: 'e2e_test',
-      integration: 'integration',
-      deployment: 'deployment',
-      monitoring: 'monitoring',
-      debugging: 'debug',
-      fixing: 'debug'
-    };
-
-    return stageToAgentMap[stage] || 'scaffold';
+    return getAgentTypeForStage(stage);
   }
 
   private estimateDuration(workflowType: string): number {

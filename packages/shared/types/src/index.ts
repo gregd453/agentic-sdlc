@@ -21,6 +21,12 @@ export * from './agents/e2e';
 export * from './agents/integration';
 export * from './agents/deployment';
 
+// ===== Envelope Exports (Session #36) =====
+export * from './envelope/agent-envelope';
+
+// ===== Constants Exports (Session #37) =====
+export * from './constants/pipeline.constants';
+
 // ===== Schema Registration =====
 import { SchemaRegistry } from './registry/schema-registry';
 import {

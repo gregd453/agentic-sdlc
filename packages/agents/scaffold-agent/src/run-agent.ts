@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import 'dotenv/config';
+import { AGENT_TYPES, REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
 import { ScaffoldAgent } from './scaffold-agent';
 
 /**
@@ -24,7 +25,8 @@ async function main() {
     console.log('✅ Scaffold Agent running and listening for tasks');
     console.log('📡 Connected to Redis:', process.env.REDIS_URL || 'redis://localhost:6379');
     console.log('🔑 Using Anthropic API key:', process.env.ANTHROPIC_API_KEY.substring(0, 20) + '...');
-    console.log('\nAgent is ready to receive tasks on channel: agent:scaffold:tasks');
+    // SESSION #37: Use constants for channel name
+    console.log(`\nAgent is ready to receive tasks on channel: ${REDIS_CHANNELS.AGENT_TASKS(AGENT_TYPES.SCAFFOLD)}`);
     console.log('Press Ctrl+C to stop\n');
 
     // Keep process alive

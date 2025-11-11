@@ -1,7 +1,9 @@
 import { BaseAgent } from '@agentic-sdlc/base-agent';
 import { TaskAssignment, TaskResult } from '@agentic-sdlc/base-agent';
 import {
-  ScaffoldTask
+  ScaffoldTask,
+  AGENT_TYPES,
+  WORKFLOW_STAGES
 } from '@agentic-sdlc/shared-types';
 import path from 'path';
 import { TemplateEngine } from './template-engine';
@@ -24,7 +26,8 @@ export class ScaffoldAgent extends BaseAgent {
 
   constructor() {
     super({
-      type: 'scaffold',
+      // SESSION #37: Use constants for agent type
+      type: AGENT_TYPES.SCAFFOLD,
       version: '1.0.0',
       capabilities: [
         'analyze-requirements',
@@ -61,35 +64,37 @@ export class ScaffoldAgent extends BaseAgent {
     });
 
     try {
-      // Convert TaskAssignment to ScaffoldTask format
+      // SESSION #37: Use envelope payload directly (Session #36 envelope format)
+      const envelope = task as any;
       const scaffoldTask: ScaffoldTask = {
-        task_id: task.task_id as any, // Already branded from TaskAssignment
-        workflow_id: task.workflow_id as any, // Already branded from TaskAssignment
-        agent_type: 'scaffold',
+        task_id: task.task_id as any,
+        workflow_id: task.workflow_id as any,
+        // SESSION #37: Use constants for agent type
+        agent_type: AGENT_TYPES.SCAFFOLD as any,
         action: 'generate_structure',
         status: 'pending',
         priority: task.priority === 'critical' ? 90 :
                   task.priority === 'high' ? 70 :
                   task.priority === 'medium' ? 50 : 30,
         payload: {
-          project_type: (task.context?.project_type as 'app' | 'service' | 'feature' | 'capability') || 'app',
-          name: task.name,
-          description: task.description,
-          tech_stack: {
+          project_type: envelope.payload?.project_type || 'app',
+          name: envelope.payload?.name || task.name || 'untitled',
+          description: envelope.payload?.description || task.description || '',
+          tech_stack: envelope.payload?.tech_stack || {
             language: 'typescript',
             runtime: 'node',
             testing: 'vitest',
-            package_manager: 'pnpm',
-            bundler: task.context?.tech_stack === 'react' ? 'vite' : undefined,
-            ui_library: task.context?.tech_stack === 'react' ? 'react' : undefined
+            package_manager: 'pnpm'
           },
-          requirements: task.requirements.split('. ').filter(r => r.length > 0)
+          requirements: Array.isArray(envelope.payload?.requirements)
+            ? envelope.payload.requirements
+            : (task.requirements || '').split('. ').filter(r => r.length > 0)
         },
         version: '1.0.0',
-        timeout_ms: 120000,
-        retry_count: 0,
-        max_retries: 3,
-        created_at: new Date().toISOString()
+        timeout_ms: envelope.timeout_ms || 120000,
+        retry_count: envelope.retry_count || 0,
+        max_retries: envelope.max_retries || 3,
+        created_at: envelope.created_at || new Date().toISOString()
       };
 
       // Step 1: Analyze requirements using Claude
@@ -142,7 +147,8 @@ export class ScaffoldAgent extends BaseAgent {
           tokens_used: analysis?.tokens_used || 0,
           api_calls: analysis?.api_calls || 1
         },
-        next_stage: 'validation'
+        // SESSION #37: Use constants for workflow stages
+        next_stage: WORKFLOW_STAGES.VALIDATION
       };
 
       return result;
@@ -212,7 +218,8 @@ export class ScaffoldAgent extends BaseAgent {
       return {
         ...analysis,
         estimated_complexity: analysis.complexity || 'medium',
-        recommended_agents: ['validation', 'e2e', 'deployment'],
+        // SESSION #37: Use constants for agent types
+        recommended_agents: [AGENT_TYPES.VALIDATION, AGENT_TYPES.E2E, AGENT_TYPES.DEPLOYMENT],
         dependencies_identified: this.extractDependencies(analysis),
         analysis_time_ms: 500,
         tokens_used: 1500,
@@ -243,7 +250,8 @@ export class ScaffoldAgent extends BaseAgent {
       // Return default analysis with flag indicating API failure
       return {
         estimated_complexity: 'medium',
-        recommended_agents: ['validation', 'e2e'],
+        // SESSION #37: Use constants for agent types
+        recommended_agents: [AGENT_TYPES.VALIDATION, AGENT_TYPES.E2E],
         dependencies_identified: [],
         analysis_time_ms: 0,
         tokens_used: 0,
@@ -476,20 +484,37 @@ export class ScaffoldAgent extends BaseAgent {
     const outputDir = process.env.OUTPUT_DIR || path.join(projectRoot, 'ai.output');
     const projectPath = path.join(outputDir, task.workflow_id || 'default', task.payload.name);
 
-    this.logger.info('Creating project files', {
+    this.logger.info('[SESSION #36] Creating project files', {
       project_path: projectPath,
-      file_count: structure.files_generated.length
+      file_count: structure.files_generated.length,
+      workflow_id: task.workflow_id,
+      project_name: task.payload.name,
+      project_root: projectRoot,
+      output_dir: outputDir
     });
 
     try {
       // Create base project directory
+      this.logger.info('[SESSION #36] Creating base project directory', {
+        project_path: projectPath
+      });
       await this.fileGenerator.createDirectories([projectPath]);
+      this.logger.info('[SESSION #36] Base project directory created', {
+        project_path: projectPath
+      });
 
       // Create subdirectories
       const directories = structure.directories.map((dir: string) =>
         path.join(projectPath, dir)
       );
+      this.logger.info('[SESSION #36] Creating subdirectories', {
+        directory_count: directories.length,
+        directories: directories
+      });
       await this.fileGenerator.createDirectories(directories);
+      this.logger.info('[SESSION #36] Subdirectories created', {
+        directory_count: directories.length
+      });
 
       // Process and create each file
       const filesCreated = [];
@@ -498,6 +523,13 @@ export class ScaffoldAgent extends BaseAgent {
       for (const fileInfo of structure.files_generated) {
         try {
           const filePath = path.join(projectPath, fileInfo.path);
+
+          this.logger.info('[SESSION #36] Processing file', {
+            file_path: filePath,
+            relative_path: fileInfo.path,
+            template_source: fileInfo.template_source,
+            file_type: fileInfo.type
+          });
 
           // Prepare template context
           const context = {
@@ -512,8 +544,12 @@ export class ScaffoldAgent extends BaseAgent {
           let content: string;
           try {
             content = this.templateEngine.render(fileInfo.template_source, context);
+            this.logger.info('[SESSION #36] Template rendered successfully', {
+              template: fileInfo.template_source,
+              content_length: content.length
+            });
           } catch (templateError) {
-            this.logger.warn('Template rendering failed, using fallback', {
+            this.logger.warn('[SESSION #36] Template rendering failed, using fallback', {
               template: fileInfo.template_source,
               error: templateError instanceof Error ? templateError.message : 'Unknown error'
             });
@@ -522,12 +558,22 @@ export class ScaffoldAgent extends BaseAgent {
           }
 
           // Create the file
+          this.logger.info('[SESSION #36] Writing file to disk', {
+            file_path: filePath,
+            content_length: content.length
+          });
+
           await this.fileGenerator.createFiles([{
             path: filePath,
             content,
             type: fileInfo.type,
             description: `${fileInfo.type} file for ${task.payload.name}`
           }]);
+
+          this.logger.info('[SESSION #36] File written successfully', {
+            file_path: filePath,
+            size: content.length
+          });
 
           totalSize += content.length;
           filesCreated.push(fileInfo.path);
@@ -538,9 +584,10 @@ export class ScaffoldAgent extends BaseAgent {
             type: fileInfo.type
           });
         } catch (fileError) {
-          this.logger.error('Failed to create file', {
+          this.logger.error('[SESSION #36] Failed to create file', {
             file: fileInfo.path,
-            error: fileError instanceof Error ? fileError.message : 'Unknown error'
+            error: fileError instanceof Error ? fileError.message : 'Unknown error',
+            error_stack: fileError instanceof Error ? fileError.stack : undefined
           });
           // Continue with other files even if one fails
         }
@@ -548,12 +595,40 @@ export class ScaffoldAgent extends BaseAgent {
 
       const templateTime = Date.now() - startTime;
 
-      this.logger.info('Files created successfully', {
+      this.logger.info('[SESSION #36] Files created successfully', {
         files_created: filesCreated.length,
         total_size: totalSize,
         project_path: projectPath,
-        duration_ms: templateTime
+        duration_ms: templateTime,
+        files_list: filesCreated
       });
+
+      // Verify files were actually written by checking disk
+      this.logger.info('[SESSION #36] Verifying files on disk', {
+        project_path: projectPath
+      });
+
+      try {
+        const fs = require('fs-extra');
+        const exists = await fs.pathExists(projectPath);
+        this.logger.info('[SESSION #36] Directory exists check', {
+          project_path: projectPath,
+          exists: exists
+        });
+
+        if (exists) {
+          const diskFiles = await fs.readdir(projectPath, { recursive: true });
+          this.logger.info('[SESSION #36] Files found on disk', {
+            project_path: projectPath,
+            file_count: diskFiles.length,
+            files: diskFiles
+          });
+        }
+      } catch (verifyError) {
+        this.logger.error('[SESSION #36] Failed to verify files on disk', {
+          error: verifyError instanceof Error ? verifyError.message : 'Unknown error'
+        });
+      }
 
       return {
         filesCreated: filesCreated.length,
@@ -563,8 +638,9 @@ export class ScaffoldAgent extends BaseAgent {
         outputPath: projectPath
       };
     } catch (error) {
-      this.logger.error('File creation failed', {
-        error: error instanceof Error ? error.message : 'Unknown error'
+      this.logger.error('[SESSION #36] File creation failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        error_stack: error instanceof Error ? error.stack : undefined
       });
       throw error;
     }

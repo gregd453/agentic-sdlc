@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import { REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
 import { TaskAssignment } from '../types';
 import { logger } from '../utils/logger';
 
@@ -78,7 +79,8 @@ export class AgentDispatcherService {
         timestamp: new Date().toISOString()
       });
 
-      if (channel === 'orchestrator:results') {
+      // SESSION #37: Use constants for Redis channels
+      if (channel === REDIS_CHANNELS.ORCHESTRATOR_RESULTS) {
         logger.info('✅ MESSAGE IS FOR ORCHESTRATOR:RESULTS CHANNEL - PROCESSING', {
           channel,
           timestamp: new Date().toISOString()
@@ -86,7 +88,7 @@ export class AgentDispatcherService {
         this.handleAgentResult(message);
       } else {
         logger.warn('⚠️ MESSAGE RECEIVED ON UNEXPECTED CHANNEL', {
-          expectedChannel: 'orchestrator:results',
+          expectedChannel: REDIS_CHANNELS.ORCHESTRATOR_RESULTS,
           actualChannel: channel
         });
       }
@@ -97,22 +99,25 @@ export class AgentDispatcherService {
    * Subscribe to agent results channel with reconnection logic
    */
   private setupResultListener(): void {
+    // SESSION #37: Use constants for Redis channels
+    const channel = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
+
     logger.info('🔌 SETTING UP REDIS SUBSCRIPTION', {
-      channel: 'orchestrator:results',
+      channel,
       subscriberState: 'connecting'
     });
 
     // Attempt subscription (use promise-based API)
-    this.redisSubscriber.subscribe('orchestrator:results').then(
+    this.redisSubscriber.subscribe(channel).then(
       () => {
         logger.info('✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL', {
-          channel: 'orchestrator:results',
+          channel,
           subscriberReady: true
         });
       },
       (err: any) => {
         logger.error('❌ SUBSCRIPTION FAILED', {
-          channel: 'orchestrator:results',
+          channel,
           errorMessage: err?.message || String(err),
           errorCode: err?.code,
           errno: err?.errno,
@@ -190,32 +195,32 @@ export class AgentDispatcherService {
   /**
    * Dispatch task to agent via Redis channel
    */
-  async dispatchTask(task: TaskAssignment, workflowData?: any): Promise<void> {
+  async dispatchTask(task: any, workflowData?: any): Promise<void> {
     try {
-      const agentChannel = `agent:${task.agent_type}:tasks`;
+      // SESSION #36: Handle both envelope and TaskAssignment formats
+      const agentType = task.agent_type;
+      // SESSION #37: Use constants for Redis channels
+      const agentChannel = REDIS_CHANNELS.AGENT_TASKS(agentType);
 
-      // Convert TaskAssignment to AgentMessage format
+      // SESSION #36: For envelopes, send as AgentMessage with envelope in context
       const agentMessage = {
-        id: task.message_id,
+        id: task.trace_id || task.message_id || `msg-${Date.now()}`,
         type: 'task',
         agent_id: '', // Will be filled by agent
         workflow_id: task.workflow_id,
-        stage: task.payload.action,
+        stage: task.workflow_context?.current_stage || 'unknown',
         payload: {
           task_id: task.task_id,
           workflow_id: task.workflow_id,
-          type: 'scaffold',
-          name: workflowData?.name || 'Unknown',
+          type: agentType,
+          name: workflowData?.name || task.workflow_context?.workflow_name || 'Unknown',
           description: workflowData?.description || '',
           requirements: workflowData?.requirements || '',
-          priority: task.priority,
-          context: {
-            ...task.payload.parameters,
-            ...workflowData
-          }
+          priority: task.priority || 'medium',
+          context: task // SESSION #36: Pass entire envelope as context
         },
-        timestamp: task.metadata.created_at,
-        trace_id: task.metadata.trace_id
+        timestamp: task.created_at || new Date().toISOString(),
+        trace_id: task.trace_id || `trace-${Date.now()}`
       };
 
       // Publish to agent channel
