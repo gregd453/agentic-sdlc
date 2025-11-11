@@ -60,6 +60,9 @@ importers:
 
   packages/agents/base-agent:
     dependencies:
+      '@agentic-sdlc/shared-types':
+        specifier: workspace:^
+        version: link:../../shared/types
       '@agentic-sdlc/shared-utils':
         specifier: workspace:*
         version: link:../../shared/utils
