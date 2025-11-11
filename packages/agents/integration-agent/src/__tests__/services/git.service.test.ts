@@ -7,20 +7,24 @@ vi.mock('simple-git', () => ({
   default: vi.fn()
 }));
 
-// Mock fs/promises
-vi.mock('fs/promises', () => ({
-  writeFile: vi.fn().mockResolvedValue(undefined),
-  readFile: vi.fn().mockResolvedValue('content'),
-  mkdir: vi.fn().mockResolvedValue(undefined),
-  unlink: vi.fn().mockResolvedValue(undefined),
-  stat: vi.fn().mockResolvedValue({}),
-  default: {
+// Mock fs module to handle both import styles
+vi.mock('fs', () => ({
+  promises: {
     writeFile: vi.fn().mockResolvedValue(undefined),
     readFile: vi.fn().mockResolvedValue('content'),
     mkdir: vi.fn().mockResolvedValue(undefined),
     unlink: vi.fn().mockResolvedValue(undefined),
     stat: vi.fn().mockResolvedValue({})
   }
+}));
+
+// Also mock fs/promises for completeness
+vi.mock('fs/promises', () => ({
+  writeFile: vi.fn().mockResolvedValue(undefined),
+  readFile: vi.fn().mockResolvedValue('content'),
+  mkdir: vi.fn().mockResolvedValue(undefined),
+  unlink: vi.fn().mockResolvedValue(undefined),
+  stat: vi.fn().mockResolvedValue({})
 }));
 
 describe('GitService', () => {
@@ -162,8 +166,10 @@ describe('GitService', () => {
 
   describe('applyResolution', () => {
     it('should write resolved content and stage file', async () => {
-      const { writeFile } = await import('fs/promises');
-      vi.mocked(writeFile).mockResolvedValue(undefined);
+      // Import mocked fs module
+      const fs = await import('fs');
+      const writeFile = vi.mocked(fs.promises.writeFile);
+      writeFile.mockResolvedValue(undefined as any);
 
       await gitService.applyResolution('src/index.ts', 'resolved code');
 
