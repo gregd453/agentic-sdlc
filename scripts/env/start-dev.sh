@@ -3,17 +3,20 @@
 ##############################################################################
 # START-DEV.sh - Start Agentic SDLC Development Environment
 #
-# Starts all required services for pipeline testing:
+# Starts all required services for complete pipeline testing:
 # - PostgreSQL 16
 # - Redis 7
 # - Orchestrator API
 # - Scaffold Agent
-# - Validation Agent (optional)
-# - E2E Agent (optional)
+# - Validation Agent
+# - E2E Agent
+# - Integration Agent
+# - Deployment Agent
+#
+# Updated in Session #37: Now starts ALL agents by default for E2E testing
 #
 # Usage:
-#   ./scripts/env/start-dev.sh              # Start core services
-#   ./scripts/env/start-dev.sh --all        # Start all agents
+#   ./scripts/env/start-dev.sh              # Start all services
 #   ./scripts/env/start-dev.sh --verbose    # Show detailed output
 ##############################################################################
 
@@ -34,12 +37,10 @@ LOGS_DIR="$PROJECT_ROOT/scripts/logs"
 
 # Parse arguments
 VERBOSE=false
-ALL_AGENTS=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     --verbose) VERBOSE=true; shift ;;
-    --all) ALL_AGENTS=true; shift ;;
     *) echo "Unknown option: $1"; exit 1 ;;
   esac
 done
@@ -121,23 +122,41 @@ echo -e "  ${GREEN}✓${NC} Scaffold Agent started (PID: $(tail -1 $PIDS_FILE))"
 
 echo ""
 
-# 4. Start additional agents (if --all)
-if [ "$ALL_AGENTS" = true ]; then
-  echo -e "${YELLOW}[4/4]${NC} Starting additional agents..."
+# 4. Start additional agents (ALL agents for complete pipeline testing)
+echo -e "${YELLOW}[4/4]${NC} Starting pipeline agents..."
 
-  for agent in validation-agent e2e-agent; do
-    if [ -d "$PROJECT_ROOT/packages/agents/$agent" ]; then
-      (
-        cd "$PROJECT_ROOT/packages/agents/$agent"
-        npm run dev > "$LOGS_DIR/$agent.log" 2>&1 &
-        echo $! >> "$PIDS_FILE"
-      )
-      echo -e "  ${GREEN}✓${NC} $agent started"
-    fi
-  done
-else
-  echo -e "${YELLOW}[4/4]${NC} Skipping additional agents (use --all to enable)"
+# Export environment variables from root .env
+if [ -f "$PROJECT_ROOT/.env" ]; then
+  export $(grep -v '^#' "$PROJECT_ROOT/.env" | xargs)
 fi
+
+# Start all agents required for complete pipeline testing
+# Updated in Session #37 to start all agents by default
+for agent in validation-agent e2e-agent integration-agent deployment-agent; do
+  if [ -d "$PROJECT_ROOT/packages/agents/$agent" ]; then
+    (
+      cd "$PROJECT_ROOT/packages/agents/$agent"
+      # Check if agent has 'start' script, otherwise try 'dev'
+      if npm run | grep -q "^\s*start$"; then
+        npm start > "$LOGS_DIR/$agent.log" 2>&1 &
+      else
+        npm run dev > "$LOGS_DIR/$agent.log" 2>&1 &
+      fi
+      echo $! >> "$PIDS_FILE"
+    )
+    sleep 2  # Give each agent time to initialize
+
+    # Check if agent is still running
+    AGENT_PID=$(tail -1 "$PIDS_FILE")
+    if kill -0 "$AGENT_PID" 2>/dev/null; then
+      echo -e "  ${GREEN}✓${NC} $agent started (PID: $AGENT_PID)"
+    else
+      echo -e "  ${RED}✗${NC} $agent failed to start (check logs/$agent.log)"
+    fi
+  else
+    echo -e "  ${YELLOW}⚠${NC} $agent directory not found, skipping"
+  fi
+done
 
 echo ""
 echo -e "${GREEN}================================================${NC}"
@@ -145,10 +164,14 @@ echo -e "${GREEN}✓ Development Environment Ready!${NC}"
 echo -e "${GREEN}================================================${NC}"
 echo ""
 echo "Services running:"
-echo -e "  ${BLUE}PostgreSQL${NC}     → localhost:5433"
-echo -e "  ${BLUE}Redis${NC}          → localhost:6380"
-echo -e "  ${BLUE}Orchestrator${NC}   → http://localhost:3000"
-echo -e "  ${BLUE}Scaffold Agent${NC} → listening for tasks"
+echo -e "  ${BLUE}PostgreSQL${NC}       → localhost:5433"
+echo -e "  ${BLUE}Redis${NC}            → localhost:6380"
+echo -e "  ${BLUE}Orchestrator${NC}     → http://localhost:3000"
+echo -e "  ${BLUE}Scaffold Agent${NC}   → listening for tasks"
+echo -e "  ${BLUE}Validation Agent${NC} → listening for tasks"
+echo -e "  ${BLUE}E2E Agent${NC}        → listening for tasks"
+echo -e "  ${BLUE}Integration Agent${NC} → listening for tasks"
+echo -e "  ${BLUE}Deployment Agent${NC} → listening for tasks"
 echo ""
 echo "Logs directory: $LOGS_DIR"
 echo "Process IDs saved to: $PIDS_FILE"

@@ -5,9 +5,11 @@
 #
 # Gracefully stops all running services:
 # - Orchestrator
-# - Agents (Scaffold, Validation, E2E)
+# - All Agents (Scaffold, Validation, E2E, Integration, Deployment)
 # - Redis
 # - PostgreSQL
+#
+# Updated in Session #37: Now handles all 5 pipeline agents
 #
 # Usage:
 #   ./scripts/env/stop-dev.sh              # Stop all services gracefully
