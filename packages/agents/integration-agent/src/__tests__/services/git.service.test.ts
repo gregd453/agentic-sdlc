@@ -9,10 +9,18 @@ vi.mock('simple-git', () => ({
 
 // Mock fs/promises
 vi.mock('fs/promises', () => ({
+  writeFile: vi.fn().mockResolvedValue(undefined),
+  readFile: vi.fn().mockResolvedValue('content'),
+  mkdir: vi.fn().mockResolvedValue(undefined),
+  unlink: vi.fn().mockResolvedValue(undefined),
+  stat: vi.fn().mockResolvedValue({}),
   default: {
-    writeFile: vi.fn()
-  },
-  writeFile: vi.fn()
+    writeFile: vi.fn().mockResolvedValue(undefined),
+    readFile: vi.fn().mockResolvedValue('content'),
+    mkdir: vi.fn().mockResolvedValue(undefined),
+    unlink: vi.fn().mockResolvedValue(undefined),
+    stat: vi.fn().mockResolvedValue({})
+  }
 }));
 
 describe('GitService', () => {

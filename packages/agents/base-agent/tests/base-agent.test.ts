@@ -16,7 +16,13 @@ vi.mock('@agentic-sdlc/shared-utils', () => ({
   RetryPresets: {
     standard: { maxAttempts: 3, delayMs: 1000 }
   },
-  CircuitBreaker: vi.fn()
+  CircuitBreaker: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ status: 'success' }),
+    getState: vi.fn().mockReturnValue('CLOSED'),
+    reset: vi.fn(),
+    open: vi.fn(),
+    close: vi.fn()
+  }))
 }));
 
 // Now import after mocks are set up
