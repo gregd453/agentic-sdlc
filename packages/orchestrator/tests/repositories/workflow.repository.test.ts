@@ -208,7 +208,8 @@ describe('WorkflowRepository', () => {
     it('should update workflow when it exists', async () => {
       mockPrisma.workflow.findUnique.mockResolvedValue({
         id: 'test-id',
-        status: 'running'
+        status: 'running',
+        version: 1
       });
 
       const updates = {
@@ -220,8 +221,11 @@ describe('WorkflowRepository', () => {
       await repository.update('test-id', updates);
 
       expect(mockPrisma.workflow.update).toHaveBeenCalledWith({
-        where: { id: 'test-id' },
-        data: updates
+        where: { id: 'test-id', version: 1 },
+        data: {
+          ...updates,
+          version: { increment: 1 }
+        }
       });
     });
 

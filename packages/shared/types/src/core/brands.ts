@@ -17,17 +17,17 @@ export const toTaskId = (id: string): TaskId => id as TaskId;
 export const toPipelineId = (id: string): PipelineId => id as PipelineId;
 export const toStageId = (id: string): StageId => id as StageId;
 
-// Validation helpers
+// Validation helpers - check string prefix patterns to distinguish ID types
 export const isWorkflowId = (id: unknown): id is WorkflowId => {
-  return typeof id === 'string' && id.length > 0;
+  return typeof id === 'string' && id.length > 0 && id.startsWith('wf_');
 };
 
 export const isAgentId = (id: unknown): id is AgentId => {
-  return typeof id === 'string' && id.length > 0;
+  return typeof id === 'string' && id.length > 0 && id.includes('_agent_');
 };
 
 export const isTaskId = (id: unknown): id is TaskId => {
-  return typeof id === 'string' && id.length > 0;
+  return typeof id === 'string' && id.length > 0 && id.startsWith('task_');
 };
 
 // ID generation helpers

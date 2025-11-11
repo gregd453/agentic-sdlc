@@ -21,7 +21,7 @@ describe('Milestone 1: Simple Happy Path Validation', () => {
     expect(workflow.workflow_id).toBeDefined();
     expect(workflow.type).toBe('app');
     expect(workflow.name).toBe('test-app');
-    expect(workflow.current_state).toBe('initiated');
+    expect(workflow.current_stage).toBe('initiated');
     expect(workflow.progress).toBe(0);
     expect(workflow.version).toBe(VERSION);
 

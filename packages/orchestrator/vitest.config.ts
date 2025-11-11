@@ -23,6 +23,7 @@ export default defineConfig({
       }
     },
     setupFiles: ['./tests/setup.ts'],
-    testTimeout: 10000
+    testTimeout: 30000,      // 30s for regular tests
+    hookTimeout: 30000       // 30s for beforeAll/afterAll hooks (Redis connection)
   }
 });
