@@ -1,7 +1,7 @@
 import { BaseAgent, TaskAssignment, TaskResult, AgentError } from '@agentic-sdlc/base-agent';
 import {
-  ValidationTask,
-  SchemaRegistry
+  isValidationEnvelope,
+  validateEnvelope
 } from '@agentic-sdlc/shared-types';
 import {
   ValidationCheckResult,
@@ -57,29 +57,68 @@ export class ValidationAgent extends BaseAgent {
 
   /**
    * Execute validation task
+   * SESSION #36: Updated to use AgentEnvelope instead of adapter
    */
   async execute(task: TaskAssignment): Promise<TaskResult> {
     const startTime = Date.now();
     const traceId = this.generateTraceId();
 
-    this.logger.info('Executing validation task', {
+    this.logger.info('[SESSION #36] Executing validation task', {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
       trace_id: traceId
     });
 
     try {
-      // Validate and parse the task using schema registry
-      const validationTask = SchemaRegistry.validate<ValidationTask>(
-        'validation.task',
-        task
-      );
+      // SESSION #37: Extract envelope from task.context (agent dispatcher wraps it)
+      // Same fix as base-agent: envelope is in (task as any).context
+      const envelopeData = (task as any).context;
+      const validation = validateEnvelope(envelopeData);
 
-      // Extract context from validated task
+      if (!validation.success) {
+        this.logger.error('[SESSION #37] Invalid envelope format', {
+          error: validation.error,
+          task_id: task.task_id
+        });
+
+        throw new AgentError(
+          `Invalid envelope: ${validation.error}`,
+          'ENVELOPE_VALIDATION_ERROR'
+        );
+      }
+
+      const envelope = validation.envelope!;
+
+      // Type guard to ensure this is a validation envelope
+      if (!isValidationEnvelope(envelope)) {
+        this.logger.warn('[SESSION #36] Wrong agent type routed to validation agent', {
+          expected: 'validation',
+          actual: envelope.agent_type,
+          task_id: task.task_id
+        });
+
+        throw new AgentError(
+          `Wrong agent type: expected validation, got ${envelope.agent_type}`,
+          'WRONG_AGENT_TYPE'
+        );
+      }
+
+      this.logger.info('[SESSION #36] Envelope validated successfully', {
+        task_id: envelope.task_id,
+        workflow_id: envelope.workflow_id,
+        file_paths_count: envelope.payload.file_paths.length,
+        working_directory: envelope.payload.working_directory,
+        validation_types: envelope.payload.validation_types,
+        has_workflow_context: !!envelope.workflow_context
+      });
+
+      // Extract context from envelope (type-safe!)
       const context = {
-        project_path: validationTask.payload.working_directory || process.cwd(),
-        validation_types: validationTask.payload.validation_types.map(v => v as 'typescript' | 'eslint' | 'coverage' | 'security'),
-        coverage_threshold: validationTask.payload.thresholds?.coverage,
+        project_path: envelope.payload.working_directory,
+        validation_types: envelope.payload.validation_types.filter((v): v is 'typescript' | 'eslint' | 'coverage' | 'security' =>
+          ['typescript', 'eslint', 'coverage', 'security'].includes(v)
+        ),
+        coverage_threshold: envelope.payload.thresholds?.coverage,
         package_manager: 'pnpm' as const,
       };
 

@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import pino from 'pino';
 import Redis from 'ioredis';
 import { retry, RetryPresets, CircuitBreaker } from '@agentic-sdlc/shared-utils';
+import { REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
 import {
   AgentLifecycle,
   AgentCapabilities,
@@ -110,7 +111,8 @@ export abstract class BaseAgent implements AgentLifecycle {
     });
 
     // Subscribe to task channel (this puts connection in subscriber mode)
-    const taskChannel = `agent:${this.capabilities.type}:tasks`;
+    // SESSION #37: Use constants for Redis channels
+    const taskChannel = REDIS_CHANNELS.AGENT_TASKS(this.capabilities.type);
     await this.redisSubscriber.subscribe(taskChannel);
 
     this.logger.info('Subscribed to task channel', { taskChannel });
@@ -134,9 +136,19 @@ export abstract class BaseAgent implements AgentLifecycle {
       // Validate task
       const task = this.validateTask(message.payload);
 
-      // SESSION #27 FIX: Extract workflow stage from task context
-      // The dispatcher puts it in context.stage (from payload.parameters.stage)
-      const workflowStage = task.context?.stage as string | undefined;
+      // SESSION #37: Extract workflow stage from envelope format
+      // Session #36 envelope is nested in message.payload.context
+      // Agent dispatcher wraps envelope: { payload: { context: envelope } }
+      const envelope = (message.payload as any).context as any;
+      const workflowStage = envelope?.workflow_context?.current_stage as string | undefined;
+
+      this.logger.info('[SESSION #37 DEBUG] Stage extraction', {
+        has_envelope: !!envelope,
+        has_workflow_context: !!envelope?.workflow_context,
+        workflow_stage: workflowStage,
+        payload_keys: Object.keys(message.payload || {}).join(','),
+        envelope_keys: envelope ? Object.keys(envelope).join(',') : 'none'
+      });
 
       // Execute task with retry (using new retry utility)
       const result = await retry(
@@ -162,9 +174,9 @@ export abstract class BaseAgent implements AgentLifecycle {
     } catch (error) {
       this.errorsCount++;
 
-      // SESSION #27 FIX: Extract workflow stage for error reporting
-      const task = message.payload as any;
-      const workflowStage = task.context?.stage as string | undefined;
+      // SESSION #37: Extract workflow stage from envelope format for error reporting
+      const envelope = (message.payload as any).context as any;
+      const workflowStage = envelope?.workflow_context?.current_stage as string | undefined;
 
       const errorResult: TaskResult = {
         task_id: message.payload.task_id as string || randomUUID(),
@@ -206,7 +218,8 @@ export abstract class BaseAgent implements AgentLifecycle {
     const stage = workflowStage || this.capabilities.type;
 
     // Publish result to Redis using publisher client
-    const resultChannel = 'orchestrator:results';
+    // SESSION #37: Use constants for Redis channels
+    const resultChannel = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
     await this.redisPublisher.publish(
       resultChannel,
       JSON.stringify({
