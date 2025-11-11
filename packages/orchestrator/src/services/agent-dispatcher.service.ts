@@ -221,7 +221,8 @@ export class AgentDispatcherService {
         trace_id: task.trace_id || `trace-${Date.now()}`
       };
 
-      // Publish to agent channel
+      // Session #44 FIX: Agents use ioredis with subscribe/on('message') pattern
+      // We need to use publish() with node-redis v4 which sends to all subscribers
       logger.info('📤 PUBLISHING TASK TO AGENT CHANNEL', {
         channel: agentChannel,
         workflow_id: task.workflow_id,
@@ -240,6 +241,14 @@ export class AgentDispatcherService {
         agent_type: task.agent_type,
         timestamp: new Date().toISOString()
       });
+
+      if (publishResult === 0) {
+        logger.warn('⚠️  NO AGENTS RECEIVED TASK - Check if agents are subscribed', {
+          channel: agentChannel,
+          task_id: task.task_id,
+          agent_type: task.agent_type
+        });
+      }
 
       logger.info('Task dispatched to agent', {
         task_id: task.task_id,

@@ -44,3 +44,21 @@
 [2025-11-11 22:06:04] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
 [2025-11-11 22:06:04] [32mINFO[39m (validation-5cfec33b/25072): [36mResult reported[39m
 [2025-11-11 22:06:04] [31mERROR[39m (validation-5cfec33b/25072): [36mTask execution failed[39m
+[2025-11-11 22:39:47] [32mINFO[39m (validation-5cfec33b/25072): [36mTask received[39m
+[2025-11-11 22:39:47] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[2025-11-11 22:39:47] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
+[2025-11-11 22:39:47] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
+[2025-11-11 22:39:47] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
+[2025-11-11 22:39:47] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
+[2025-11-11 22:39:47] [33mWARN[39m (validation-5cfec33b/25072): [36mTask execution failed, retrying[39m
+[2025-11-11 22:39:49] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
+[2025-11-11 22:39:49] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
+[2025-11-11 22:39:49] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
+[2025-11-11 22:39:49] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
+[2025-11-11 22:39:49] [33mWARN[39m (validation-5cfec33b/25072): [36mTask execution failed, retrying[39m
+[2025-11-11 22:39:54] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
+[2025-11-11 22:39:54] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
+[2025-11-11 22:39:54] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
+[2025-11-11 22:39:54] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
+[2025-11-11 22:39:54] [32mINFO[39m (validation-5cfec33b/25072): [36mResult reported[39m
+[2025-11-11 22:39:54] [31mERROR[39m (validation-5cfec33b/25072): [36mTask execution failed[39m
