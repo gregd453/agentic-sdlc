@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from 'vitest';
 import { E2EAgent } from '../e2e-agent';
 import { TaskAssignment } from '@agentic-sdlc/base-agent';
 
@@ -10,6 +10,14 @@ vi.mock('../utils/artifact-storage');
 
 describe('E2EAgent', () => {
   let agent: E2EAgent;
+
+  beforeAll(() => {
+    process.env.ANTHROPIC_API_KEY = 'test-key-sk-12345';
+  });
+
+  afterAll(() => {
+    delete process.env.ANTHROPIC_API_KEY;
+  });
 
   beforeEach(() => {
     agent = new E2EAgent();

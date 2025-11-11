@@ -1,0 +1,1625 @@
+
+> agentic-sdlc@0.1.0 test
+> turbo run test
+
+• Packages in scope: @agentic-sdlc/base-agent, @agentic-sdlc/contracts, @agentic-sdlc/deployment-agent, @agentic-sdlc/e2e-agent, @agentic-sdlc/integration-agent, @agentic-sdlc/ops, @agentic-sdlc/orchestrator, @agentic-sdlc/scaffold-agent, @agentic-sdlc/shared-types, @agentic-sdlc/shared-utils, @agentic-sdlc/test-utils, @agentic-sdlc/validation-agent
+• Running test in 12 packages
+• Remote caching disabled
+@agentic-sdlc/ops:test: cache hit, replaying logs b9b12fea7407eb80
+@agentic-sdlc/ops:test: 
+@agentic-sdlc/ops:test: > @agentic-sdlc/ops@1.0.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/ops/agentic
+@agentic-sdlc/ops:test: > vitest run
+@agentic-sdlc/ops:test: 
+@agentic-sdlc/ops:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/ops:test: 
+@agentic-sdlc/ops:test:  RUN  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/ops/agentic
+@agentic-sdlc/ops:test: 
+@agentic-sdlc/ops:test:  ✓ core/clarify.test.ts  (23 tests) 20ms
+@agentic-sdlc/ops:test:  ✓ core/decisions.test.ts  (19 tests) 303ms
+@agentic-sdlc/ops:test: 
+@agentic-sdlc/ops:test:  Test Files  2 passed (2)
+@agentic-sdlc/ops:test:       Tests  42 passed (42)
+@agentic-sdlc/ops:test:    Start at  08:34:01
+@agentic-sdlc/ops:test:    Duration  963ms (transform 146ms, setup 0ms, collect 277ms, tests 323ms, environment 1ms, prepare 230ms)
+@agentic-sdlc/ops:test: 
+@agentic-sdlc/shared-utils:build: cache hit, replaying logs 92b28b2478e4e4a5
+@agentic-sdlc/shared-utils:build: 
+@agentic-sdlc/shared-utils:build: > @agentic-sdlc/shared-utils@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/utils
+@agentic-sdlc/shared-utils:build: > tsc
+@agentic-sdlc/shared-utils:build: 
+@agentic-sdlc/shared-types:build: cache hit, replaying logs 8c45e800c758f0c1
+@agentic-sdlc/shared-types:build: 
+@agentic-sdlc/shared-types:build: > @agentic-sdlc/shared-types@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types
+@agentic-sdlc/shared-types:build: > tsc
+@agentic-sdlc/shared-types:build: 
+@agentic-sdlc/contracts:test: cache hit, replaying logs bcb828aa457bfe46
+@agentic-sdlc/contracts:test: 
+@agentic-sdlc/contracts:test: > @agentic-sdlc/contracts@1.0.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/contracts
+@agentic-sdlc/contracts:test: > vitest run
+@agentic-sdlc/contracts:test: 
+@agentic-sdlc/contracts:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/contracts:test: 
+@agentic-sdlc/contracts:test:  RUN  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/contracts
+@agentic-sdlc/contracts:test: 
+@agentic-sdlc/contracts:test:  ✓ src/__tests__/contract-validator.test.ts  (19 tests) 5ms
+@agentic-sdlc/contracts:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/contracts:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/contracts:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/contracts:test: 
+@agentic-sdlc/contracts:test:  ✓ src/__tests__/version-validator.test.ts  (25 tests) 4ms
+@agentic-sdlc/contracts:test:  ✓ src/__tests__/scaffold.contract.test.ts  (7 tests) 11ms
+@agentic-sdlc/contracts:test: 
+@agentic-sdlc/contracts:test:  Test Files  3 passed (3)
+@agentic-sdlc/contracts:test:       Tests  51 passed (51)
+@agentic-sdlc/contracts:test:    Start at  16:14:54
+@agentic-sdlc/contracts:test:    Duration  831ms (transform 164ms, setup 0ms, collect 377ms, tests 20ms, environment 0ms, prepare 579ms)
+@agentic-sdlc/contracts:test: 
+@agentic-sdlc/base-agent:test: cache miss, executing 3010091df44e008c
+@agentic-sdlc/base-agent:build: cache hit, replaying logs fb2f0eeb1a0cdac4
+@agentic-sdlc/base-agent:build: 
+@agentic-sdlc/base-agent:build: > @agentic-sdlc/base-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:build: > tsc
+@agentic-sdlc/base-agent:build: 
+@agentic-sdlc/validation-agent:test: cache miss, executing 80ddfb72d0de42ff
+@agentic-sdlc/test-utils:build: cache hit, replaying logs 32444058caab95a2
+@agentic-sdlc/test-utils:build: 
+@agentic-sdlc/test-utils:build: > @agentic-sdlc/test-utils@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/test-utils
+@agentic-sdlc/test-utils:build: > tsc
+@agentic-sdlc/test-utils:build: 
+@agentic-sdlc/deployment-agent:test: cache miss, executing 33729e8ad62d1759
+@agentic-sdlc/e2e-agent:test: cache miss, executing e5967e842e3aaf33
+@agentic-sdlc/integration-agent:test: cache miss, executing e059d064dfb74e8e
+@agentic-sdlc/contracts:build: cache hit, replaying logs 8f6306e07b70b73e
+@agentic-sdlc/contracts:build: 
+@agentic-sdlc/contracts:build: > @agentic-sdlc/contracts@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/contracts
+@agentic-sdlc/contracts:build: > tsc
+@agentic-sdlc/contracts:build: 
+@agentic-sdlc/scaffold-agent:test: cache miss, executing a0cc4dc5bd254dc7
+@agentic-sdlc/orchestrator:test: cache miss, executing 360ea9be9db98357
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/validation-agent:test: > @agentic-sdlc/validation-agent@0.1.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent
+@agentic-sdlc/validation-agent:test: > vitest
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: > @agentic-sdlc/base-agent@0.1.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:test: > vitest
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test: > @agentic-sdlc/deployment-agent@0.1.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/deployment-agent
+@agentic-sdlc/deployment-agent:test: > vitest
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/e2e-agent:test: > @agentic-sdlc/e2e-agent@0.1.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/e2e-agent
+@agentic-sdlc/e2e-agent:test: > vitest
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test: > @agentic-sdlc/integration-agent@0.1.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/integration-agent
+@agentic-sdlc/integration-agent:test: > vitest
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: > @agentic-sdlc/orchestrator@0.1.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+@agentic-sdlc/orchestrator:test: > vitest
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: > @agentic-sdlc/scaffold-agent@0.1.0 test /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent
+@agentic-sdlc/scaffold-agent:test: > vitest
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/deployment-agent:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/orchestrator:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/base-agent:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/e2e-agent:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/validation-agent:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test:  DEV  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/deployment-agent
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/integration-agent:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/scaffold-agent:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  DEV  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  DEV  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/e2e-agent:test:  DEV  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/e2e-agent
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/validation-agent:test:  DEV  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test:  DEV  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/integration-agent
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  DEV  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/integration-agent:test:  ✓ src/__tests__/services/conflict-resolver.service.test.ts  (11 tests) 4ms
+@agentic-sdlc/integration-agent:test:  ❯ src/__tests__/services/git.service.test.ts  (18 tests | 1 failed) 9ms
+@agentic-sdlc/integration-agent:test:    ❯ src/__tests__/services/git.service.test.ts > GitService > applyResolution > should write resolved content and stage file
+@agentic-sdlc/integration-agent:test:      → Failed to apply resolution to src/index.ts: ENOENT: no such file or directory, open '/tmp/test-repo/src/index.ts'
+@agentic-sdlc/e2e-agent:test:  ✓ src/__tests__/utils/report-generator.test.ts  (7 tests) 8ms
+@agentic-sdlc/validation-agent:test:  ✓ src/__tests__/validators/quality-gates.test.ts  (6 tests) 5ms
+@agentic-sdlc/deployment-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/deployment-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/validation-agent:test:  ✓ src/__tests__/utils/report-generator.test.ts  (6 tests) 3ms
+@agentic-sdlc/base-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/base-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/e2e-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/e2e-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/integration-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/template-engine.test.ts > TemplateEngine > Error handling > should throw error for missing template
+@agentic-sdlc/scaffold-agent:test: Template not found: non-existent-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/template-engine.test.ts > TemplateEngine > Cache management > should clear cache
+@agentic-sdlc/scaffold-agent:test: Template not found: to-clear. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/base-agent:test: (node:3541) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 modified listeners added to [EventEmitter]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+@agentic-sdlc/base-agent:test: (Use `node --trace-warnings ...` to show where the warning was created)
+@agentic-sdlc/scaffold-agent:test:  ✓ tests/template-engine.test.ts  (18 tests) 62ms
+@agentic-sdlc/orchestrator:test:  ✓ tests/services/decision-gate.service.test.ts  (44 tests) 24ms
+@agentic-sdlc/base-agent:test:  ❯ tests/base-agent.test.ts  (12 tests | 5 failed) 54ms
+@agentic-sdlc/base-agent:test:    ❯ tests/base-agent.test.ts > BaseAgent > health check > should return healthy status
+@agentic-sdlc/base-agent:test:      → expected 0 to be greater than 0
+@agentic-sdlc/base-agent:test:    ❯ tests/base-agent.test.ts > BaseAgent > retry logic > should retry failed operations
+@agentic-sdlc/base-agent:test:      → First attempt
+@agentic-sdlc/base-agent:test:    ❯ tests/base-agent.test.ts > BaseAgent > retry logic > should throw after max retries
+@agentic-sdlc/base-agent:test:      → expected [Function] to throw error including 'Operation failed after 2 attempts' but got 'Always fails'
+@agentic-sdlc/base-agent:test:    ❯ tests/base-agent.test.ts > BaseAgent > Claude integration > should call Claude API successfully
+@agentic-sdlc/base-agent:test:      → this.claudeCircuitBreaker.execute is not a function
+@agentic-sdlc/base-agent:test:    ❯ tests/base-agent.test.ts > BaseAgent > Claude integration > should handle Claude API errors
+@agentic-sdlc/base-agent:test:      → expected [Function] to throw error including 'Claude API error' but got 'this.claudeCircuitBreaker.execute is …'
+@agentic-sdlc/base-agent:test: [2025-11-11 21:17:07] [32mINFO[39m (example-124e7aed/3541): [36mInitializing agent[39m
+@agentic-sdlc/base-agent:test: [2025-11-11 21:17:07] [32mINFO[39m (example-124e7aed/3541): [36mSubscribed to task channel[39m
+@agentic-sdlc/base-agent:test: [2025-11-11 21:17:07] [32mINFO[39m (example-124e7aed/3541): [36mRegistered with orchestrator[39m
+@agentic-sdlc/base-agent:test: [2025-11-11 21:17:07] [32mINFO[39m (example-124e7aed/3541): [36mAgent initialized successfully[39m
+@agentic-sdlc/base-agent:test: [2025-11-11 21:17:07] [32mINFO[39m (example-3219a4bb/3541): [36mResult reported[39m
+@agentic-sdlc/base-agent:test: (node:3541) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+@agentic-sdlc/integration-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/integration-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/validation-agent:test:  ✓ src/__tests__/utils/policy-loader.test.ts  (7 tests) 29ms
+@agentic-sdlc/e2e-agent:test:  ✓ src/__tests__/generators/page-object-generator.test.ts  (8 tests) 3ms
+@agentic-sdlc/scaffold-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/e2e-agent:test: {"level":30,"time":1762895827872,"pid":3538,"hostname":"Mac.lan","name":"test-generator","msg":"Generated test files"}
+@agentic-sdlc/e2e-agent:test: {"level":30,"time":1762895827873,"pid":3538,"hostname":"Mac.lan","name":"test-generator","msg":"Generated test files"}
+@agentic-sdlc/e2e-agent:test: {"level":30,"time":1762895827873,"pid":3538,"hostname":"Mac.lan","name":"test-generator","msg":"Generated test files"}
+@agentic-sdlc/validation-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/e2e-agent:test:  ✓ src/__tests__/generators/test-generator.test.ts  (8 tests) 2ms
+@agentic-sdlc/validation-agent:test: stdout | Function.register (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/registry/schema-registry.ts:54:13)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: workflow (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: agent.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: agent.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: pipeline.stage (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: event (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: scaffold.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: scaffold.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: scaffold.requirements (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: validation.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: validation.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: e2e.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: e2e.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: e2e.page_object (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: integration.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: integration.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: deployment.task (v1.0.0)
+@agentic-sdlc/validation-agent:test: ✅ Registered schema: deployment.result (v1.0.0)
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/orchestrator:test:  ✓ tests/services/quality-gate.service.test.ts  (33 tests) 10ms
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  FAIL  tests/base-agent.test.ts > BaseAgent > health check > should return healthy status
+@agentic-sdlc/base-agent:test: AssertionError: expected 0 to be greater than 0
+@agentic-sdlc/base-agent:test:  ❯ tests/base-agent.test.ts:177:32
+@agentic-sdlc/scaffold-agent:test:  ✓ tests/file-generator.test.ts  (19 tests | 5 skipped) 217ms
+@agentic-sdlc/base-agent:test:     175| 
+@agentic-sdlc/base-agent:test:     176|       expect(health.status).toBe('healthy');
+@agentic-sdlc/base-agent:test:     177|       expect(health.uptime_ms).toBeGreaterThan(0);
+@agentic-sdlc/base-agent:test:        |                                ^
+@agentic-sdlc/base-agent:test:     178|       expect(health.tasks_processed).toBe(0);
+@agentic-sdlc/base-agent:test:     179|       expect(health.errors_count).toBe(0);
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  FAIL  tests/base-agent.test.ts > BaseAgent > retry logic > should retry failed operations
+@agentic-sdlc/base-agent:test: Error: First attempt
+@agentic-sdlc/base-agent:test:  ❯ tests/base-agent.test.ts:186:32
+@agentic-sdlc/base-agent:test:     184|     it('should retry failed operations', async () => {
+@agentic-sdlc/base-agent:test:     185|       const operation = vi.fn()
+@agentic-sdlc/base-agent:test:     186|         .mockRejectedValueOnce(new Error('First attempt'))
+@agentic-sdlc/base-agent:test:        |                                ^
+@agentic-sdlc/base-agent:test:     187|         .mockRejectedValueOnce(new Error('Second attempt'))
+@agentic-sdlc/base-agent:test:     188|         .mockResolvedValueOnce('Success');
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  FAIL  tests/base-agent.test.ts > BaseAgent > retry logic > should throw after max retries
+@agentic-sdlc/base-agent:test: AssertionError: expected [Function] to throw error including 'Operation failed after 2 attempts' but got 'Always fails'
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: - Expected
+@agentic-sdlc/base-agent:test: + Received
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: - Operation failed after 2 attempts
+@agentic-sdlc/base-agent:test: + Always fails
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  ❯ tests/base-agent.test.ts:200:7
+@agentic-sdlc/base-agent:test:     198|         .mockRejectedValue(new Error('Always fails'));
+@agentic-sdlc/base-agent:test:     199| 
+@agentic-sdlc/base-agent:test:     200|       await expect(
+@agentic-sdlc/base-agent:test:        |       ^
+@agentic-sdlc/base-agent:test:     201|         (agent as any).executeWithRetry(operation, 2)
+@agentic-sdlc/base-agent:test:     202|       ).rejects.toThrow('Operation failed after 2 attempts');
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  FAIL  tests/base-agent.test.ts > BaseAgent > Claude integration > should call Claude API successfully
+@agentic-sdlc/base-agent:test: TypeError: this.claudeCircuitBreaker.execute is not a function
+@agentic-sdlc/base-agent:test:  ❯ TestAgent.callClaude src/base-agent.ts:314:38
+@agentic-sdlc/base-agent:test:     312|     maxTokens: number = 4096
+@agentic-sdlc/base-agent:test:     313|   ): Promise<string> {
+@agentic-sdlc/base-agent:test:     314|     return this.claudeCircuitBreaker.execute(async () => {
+@agentic-sdlc/base-agent:test:        |                                      ^
+@agentic-sdlc/base-agent:test:     315|       try {
+@agentic-sdlc/base-agent:test:     316|         const response = await this.anthropic.messages.create({
+@agentic-sdlc/base-agent:test:  ❯ tests/base-agent.test.ts:210:45
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  FAIL  tests/base-agent.test.ts > BaseAgent > Claude integration > should handle Claude API errors
+@agentic-sdlc/base-agent:test: AssertionError: expected [Function] to throw error including 'Claude API error' but got 'this.claudeCircuitBreaker.execute is …'
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: - Expected
+@agentic-sdlc/base-agent:test: + Received
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: - Claude API error
+@agentic-sdlc/base-agent:test: + this.claudeCircuitBreaker.execute is not a function
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  Test Files  1 failed (1)
+@agentic-sdlc/base-agent:test:       Tests  5 failed | 7 passed (12)
+@agentic-sdlc/base-agent:test:    Start at  16:17:06
+@agentic-sdlc/base-agent:test:    Duration  920ms (transform 161ms, setup 0ms, collect 267ms, tests 54ms, environment 0ms, prepare 313ms)
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test: 
+@agentic-sdlc/base-agent:test:  FAIL  Tests failed. Watching for file changes...
+@agentic-sdlc/base-agent:test:        press h to show help, press q to quit
+@agentic-sdlc/integration-agent:test:  ❯ src/__tests__/integration-agent.test.ts  (6 tests | 6 failed) 10ms
+@agentic-sdlc/integration-agent:test:    ❯ src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should handle merge_branch task successfully
+@agentic-sdlc/integration-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/integration-agent:test:    ❯ src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should handle resolve_conflict task successfully
+@agentic-sdlc/integration-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/integration-agent:test:    ❯ src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should handle update_dependencies task successfully
+@agentic-sdlc/integration-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/integration-agent:test:    ❯ src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should handle run_integration_tests task successfully
+@agentic-sdlc/integration-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/integration-agent:test:    ❯ src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should throw error for unknown action
+@agentic-sdlc/integration-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/integration-agent:test:    ❯ src/__tests__/integration-agent.test.ts > IntegrationAgent > cleanup > should cleanup resources
+@agentic-sdlc/integration-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test:  FAIL  src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should handle merge_branch task successfully
+@agentic-sdlc/integration-agent:test:  FAIL  src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should handle resolve_conflict task successfully
+@agentic-sdlc/integration-agent:test:  FAIL  src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should handle update_dependencies task successfully
+@agentic-sdlc/integration-agent:test:  FAIL  src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should handle run_integration_tests task successfully
+@agentic-sdlc/integration-agent:test:  FAIL  src/__tests__/integration-agent.test.ts > IntegrationAgent > executeTask > should throw error for unknown action
+@agentic-sdlc/integration-agent:test:  FAIL  src/__tests__/integration-agent.test.ts > IntegrationAgent > cleanup > should cleanup resources
+@agentic-sdlc/integration-agent:test: AgentError: ANTHROPIC_API_KEY not configured
+@agentic-sdlc/integration-agent:test:  ❯ new BaseAgent ../base-agent/src/base-agent.ts:53:13
+@agentic-sdlc/integration-agent:test:  ❯ new IntegrationAgent src/integration-agent.ts:28:5
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should execute scaffold task successfully
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/integration-agent:test:      26| 
+@agentic-sdlc/integration-agent:test:      27|   constructor(repoPath: string = process.cwd()) {
+@agentic-sdlc/integration-agent:test:      28|     super({
+@agentic-sdlc/integration-agent:test:        |     ^
+@agentic-sdlc/integration-agent:test:      29|       type: 'integration',
+@agentic-sdlc/integration-agent:test:      30|       version: '1.0.0',
+@agentic-sdlc/integration-agent:test:  ❯ src/__tests__/integration-agent.test.ts:26:13
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should execute scaffold task successfully
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:07] [32mINFO[39m (scaffold-fb150322/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/integration-agent:test: Serialized Error: { code: 'CONFIG_ERROR' }
+@agentic-sdlc/integration-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test:  FAIL  src/__tests__/services/git.service.test.ts > GitService > applyResolution > should write resolved content and stage file
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should execute scaffold task successfully
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/integration-agent:test: Error: Failed to apply resolution to src/index.ts: ENOENT: no such file or directory, open '/tmp/test-repo/src/index.ts'
+@agentic-sdlc/integration-agent:test:  ❯ GitService.applyResolution src/services/git.service.ts:271:13
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:07] [32mINFO[39m (scaffold-fb150322/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-fb150322/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-fb150322/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/integration-agent:test:     269|       await this.git.add(filePath);
+@agentic-sdlc/integration-agent:test:     270|     } catch (error) {
+@agentic-sdlc/integration-agent:test:     271|       throw new Error(`Failed to apply resolution to ${filePath}: ${er…
+@agentic-sdlc/integration-agent:test:        |             ^
+@agentic-sdlc/integration-agent:test:     272|     }
+@agentic-sdlc/integration-agent:test:     273|   }
+@agentic-sdlc/integration-agent:test:  ❯ src/__tests__/services/git.service.test.ts:160:7
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test:  Test Files  2 failed | 1 passed (3)
+@agentic-sdlc/integration-agent:test:       Tests  7 failed | 28 passed (35)
+@agentic-sdlc/integration-agent:test:    Start at  16:17:07
+@agentic-sdlc/integration-agent:test:    Duration  996ms (transform 295ms, setup 0ms, collect 731ms, tests 23ms, environment 0ms, prepare 449ms)
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test: 
+@agentic-sdlc/integration-agent:test:  FAIL  Tests failed. Watching for file changes...
+@agentic-sdlc/integration-agent:test:        press h to show help, press q to quit
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-5fb04a12/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-5fb04a12/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-5fb04a12/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-5fb04a12/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/e2e-agent:test:  ❯ src/__tests__/e2e-agent.test.ts  (8 tests | 8 failed) 28ms
+@agentic-sdlc/e2e-agent:test:    ❯ src/__tests__/e2e-agent.test.ts > E2EAgent > should create agent with correct configuration
+@agentic-sdlc/e2e-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:    ❯ src/__tests__/e2e-agent.test.ts > E2EAgent > should validate task context schema
+@agentic-sdlc/e2e-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:    ❯ src/__tests__/e2e-agent.test.ts > E2EAgent > should reject invalid task context
+@agentic-sdlc/e2e-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:    ❯ src/__tests__/e2e-agent.test.ts > E2EAgent > should handle task with minimal context
+@agentic-sdlc/e2e-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:    ❯ src/__tests__/e2e-agent.test.ts > E2EAgent > should support all browser types
+@agentic-sdlc/e2e-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:    ❯ src/__tests__/e2e-agent.test.ts > E2EAgent > should support artifact storage options
+@agentic-sdlc/e2e-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:    ❯ src/__tests__/e2e-agent.test.ts > E2EAgent > should support screenshot and video options
+@agentic-sdlc/e2e-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:    ❯ src/__tests__/e2e-agent.test.ts > E2EAgent > should support custom timeout
+@agentic-sdlc/e2e-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mClaude API response received[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mRequirements analysis completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-502fc046/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-502fc046/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-502fc046/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-502fc046/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-502fc046/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-502fc046/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-502fc046/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-502fc046/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-502fc046/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.077Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"❌ REDIS PUBLISHER ERROR"}
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.081Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Pipeline execution failed"}
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/e2e-agent:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/e2e-agent:test:  FAIL  src/__tests__/e2e-agent.test.ts > E2EAgent > should create agent with correct configuration
+@agentic-sdlc/e2e-agent:test:  FAIL  src/__tests__/e2e-agent.test.ts > E2EAgent > should validate task context schema
+@agentic-sdlc/e2e-agent:test:  FAIL  src/__tests__/e2e-agent.test.ts > E2EAgent > should reject invalid task context
+@agentic-sdlc/e2e-agent:test:  FAIL  src/__tests__/e2e-agent.test.ts > E2EAgent > should handle task with minimal context
+@agentic-sdlc/e2e-agent:test:  FAIL  src/__tests__/e2e-agent.test.ts > E2EAgent > should support all browser types
+@agentic-sdlc/e2e-agent:test:  FAIL  src/__tests__/e2e-agent.test.ts > E2EAgent > should support artifact storage options
+@agentic-sdlc/e2e-agent:test:  FAIL  src/__tests__/e2e-agent.test.ts > E2EAgent > should support screenshot and video options
+@agentic-sdlc/e2e-agent:test:  FAIL  src/__tests__/e2e-agent.test.ts > E2EAgent > should support custom timeout
+@agentic-sdlc/e2e-agent:test: AgentError: ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:  ❯ new BaseAgent ../base-agent/src/base-agent.ts:53:13
+@agentic-sdlc/e2e-agent:test:  ❯ new E2EAgent src/e2e-agent.ts:22:5
+@agentic-sdlc/deployment-agent:test:  ❯ src/__tests__/deployment-agent.test.ts  (6 tests | 6 failed) 11ms
+@agentic-sdlc/deployment-agent:test:    ❯ src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should handle build_docker_image task successfully
+@agentic-sdlc/deployment-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/deployment-agent:test:    ❯ src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should handle push_to_ecr task successfully
+@agentic-sdlc/deployment-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/deployment-agent:test:    ❯ src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should handle health_check task successfully
+@agentic-sdlc/deployment-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/deployment-agent:test:    ❯ src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should handle rollback_deployment task successfully
+@agentic-sdlc/deployment-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/deployment-agent:test:    ❯ src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should throw error for unknown action
+@agentic-sdlc/deployment-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/deployment-agent:test:    ❯ src/__tests__/deployment-agent.test.ts > DeploymentAgent > cleanup > should cleanup resources
+@agentic-sdlc/deployment-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/e2e-agent:test:      20| 
+@agentic-sdlc/e2e-agent:test:      21|   constructor() {
+@agentic-sdlc/e2e-agent:test:      22|     super({
+@agentic-sdlc/e2e-agent:test:        |     ^
+@agentic-sdlc/e2e-agent:test:      23|       type: 'e2e',
+@agentic-sdlc/e2e-agent:test:      24|       version: '1.0.0',
+@agentic-sdlc/e2e-agent:test:  ❯ src/__tests__/e2e-agent.test.ts:15:13
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/e2e-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/e2e-agent:test: Serialized Error: { code: 'CONFIG_ERROR' }
+@agentic-sdlc/e2e-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/e2e-agent:test:  Test Files  1 failed | 3 passed (4)
+@agentic-sdlc/e2e-agent:test:       Tests  8 failed | 23 passed (31)
+@agentic-sdlc/e2e-agent:test:    Start at  16:17:07
+@agentic-sdlc/e2e-agent:test:    Duration  1.09s (transform 208ms, setup 0ms, collect 1.09s, tests 41ms, environment 0ms, prepare 618ms)
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/e2e-agent:test: 
+@agentic-sdlc/e2e-agent:test:  FAIL  Tests failed. Watching for file changes...
+@agentic-sdlc/e2e-agent:test:        press h to show help, press q to quit
+@agentic-sdlc/validation-agent:test:  ❯ src/__tests__/validation-agent.test.ts  (9 tests | 9 failed) 17ms
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > constructor > should initialize with correct capabilities
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should execute validation task successfully
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should run only specified validation types
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should return failure status when validation fails
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should return partial status when warnings present
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should throw error for invalid context
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should use custom coverage threshold from context
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should include next_stage in successful results
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:    ❯ src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should not include next_stage in failed results
+@agentic-sdlc/validation-agent:test:      → ANTHROPIC_API_KEY not configured
+@agentic-sdlc/orchestrator:test:  ✓ src/services/workflow.service.test.ts  (11 tests) 10ms
+@agentic-sdlc/orchestrator:test:  ❯ tests/e2e/full-workflow.test.ts  (0 test)
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle invalid task gracefully
+@agentic-sdlc/scaffold-agent:test: ❌ CLAUDE API ERROR: Claude API error: 401 {"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"},"request_id":"req_011CV2oC3D3DdfWtStx4cv9r"}
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle invalid task gracefully
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle invalid task gracefully
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle invalid task gracefully
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle Claude API errors
+@agentic-sdlc/scaffold-agent:test: ❌ CLAUDE API ERROR: API Error
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle Claude API errors
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle Claude API errors
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle Claude API errors
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/orchestrator:test:  ✓ tests/e2e/five-agent-pipeline.test.ts  (22 tests) 164ms
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/validation-agent:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > constructor > should initialize with correct capabilities
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should execute validation task successfully
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should run only specified validation types
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should return failure status when validation fails
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should return partial status when warnings present
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should throw error for invalid context
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should use custom coverage threshold from context
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should include next_stage in successful results
+@agentic-sdlc/validation-agent:test:  FAIL  src/__tests__/validation-agent.test.ts > ValidationAgent > execute > should not include next_stage in failed results
+@agentic-sdlc/validation-agent:test: AgentError: ANTHROPIC_API_KEY not configured
+@agentic-sdlc/validation-agent:test:  ❯ new BaseAgent ../base-agent/src/base-agent.ts:53:13
+@agentic-sdlc/validation-agent:test:  ❯ new ValidationAgent src/validation-agent.ts:27:5
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle malformed Claude response
+@agentic-sdlc/scaffold-agent:test: ❌ JSON PARSING ERROR: Failed to extract valid JSON from Claude response after trying all strategies. Response preview: Invalid JSON{
+@agentic-sdlc/scaffold-agent:test: This likely means Claude returned non-JSON format despite instructions.
+@agentic-sdlc/scaffold-agent:test: Check logs for raw_response to see what Claude actually returned.
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle malformed Claude response
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle malformed Claude response
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/validation-agent:test:      25| 
+@agentic-sdlc/validation-agent:test:      26|   constructor() {
+@agentic-sdlc/validation-agent:test:      27|     super({
+@agentic-sdlc/validation-agent:test:        |     ^
+@agentic-sdlc/validation-agent:test:      28|       type: 'validation',
+@agentic-sdlc/validation-agent:test:      29|       version: '1.0.0',
+@agentic-sdlc/validation-agent:test:  ❯ src/__tests__/validation-agent.test.ts:64:13
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/validation-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/validation-agent:test: Serialized Error: { code: 'CONFIG_ERROR' }
+@agentic-sdlc/validation-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/validation-agent:test:  Test Files  1 failed | 3 passed (4)
+@agentic-sdlc/validation-agent:test:       Tests  9 failed | 19 passed (28)
+@agentic-sdlc/validation-agent:test:    Start at  16:17:07
+@agentic-sdlc/validation-agent:test:    Duration  1.17s (transform 380ms, setup 0ms, collect 1.30s, tests 54ms, environment 0ms, prepare 253ms)
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/validation-agent:test: 
+@agentic-sdlc/validation-agent:test:  FAIL  Tests failed. Watching for file changes...
+@agentic-sdlc/validation-agent:test:        press h to show help, press q to quit
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle malformed Claude response
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for service type
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for service type
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for service type
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [31mERROR[39m (scaffold-62d69cbe/3625): [36mFailed to analyze requirements with Claude API[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [31mERROR[39m (scaffold-dd010f58/3625): [36mFailed to analyze requirements with Claude API[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-dd010f58/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-dd010f58/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-dd010f58/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-dd010f58/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-dd010f58/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-dd010f58/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-62d69cbe/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-62d69cbe/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-62d69cbe/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-62d69cbe/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-62d69cbe/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-62d69cbe/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mClaude API response received[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [31mERROR[39m (scaffold-e2e936bd/3625): [36mFailed to extract valid JSON from Claude response after trying all strategies[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [31mERROR[39m (scaffold-e2e936bd/3625): [36mFailed to analyze requirements with Claude API[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-e2e936bd/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-e2e936bd/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-e2e936bd/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-e2e936bd/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-e2e936bd/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-e2e936bd/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for app type
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for app type
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for feature type
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for feature type
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mClaude API response received[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mRequirements analysis completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-9377d41a/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-9377d41a/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-9377d41a/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-9377d41a/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-9377d41a/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-9377d41a/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for feature type
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for capability type
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for capability type
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Project type support > should generate correct structure for capability type
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Contract generation > should generate Zod schemas from contracts
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Test generation > should generate test files when generate_tests is true
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Test generation > should generate test files when generate_tests is true
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mClaude API response received[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mRequirements analysis completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-b8ad63a8/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-b8ad63a8/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-b8ad63a8/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-b8ad63a8/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-b8ad63a8/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-b8ad63a8/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Test generation > should skip test files when generate_tests is false
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Test generation > should skip test files when generate_tests is false
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mClaude API response received[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mRequirements analysis completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-bdf1f2b0/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-bdf1f2b0/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-bdf1f2b0/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-bdf1f2b0/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-bdf1f2b0/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-bdf1f2b0/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Metrics collection > should collect execution metrics
+@agentic-sdlc/scaffold-agent:test: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Metrics collection > should collect execution metrics
+@agentic-sdlc/scaffold-agent:test: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: stderr | tests/scaffold-agent.test.ts > ScaffoldAgent > Metrics collection > should collect execution metrics
+@agentic-sdlc/scaffold-agent:test: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts  (14 tests | 8 failed) 316ms
+@agentic-sdlc/scaffold-agent:test:    ❯ tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should execute scaffold task successfully
+@agentic-sdlc/scaffold-agent:test:      → actual value must be number or bigint, received "object"
+@agentic-sdlc/scaffold-agent:test:    ❯ tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle invalid task gracefully
+@agentic-sdlc/scaffold-agent:test:      → expected 'success' to be 'failure' // Object.is equality
+@agentic-sdlc/scaffold-agent:test:    ❯ tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle Claude API errors
+@agentic-sdlc/scaffold-agent:test:      → expected 'success' to be 'failure' // Object.is equality
+@agentic-sdlc/scaffold-agent:test:    ❯ tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle malformed Claude response
+@agentic-sdlc/scaffold-agent:test:      → expected 'success' to be 'failure' // Object.is equality
+@agentic-sdlc/scaffold-agent:test:    ❯ tests/scaffold-agent.test.ts > ScaffoldAgent > Contract generation > should generate Zod schemas from contracts
+@agentic-sdlc/scaffold-agent:test:      → Cannot read properties of undefined (reading 'some')
+@agentic-sdlc/scaffold-agent:test:    ❯ tests/scaffold-agent.test.ts > ScaffoldAgent > Test generation > should generate test files when generate_tests is true
+@agentic-sdlc/scaffold-agent:test:      → Cannot read properties of undefined (reading 'some')
+@agentic-sdlc/scaffold-agent:test:    ❯ tests/scaffold-agent.test.ts > ScaffoldAgent > Test generation > should skip test files when generate_tests is false
+@agentic-sdlc/scaffold-agent:test:      → Cannot read properties of undefined (reading 'every')
+@agentic-sdlc/scaffold-agent:test:    ❯ tests/scaffold-agent.test.ts > ScaffoldAgent > Metrics collection > should collect execution metrics
+@agentic-sdlc/scaffold-agent:test:      → actual value must be number or bigint, received "undefined"
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mClaude API response received[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mRequirements analysis completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-f6760cc6/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-f6760cc6/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-f6760cc6/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-f6760cc6/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-f6760cc6/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-f6760cc6/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.299Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to verify GitHub webhook signature"}
+@agentic-sdlc/orchestrator:test:  ❯ tests/e2e/scaffold-happy-path.test.ts  (0 test)
+@agentic-sdlc/orchestrator:test:  ✓ src/__tests__/integrations/github-actions.integration.test.ts  (18 tests) 4ms
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mScaffold agent schemas registered[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mExecuting scaffold task[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mAnalyzing requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mCalling Claude API to analyze requirements[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mClaude API response received[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mRequirements analysis completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mGenerating project structure[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mCreating files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Creating project files[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Creating base project directory[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-8d5b1d62/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Base project directory created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Creating subdirectories[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-8d5b1d62/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Subdirectories created[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-8d5b1d62/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-8d5b1d62/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Processing file[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Template rendering failed, using fallback[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Writing file to disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [33mWARN[39m (scaffold-8d5b1d62/3625): [36mUsing absolute path[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] File written successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Files created successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Verifying files on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Directory exists check[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36m[SESSION #36] Files found on disk[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mScaffold task completed successfully[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mCleaning up agent[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mDeregistered from orchestrator[39m
+@agentic-sdlc/scaffold-agent:test: [2025-11-11 21:17:08] [32mINFO[39m (scaffold-8d5b1d62/3625): [36mAgent cleanup completed[39m
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should execute scaffold task successfully
+@agentic-sdlc/scaffold-agent:test: TypeError: actual value must be number or bigint, received "object"
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts:99:54
+@agentic-sdlc/scaffold-agent:test:      97|       expect(result.task_id).toBe(task.task_id);
+@agentic-sdlc/scaffold-agent:test:      98|       expect(result.workflow_id).toBe(task.workflow_id);
+@agentic-sdlc/scaffold-agent:test:      99|       expect((result.output as any).files_generated).toBeGreaterThan(0…
+@agentic-sdlc/scaffold-agent:test:        |                                                      ^
+@agentic-sdlc/scaffold-agent:test:     100|       expect((result.output as any).summary).toContain('Successfully s…
+@agentic-sdlc/scaffold-agent:test:     101|     });
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle invalid task gracefully
+@agentic-sdlc/scaffold-agent:test: AssertionError: expected 'success' to be 'failure' // Object.is equality
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: - Expected
+@agentic-sdlc/scaffold-agent:test: + Received
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: - failure
+@agentic-sdlc/scaffold-agent:test: + success
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts:116:29
+@agentic-sdlc/scaffold-agent:test:     114|       const result = await agent.execute(invalidTask);
+@agentic-sdlc/scaffold-agent:test:     115| 
+@agentic-sdlc/scaffold-agent:test:     116|       expect(result.status).toBe('failure');
+@agentic-sdlc/scaffold-agent:test:        |                             ^
+@agentic-sdlc/scaffold-agent:test:     117|       expect(result.errors).toBeDefined();
+@agentic-sdlc/scaffold-agent:test:     118|       expect(result.errors!.length).toBeGreaterThan(0);
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle Claude API errors
+@agentic-sdlc/scaffold-agent:test: AssertionError: expected 'success' to be 'failure' // Object.is equality
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: - Expected
+@agentic-sdlc/scaffold-agent:test: + Received
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: - failure
+@agentic-sdlc/scaffold-agent:test: + success
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts:143:29
+@agentic-sdlc/scaffold-agent:test:     141|       const result = await agent.execute(task);
+@agentic-sdlc/scaffold-agent:test:     142| 
+@agentic-sdlc/scaffold-agent:test:     143|       expect(result.status).toBe('failure');
+@agentic-sdlc/scaffold-agent:test:        |                             ^
+@agentic-sdlc/scaffold-agent:test:     144|       expect(result.errors).toBeDefined();
+@agentic-sdlc/scaffold-agent:test:     145|     });
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  tests/scaffold-agent.test.ts > ScaffoldAgent > Task execution > should handle malformed Claude response
+@agentic-sdlc/scaffold-agent:test: AssertionError: expected 'success' to be 'failure' // Object.is equality
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: - Expected
+@agentic-sdlc/scaffold-agent:test: + Received
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: - failure
+@agentic-sdlc/scaffold-agent:test: + success
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts:167:29
+@agentic-sdlc/scaffold-agent:test:     165|       const result = await agent.execute(task);
+@agentic-sdlc/scaffold-agent:test:     166| 
+@agentic-sdlc/scaffold-agent:test:     167|       expect(result.status).toBe('failure');
+@agentic-sdlc/scaffold-agent:test:        |                             ^
+@agentic-sdlc/scaffold-agent:test:     168|       expect(result.errors).toBeDefined();
+@agentic-sdlc/scaffold-agent:test:     169|     });
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  tests/scaffold-agent.test.ts > ScaffoldAgent > Contract generation > should generate Zod schemas from contracts
+@agentic-sdlc/scaffold-agent:test: TypeError: Cannot read properties of undefined (reading 'some')
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts:350:53
+@agentic-sdlc/scaffold-agent:test:     348| 
+@agentic-sdlc/scaffold-agent:test:     349|       expect(result.status).toBe('success');
+@agentic-sdlc/scaffold-agent:test:     350|       expect((result.output as any).structure.files.some(
+@agentic-sdlc/scaffold-agent:test:        |                                                     ^
+@agentic-sdlc/scaffold-agent:test:     351|         (f: any) => f.path.includes('types')
+@agentic-sdlc/scaffold-agent:test:     352|       )).toBe(true);
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  tests/scaffold-agent.test.ts > ScaffoldAgent > Test generation > should generate test files when generate_tests is true
+@agentic-sdlc/scaffold-agent:test: TypeError: Cannot read properties of undefined (reading 'some')
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts:390:53
+@agentic-sdlc/scaffold-agent:test:     388| 
+@agentic-sdlc/scaffold-agent:test:     389|       expect(result.status).toBe('success');
+@agentic-sdlc/scaffold-agent:test:     390|       expect((result.output as any).structure.files.some(
+@agentic-sdlc/scaffold-agent:test:        |                                                     ^
+@agentic-sdlc/scaffold-agent:test:     391|         (f: any) => f.type === 'test'
+@agentic-sdlc/scaffold-agent:test:     392|       )).toBe(true);
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  tests/scaffold-agent.test.ts > ScaffoldAgent > Test generation > should skip test files when generate_tests is false
+@agentic-sdlc/scaffold-agent:test: TypeError: Cannot read properties of undefined (reading 'every')
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts:428:53
+@agentic-sdlc/scaffold-agent:test:     426| 
+@agentic-sdlc/scaffold-agent:test:     427|       expect(result.status).toBe('success');
+@agentic-sdlc/scaffold-agent:test:     428|       expect((result.output as any).structure.files.every(
+@agentic-sdlc/scaffold-agent:test:        |                                                     ^
+@agentic-sdlc/scaffold-agent:test:     429|         (f: any) => f.type !== 'test'
+@agentic-sdlc/scaffold-agent:test:     430|       )).toBe(true);
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  tests/scaffold-agent.test.ts > ScaffoldAgent > Metrics collection > should collect execution metrics
+@agentic-sdlc/scaffold-agent:test: TypeError: actual value must be number or bigint, received "undefined"
+@agentic-sdlc/scaffold-agent:test:  ❯ tests/scaffold-agent.test.ts:467:45
+@agentic-sdlc/scaffold-agent:test:     465|       expect(result.metrics).toBeDefined();
+@agentic-sdlc/scaffold-agent:test:     466|       expect(result.metrics!.duration_ms).toBeGreaterThan(0);
+@agentic-sdlc/scaffold-agent:test:     467|       expect(result.metrics!.files_created).toBeGreaterThanOrEqual(0);
+@agentic-sdlc/scaffold-agent:test:        |                                             ^
+@agentic-sdlc/scaffold-agent:test:     468|       expect(result.metrics!.directories_created).toBeGreaterThanOrEqu…
+@agentic-sdlc/scaffold-agent:test:     469|     });
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  Test Files  1 failed | 2 passed (3)
+@agentic-sdlc/scaffold-agent:test:       Tests  8 failed | 38 passed | 5 skipped (51)
+@agentic-sdlc/scaffold-agent:test:    Start at  16:17:07
+@agentic-sdlc/scaffold-agent:test:    Duration  1.25s (transform 219ms, setup 0ms, collect 614ms, tests 595ms, environment 0ms, prepare 585ms)
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test: 
+@agentic-sdlc/scaffold-agent:test:  FAIL  Tests failed. Watching for file changes...
+@agentic-sdlc/scaffold-agent:test:        press h to show help, press q to quit
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.410Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"❌ REDIS PUBLISHER ERROR"}
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.413Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Database health check failed"}
+@agentic-sdlc/orchestrator:test:  ✓ tests/repositories/workflow.repository.test.ts  (13 tests) 6ms
+@agentic-sdlc/orchestrator:test:  ✓ tests/services/health-check.service.test.ts  (17 tests) 16ms
+@agentic-sdlc/orchestrator:test:  ✓ tests/e2e/three-agent-pipeline.test.ts  (21 tests) 119ms
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.575Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"❌ FAILED TO PARSE JSON"}
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.575Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to process agent result"}
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.576Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Pipeline execution failed"}
+@agentic-sdlc/orchestrator:test:  ✓ src/__tests__/services/quality-gate.service.test.ts  (14 tests) 4ms
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.637Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Pipeline execution failed"}
+@agentic-sdlc/orchestrator:test:  ❯ tests/api/workflow.routes.test.ts  (13 tests | 2 failed) 135ms
+@agentic-sdlc/orchestrator:test:    ❯ tests/api/workflow.routes.test.ts > Workflow API Routes > POST /api/v1/workflows > should create a new workflow
+@agentic-sdlc/orchestrator:test:      → expected 400 to be 200 // Object.is equality
+@agentic-sdlc/orchestrator:test:    ❯ tests/api/workflow.routes.test.ts > Workflow API Routes > POST /api/v1/workflows > should handle service errors
+@agentic-sdlc/orchestrator:test:      → expected 400 to be 500 // Object.is equality
+@agentic-sdlc/orchestrator:test:  ✓ tests/api/routes/health.routes.test.ts  (7 tests) 32ms
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.806Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Workflow not found for task creation"}
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.806Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to create workflow"}
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.808Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to create workflow"}
+@agentic-sdlc/orchestrator:test:  ❯ tests/services/workflow.service.test.ts  (10 tests | 1 failed) 11ms
+@agentic-sdlc/orchestrator:test:    ❯ tests/services/workflow.service.test.ts > WorkflowService > createWorkflow > should successfully create a workflow
+@agentic-sdlc/orchestrator:test:      → Workflow test-workflow-id not found
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.840Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Stage execution failed"}
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:08.840Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Pipeline execution failed"}
+@agentic-sdlc/orchestrator:test:  ✓ src/utils/stages.test.ts  (30 tests) 5ms
+@agentic-sdlc/orchestrator:test:  ❯ tests/simple-happy-path.test.ts  (4 tests | 2 failed) 16ms
+@agentic-sdlc/orchestrator:test:    ❯ tests/simple-happy-path.test.ts > Milestone 1: Simple Happy Path Validation > should support type branding for IDs
+@agentic-sdlc/orchestrator:test:      → expected false to be true // Object.is equality
+@agentic-sdlc/orchestrator:test:    ❯ tests/simple-happy-path.test.ts > Milestone 1: Simple Happy Path Validation > should handle workflow state transitions
+@agentic-sdlc/orchestrator:test:      → expected [Function] to throw an error
+@agentic-sdlc/orchestrator:test:  ✓ tests/services/graceful-shutdown.service.test.ts  (5 tests) 3ms
+@agentic-sdlc/orchestrator:test:  ❯ src/__tests__/services/pipeline-executor.service.test.ts  (13 tests | 3 failed) 919ms
+@agentic-sdlc/orchestrator:test:    ❯ src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > startPipeline > should start pipeline execution successfully
+@agentic-sdlc/orchestrator:test:      → expected 'running' to be 'queued' // Object.is equality
+@agentic-sdlc/orchestrator:test:    ❯ src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > stage execution > should enforce quality gates
+@agentic-sdlc/orchestrator:test:      → Target cannot be null or undefined.
+@agentic-sdlc/orchestrator:test:    ❯ src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > stage execution > should fail stage when blocking quality gate fails
+@agentic-sdlc/orchestrator:test:      → expected undefined to be 'failed' // Object.is equality
+@agentic-sdlc/orchestrator:test:  ✓ tests/services/pipeline-executor.service.test.ts  (30 tests) 1228ms
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:09.312Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to get registered agents"}
+@agentic-sdlc/orchestrator:test: {"level":"error","timestamp":"2025-11-11T21:17:09.363Z","pid":3614,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to process agent result"}
+@agentic-sdlc/orchestrator:test:  ❯ tests/services/agent-dispatcher.service.test.ts  (32 tests | 4 failed) 1863ms
+@agentic-sdlc/orchestrator:test:    ❯ tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Result Handling > should auto-remove handler after success status
+@agentic-sdlc/orchestrator:test:      → expected true to be false // Object.is equality
+@agentic-sdlc/orchestrator:test:    ❯ tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Result Handling > should auto-remove handler after failure status
+@agentic-sdlc/orchestrator:test:      → expected true to be false // Object.is equality
+@agentic-sdlc/orchestrator:test:    ❯ tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Real-world Scenarios > should handle complete workflow lifecycle
+@agentic-sdlc/orchestrator:test:      → expected true to be false // Object.is equality
+@agentic-sdlc/orchestrator:test:    ❯ tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Real-world Scenarios > should handle multiple concurrent workflows
+@agentic-sdlc/orchestrator:test:      → expected 3 to be +0 // Object.is equality
+@agentic-sdlc/deployment-agent:test:  ❯ src/__tests__/services/health-check.service.test.ts  (5 tests | 1 failed) 10031ms
+@agentic-sdlc/deployment-agent:test:    ❯ src/__tests__/services/health-check.service.test.ts > HealthCheckService > checkEndpoint > should return healthy for 200 status
+@agentic-sdlc/deployment-agent:test:      → expected 0 to be greater than 0
+@agentic-sdlc/deployment-agent:test:  ❯ src/__tests__/services/ecs.service.test.ts  (7 tests | 1 failed) 10005ms
+@agentic-sdlc/deployment-agent:test:    ❯ src/__tests__/services/ecs.service.test.ts > ECSService > waitForServiceStable > should throw error on timeout
+@agentic-sdlc/deployment-agent:test:      → Test timed out in 10000ms.
+@agentic-sdlc/deployment-agent:test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test:  FAIL  src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should handle build_docker_image task successfully
+@agentic-sdlc/deployment-agent:test:  FAIL  src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should handle push_to_ecr task successfully
+@agentic-sdlc/deployment-agent:test:  FAIL  src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should handle health_check task successfully
+@agentic-sdlc/deployment-agent:test:  FAIL  src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should handle rollback_deployment task successfully
+@agentic-sdlc/deployment-agent:test:  FAIL  src/__tests__/deployment-agent.test.ts > DeploymentAgent > executeTask > should throw error for unknown action
+@agentic-sdlc/deployment-agent:test:  FAIL  src/__tests__/deployment-agent.test.ts > DeploymentAgent > cleanup > should cleanup resources
+@agentic-sdlc/deployment-agent:test: AgentError: ANTHROPIC_API_KEY not configured
+@agentic-sdlc/deployment-agent:test:  ❯ new BaseAgent ../base-agent/src/base-agent.ts:53:13
+@agentic-sdlc/deployment-agent:test:  ❯ new DeploymentAgent src/deployment-agent.ts:31:5
+@agentic-sdlc/deployment-agent:test:      29| 
+@agentic-sdlc/deployment-agent:test:      30|   constructor() {
+@agentic-sdlc/deployment-agent:test:      31|     super({
+@agentic-sdlc/deployment-agent:test:        |     ^
+@agentic-sdlc/deployment-agent:test:      32|       type: 'deployment',
+@agentic-sdlc/deployment-agent:test:      33|       version: '1.0.0',
+@agentic-sdlc/deployment-agent:test:  ❯ src/__tests__/deployment-agent.test.ts:25:13
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/deployment-agent:test: Serialized Error: { code: 'CONFIG_ERROR' }
+@agentic-sdlc/deployment-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test:  FAIL  src/__tests__/services/ecs.service.test.ts > ECSService > waitForServiceStable > should throw error on timeout
+@agentic-sdlc/deployment-agent:test: Error: Test timed out in 10000ms.
+@agentic-sdlc/deployment-agent:test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+@agentic-sdlc/deployment-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test:  FAIL  src/__tests__/services/health-check.service.test.ts > HealthCheckService > checkEndpoint > should return healthy for 200 status
+@agentic-sdlc/deployment-agent:test: AssertionError: expected 0 to be greater than 0
+@agentic-sdlc/deployment-agent:test:  ❯ src/__tests__/services/health-check.service.test.ts:40:35
+@agentic-sdlc/deployment-agent:test:      38|       expect(result.healthy).toBe(true);
+@agentic-sdlc/deployment-agent:test:      39|       expect(result.statusCode).toBe(200);
+@agentic-sdlc/deployment-agent:test:      40|       expect(result.responseTime).toBeGreaterThan(0);
+@agentic-sdlc/deployment-agent:test:        |                                   ^
+@agentic-sdlc/deployment-agent:test:      41|     });
+@agentic-sdlc/deployment-agent:test:      42| 
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test:  Test Files  3 failed (3)
+@agentic-sdlc/deployment-agent:test:       Tests  8 failed | 10 passed (18)
+@agentic-sdlc/deployment-agent:test:    Start at  16:17:06
+@agentic-sdlc/deployment-agent:test:    Duration  10.68s (transform 364ms, setup 0ms, collect 983ms, tests 20.05s, environment 0ms, prepare 942ms)
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test: 
+@agentic-sdlc/deployment-agent:test:  FAIL  Tests failed. Watching for file changes...
+@agentic-sdlc/deployment-agent:test:        press h to show help, press q to quit
+@agentic-sdlc/orchestrator:test:  ❯ src/hexagonal/__tests__/integration.test.ts  (28 tests) 30032ms
+@agentic-sdlc/orchestrator:test:  ❯ src/hexagonal/__tests__/smoke.test.ts  (15 tests) 30022ms
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯ Failed Suites 4 ⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/e2e/full-workflow.test.ts [ tests/e2e/full-workflow.test.ts ]
+@agentic-sdlc/orchestrator:test: Error: Failed to load url ../../src/state-machine/state-machine (resolved id: ../../src/state-machine/state-machine) in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/tests/e2e/full-workflow.test.ts. Does the file exist?
+@agentic-sdlc/orchestrator:test:  ❯ loadAndTransform ../../node_modules/.pnpm/vite@5.4.21_@types+node@20.19.24/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/e2e/scaffold-happy-path.test.ts [ tests/e2e/scaffold-happy-path.test.ts ]
+@agentic-sdlc/orchestrator:test: Error: Vitest cannot be imported in a CommonJS module using require(). Please use "import" instead.
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: If you are using "import" in your source code, then it's possible it was bundled into require() automatically by your bundler. In that case, do not bundle CommonJS output since it will never work with Vitest, or use dynamic import() which is available in all CommonJS modules.
+@agentic-sdlc/orchestrator:test:  ❯ Object.<anonymous> ../../node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.24/node_modules/vitest/index.cjs:1:7
+@agentic-sdlc/orchestrator:test:  ❯ TracingChannel.traceSync node:diagnostics_channel:322:14
+@agentic-sdlc/orchestrator:test:  ❯ Object.<anonymous> ../shared/test-utils/src/mocks/redis.mock.ts:1:1
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests
+@agentic-sdlc/orchestrator:test:  FAIL  src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests
+@agentic-sdlc/orchestrator:test: Error: Hook timed out in 30000ms.
+@agentic-sdlc/orchestrator:test: If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests
+@agentic-sdlc/orchestrator:test: TypeError: Cannot read properties of undefined (reading 'disconnect')
+@agentic-sdlc/orchestrator:test:  ❯ src/hexagonal/__tests__/integration.test.ts:56:15
+@agentic-sdlc/orchestrator:test:      54|     log.info('Tearing down integration tests');
+@agentic-sdlc/orchestrator:test:      55|     // Disconnect adapters
+@agentic-sdlc/orchestrator:test:      56|     await bus.disconnect();
+@agentic-sdlc/orchestrator:test:        |               ^
+@agentic-sdlc/orchestrator:test:      57|     await kv.disconnect();
+@agentic-sdlc/orchestrator:test:      58|     // Disconnect Redis suite
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests
+@agentic-sdlc/orchestrator:test: TypeError: Cannot read properties of undefined (reading 'shutdown')
+@agentic-sdlc/orchestrator:test:  ❯ src/hexagonal/__tests__/smoke.test.ts:37:21
+@agentic-sdlc/orchestrator:test:      35|   afterAll(async () => {
+@agentic-sdlc/orchestrator:test:      36|     log.info('Shutting down container');
+@agentic-sdlc/orchestrator:test:      37|     await container.shutdown();
+@agentic-sdlc/orchestrator:test:        |                     ^
+@agentic-sdlc/orchestrator:test:      38|   });
+@agentic-sdlc/orchestrator:test:      39| 
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/simple-happy-path.test.ts > Milestone 1: Simple Happy Path Validation > should support type branding for IDs
+@agentic-sdlc/orchestrator:test: AssertionError: expected false to be true // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected
+@agentic-sdlc/orchestrator:test: + Received
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - true
+@agentic-sdlc/orchestrator:test: + false
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ tests/simple-happy-path.test.ts:123:32
+@agentic-sdlc/orchestrator:test:     121|     // Type guards should work
+@agentic-sdlc/orchestrator:test:     122|     expect(isWorkflowId(workflowId)).toBe(true);
+@agentic-sdlc/orchestrator:test:     123|     expect(isAgentId(agentId)).toBe(true);
+@agentic-sdlc/orchestrator:test:        |                                ^
+@agentic-sdlc/orchestrator:test:     124|     expect(isTaskId(taskId)).toBe(true);
+@agentic-sdlc/orchestrator:test:     125| 
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/simple-happy-path.test.ts > Milestone 1: Simple Happy Path Validation > should handle workflow state transitions
+@agentic-sdlc/orchestrator:test: AssertionError: expected [Function] to throw an error
+@agentic-sdlc/orchestrator:test:  ❯ tests/simple-happy-path.test.ts:161:8
+@agentic-sdlc/orchestrator:test:     159|     expect(() => {
+@agentic-sdlc/orchestrator:test:     160|       SchemaRegistry.validate('workflow', workflow);
+@agentic-sdlc/orchestrator:test:     161|     }).toThrow();
+@agentic-sdlc/orchestrator:test:        |        ^
+@agentic-sdlc/orchestrator:test:     162|   });
+@agentic-sdlc/orchestrator:test:     163| });
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/api/workflow.routes.test.ts > Workflow API Routes > POST /api/v1/workflows > should create a new workflow
+@agentic-sdlc/orchestrator:test: AssertionError: expected 400 to be 200 // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected
+@agentic-sdlc/orchestrator:test: + Received
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - 200
+@agentic-sdlc/orchestrator:test: + 400
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ tests/api/workflow.routes.test.ts:47:35
+@agentic-sdlc/orchestrator:test:      45|       });
+@agentic-sdlc/orchestrator:test:      46| 
+@agentic-sdlc/orchestrator:test:      47|       expect(response.statusCode).toBe(200);
+@agentic-sdlc/orchestrator:test:        |                                   ^
+@agentic-sdlc/orchestrator:test:      48|       const body = JSON.parse(response.body);
+@agentic-sdlc/orchestrator:test:      49|       expect(body.workflow_id).toBe('test-workflow-id');
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/api/workflow.routes.test.ts > Workflow API Routes > POST /api/v1/workflows > should handle service errors
+@agentic-sdlc/orchestrator:test: AssertionError: expected 400 to be 500 // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected
+@agentic-sdlc/orchestrator:test: + Received
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - 500
+@agentic-sdlc/orchestrator:test: + 400
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ tests/api/workflow.routes.test.ts:88:35
+@agentic-sdlc/orchestrator:test:      86|       });
+@agentic-sdlc/orchestrator:test:      87| 
+@agentic-sdlc/orchestrator:test:      88|       expect(response.statusCode).toBe(500);
+@agentic-sdlc/orchestrator:test:        |                                   ^
+@agentic-sdlc/orchestrator:test:      89|       const body = JSON.parse(response.body);
+@agentic-sdlc/orchestrator:test:      90|       expect(body.error).toBe('Internal server error');
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Result Handling > should auto-remove handler after success status
+@agentic-sdlc/orchestrator:test: AssertionError: expected true to be false // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected
+@agentic-sdlc/orchestrator:test: + Received
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - false
+@agentic-sdlc/orchestrator:test: + true
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ tests/services/agent-dispatcher.service.test.ts:220:40
+@agentic-sdlc/orchestrator:test:     218| 
+@agentic-sdlc/orchestrator:test:     219|       const handlers = (service as any).resultHandlers;
+@agentic-sdlc/orchestrator:test:     220|       expect(handlers.has(workflowId)).toBe(false);
+@agentic-sdlc/orchestrator:test:        |                                        ^
+@agentic-sdlc/orchestrator:test:     221|     });
+@agentic-sdlc/orchestrator:test:     222| 
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Result Handling > should auto-remove handler after failure status
+@agentic-sdlc/orchestrator:test: AssertionError: expected true to be false // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected
+@agentic-sdlc/orchestrator:test: + Received
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - false
+@agentic-sdlc/orchestrator:test: + true
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ tests/services/agent-dispatcher.service.test.ts:239:40
+@agentic-sdlc/orchestrator:test:     237| 
+@agentic-sdlc/orchestrator:test:     238|       const handlers = (service as any).resultHandlers;
+@agentic-sdlc/orchestrator:test:     239|       expect(handlers.has(workflowId)).toBe(false);
+@agentic-sdlc/orchestrator:test:        |                                        ^
+@agentic-sdlc/orchestrator:test:     240|     });
+@agentic-sdlc/orchestrator:test:     241| 
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Real-world Scenarios > should handle complete workflow lifecycle
+@agentic-sdlc/orchestrator:test: AssertionError: expected true to be false // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected
+@agentic-sdlc/orchestrator:test: + Received
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - false
+@agentic-sdlc/orchestrator:test: + true
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ tests/services/agent-dispatcher.service.test.ts:610:40
+@agentic-sdlc/orchestrator:test:     608|       // Handler should be auto-removed after success
+@agentic-sdlc/orchestrator:test:     609|       const handlers = (service as any).resultHandlers;
+@agentic-sdlc/orchestrator:test:     610|       expect(handlers.has(workflowId)).toBe(false);
+@agentic-sdlc/orchestrator:test:        |                                        ^
+@agentic-sdlc/orchestrator:test:     611|     });
+@agentic-sdlc/orchestrator:test:     612| 
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Real-world Scenarios > should handle multiple concurrent workflows
+@agentic-sdlc/orchestrator:test: AssertionError: expected 3 to be +0 // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected
+@agentic-sdlc/orchestrator:test: + Received
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - 0
+@agentic-sdlc/orchestrator:test: + 3
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ tests/services/agent-dispatcher.service.test.ts:677:29
+@agentic-sdlc/orchestrator:test:     675|       // All handlers should be removed after success
+@agentic-sdlc/orchestrator:test:     676|       const handlers = (service as any).resultHandlers;
+@agentic-sdlc/orchestrator:test:     677|       expect(handlers.size).toBe(0);
+@agentic-sdlc/orchestrator:test:        |                             ^
+@agentic-sdlc/orchestrator:test:     678|     });
+@agentic-sdlc/orchestrator:test:     679|   });
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  tests/services/workflow.service.test.ts > WorkflowService > createWorkflow > should successfully create a workflow
+@agentic-sdlc/orchestrator:test: Error: Workflow test-workflow-id not found
+@agentic-sdlc/orchestrator:test:  ❯ WorkflowService.createTaskForStage src/services/workflow.service.ts:360:13
+@agentic-sdlc/orchestrator:test:     358|     if (!workflow) {
+@agentic-sdlc/orchestrator:test:     359|       logger.error('Workflow not found for task creation', { workflowI…
+@agentic-sdlc/orchestrator:test:     360|       throw new Error(`Workflow ${workflowId} not found`);
+@agentic-sdlc/orchestrator:test:        |             ^
+@agentic-sdlc/orchestrator:test:     361|     }
+@agentic-sdlc/orchestrator:test:     362| 
+@agentic-sdlc/orchestrator:test:  ❯ WorkflowService.createWorkflow src/services/workflow.service.ts:245:7
+@agentic-sdlc/orchestrator:test:  ❯ tests/services/workflow.service.test.ts:73:22
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > startPipeline > should start pipeline execution successfully
+@agentic-sdlc/orchestrator:test: AssertionError: expected 'running' to be 'queued' // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected
+@agentic-sdlc/orchestrator:test: + Received
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - queued
+@agentic-sdlc/orchestrator:test: + running
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ src/__tests__/services/pipeline-executor.service.test.ts:85:32
+@agentic-sdlc/orchestrator:test:      83|       expect(execution.pipeline_id).toBe(definition.id);
+@agentic-sdlc/orchestrator:test:      84|       expect(execution.workflow_id).toBe(definition.workflow_id);
+@agentic-sdlc/orchestrator:test:      85|       expect(execution.status).toBe('queued');
+@agentic-sdlc/orchestrator:test:        |                                ^
+@agentic-sdlc/orchestrator:test:      86|       expect(execution.trigger).toBe('manual');
+@agentic-sdlc/orchestrator:test:      87|       expect(execution.triggered_by).toBe('test-user');
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > stage execution > should enforce quality gates
+@agentic-sdlc/orchestrator:test: AssertionError: Target cannot be null or undefined.
+@agentic-sdlc/orchestrator:test:  ❯ src/__tests__/services/pipeline-executor.service.test.ts:228:47
+@agentic-sdlc/orchestrator:test:     226| 
+@agentic-sdlc/orchestrator:test:     227|       // Stage should pass since mock returns 90% coverage
+@agentic-sdlc/orchestrator:test:     228|       expect(currentExecution?.stage_results).toHaveLength(1);
+@agentic-sdlc/orchestrator:test:        |                                               ^
+@agentic-sdlc/orchestrator:test:     229|       expect(currentExecution?.stage_results[0].status).toBe('success'…
+@agentic-sdlc/orchestrator:test:     230|       expect(currentExecution?.stage_results[0].quality_gate_results).…
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > stage execution > should fail stage when blocking quality gate fails
+@agentic-sdlc/orchestrator:test: AssertionError: expected undefined to be 'failed' // Object.is equality
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: - Expected: 
+@agentic-sdlc/orchestrator:test: "failed"
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: + Received: 
+@agentic-sdlc/orchestrator:test: undefined
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  ❯ src/__tests__/services/pipeline-executor.service.test.ts:293:57
+@agentic-sdlc/orchestrator:test:     291| 
+@agentic-sdlc/orchestrator:test:     292|       // Stage should fail
+@agentic-sdlc/orchestrator:test:     293|       expect(currentExecution?.stage_results[0].status).toBe('failed');
+@agentic-sdlc/orchestrator:test:        |                                                         ^
+@agentic-sdlc/orchestrator:test:     294|       expect(currentExecution?.stage_results[0].error?.code).toBe('QUA…
+@agentic-sdlc/orchestrator:test:     295|     });
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/18]⎯
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  Test Files  9 failed | 13 passed (22)
+@agentic-sdlc/orchestrator:test:       Tests  12 failed | 325 passed (380)
+@agentic-sdlc/orchestrator:test:    Start at  16:17:06
+@agentic-sdlc/orchestrator:test:    Duration  31.60s (transform 1.08s, setup 606ms, collect 2.60s, tests 64.62s, environment 1ms, prepare 2.74s)
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test: 
+@agentic-sdlc/orchestrator:test:  FAIL  Tests failed. Watching for file changes...
+@agentic-sdlc/orchestrator:test:        press h to show help, press q to quit
+@agentic-sdlc/e2e-agent:test: [3Jc
+@agentic-sdlc/e2e-agent:test:  RERUN  src/__tests__/e2e-agent.test.ts x1
+@agentic-sdlc/e2e-agent:test: 

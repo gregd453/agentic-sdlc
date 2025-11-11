@@ -1,0 +1,5 @@
+npm error Missing script: "test:run"
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run
+npm error A complete log of this run can be found in: /Users/Greg/.npm/_logs/2025-11-11T20_57_33_167Z-debug-0.log
