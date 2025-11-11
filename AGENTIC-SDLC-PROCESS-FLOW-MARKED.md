@@ -44,9 +44,9 @@
 │ PHASE 1: SPRINT INITIATION ✅ (20 BOXES COMPLETE - TIERS 1-3)                               │
 ├──────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                                │
-│   [Product Owner]❌          [Backlog]❌           [Sprint Manager Agent]❌                    │
+│   [Product Owner AGENT]❌        [Backlog]❌           [Sprint Manager Agent]❌                    │
 │         │                        │                         │                                  │
-│         │  Requirements          │                         │                                  │
+│         │  EPCC/EXPLORE          │                         │                                  │
 │         └───────────────────────►│                         │                                  │
 │                                  │                         │                                  │
 │                                  │    Unrefined Items      │                                  │
@@ -56,7 +56,8 @@
 │                                              ┌──────────────────┐                            │
 │                                              │ Sprint Planning  │                            │
 │                                              │     Agent❌       │                            │
-│                                              └──────┬───────────┘                            │
+│                                              |     EPCC-PLAN    |                            |
+                                               └──────┬───────────┘                            │
 │                                                     │                                         │
 │                              ┌──────────────────────┼──────────────────────┐                 │
 │                              ▼                      ▼                      ▼                 │
@@ -91,8 +92,8 @@
 │     │                              │                                │                         │
 │     │                              ▼                                ▼                         │
 │     │                    ┌───────────────────┐            ┌──────────────┐                  │
-│     │                    │ Work Execution:✅  │            │ CI/CD Pipeline│✅               │
-│     │                    │                   │            └──────────────┘                  │
+│     │                    │ Work Execution:✅ │            │ CI/CD Pipeline│✅               │
+│     │                    │    EPCC-CODE      │            └──────────────┘                  │
 │     │                    │ ┌───────────────┐ │                     │                         │
 │     │                    │ │Scaffold Agent │ │                     │                         │
 │     │                    │ │       ✅       │ │                     ▼                         │
@@ -170,6 +171,7 @@
 │                                     │                                                        │
 │                                     ▼                                                        │
 │                          ┌──────────────────┐                                               │
+
 │                          │ Agent Results:✅  │                                               │
 │                          │ • Code Generated │                                               │
 │                          │ • Tests Passed   │                                               │

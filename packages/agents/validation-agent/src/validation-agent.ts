@@ -70,9 +70,19 @@ export class ValidationAgent extends BaseAgent {
     });
 
     try {
-      // SESSION #37: Extract envelope from task.context (agent dispatcher wraps it)
-      // Same fix as base-agent: envelope is in (task as any).context
-      const envelopeData = (task as any).context;
+      // SESSION #38: Extract envelope from correct location
+      // Debug: log the structure to understand where the envelope is
+      const taskObj = task as any;
+      this.logger.info('[SESSION #38] Task structure debug', {
+        has_context: !!taskObj.context,
+        context_keys: taskObj.context ? Object.keys(taskObj.context).slice(0, 10) : [],
+        has_payload: !!taskObj.payload,
+        payload_keys: taskObj.payload ? Object.keys(taskObj.payload).slice(0, 10) : [],
+        task_keys: Object.keys(taskObj).slice(0, 15)
+      });
+
+      // Try multiple paths to find the envelope
+      const envelopeData = taskObj.context?.payload || taskObj.payload || taskObj.context;
       const validation = validateEnvelope(envelopeData);
 
       if (!validation.success) {

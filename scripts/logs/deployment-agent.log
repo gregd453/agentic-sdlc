@@ -1,0 +1,24 @@
+
+> @agentic-sdlc/deployment-agent@0.1.0 dev
+> tsx watch src/index.ts
+
+✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
