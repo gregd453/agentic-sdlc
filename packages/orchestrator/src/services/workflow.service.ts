@@ -800,7 +800,10 @@ export class WorkflowService {
     workflow: any
   ): any {
     const now = new Date().toISOString();
-    const traceId = generateTraceId();
+    // SESSION #47: Use task_id as trace_id instead of custom trace format
+    // The envelope schema expects trace_id to be a valid UUID or undefined
+    const { randomUUID } = require('crypto');
+    const traceId = randomUUID();
 
     // Common envelope metadata
     const envelopeBase = {

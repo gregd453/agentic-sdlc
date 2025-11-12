@@ -58,6 +58,7 @@ export class ValidationAgent extends BaseAgent {
   /**
    * Execute validation task
    * SESSION #36: Updated to use AgentEnvelope instead of adapter
+   * SESSION #47: Enhanced debugging for envelope extraction
    */
   async execute(task: TaskAssignment): Promise<TaskResult> {
     const startTime = Date.now();
@@ -70,25 +71,57 @@ export class ValidationAgent extends BaseAgent {
     });
 
     try {
-      // SESSION #38: Extract envelope from correct location
-      // Debug: log the structure to understand where the envelope is
+      // SESSION #47: Enhanced envelope extraction debugging
       const taskObj = task as any;
       this.logger.info('[SESSION #38] Task structure debug', {
         has_context: !!taskObj.context,
         context_keys: taskObj.context ? Object.keys(taskObj.context).slice(0, 10) : [],
+        context_type: typeof taskObj.context,
         has_payload: !!taskObj.payload,
         payload_keys: taskObj.payload ? Object.keys(taskObj.payload).slice(0, 10) : [],
-        task_keys: Object.keys(taskObj).slice(0, 15)
+        task_keys: Object.keys(taskObj).slice(0, 15),
+        context_agent_type: taskObj.context?.agent_type,
+        context_envelope_version: taskObj.context?.envelope_version
       });
 
-      // Try multiple paths to find the envelope
-      const envelopeData = taskObj.context?.payload || taskObj.payload || taskObj.context;
+      // SESSION #47: The envelope is at taskObj.context (from agent-dispatcher wrapper)
+      // Agent dispatcher sends: { payload: { context: envelope } }
+      // Base agent validates payload and passes to execute, so envelope is in task.context
+      const envelopeData = taskObj.context;
+
+      if (!envelopeData) {
+        this.logger.error('[SESSION #47] No context found in task', {
+          task_keys: Object.keys(taskObj),
+          task_id: task.task_id
+        });
+        throw new AgentError('No context envelope found in task', 'ENVELOPE_MISSING_ERROR');
+      }
+
+      this.logger.info('[SESSION #47] Attempting to validate envelope', {
+        envelope_agent_type: envelopeData.agent_type,
+        envelope_version: envelopeData.envelope_version,
+        has_payload: !!envelopeData.payload,
+        has_workflow_context: !!envelopeData.workflow_context
+      });
+
+      // Session #47: Log full envelope structure for debugging
+      console.log('[SESSION #47] Full envelope data:', JSON.stringify(envelopeData, null, 2));
+      console.log('[SESSION #47] Envelope keys:', Object.keys(envelopeData).join(', '));
+      console.log('[SESSION #47] Agent type:', envelopeData.agent_type);
+      console.log('[SESSION #47] Envelope version:', envelopeData.envelope_version);
+      console.log('[SESSION #47] Payload keys:', Object.keys(envelopeData.payload || {}).join(', '));
+
       const validation = validateEnvelope(envelopeData);
 
       if (!validation.success) {
+        console.log('[SESSION #47] Validation failed with error:', validation.error);
         this.logger.error('[SESSION #37] Invalid envelope format', {
           error: validation.error,
-          task_id: task.task_id
+          error_details: validation.error?.toString(),
+          task_id: task.task_id,
+          envelope_keys: Object.keys(envelopeData),
+          envelope_agent_type: envelopeData.agent_type,
+          envelope_str: JSON.stringify(envelopeData).substring(0, 200)
         });
 
         throw new AgentError(
