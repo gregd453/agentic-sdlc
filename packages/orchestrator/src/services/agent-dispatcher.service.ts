@@ -87,7 +87,7 @@ export class AgentDispatcherService {
 
   /**
    * Subscribe to agent results channel
-   * Uses pSubscribe for pattern matching
+   * SESSION #45: Fixed callback binding issue with node-redis v4
    */
   private async setupResultListener(): Promise<void> {
     try {
@@ -96,29 +96,42 @@ export class AgentDispatcherService {
 
       logger.info('🔌 SETTING UP REDIS SUBSCRIPTION', {
         channel,
-        subscriberState: 'connected'
+        subscriberState: 'connected',
+        timestamp: new Date().toISOString()
       });
 
-      // Subscribe and setup message handler
+      // Session #45 FIX: Use bound method to ensure 'this' context is preserved
       // node-redis v4 callback signature: (message, channel)
-      await this.redisSubscriber.subscribe(channel, (message: string) => {
-        logger.info('📨 RAW MESSAGE RECEIVED FROM REDIS', {
-          channel,
-          messageLength: message.length,
-          messagePreview: message.substring(0, 100),
-          timestamp: new Date().toISOString()
-        });
+      const boundHandler = this.handleAgentResult.bind(this);
 
-        logger.info('✅ MESSAGE IS FOR ORCHESTRATOR:RESULTS CHANNEL - PROCESSING', {
-          channel,
-          timestamp: new Date().toISOString()
-        });
-        this.handleAgentResult(message);
+      await this.redisSubscriber.subscribe(channel, async (message: string) => {
+        try {
+          logger.info('📨 RAW MESSAGE RECEIVED FROM REDIS', {
+            channel,
+            messageLength: message.length,
+            messagePreview: message.substring(0, 100),
+            timestamp: new Date().toISOString()
+          });
+
+          logger.info('✅ MESSAGE IS FOR ORCHESTRATOR:RESULTS CHANNEL - PROCESSING', {
+            channel,
+            timestamp: new Date().toISOString()
+          });
+
+          // Call bound handler with async/await for proper error propagation
+          await boundHandler(message);
+        } catch (error) {
+          logger.error('❌ ERROR IN MESSAGE CALLBACK', {
+            errorMessage: (error as any)?.message || String(error),
+            timestamp: new Date().toISOString()
+          });
+        }
       });
 
       logger.info('✅ SUCCESSFULLY SUBSCRIBED TO CHANNEL', {
         channel,
-        subscriberReady: true
+        subscriberReady: true,
+        timestamp: new Date().toISOString()
       });
     } catch (error: any) {
       logger.error('❌ SUBSCRIPTION FAILED', {
