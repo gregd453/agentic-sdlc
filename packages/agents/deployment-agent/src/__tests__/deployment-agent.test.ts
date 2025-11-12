@@ -28,12 +28,24 @@ describe('DeploymentAgent', () => {
   describe('executeTask', () => {
     it('should handle build_docker_image task successfully', async () => {
       const mockTask = {
+        task_id: 'task_test-123',
+        workflow_id: 'wf_test-123',
+        agent_type: 'deployment' as const,
         action: 'build_docker_image' as const,
-        dockerfile_path: './Dockerfile',
-        context_path: '.',
-        image_name: 'test-app',
-        image_tag: 'v1.0.0',
-        no_cache: false
+        status: 'pending' as const,
+        priority: 50,
+        payload: {
+          dockerfile_path: './Dockerfile',
+          context_path: '.',
+          image_name: 'test-app',
+          image_tag: 'v1.0.0',
+          no_cache: false
+        },
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       vi.spyOn(DockerService.prototype, 'buildImage').mockResolvedValue(
@@ -49,12 +61,24 @@ describe('DeploymentAgent', () => {
 
     it('should handle push_to_ecr task successfully', async () => {
       const mockTask = {
+        task_id: 'task_test-456',
+        workflow_id: 'wf_test-123',
+        agent_type: 'deployment' as const,
         action: 'push_to_ecr' as const,
-        image_name: 'test-app',
-        image_tag: 'v1.0.0',
-        repository_name: 'my-repo',
-        aws_region: 'us-east-1',
-        create_repository: true
+        status: 'pending' as const,
+        priority: 50,
+        payload: {
+          image_name: 'test-app',
+          image_tag: 'v1.0.0',
+          repository_name: 'my-repo',
+          aws_region: 'us-east-1',
+          create_repository: true
+        },
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       vi.spyOn(ECRService.prototype, 'createRepositoryIfNotExists').mockResolvedValue('123456.dkr.ecr.us-east-1.amazonaws.com/my-repo');
@@ -78,12 +102,24 @@ describe('DeploymentAgent', () => {
 
     it('should handle health_check task successfully', async () => {
       const mockTask = {
+        task_id: 'task_test-789',
+        workflow_id: 'wf_test-123',
+        agent_type: 'deployment' as const,
         action: 'health_check' as const,
-        cluster_name: 'my-cluster',
-        service_name: 'my-service',
-        endpoint: 'http://example.com/health',
-        timeout_seconds: 30,
-        expected_status: 200
+        status: 'pending' as const,
+        priority: 50,
+        payload: {
+          cluster_name: 'my-cluster',
+          service_name: 'my-service',
+          endpoint: 'http://example.com/health',
+          timeout_seconds: 30,
+          expected_status: 200
+        },
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       vi.spyOn(HealthCheckService.prototype, 'checkEndpoint').mockResolvedValue(
@@ -99,10 +135,22 @@ describe('DeploymentAgent', () => {
 
     it('should handle rollback_deployment task successfully', async () => {
       const mockTask = {
+        task_id: 'task_test-101',
+        workflow_id: 'wf_test-123',
+        agent_type: 'deployment' as const,
         action: 'rollback_deployment' as const,
-        cluster_name: 'my-cluster',
-        service_name: 'my-service',
-        reason: 'Health check failed'
+        status: 'pending' as const,
+        priority: 50,
+        payload: {
+          cluster_name: 'my-cluster',
+          service_name: 'my-service',
+          reason: 'Health check failed'
+        },
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       vi.spyOn(ECSService.prototype, 'rollbackDeployment').mockResolvedValue(
@@ -121,7 +169,18 @@ describe('DeploymentAgent', () => {
 
     it('should throw error for unknown action', async () => {
       const mockTask = {
-        action: 'unknown_action' as any
+        task_id: 'task_test-202',
+        workflow_id: 'wf_test-123',
+        agent_type: 'deployment' as const,
+        action: 'unknown_action' as any,
+        status: 'pending' as const,
+        priority: 50,
+        payload: {},
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       await expect(agent.executeTask(mockTask)).rejects.toThrow();

@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { randomUUID } from 'crypto';
 import { ValidationAgent } from '../validation-agent';
 import { ValidationTask, createValidationTask } from '@agentic-sdlc/shared-types';
 import * as tsValidator from '../validators/typescript-validator';
@@ -33,15 +32,13 @@ vi.mock('../validators/security-validator');
 // Helper to create test validation tasks
 function createTestTask(filePaths: string[], validationTypes?: string[], overrides?: Partial<ValidationTask>): ValidationTask {
   const now = new Date().toISOString();
-  const workflowId = `workflow_${randomUUID()}` as any;
-  const taskId = `task_${randomUUID()}` as any;
 
   return {
-    task_id: taskId,
-    workflow_id: workflowId,
-    agent_type: 'validation',
-    action: 'validate_code',
-    status: 'pending',
+    task_id: 'task_test-123',
+    workflow_id: 'wf_test-123',
+    agent_type: 'validation' as const,
+    action: 'validate_code' as const,
+    status: 'pending' as const,
     priority: 50,
     payload: {
       file_paths: filePaths,
