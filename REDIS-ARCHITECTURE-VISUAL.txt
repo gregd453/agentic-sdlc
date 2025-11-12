@@ -1,0 +1,373 @@
+================================================================================
+REDIS HEXAGONAL ARCHITECTURE - VISUAL FLOW DIAGRAM
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           TEST LAYER                                        │
+│                                                                               │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────────┐  │
+│  │ Smoke Tests      │  │ Integration Tests │  │ E2E Tests                │  │
+│  │ ────────────────  │  │ ─────────────────  │  │ ───────────────────────  │  │
+│  │ • Bootstrap      │  │ • Pub/Sub         │  │ • Full workflow          │  │
+│  │ • Container      │  │ • KV Store        │  │ • Multi-stage            │  │
+│  │ • Health Checks  │  │ • Idempotency     │  │ • Error handling         │  │
+│  │ • Envelopes      │  │ • Retry Logic     │  │ • End-to-end            │  │
+│  │ • Cleanup        │  │ • Error Handling  │  │                          │  │
+│  └──────────────────┘  └──────────────────┘  └──────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Tests call
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      ORCHESTRATOR CONTAINER                                 │
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  createContainer({redisUrl, redisNamespace, coordinators})          │  │
+│  │                                                                        │  │
+│  │  Returns: {                                                          │  │
+│  │    getBus()     → IMessageBus                                        │  │
+│  │    getKV()      → IKVStore                                           │  │
+│  │    health()     → { ok, bus, kv }                                    │  │
+│  │    shutdown()   → Promise<void>                                      │  │
+│  │  }                                                                     │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Creates
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         REDIS SUITE FACTORY                                 │
+│                          redis-suite.ts                                     │
+│                                                                               │
+│   await makeRedisSuite(url)                                                 │
+│                    │                                                         │
+│                    ├─→ createClient(url, 'base-client')                     │
+│                    │   • Handles: GET, SET, DEL, INCR, CAS, EVAL          │
+│                    │   • Used by: KV store (redis-kv.adapter.ts)           │
+│                    │                                                         │
+│                    ├─→ createClient(url, 'pub-client')                      │
+│                    │   • Handles: PUBLISH, SETEX                           │
+│                    │   • Used by: Message bus publish                      │
+│                    │                                                         │
+│                    └─→ createClient(url, 'sub-client')                      │
+│                        • Handles: PSUBSCRIBE                               │
+│                        • Used by: Message bus subscribe                    │
+│                                                                               │
+│   Critical: Redis subscribers in SUBSCRIBE mode cannot issue other         │
+│             commands → need 3 separate clients                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    ▼                 ▼                 ▼
+    ┌──────────────────────┐ ┌──────────────────────┐ ┌──────────────────┐
+    │  MESSAGE BUS ADAPTER │ │   KV STORE ADAPTER   │ │  ENVELOPE FORMAT │
+    │  redis-bus.adapter.ts│ │ redis-kv.adapter.ts  │ │  event-envelope  │
+    └──────────────────────┘ └──────────────────────┘ └──────────────────┘
+                    │                 │                         │
+                    │                 │                         │
+        ┌───────────┴─────────┐       │              ┌──────────┴──────────┐
+        │                     │       │              │                     │
+        ▼                     ▼       ▼              ▼                     ▼
+    ┌─────────┐           ┌────────┐         ┌───────────────────────┐ ┌──────┐
+    │ PUBLISH │           │SUBSCRIBE        │ ENVELOPE STRUCTURE    │ │CAS   │
+    │         │           │        │         │ ────────────────────  │ │      │
+    │ Wraps   │           │ ┌──────┴────┐   │ {                     │ │Lua   │
+    │ Envelope│           │ │pSubscribe  │   │   id: UUID          │ │Script│
+    │ as:     │           │ │ on '*'     │   │   type: string      │ │      │
+    │ {       │           │ │ (msg, ch)  │   │   ts: ISO8601       │ │Atomic│
+    │ key?,   │           │ └───────┬────┘   │   corrId?: string   │ │Update│
+    │ msg     │           │         │        │   tenantId?: string │ │      │
+    │}        │           │    ┌────▼────┐   │   payload: T        │ │v: 1  │
+    │         │           │    │Handlers  │   │   attempts?: num    │ │→ v2  │
+    │JSON     │           │    │Set<h>    │   │   lastError?: str   │ │      │
+    │Encode   │           │    │          │   │ }                   │ │Returns│
+    │         │           │    │Concurrent    │                     │ │1/0   │
+    │pub      │           │    │Execution     │                     │ └──────┘
+    │.publish │           │    │via Promise    │                     │
+    │(topic,  │           │    │.all()        │                     │
+    │payload) │           │    │          │   │                     │
+    └─────────┘           │    └──────────┘   │                     │
+         │                │         │         │                     │
+         │ on publish     │ on      │         │                     │
+         │ to Redis       │ subscribe        │                     │
+         │                │                   │                     │
+    RECEIVER              SUBSCRIBER          │                     │
+    COUNT = n             MODE READY          │                     │
+                                               │                     │
+                    ┌──────────────────────────┴─────────────────────┤
+                    │ Implementation Issues Identified:                │
+                    │                                                  │
+                    │ 1. LISTENER RACE (HIGH)                         │
+                    │    Async IIFE without await                    │
+                    │    Listener not ready when publish happens     │
+                    │    Message lost → test timeout                 │
+                    │                                                  │
+                    │ 2. SUBSCRIPTION RACE (MEDIUM)                   │
+                    │    Non-serialized map ops + async Redis        │
+                    │    Duplicate subscriptions possible             │
+                    │                                                  │
+                    │ 3. ENVELOPE FORMAT (MEDIUM)                     │
+                    │    Multiple wrapping patterns                  │
+                    │    Type confusion in handlers                  │
+                    │                                                  │
+                    │ 4. TTL TIMING (LOW)                             │
+                    │    Tests assume exact expiry                   │
+                    │    System load affects timing                  │
+                    │                                                  │
+                    │ 5. ERROR PROPAGATION (MEDIUM)                   │
+                    │    Promise.all() rejection issues              │
+                    │    One error blocks others                     │
+                    └──────────────────────────────────────────────────┘
+
+================================================================================
+MESSAGE FLOW - NORMAL OPERATION
+================================================================================
+
+TEST CODE:
+  const unsub = await bus.subscribe('test:topic', async (msg) => {
+    messages.push(msg);
+  });
+  
+  const envelope = createEnvelope('test:topic', { test: true });
+  await bus.publish('test:topic', envelope);
+  
+  await new Promise(r => setTimeout(r, 100));  // Wait for delivery
+  expect(messages).toHaveLength(1);
+  await unsub();
+
+
+HAPPY PATH (when working):
+
+  Time  Publisher                 Redis              Listener        Handler
+  ────  ─────────────────────────────────────────────────────────────────
+   T0   bus.subscribe()                              
+        • Add handler to map                        
+        • Return unsub fn         
+        • (listener starts async)
+                                                     pSubscribe('*')
+                                                     attached to Redis
+   T1   bus.publish(envelope)
+        • Wrap: {msg: envelope}
+        • JSON.stringify()
+        • pub.publish(topic)    ──→ msg to topic   
+                                                     receive(msg)
+                                                     • parse JSON
+                                                     • get handlers
+                                                     • execute handler
+                                                                        → callback
+                                                                        • receives
+                                                                        • log
+                                                                        • push
+   T2   (wait 100ms)
+        
+   T3   messages = [envelope]
+        expect(1 message)  ✅ PASS
+
+   T4   await unsub()
+        • Remove handler from map
+        • (if last) unsubscribe(topic)
+        • Return
+
+
+FAILURE PATH (race condition):
+
+  Time  Publisher                 Redis              Listener        Handler
+  ────  ─────────────────────────────────────────────────────────────────
+   T0   bus.subscribe()
+        • Add handler to map
+        • Return unsub fn
+        • listener = async IIFE (NOT AWAITED!)
+   
+   T0.5 bus.publish(envelope)
+        • JSON.stringify()
+        • pub.publish(topic)    ──→ msg to Redis
+        • (returns immediately)
+        
+        MESSAGE DELIVERED TO REDIS
+        BUT LISTENER NOT READY YET!
+        
+   T1   (finally) pSubscribe('*')
+        listener finally attaches
+        (too late - message already gone)
+        
+   T2   (wait 100ms)
+   
+   T3   messages = []          ← NO MESSAGE RECEIVED!
+        expect(1 message)  ❌ FAIL - TEST TIMEOUT
+
+   Root Cause: No synchronization between:
+     - async IIFE starting
+     - pub.publish() being called
+     - pSubscribe() being ready
+
+================================================================================
+MESSAGE HANDLING STATE MACHINE
+================================================================================
+
+SUBSCRIPTION LIFECYCLE:
+
+  New Subscription:
+    ┌─────────────────────────────────────────┐
+    │ subscribe(topic, handler)               │
+    │                                         │
+    │ subscriptions.has(topic)?               │
+    │    ├─ YES: Add to existing set         │
+    │    │       subscriptions.get(topic)    │
+    │    │         .add(handler)             │
+    │    │       return unsub()              │
+    │    │                                    │
+    │    └─ NO: Create new entry            │
+    │         subscriptions.set(topic, {})   │
+    │         await sub.subscribe(topic)     │ ← ASYNC!
+    │         [RACE CONDITION HERE]          │
+    │         add handler to set             │
+    │         return unsub()                 │
+    └─────────────────────────────────────────┘
+
+HANDLER EXECUTION:
+
+  On message for topic:
+    ┌──────────────────────────────────────┐
+    │ handlers = subscriptions.get(topic)  │
+    │                                      │
+    │ Promise.all(handlers.map(h => {      │
+    │   return h(msg).catch(error handler) │
+    │ }))                                   │
+    │                                      │
+    │ Concurrent execution:                │
+    │  ├─ h1(msg) ... [running]            │
+    │  ├─ h2(msg) ... [running]            │
+    │  └─ h3(msg) ... [running]            │
+    │                                      │
+    │ When all complete → done             │
+    │ If one throws → caught, logged       │
+    │ If one rejects → ???? (unclear)      │
+    └──────────────────────────────────────┘
+
+================================================================================
+KV STORE OPERATIONS
+================================================================================
+
+GET:
+  await kv.get('key')
+  ↓
+  ns(key) = namespace ? `${ns}:${key}` : key
+  ↓
+  base.get(nsKey)
+  ↓
+  JSON.parse(raw) [with fallback to string]
+  ↓
+  return <T> | null
+
+SET:
+  await kv.set('key', value, ttlSec?)
+  ↓
+  ns(key) = namespace ? `${ns}:${key}` : key
+  ↓
+  ttlSec? 
+    ├─ YES: base.setEx(nsKey, ttlSec, JSON.stringify(value))
+    └─ NO:  base.set(nsKey, JSON.stringify(value))
+  ↓
+  return Promise<void>
+
+CAS:
+  await kv.cas('key', expected, newValue)
+  ↓
+  Run Lua Script:
+    IF redis.GET(key) == JSON(expected) THEN
+      redis.SET(key, JSON(newValue))
+      IF ttl THEN redis.EXPIRE(key, ttl)
+      RETURN 1
+    ELSE
+      RETURN 0
+  ↓
+  return boolean (success/failure)
+
+================================================================================
+ENVELOPE CREATION
+================================================================================
+
+createEnvelope(type, payload, corrId?, tenantId?)
+  ↓
+  return {
+    id: randomUUID(),              // Unique per message
+    type: type,                    // "test:topic"
+    ts: ISO8601(),                 // Current timestamp
+    corrId: corrId ?? randomUUID(),// Correlation trace ID
+    tenantId: tenantId,            // Optional tenant
+    payload: payload,              // Actual message
+    attempts: 0                    // For retries
+  }
+
+Example:
+  createEnvelope('test:topic', {data: 'hello'}, 'trace-123')
+  
+  Returns:
+  {
+    id: "550e8400-e29b-41d4-a716-446655440000",
+    type: "test:topic",
+    ts: "2025-11-12T14:20:00.123Z",
+    corrId: "trace-123",
+    tenantId: undefined,
+    payload: {data: 'hello'},
+    attempts: 0
+  }
+
+================================================================================
+IDEMPOTENCY MECHANISM
+================================================================================
+
+once(kv, key, fn, ttlSec):
+  
+  ┌──────────────────────────────────┐
+  │ Check if already executed:        │
+  │   existing = await kv.get(key)   │
+  │   if (existing) return null       │
+  │                                   │
+  │ Execute function:                │
+  │   result = await fn()            │
+  │                                   │
+  │ Mark as done:                    │
+  │   await kv.set(key, true, ttlSec)│
+  │   return result                  │
+  └──────────────────────────────────┘
+
+deduplicateEvent(kv, eventId, ttlSec):
+
+  ┌──────────────────────────────────┐
+  │ key = `seen:${eventId}`          │
+  │                                   │
+  │ Check if seen:                   │
+  │   alreadySeen = await kv.get(key)│
+  │   if (alreadySeen) return false  │
+  │                                   │
+  │ Mark as seen:                    │
+  │   await kv.set(key, true, ttlSec)│
+  │   return true                    │
+  └──────────────────────────────────┘
+
+Result: Duplicate messages ignored within TTL window
+
+================================================================================
+CURRENT STATE: ~95.5% PASS RATE
+================================================================================
+
+Tests Passing:     ~936 / 980 (95.5%)
+Tests Failing:     ~44 / 980 (4.5%)
+
+Orchestrator Redis Tests:
+  Smoke Tests:      18 (⏳ DEPENDS_ON_REDIS)
+  Integration:      48 (⏳ DEPENDS_ON_REDIS)
+  Total Failures:   ~8 (race conditions, timing)
+
+Other Components:
+  API Routes:       ✅ 92% passing
+  Services:         ✅ 92% passing
+  Agent Tests:      ✅ 95%+ passing
+
+With fixes:
+  Expected:         99%+ pass rate consistently
+  Time to fix:      5-6 hours
+  Impact:           Reliable Redis integration testing
+
+================================================================================

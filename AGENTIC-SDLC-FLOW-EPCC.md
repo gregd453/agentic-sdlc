@@ -25,8 +25,8 @@ Purpose: Show how backlog items (from Git) flow through the agentic SDLC pipelin
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                AGENTIC EPCC SPRINT PLANNING PROCESS                              │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘
-                                              │
-                                              ▼
+│
+▼
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ PHASE 0: BACKLOG ENTRY (TWO PATHS)                                                               │
 ├──────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -40,8 +40,8 @@ Purpose: Show how backlog items (from Git) flow through the agentic SDLC pipelin
 │   → CI validates schema + ADR refs → label: status:ready-for-plan                                │
 │                                                                                                  │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘
-                                              │
-                                              ▼
+│
+▼
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ PHASE 1: EXPLORE (Context + Governance Discovery)                                                │
 ├──────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -60,8 +60,8 @@ Purpose: Show how backlog items (from Git) flow through the agentic SDLC pipelin
 │    - validated manifest.json (seed for new capabilities)                                         │
 │                                                                                                  │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘
-                                              │
-                                              ▼
+│
+▼
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ PHASE 2: PLAN (Prioritization + Sprint Assembly)                                                 │
 ├──────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -85,8 +85,8 @@ Purpose: Show how backlog items (from Git) flow through the agentic SDLC pipelin
 │    - /sprints/<milestone>/risk-register.md                                                       │
 │                                                                                                  │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘
-                                              │
-                                              ▼
+│
+▼
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ PHASE 3: CODE (Scaffolding + Implementation)                                                     │
 ├──────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -105,8 +105,8 @@ Purpose: Show how backlog items (from Git) flow through the agentic SDLC pipelin
 │    - /backlog/.../implementation-report.md                                                       │
 │                                                                                                  │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘
-                                              │
-                                              ▼
+│
+▼
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ PHASE 4: CERTIFY (Validation + Governance Enforcement)                                           │
 ├──────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -125,8 +125,8 @@ Purpose: Show how backlog items (from Git) flow through the agentic SDLC pipelin
 │    - release-notes.md                                                                            │
 │                                                                                                  │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘
-                                              │
-                                              ▼
+│
+▼
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ PHASE 5: DEPLOY + LEARN                                                                          │
 ├──────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -174,11 +174,11 @@ Deploy  monorepo(s) release.yml release-notes.md    Optional
 ⸻
 
 🚀 Summary
-    •   EPCC gives the structure and guardrails.
-    •   Git-based backlogs give the truth and traceability.
-    •   Domain-capability boundaries give modular scalability.
-    •   Agents + CI keep it autonomous yet auditable.
-    •   Outcome: a repeatable, policy-enforced loop for creating or improving any capability — seamlessly through your pipelines.
+•   EPCC gives the structure and guardrails.
+•   Git-based backlogs give the truth and traceability.
+•   Domain-capability boundaries give modular scalability.
+•   Agents + CI keep it autonomous yet auditable.
+•   Outcome: a repeatable, policy-enforced loop for creating or improving any capability — seamlessly through your pipelines.
 
 ⸻
 
@@ -190,9 +190,9 @@ Would you like me to now visualize this as an SVG swimlane diagram (humans vs. a
 Love it. Here’s how to embed a JSON Knowledge Base (KB)—covering ADRs, patterns, and policies—straight into your EPCC design so agents can query it deterministically and CI can enforce it.
 
 What changes
-    •   Add a /knowledge folder (in zyp-backlog) with machine-readable JSON indices of ADRs, patterns, and policies.
-    •   Agents treat the KB as the authoritative lookup for governance, reusable patterns, and design decisions during Explore/Plan/Certify.
-    •   CI validates that every backlog item and PR references KB IDs (not free text).
+•   Add a /knowledge folder (in zyp-backlog) with machine-readable JSON indices of ADRs, patterns, and policies.
+•   Agents treat the KB as the authoritative lookup for governance, reusable patterns, and design decisions during Explore/Plan/Certify.
+•   CI validates that every backlog item and PR references KB IDs (not free text).
 
 ⸻
 
@@ -219,9 +219,9 @@ zyp-backlog/
 │  ├─ kb-build.ts                   # Parse ADR markdown → adr.json; validate all KB files
 │  └─ kb-validate.ts                # CI validator (refs resolve, schemas pass)
 └─ .github/workflows/
-   ├─ plan.yml                      # Now loads KB for planning/validation
-   ├─ validate-artifacts.yml        # Runs kb-validate.ts
-   └─ publish-reports.yml
+├─ plan.yml                      # Now loads KB for planning/validation
+├─ validate-artifacts.yml        # Runs kb-validate.ts
+└─ publish-reports.yml
 
 
 ⸻
@@ -231,79 +231,81 @@ Minimal JSON shapes (idiomatic, agent-friendly)
 knowledge/kb.json
 
 {
-  "version": "2025.11.11",
-  "indexes": {
-    "adr": "knowledge/adr.json",
-    "patterns": "knowledge/patterns.json",
-    "policies": "knowledge/policies.json",
-    "components": "knowledge/components.json"
-  }
+"version": "2025.11.11",
+"indexes": {
+"adr": "knowledge/adr.json",
+"patterns": "knowledge/patterns.json",
+"policies": "knowledge/policies.json",
+"components": "knowledge/components.json"
+}
 }
 
 knowledge/adr.json (excerpt)
 
 [
-  {
-    "id": "ADR-0001",
-    "title": "Architecture Boundaries",
-    "status": "accepted",
-    "decision_date": "2025-10-15",
-    "applies_to": ["domains/*"],
-    "rules": [
-      {"type": "layer", "from": "shells", "to": "domains/*", "allow": false},
-      {"type": "dependency", "from": "capabilities/*", "to": "packages/ui-kit", "allow": true}
-    ],
-    "doc_ref": "policies/adr/0001-architecture-boundaries.md"
-  }
+{
+"id": "ADR-0001",
+"title": "Architecture Boundaries",
+"status": "accepted",
+"decision_date": "2025-10-15",
+"applies_to": ["domains/*"],
+"rules": [
+{"type": "layer", "from": "shells", "to": "domains/*", "allow": false},
+{"type": "dependency", "from": "capabilities/*", "to": "packages/ui-kit", "allow": true}
+],
+"doc_ref": "policies/adr/0001-architecture-boundaries.md"
+}
 ]
+
+
 
 knowledge/patterns.json (excerpt)
 
 [
-  {
-    "id": "PAT-UI-CARD-GRID",
-    "name": "Card Grid Layout",
-    "category": "ui",
-    "constraints": {
-      "min_columns": 3,
-      "max_columns": 5,
-      "spacing": "8px-24px"
-    },
-    "lint_rules": ["ui-grid-columns", "ui-spacing-scale"],
-    "examples": ["packages/ui-kit/examples/card-grid"],
-    "applies_to": ["shells/*", "domains/*"]
-  }
+{
+"id": "PAT-UI-CARD-GRID",
+"name": "Card Grid Layout",
+"category": "ui",
+"constraints": {
+"min_columns": 3,
+"max_columns": 5,
+"spacing": "8px-24px"
+},
+"lint_rules": ["ui-grid-columns", "ui-spacing-scale"],
+"examples": ["packages/ui-kit/examples/card-grid"],
+"applies_to": ["shells/*", "domains/*"]
+}
 ]
 
 knowledge/policies.json (excerpt)
 
 {
-  "naming": {
-    "capability_id": "^[a-z0-9-]+$",
-    "branch_feat": "^feat\\/[a-z0-9-]+\\/[a-z0-9-]+$"
-  },
-  "versions": {
-    "react": "19.2.0",
-    "next": "15.0.3",
-    "tailwind": "3.4.0"
-  },
-  "frozen_rules": [
-    {"id": "POL-LAYER-001", "type": "layer", "from": "domains/*", "to": "shells/*", "allow": false}
-  ]
+"naming": {
+"capability_id": "^[a-z0-9-]+$",
+"branch_feat": "^feat\\/[a-z0-9-]+\\/[a-z0-9-]+$"
+},
+"versions": {
+"react": "19.2.0",
+"next": "15.0.3",
+"tailwind": "3.4.0"
+},
+"frozen_rules": [
+{"id": "POL-LAYER-001", "type": "layer", "from": "domains/*", "to": "shells/*", "allow": false}
+]
 }
 
 knowledge/components.json (excerpt)
 
 [
-  {
-    "id": "COMP-UI-CARD",
-    "name": "UICard",
-    "package": "@zyp/ui-kit",
-    "version": "2.3.1",
-    "owners": ["@design-systems"],
-    "usage": ["shells/*", "domains/*"],
-    "replaces": ["COMP-LEGACY-CARD"]
-  }
+{
+"id": "COMP-UI-CARD",
+"name": "UICard",
+"package": "@zyp/ui-kit",
+"version": "2.3.1",
+"owners": ["@design-systems"],
+"usage": ["shells/*", "domains/*"],
+"replaces": ["COMP-LEGACY-CARD"]
+}
 ]
 
 
@@ -312,122 +314,120 @@ knowledge/components.json (excerpt)
 How EPCC uses the KB (phase-by-phase)
 
 PHASE 1 — Explore
-    •   Inputs: issue data + knowledge/*
-    •   Agent behavior:
-    •   Resolve ADR implications (e.g., can this capability depend on X?).
-    •   Suggest patterns (UI/API) and shared components by ID.
-    •   Write a normalized queue YAML with kb_refs: { adrs:[], patterns:[], policies:[], components:[] }.
+•   Inputs: issue data + knowledge/*
+•   Agent behavior:
+•   Resolve ADR implications (e.g., can this capability depend on X?).
+•   Suggest patterns (UI/API) and shared components by ID.
+•   Write a normalized queue YAML with kb_refs: { adrs:[], patterns:[], policies:[], components:[] }.
 
 Output additions
-    •   context-report.json includes kb_matches and any policy risks detected early.
+•   context-report.json includes kb_matches and any policy risks detected early.
 
 PHASE 2 — Plan
-    •   Use policies.json to enforce naming, version floors, and branch formats.
-    •   Use components.json to force reuse (block plan if re-implementing an existing component).
-    •   Priority may factor policy_risk_penalty and component_reuse_bonus.
+•   Use policies.json to enforce naming, version floors, and branch formats.
+•   Use components.json to force reuse (block plan if re-implementing an existing component).
+•   Priority may factor policy_risk_penalty and component_reuse_bonus.
 
 Output additions
-    •   sprint-plan.json embeds KB references per item, e.g.:
+•   sprint-plan.json embeds KB references per item, e.g.:
 
 {
-  "item_id": 123,
-  "kb_refs": { "adrs": ["ADR-0001"], "patterns": ["PAT-UI-CARD-GRID"], "components": ["COMP-UI-CARD"] }
+"item_id": 123,
+"kb_refs": { "adrs": ["ADR-0001"], "patterns": ["PAT-UI-CARD-GRID"], "components": ["COMP-UI-CARD"] }
 }
 
 
 
 PHASE 3 — Code
-    •   Scaffold agent imports components by ID; if a component is missing, it opens a component request issue.
-    •   PR template checks for KB IDs in the changed capability manifest and test plan.
+•   Scaffold agent imports components by ID; if a component is missing, it opens a component request issue.
+•   PR template checks for KB IDs in the changed capability manifest and test plan.
 
 PHASE 4 — Certify
-    •   ADR Validator converts adr.json.rules into static checks (layer/dependency).
-    •   UI lint runs pattern rules mapped from patterns.json.lint_rules.
-    •   Policy Enforcer checks naming/version rules from policies.json.
-    •   Coverage Auditor verifies presence of tests for AC and at least one pattern example if applicable.
+•   ADR Validator converts adr.json.rules into static checks (layer/dependency).
+•   UI lint runs pattern rules mapped from patterns.json.lint_rules.
+•   Policy Enforcer checks naming/version rules from policies.json.
+•   Coverage Auditor verifies presence of tests for AC and at least one pattern example if applicable.
 
 Output additions
-    •   adr-check-report.md and validation.log list KB rule passes/fails by ID.
+•   adr-check-report.md and validation.log list KB rule passes/fails by ID.
 
 PHASE 5 — Deploy + Learn
-    •   On release, update components.json version usage stats (optional).
-    •   Feed KB usage + violations into /reports/planning-audit.json to guide future patterns/policies.
+•   On release, update components.json version usage stats (optional).
+•   Feed KB usage + violations into /reports/planning-audit.json to guide future patterns/policies.
 
 ⸻
 
 Diagram (updated text sketch with KB)
 
 PHASE 0: BACKLOG ENTRY
-  Issues → schema check → status:ready-for-plan
-                    │
-                    ▼
+Issues → schema check → status:ready-for-plan
+│
+▼
 PHASE 1: EXPLORE ──────────────┐
-  (Context, ADR discovery)     │   Uses KB:
-   • Load knowledge/kb.json    │   • adr.json
-   • Suggest patterns & comps  │   • patterns.json
-   • Write kb_refs into queue  │   • policies.json
-                    │          │   • components.json
-                    ▼          │
+(Context, ADR discovery)     │   Uses KB:
+• Load knowledge/kb.json    │   • adr.json
+• Suggest patterns & comps  │   • patterns.json
+• Write kb_refs into queue  │   • policies.json
+│          │   • components.json
+▼          │
 PHASE 2: PLAN ─────────────────┘
-   • Enforce policies.json (names/versions)
-   • Force components reuse (components.json)
-   • Prioritize w/ kb-derived risk/bonus
-   • Output sprint-plan.json (w/ kb_refs)
-                    │
-                    ▼
+• Enforce policies.json (names/versions)
+• Force components reuse (components.json)
+• Prioritize w/ kb-derived risk/bonus
+• Output sprint-plan.json (w/ kb_refs)
+│
+▼
 PHASE 3: CODE
-   • Scaffold imports by component IDs
-   • PR carries kb_refs in plan-link.json
-                    │
-                    ▼
+• Scaffold imports by component IDs
+• PR carries kb_refs in plan-link.json
+│
+▼
 PHASE 4: CERTIFY
-   • ADR rules → static checks
-   • Patterns → UI lint rules
-   • Policies → naming/version gates
-   • Produce adr-check-report.md
-                    │
-                    ▼
+• ADR rules → static checks
+• Patterns → UI lint rules
+• Policies → naming/version gates
+• Produce adr-check-report.md
+│
+▼
 PHASE 5: DEPLOY + LEARN
-   • Update reports + (optional) KB usage stats
-   • Telemetry informs next Explore
+• Update reports + (optional) KB usage stats
+• Telemetry informs next Explore
 
 
 ⸻
 
 CI wiring (what actually enforces this)
-    •   plan.yml
-    •   kb-validate.ts (schema & referential integrity)
-    •   Planner loads knowledge/*.json to:
-    •   annotate issues with kb_refs
-    •   block items missing required ADR or pattern references (per domain)
-    •   validate-artifacts.yml
-    •   Static rule checks from adr.json.rules
-    •   Pattern lint rules
-    •   Policy gates (naming/versions)
-    •   Component reuse enforcement
+•   plan.yml
+•   kb-validate.ts (schema & referential integrity)
+•   Planner loads knowledge/*.json to:
+•   annotate issues with kb_refs
+•   block items missing required ADR or pattern references (per domain)
+•   validate-artifacts.yml
+•   Static rule checks from adr.json.rules
+•   Pattern lint rules
+•   Policy gates (naming/versions)
+•   Component reuse enforcement
 
 
 Authoring rules (practical guidance)
-    •   Start small: 5–10 ADRs, 8–12 patterns, 10–20 policies, 10–30 components.
-    •   Every backlog item must reference at least:
-    •   1 ADR (or “ADR-N/A” for pure UI tweaks),
-    •   1 pattern (UI or API), and
-    •   0+ components (if UI/API is involved).
-    •   Maintain ADRs in Markdown; generate adr.json via scripts/kb-build.ts.
-    •   Treat patterns.json as design-system contracts (not just docs).
-    •   Keep policies.json the single place for frozen rules; don’t duplicate in code.
+•   Start small: 5–10 ADRs, 8–12 patterns, 10–20 policies, 10–30 components.
+•   Every backlog item must reference at least:
+•   1 ADR (or “ADR-N/A” for pure UI tweaks),
+•   1 pattern (UI or API), and
+•   0+ components (if UI/API is involved).
+•   Maintain ADRs in Markdown; generate adr.json via scripts/kb-build.ts.
+•   Treat patterns.json as design-system contracts (not just docs).
+•   Keep policies.json the single place for frozen rules; don’t duplicate in code.
 
 ⸻
 
 Why this works
-    •   Deterministic for agents (IDs, schemas).
-    •   Auditable for humans (Markdown ADRs + JSON indexes).
-    •   Scalable for the platform (enforces reuse, prevents drift).
-    •   Plug-and-play with EPCC (each phase knows exactly how to query and apply the KB).
+•   Deterministic for agents (IDs, schemas).
+•   Auditable for humans (Markdown ADRs + JSON indexes).
+•   Scalable for the platform (enforces reuse, prevents drift).
+•   Plug-and-play with EPCC (each phase knows exactly how to query and apply the KB).
 
-If you’d like, I can generate starter files for knowledge/*.json and the kb.schema.json so you can drop them in today.
-
-
+If you’d like, I can generate starter files for knowledge/*.json and the kb.schema.json so you can drop them in today
 
 
 awesome—here’s your updated ASCII with a tall, thin right-hand column labeled AI API, listing the API calls each phase would make. i kept your five big phase boxes and added the API column that runs top-to-bottom.
@@ -448,7 +448,7 @@ EPCC – Multi-Agent Orchestrations + AI API (right column)
 │  └──────────────────┘  └──────────────────┘                                   │ │  • patterns.  │
 │      ↓ outputs context-report.json, dependency-map.json, kb_refs              │ │    suggest()  │
 └──────────────────────────────────────────────────────────────────────────────┘ │  • comps.suggest│
-                                                                                │  • deps.graph() │
+│  • deps.graph() │
 ┌──────────────────────────────────────────────────────────────────────────────┐ │  • risk.estimate│
 │                                PHASE 2: PLAN                                 │ │               │
 │──────────────────────────────────────────────────────────────────────────────│ │  PLAN          │
@@ -474,7 +474,7 @@ EPCC – Multi-Agent Orchestrations + AI API (right column)
 │  └──────────────────┘  └──────────────────┘                                   │ │  • docs.generate│
 │      ↓ outputs feature branches, PRs, plan-link.json, tests                   │ │               │
 └──────────────────────────────────────────────────────────────────────────────┘ │  CERTIFY       │
-                                                                                │  • tests.run()  │
+│  • tests.run()  │
 ┌──────────────────────────────────────────────────────────────────────────────┐ │  • coverage.calc│
 │                               PHASE 4: CERTIFY                               │ │  • adr.validate│
 │──────────────────────────────────────────────────────────────────────────────│ │  • policy.check│
@@ -486,7 +486,7 @@ EPCC – Multi-Agent Orchestrations + AI API (right column)
 │  └──────────────────┘  └──────────────────┘  └──────────────────┘            │ │  DEPLOY+LEARN  │
 │      ↓ outputs adr-check-report.md, validation.log, certification-bundle.zip │ │  • release.notes│
 └──────────────────────────────────────────────────────────────────────────────┘ │  • deploy.trigger│
-                                                                                │  • telemetry.ingest│
+│  • telemetry.ingest│
 ┌──────────────────────────────────────────────────────────────────────────────┐ │  • dora.report()│
 │                             PHASE 5: DEPLOY + LEARN                          │ │  • kb.updateUsage│
 │──────────────────────────────────────────────────────────────────────────────│ │  • lessons.extract│
@@ -525,9 +525,9 @@ Think of it this way:
 ➤ Few APIs, many agents
 
 You want a small, stable AI API surface that’s:
-    •   Phase-agnostic (usable in multiple phases),
-    •   Functionally cohesive (grouped by capability: knowledge, reasoning, validation, synthesis, telemetry),
-    •   Governance-aware (always context + policy bound).
+•   Phase-agnostic (usable in multiple phases),
+•   Functionally cohesive (grouped by capability: knowledge, reasoning, validation, synthesis, telemetry),
+•   Governance-aware (always context + policy bound).
 
 This ensures every new agent you add (say, a Security Analyzer or Cost Optimizer) can call the same primitives without API proliferation.
 
@@ -581,14 +581,14 @@ You can think of the AI API like this:
 Then, each agent orchestration binds to this layer via an API manifest, e.g.:
 
 {
-  "agent": "clarifier",
-  "allowed_calls": ["kb.query", "ac.refine", "patterns.suggest", "kb.linkRefs"]
+"agent": "clarifier",
+"allowed_calls": ["kb.query", "ac.refine", "patterns.suggest", "kb.linkRefs"]
 }
 
 ✅ That gives you:
-    •   Security: agents can only use whitelisted calls.
-    •   Traceability: audit which calls were made, by which agent, in which phase.
-    •   Flexibility: add new agents with zero new endpoints—reuse existing ones.
+•   Security: agents can only use whitelisted calls.
+•   Traceability: audit which calls were made, by which agent, in which phase.
+•   Flexibility: add new agents with zero new endpoints—reuse existing ones.
 
 ⸻
 
@@ -610,20 +610,20 @@ Would you like me to generate that next?
 
 
 quick reference: API call purposes
-    •   kb.query / kb.linkRefs / kb.updateUsage — read & write into your JSON knowledge-base (ADRs, patterns, policies, components).
-    •   adr.lookup / adr.validate — fetch ADRs and run static boundary checks (layer, dependency, version).
-    •   patterns.suggest / patterns.audit — propose or verify design-system patterns (UI/API).
-    •   comps.suggest / comps.bind — discover and bind shared components by ID.
-    •   deps.graph / deps.validate — compute and verify cross-capability dependencies.
-    •   risk.estimate — produce risk profile using deps + telemetry.
-    •   plan.build / priority.score — assemble and rank the sprint plan.
-    •   ac.refine — convert rough AC to Given/When/Then + contracts.
-    •   scaffold.generate / contracts.synthesize / code.modify — create or change code/defs.
-    •   tests.gen / tests.run / coverage.calc — generate & execute tests and compute coverage.
-    •   policy.check / security.scan — enforce naming/version/frozen rules; run sec checks.
-    •   pr.prepare / docs.generate / certify.bundle.create — create PRs, human docs, and certification bundles.
-    •   deploy.trigger / release.notes — push artifacts and emit notes.
-    •   telemetry.ingest / dora.report / lessons.extract / backlog.raise — feedback loop; auto-raise improvements.
+•   kb.query / kb.linkRefs / kb.updateUsage — read & write into your JSON knowledge-base (ADRs, patterns, policies, components).
+•   adr.lookup / adr.validate — fetch ADRs and run static boundary checks (layer, dependency, version).
+•   patterns.suggest / patterns.audit — propose or verify design-system patterns (UI/API).
+•   comps.suggest / comps.bind — discover and bind shared components by ID.
+•   deps.graph / deps.validate — compute and verify cross-capability dependencies.
+•   risk.estimate — produce risk profile using deps + telemetry.
+•   plan.build / priority.score — assemble and rank the sprint plan.
+•   ac.refine — convert rough AC to Given/When/Then + contracts.
+•   scaffold.generate / contracts.synthesize / code.modify — create or change code/defs.
+•   tests.gen / tests.run / coverage.calc — generate & execute tests and compute coverage.
+•   policy.check / security.scan — enforce naming/version/frozen rules; run sec checks.
+•   pr.prepare / docs.generate / certify.bundle.create — create PRs, human docs, and certification bundles.
+•   deploy.trigger / release.notes — push artifacts and emit notes.
+•   telemetry.ingest / dora.report / lessons.extract / backlog.raise — feedback loop; auto-raise improvements.
 
 if you want, i can turn these API names into a typed interface (TypeScript) and a mock service your agents can call right away.
 
@@ -746,9 +746,9 @@ Agent   Responsibility  Consumes    Produces
     └───────────────┘  └──────────────┘  └─────────────┘  └────────────┘  └─────────────┘
         │    ▲             │   ▲            │   ▲           │   ▲            │   ▲
         ▼    │             ▼   │            ▼   │           ▼   │            ▼   │
-   multiple agents     multiple agents  multiple agents multiple agents  multiple agents
-   (context, adr,      (planner, clarifier, scaffold,   (qa, adr, policy, release,
-   deps, components)   priority, validator) integrator)  pattern, coverage) telemetry)
+multiple agents     multiple agents  multiple agents multiple agents  multiple agents
+(context, adr,      (planner, clarifier, scaffold,   (qa, adr, policy, release,
+deps, components)   priority, validator) integrator)  pattern, coverage) telemetry)
 
 
 ⸻
@@ -766,26 +766,26 @@ Extensibility   New agents (e.g., Cost Analyzer, UX Auditor) can plug into exist
 ⸻
 
 ⚙️ Technical Implementation Pattern
-    •   Each agent is a Node service or function under packages/agents/<agent-name>.
-    •   All share:
-    •   @zyp/agent-core (common SDK)
-    •   @zyp/knowledge-client (reads knowledge/*.json)
-    •   @zyp/event-bus (Redis pub/sub or queue for coordination)
-    •   EPCC Orchestrator manages:
-    •   Phase registry (phases.json)
-    •   Agent routing tables (agents.json)
-    •   State persistence (/reports/epcc-state.json)
+•   Each agent is a Node service or function under packages/agents/<agent-name>.
+•   All share:
+•   @zyp/agent-core (common SDK)
+•   @zyp/knowledge-client (reads knowledge/*.json)
+•   @zyp/event-bus (Redis pub/sub or queue for coordination)
+•   EPCC Orchestrator manages:
+•   Phase registry (phases.json)
+•   Agent routing tables (agents.json)
+•   State persistence (/reports/epcc-state.json)
 
 ⸻
 
 TL;DR
 
 ✅ Yes — each phase deliberately uses multiple agents.
-    •   Explore = discover & contextualize
-    •   Plan = prioritize & validate
-    •   Code = scaffold & implement
-    •   Certify = verify & enforce
-    •   Deploy+Learn = release & feed back
+•   Explore = discover & contextualize
+•   Plan = prioritize & validate
+•   Code = scaffold & implement
+•   Certify = verify & enforce
+•   Deploy+Learn = release & feed back
 
 Each agent is small, composable, KB-aware, and policy-bounded.
 Together they form your Agentic Mesh — the heart of a scalable, self-governing SDLC.

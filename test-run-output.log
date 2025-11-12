@@ -1,0 +1,12 @@
+
+> agentic-sdlc@0.1.0 test
+> turbo run test --run
+
+ ERROR  unexpected argument '--run' found
+
+  tip: to pass '--run' as a value, use '-- --run'
+
+Usage: turbo run <--cache-dir <CACHE_DIR>|--concurrency <CONCURRENCY>|--continue|--single-package|--force [<FORCE>]|--framework-inference [<BOOL>]|--global-deps <GLOBAL_DEPS>|--env-mode [<ENV_MODE>]|--filter <FILTER>|--scope <SCOPE>|--ignore <IGNORE>|--since <SINCE>|--include-dependencies|--no-deps|--output-logs <OUTPUT_LOGS>|--log-order <LOG_ORDER>|--only|--pkg-inference-root <PKG_INFERENCE_ROOT>|--remote-only [<BOOL>]|--log-prefix <LOG_PREFIX>|TASKS|PASS_THROUGH_ARGS>
+
+For more information, try '--help'.
+

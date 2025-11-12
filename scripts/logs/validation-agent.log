@@ -19,46 +19,1070 @@
 ✅ Registered schema: integration.result (v1.0.0)
 ✅ Registered schema: deployment.task (v1.0.0)
 ✅ Registered schema: deployment.result (v1.0.0)
+📦 @agentic-sdlc/shared-types loaded
+📝 Registered schemas: workflow, agent.task, agent.result, pipeline.stage, event, scaffold.task, scaffold.result, scaffold.requirements, validation.task, validation.result, e2e.task, e2e.result, e2e.page_object, integration.task, integration.result, deployment.task, deployment.result
+🔖 Version: 1.0.0
 ✅ Validation agent started successfully
 📡 Listening for validation tasks...
-[2025-11-11 22:04:33] [32mINFO[39m (validation-5cfec33b/25072): [36mInitializing agent[39m
-[2025-11-11 22:04:33] [32mINFO[39m (validation-5cfec33b/25072): [36mSubscribed to task channel[39m
-[2025-11-11 22:04:33] [32mINFO[39m (validation-5cfec33b/25072): [36mRegistered with orchestrator[39m
-[2025-11-11 22:04:33] [32mINFO[39m (validation-5cfec33b/25072): [36mAgent initialized successfully[39m
-[2025-11-11 22:04:33] [33mWARN[39m (validation-5cfec33b/25072): [36mFailed to load policy, using defaults[39m
-[2025-11-11 22:05:58] [32mINFO[39m (validation-5cfec33b/25072): [36mTask received[39m
-[2025-11-11 22:05:58] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #37 DEBUG] Stage extraction[39m
-[2025-11-11 22:05:58] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
-[2025-11-11 22:05:58] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
-[2025-11-11 22:05:58] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
-[2025-11-11 22:05:58] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
-[2025-11-11 22:05:58] [33mWARN[39m (validation-5cfec33b/25072): [36mTask execution failed, retrying[39m
-[2025-11-11 22:06:00] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
-[2025-11-11 22:06:00] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
-[2025-11-11 22:06:00] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
-[2025-11-11 22:06:00] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
-[2025-11-11 22:06:00] [33mWARN[39m (validation-5cfec33b/25072): [36mTask execution failed, retrying[39m
-[2025-11-11 22:06:04] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
-[2025-11-11 22:06:04] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
-[2025-11-11 22:06:04] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
-[2025-11-11 22:06:04] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
-[2025-11-11 22:06:04] [32mINFO[39m (validation-5cfec33b/25072): [36mResult reported[39m
-[2025-11-11 22:06:04] [31mERROR[39m (validation-5cfec33b/25072): [36mTask execution failed[39m
-[2025-11-11 22:39:47] [32mINFO[39m (validation-5cfec33b/25072): [36mTask received[39m
-[2025-11-11 22:39:47] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #37 DEBUG] Stage extraction[39m
-[2025-11-11 22:39:47] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
-[2025-11-11 22:39:47] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
-[2025-11-11 22:39:47] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
-[2025-11-11 22:39:47] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
-[2025-11-11 22:39:47] [33mWARN[39m (validation-5cfec33b/25072): [36mTask execution failed, retrying[39m
-[2025-11-11 22:39:49] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
-[2025-11-11 22:39:49] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
-[2025-11-11 22:39:49] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
-[2025-11-11 22:39:49] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
-[2025-11-11 22:39:49] [33mWARN[39m (validation-5cfec33b/25072): [36mTask execution failed, retrying[39m
-[2025-11-11 22:39:54] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #36] Executing validation task[39m
-[2025-11-11 22:39:54] [32mINFO[39m (validation-5cfec33b/25072): [36m[SESSION #38] Task structure debug[39m
-[2025-11-11 22:39:54] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #37] Invalid envelope format[39m
-[2025-11-11 22:39:54] [31mERROR[39m (validation-5cfec33b/25072): [36m[SESSION #32] Validation task failed with detailed diagnostics[39m
-[2025-11-11 22:39:54] [32mINFO[39m (validation-5cfec33b/25072): [36mResult reported[39m
-[2025-11-11 22:39:54] [31mERROR[39m (validation-5cfec33b/25072): [36mTask execution failed[39m
+[2025-11-12 12:12:38] [32mINFO[39m (validation-12c525aa/96117): [36mInitializing agent[39m
+[2025-11-12 12:12:38] [32mINFO[39m (validation-12c525aa/96117): [36mSubscribed to task channel[39m
+[2025-11-12 12:12:38] [32mINFO[39m (validation-12c525aa/96117): [36mRegistered with orchestrator[39m
+[2025-11-12 12:12:38] [32mINFO[39m (validation-12c525aa/96117): [36mAgent initialized successfully[39m
+[2025-11-12 12:12:38] [33mWARN[39m (validation-12c525aa/96117): [36mFailed to load policy, using defaults[39m
+[SESSION #47] Full envelope data: {
+  "task_id": "c693a843-4573-457a-aa01-0957f5adb053",
+  "workflow_id": "3d7bfb71-dc25-466f-ba77-1fc83ddfb919",
+  "priority": "medium",
+  "status": "pending",
+  "retry_count": 0,
+  "max_retries": 3,
+  "timeout_ms": 300000,
+  "created_at": "2025-11-12T12:20:38.214Z",
+  "trace_id": "1c6a7d65-a682-42c9-a1c9-f13da16ae4db",
+  "envelope_version": "1.0.0",
+  "workflow_context": {
+    "workflow_type": "app",
+    "workflow_name": "hello-world-app",
+    "current_stage": "validation",
+    "stage_outputs": {
+      "scaffolding": {
+        "structure": {
+          "root_path": "./hello-world-app",
+          "test_files": [],
+          "directories": [
+            "src"
+          ],
+          "config_files": [
+            "package.json",
+            "tsconfig.json",
+            ".eslintrc.js"
+          ],
+          "entry_points": [
+            "src/index.ts"
+          ],
+          "files_generated": [
+            {
+              "path": "src/index.ts",
+              "type": "source",
+              "checksum": "c3JjL2lu",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: app-template",
+              "template_source": "app-template"
+            },
+            {
+              "path": "package.json",
+              "type": "config",
+              "checksum": "cGFja2Fn",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: package-template",
+              "template_source": "package-template"
+            },
+            {
+              "path": "tsconfig.json",
+              "type": "config",
+              "checksum": "dHNjb25m",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: tsconfig-template",
+              "template_source": "tsconfig-template"
+            }
+          ]
+        },
+        "output_path": "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app",
+        "completed_at": "2025-11-12T12:20:38.195Z",
+        "entry_points": [
+          "src/index.ts"
+        ],
+        "project_name": "hello-world-app",
+        "files_generated": [
+          {
+            "path": "src/index.ts",
+            "type": "source",
+            "checksum": "c3JjL2lu",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: app-template",
+            "template_source": "app-template"
+          },
+          {
+            "path": "package.json",
+            "type": "config",
+            "checksum": "cGFja2Fn",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: package-template",
+            "template_source": "package-template"
+          },
+          {
+            "path": "tsconfig.json",
+            "type": "config",
+            "checksum": "dHNjb25m",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: tsconfig-template",
+            "template_source": "tsconfig-template"
+          }
+        ]
+      },
+      "initialization": {
+        "structure": {
+          "root_path": "./hello-world-app",
+          "test_files": [],
+          "directories": [
+            "src"
+          ],
+          "config_files": [
+            "package.json",
+            "tsconfig.json",
+            ".eslintrc.js"
+          ],
+          "entry_points": [
+            "src/index.ts"
+          ],
+          "files_generated": [
+            {
+              "path": "src/index.ts",
+              "type": "source",
+              "checksum": "c3JjL2lu",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: app-template",
+              "template_source": "app-template"
+            },
+            {
+              "path": "package.json",
+              "type": "config",
+              "checksum": "cGFja2Fn",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: package-template",
+              "template_source": "package-template"
+            },
+            {
+              "path": "tsconfig.json",
+              "type": "config",
+              "checksum": "dHNjb25m",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: tsconfig-template",
+              "template_source": "tsconfig-template"
+            }
+          ]
+        },
+        "output_path": "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app",
+        "completed_at": "2025-11-12T12:20:36.495Z",
+        "entry_points": [
+          "src/index.ts"
+        ],
+        "project_name": "hello-world-app",
+        "files_generated": [
+          {
+            "path": "src/index.ts",
+            "type": "source",
+            "checksum": "c3JjL2lu",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: app-template",
+            "template_source": "app-template"
+          },
+          {
+            "path": "package.json",
+            "type": "config",
+            "checksum": "cGFja2Fn",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: package-template",
+            "template_source": "package-template"
+          },
+          {
+            "path": "tsconfig.json",
+            "type": "config",
+            "checksum": "dHNjb25m",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: tsconfig-template",
+            "template_source": "tsconfig-template"
+          }
+        ]
+      }
+    }
+  },
+  "agent_type": "validation",
+  "payload": {
+    "file_paths": [
+      "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app/src/index.ts",
+      "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app/package.json",
+      "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app/tsconfig.json"
+    ],
+    "working_directory": "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app",
+    "validation_types": [
+      "typescript",
+      "eslint"
+    ],
+    "thresholds": {
+      "coverage": 80,
+      "complexity": 10,
+      "errors": 0,
+      "warnings": 10,
+      "duplications": 5
+    }
+  }
+}
+[SESSION #47] Envelope keys: task_id, workflow_id, priority, status, retry_count, max_retries, timeout_ms, created_at, trace_id, envelope_version, workflow_context, agent_type, payload
+[SESSION #47] Agent type: validation
+[SESSION #47] Envelope version: 1.0.0
+[SESSION #47] Payload keys: file_paths, working_directory, validation_types, thresholds
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36mTask received[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #36] Executing validation task[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #38] Task structure debug[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #47] Attempting to validate envelope[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #36] Envelope validated successfully[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #32] Checking working directory existence[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #32] Working directory exists, proceeding with validation[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #32] Running validation checks[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #32] Running TypeScript validation[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #32] TypeScript validation completed[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #32] Running ESLint validation[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #32] ESLint validation completed[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36m[SESSION #32] All validation checks completed[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36mValidation completed[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36mValidation Report:
+================================================================================
+VALIDATION REPORT
+================================================================================
+
+Task ID:       c693a843-4573-457a-aa01-0957f5adb053
+Workflow ID:   3d7bfb71-dc25-466f-ba77-1fc83ddfb919
+Timestamp:     2025-11-12T12:20:38.901Z
+Project Path:  /Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app
+Overall Status: FAILED
+
+--------------------------------------------------------------------------------
+SUMMARY
+--------------------------------------------------------------------------------
+Total Checks:   2
+Passed:         0
+Failed:         1
+Warnings:       0
+Duration:       678ms
+
+--------------------------------------------------------------------------------
+VALIDATION CHECKS
+--------------------------------------------------------------------------------
+✗ TYPESCRIPT: failed (675ms)
+  ERROR: tsconfig.json:27:5 - File '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app/tsconfig.node.json' not found.
+⚠ ESLINT: skipped (0ms)
+  WARNING: No ESLint configuration found, skipping ESLint validation
+
+--------------------------------------------------------------------------------
+QUALITY GATES
+--------------------------------------------------------------------------------
+Overall: PASSED ✓
+Evaluated: 0
+Passed:    0
+Failed:    0
+
+--------------------------------------------------------------------------------
+RECOMMENDATIONS
+--------------------------------------------------------------------------------
+1. Fix TypeScript compilation errors before proceeding. Run `pnpm typecheck` for details.
+
+================================================================================[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-12c525aa/96117): [36mResult reported[39m
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                7:13:43 AM [tsx] change in ./../../shared/types/dist/registry/schema-registry.js Restarting...
+
+Shutting down validation agent...
+[2025-11-12 12:13:43] [32mINFO[39m (validation-899141ac/95225): [36mCleaning up agent[39m
+[2025-11-12 12:13:43] [32mINFO[39m (validation-899141ac/95225): [36mDeregistered from orchestrator[39m
+[2025-11-12 12:13:43] [32mINFO[39m (validation-899141ac/95225): [36mAgent cleanup completed[39m
+c7:13:44 AM [tsx] change in ./../base-agent/dist/index.js Restarting...
+c✅ Registered schema: workflow (v1.0.0)
+✅ Registered schema: agent.task (v1.0.0)
+✅ Registered schema: agent.result (v1.0.0)
+✅ Registered schema: pipeline.stage (v1.0.0)
+✅ Registered schema: event (v1.0.0)
+✅ Registered schema: scaffold.task (v1.0.0)
+✅ Registered schema: scaffold.result (v1.0.0)
+✅ Registered schema: scaffold.requirements (v1.0.0)
+✅ Registered schema: validation.task (v1.0.0)
+✅ Registered schema: validation.result (v1.0.0)
+✅ Registered schema: e2e.task (v1.0.0)
+✅ Registered schema: e2e.result (v1.0.0)
+✅ Registered schema: e2e.page_object (v1.0.0)
+✅ Registered schema: integration.task (v1.0.0)
+✅ Registered schema: integration.result (v1.0.0)
+✅ Registered schema: deployment.task (v1.0.0)
+✅ Registered schema: deployment.result (v1.0.0)
+✅ Validation agent started successfully
+📡 Listening for validation tasks...
+[2025-11-12 12:13:44] [32mINFO[39m (validation-a7c51be0/97534): [36mInitializing agent[39m
+[2025-11-12 12:13:44] [32mINFO[39m (validation-a7c51be0/97534): [36mSubscribed to task channel[39m
+[2025-11-12 12:13:44] [32mINFO[39m (validation-a7c51be0/97534): [36mRegistered with orchestrator[39m
+[2025-11-12 12:13:44] [32mINFO[39m (validation-a7c51be0/97534): [36mAgent initialized successfully[39m
+[2025-11-12 12:13:44] [33mWARN[39m (validation-a7c51be0/97534): [36mFailed to load policy, using defaults[39m
+[SESSION #47] Full envelope data: {
+  "task_id": "c693a843-4573-457a-aa01-0957f5adb053",
+  "workflow_id": "3d7bfb71-dc25-466f-ba77-1fc83ddfb919",
+  "priority": "medium",
+  "status": "pending",
+  "retry_count": 0,
+  "max_retries": 3,
+  "timeout_ms": 300000,
+  "created_at": "2025-11-12T12:20:38.214Z",
+  "trace_id": "1c6a7d65-a682-42c9-a1c9-f13da16ae4db",
+  "envelope_version": "1.0.0",
+  "workflow_context": {
+    "workflow_type": "app",
+    "workflow_name": "hello-world-app",
+    "current_stage": "validation",
+    "stage_outputs": {
+      "scaffolding": {
+        "structure": {
+          "root_path": "./hello-world-app",
+          "test_files": [],
+          "directories": [
+            "src"
+          ],
+          "config_files": [
+            "package.json",
+            "tsconfig.json",
+            ".eslintrc.js"
+          ],
+          "entry_points": [
+            "src/index.ts"
+          ],
+          "files_generated": [
+            {
+              "path": "src/index.ts",
+              "type": "source",
+              "checksum": "c3JjL2lu",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: app-template",
+              "template_source": "app-template"
+            },
+            {
+              "path": "package.json",
+              "type": "config",
+              "checksum": "cGFja2Fn",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: package-template",
+              "template_source": "package-template"
+            },
+            {
+              "path": "tsconfig.json",
+              "type": "config",
+              "checksum": "dHNjb25m",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: tsconfig-template",
+              "template_source": "tsconfig-template"
+            }
+          ]
+        },
+        "output_path": "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app",
+        "completed_at": "2025-11-12T12:20:38.195Z",
+        "entry_points": [
+          "src/index.ts"
+        ],
+        "project_name": "hello-world-app",
+        "files_generated": [
+          {
+            "path": "src/index.ts",
+            "type": "source",
+            "checksum": "c3JjL2lu",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: app-template",
+            "template_source": "app-template"
+          },
+          {
+            "path": "package.json",
+            "type": "config",
+            "checksum": "cGFja2Fn",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: package-template",
+            "template_source": "package-template"
+          },
+          {
+            "path": "tsconfig.json",
+            "type": "config",
+            "checksum": "dHNjb25m",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: tsconfig-template",
+            "template_source": "tsconfig-template"
+          }
+        ]
+      },
+      "initialization": {
+        "structure": {
+          "root_path": "./hello-world-app",
+          "test_files": [],
+          "directories": [
+            "src"
+          ],
+          "config_files": [
+            "package.json",
+            "tsconfig.json",
+            ".eslintrc.js"
+          ],
+          "entry_points": [
+            "src/index.ts"
+          ],
+          "files_generated": [
+            {
+              "path": "src/index.ts",
+              "type": "source",
+              "checksum": "c3JjL2lu",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: app-template",
+              "template_source": "app-template"
+            },
+            {
+              "path": "package.json",
+              "type": "config",
+              "checksum": "cGFja2Fn",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: package-template",
+              "template_source": "package-template"
+            },
+            {
+              "path": "tsconfig.json",
+              "type": "config",
+              "checksum": "dHNjb25m",
+              "size_bytes": 1024,
+              "content_preview": "// Generated from template: tsconfig-template",
+              "template_source": "tsconfig-template"
+            }
+          ]
+        },
+        "output_path": "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app",
+        "completed_at": "2025-11-12T12:20:36.495Z",
+        "entry_points": [
+          "src/index.ts"
+        ],
+        "project_name": "hello-world-app",
+        "files_generated": [
+          {
+            "path": "src/index.ts",
+            "type": "source",
+            "checksum": "c3JjL2lu",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: app-template",
+            "template_source": "app-template"
+          },
+          {
+            "path": "package.json",
+            "type": "config",
+            "checksum": "cGFja2Fn",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: package-template",
+            "template_source": "package-template"
+          },
+          {
+            "path": "tsconfig.json",
+            "type": "config",
+            "checksum": "dHNjb25m",
+            "size_bytes": 1024,
+            "content_preview": "// Generated from template: tsconfig-template",
+            "template_source": "tsconfig-template"
+          }
+        ]
+      }
+    }
+  },
+  "agent_type": "validation",
+  "payload": {
+    "file_paths": [
+      "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app/src/index.ts",
+      "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app/package.json",
+      "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app/tsconfig.json"
+    ],
+    "working_directory": "/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app",
+    "validation_types": [
+      "typescript",
+      "eslint"
+    ],
+    "thresholds": {
+      "coverage": 80,
+      "complexity": 10,
+      "errors": 0,
+      "warnings": 10,
+      "duplications": 5
+    }
+  }
+}
+[SESSION #47] Envelope keys: task_id, workflow_id, priority, status, retry_count, max_retries, timeout_ms, created_at, trace_id, envelope_version, workflow_context, agent_type, payload
+[SESSION #47] Agent type: validation
+[SESSION #47] Envelope version: 1.0.0
+[SESSION #47] Payload keys: file_paths, working_directory, validation_types, thresholds
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36mTask received[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #36] Executing validation task[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #38] Task structure debug[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #47] Attempting to validate envelope[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #36] Envelope validated successfully[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #32] Checking working directory existence[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #32] Working directory exists, proceeding with validation[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #32] Running validation checks[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #32] Running TypeScript validation[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #32] TypeScript validation completed[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #32] Running ESLint validation[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #32] ESLint validation completed[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36m[SESSION #32] All validation checks completed[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36mValidation completed[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36mValidation Report:
+================================================================================
+VALIDATION REPORT
+================================================================================
+
+Task ID:       c693a843-4573-457a-aa01-0957f5adb053
+Workflow ID:   3d7bfb71-dc25-466f-ba77-1fc83ddfb919
+Timestamp:     2025-11-12T12:20:38.897Z
+Project Path:  /Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app
+Overall Status: FAILED
+
+--------------------------------------------------------------------------------
+SUMMARY
+--------------------------------------------------------------------------------
+Total Checks:   2
+Passed:         0
+Failed:         1
+Warnings:       0
+Duration:       674ms
+
+--------------------------------------------------------------------------------
+VALIDATION CHECKS
+--------------------------------------------------------------------------------
+✗ TYPESCRIPT: failed (672ms)
+  ERROR: tsconfig.json:27:5 - File '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/3d7bfb71-dc25-466f-ba77-1fc83ddfb919/hello-world-app/tsconfig.node.json' not found.
+⚠ ESLINT: skipped (0ms)
+  WARNING: No ESLint configuration found, skipping ESLint validation
+
+--------------------------------------------------------------------------------
+QUALITY GATES
+--------------------------------------------------------------------------------
+Overall: PASSED ✓
+Evaluated: 0
+Passed:    0
+Failed:    0
+
+--------------------------------------------------------------------------------
+RECOMMENDATIONS
+--------------------------------------------------------------------------------
+1. Fix TypeScript compilation errors before proceeding. Run `pnpm typecheck` for details.
+
+================================================================================[39m
+[2025-11-12 12:20:38] [32mINFO[39m (validation-a7c51be0/97534): [36mResult reported[39m
+[ioredis] Unhandled error event: Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at EventEmitter.sendCommand (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:396:29)
+    at EventEmitter.client (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/utils/Commander.js:90:25)
+    at /Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/redis/event_handler.js:65:22
+[ioredis] Unhandled error event: Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at EventEmitter.sendCommand (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/Redis.js:396:29)
+    at EventEmitter.client (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/utils/Commander.js:90:25)
+    at /Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/ioredis@5.8.2/node_modules/ioredis/built/redis/event_handler.js:65:22
+[ioredis] Unhandled error event: Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[ioredis] Unhandled error event: Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)

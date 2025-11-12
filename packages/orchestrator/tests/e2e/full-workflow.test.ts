@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import Fastify, { FastifyInstance } from 'fastify';
 import { workflowRoutes } from '../../src/api/routes/workflow.routes';
 import { WorkflowService } from '../../src/services/workflow.service';
-import { StateMachine } from '../../src/state-machine/state-machine';
+import { StateMachine } from '../../src/state-machine';
 import { EventBus } from '../../src/events/event-bus';
 
 /**

@@ -189,8 +189,24 @@ export class AgentDispatcherService {
           taskStatus: result.payload?.status
         });
         await handler(result);
-        // NOTE: Handler cleanup is now responsibility of workflow service
-        // (only remove when workflow reaches terminal state, not per-stage)
+
+        // Clean up handler for terminal statuses
+        const status = result.payload?.status;
+        if (status === 'success' || status === 'failure') {
+          this.resultHandlers.delete(result.workflow_id);
+
+          // Also clean up timeout if exists
+          const timeout = this.handlerTimeouts.get(result.workflow_id);
+          if (timeout) {
+            clearTimeout(timeout);
+            this.handlerTimeouts.delete(result.workflow_id);
+          }
+
+          logger.info('✅ HANDLER CLEANED UP (terminal status)', {
+            workflow_id: result.workflow_id,
+            status: status
+          });
+        }
       } else {
         logger.warn('❌ NO HANDLER FOUND FOR WORKFLOW', {
           workflow_id: result.workflow_id,

@@ -1,0 +1,600 @@
+
+> @agentic-sdlc/orchestrator@0.1.0 test
+> vitest -- --run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ DEV  v1.6.1 /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+
+ ✓ tests/services/decision-gate.service.test.ts  (44 tests) 5ms
+ ✓ tests/services/quality-gate.service.test.ts  (33 tests) 7ms
+ ❯ tests/e2e/full-workflow.test.ts  (0 test)
+ ✓ src/services/workflow.service.test.ts  (11 tests) 10ms
+ ✓ tests/e2e/five-agent-pipeline.test.ts  (22 tests) 122ms
+{"level":"error","timestamp":"2025-11-12T12:14:12.878Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Pipeline execution failed"}
+{"level":"error","timestamp":"2025-11-12T12:14:12.892Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to verify GitHub webhook signature"}
+ ✓ src/__tests__/integrations/github-actions.integration.test.ts  (18 tests) 4ms
+ ❯ tests/e2e/scaffold-happy-path.test.ts  (0 test)
+{"level":"error","timestamp":"2025-11-12T12:14:12.996Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Database health check failed"}
+ ✓ tests/repositories/workflow.repository.test.ts  (13 tests) 5ms
+ ✓ tests/services/health-check.service.test.ts  (17 tests) 15ms
+ ✓ tests/e2e/three-agent-pipeline.test.ts  (21 tests) 117ms
+{"level":"error","timestamp":"2025-11-12T12:14:13.212Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Pipeline execution failed"}
+ ✓ src/__tests__/services/quality-gate.service.test.ts  (14 tests) 4ms
+ ❯ tests/api/workflow.routes.test.ts  (13 tests | 2 failed) 139ms
+   ❯ tests/api/workflow.routes.test.ts > Workflow API Routes > POST /api/v1/workflows > should create a new workflow
+     → expected 400 to be 200 // Object.is equality
+   ❯ tests/api/workflow.routes.test.ts > Workflow API Routes > POST /api/v1/workflows > should handle service errors
+     → expected 400 to be 500 // Object.is equality
+{"level":"error","timestamp":"2025-11-12T12:14:13.370Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"❌ FAILED TO PARSE JSON"}
+{"level":"error","timestamp":"2025-11-12T12:14:13.370Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to process agent result"}
+{"level":"error","timestamp":"2025-11-12T12:14:13.390Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Workflow not found for task creation"}
+{"level":"error","timestamp":"2025-11-12T12:14:13.390Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to create workflow"}
+{"level":"error","timestamp":"2025-11-12T12:14:13.392Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to create workflow"}
+ ❯ tests/services/workflow.service.test.ts  (10 tests | 1 failed) 10ms
+   ❯ tests/services/workflow.service.test.ts > WorkflowService > createWorkflow > should successfully create a workflow
+     → Workflow test-workflow-id not found
+ ✓ tests/api/routes/health.routes.test.ts  (7 tests) 32ms
+{"level":"error","timestamp":"2025-11-12T12:14:13.436Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Pipeline execution failed"}
+ ✓ src/utils/stages.test.ts  (30 tests) 4ms
+ ❯ tests/simple-happy-path.test.ts  (4 tests | 2 failed) 15ms
+   ❯ tests/simple-happy-path.test.ts > Milestone 1: Simple Happy Path Validation > should support type branding for IDs
+     → expected false to be true // Object.is equality
+   ❯ tests/simple-happy-path.test.ts > Milestone 1: Simple Happy Path Validation > should handle workflow state transitions
+     → expected [Function] to throw an error
+ ✓ tests/services/graceful-shutdown.service.test.ts  (5 tests) 2ms
+{"level":"error","timestamp":"2025-11-12T12:14:13.641Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Stage execution failed"}
+{"level":"error","timestamp":"2025-11-12T12:14:13.641Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Pipeline execution failed"}
+ ❯ src/__tests__/services/pipeline-executor.service.test.ts  (13 tests | 3 failed) 916ms
+   ❯ src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > startPipeline > should start pipeline execution successfully
+     → expected 'running' to be 'queued' // Object.is equality
+   ❯ src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > stage execution > should enforce quality gates
+     → Target cannot be null or undefined.
+   ❯ src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > stage execution > should fail stage when blocking quality gate fails
+     → expected undefined to be 'failed' // Object.is equality
+ ✓ tests/services/pipeline-executor.service.test.ts  (30 tests) 1228ms
+{"level":"error","timestamp":"2025-11-12T12:14:14.110Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to get registered agents"}
+{"level":"error","timestamp":"2025-11-12T12:14:14.160Z","pid":98587,"hostname":"Mac.lan","name":"orchestrator","msg":"Failed to process agent result"}
+ ❯ tests/services/agent-dispatcher.service.test.ts  (32 tests | 4 failed) 1854ms
+   ❯ tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Result Handling > should auto-remove handler after success status
+     → expected true to be false // Object.is equality
+   ❯ tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Result Handling > should auto-remove handler after failure status
+     → expected true to be false // Object.is equality
+   ❯ tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Real-world Scenarios > should handle complete workflow lifecycle
+     → expected true to be false // Object.is equality
+   ❯ tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Real-world Scenarios > should handle multiple concurrent workflows
+     → expected 3 to be +0 // Object.is equality
+ ❯ src/hexagonal/__tests__/smoke.test.ts  (15 tests | 6 failed) 1706ms
+   ❯ src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Bootstrap & Container > should have healthy message bus
+     → expected 0 to be greater than 0
+   ❯ src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Pub/Sub Messaging > should publish and receive message
+     → expected [] to have a length of 1 but got +0
+   ❯ src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Pub/Sub Messaging > should handle multiple publish/subscribe cycles
+     → expected [] to have a length of 3 but got +0
+   ❯ src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > KV Store Operations > should support atomic counters
+     → expected 9 to be 1 // Object.is equality
+   ❯ src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Error Recovery > should continue after message error
+     → expected 0 to be greater than 0
+   ❯ src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Correlation & Tracing > should preserve correlation ID through message flow
+     → Cannot read properties of undefined (reading 'corrId')
+ ❯ src/hexagonal/__tests__/integration.test.ts  (28 tests | 11 failed) 4950ms
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Message Bus (Pub/Sub) > should publish and receive a message
+     → expected [] to have a length of 1 but got +0
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Message Bus (Pub/Sub) > should handle multiple subscribers
+     → expected [] to have a length of 1 but got +0
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Message Bus (Pub/Sub) > should handle JSON serialization
+     → Cannot read properties of undefined (reading 'nested')
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Message Bus (Pub/Sub) > should check health
+     → expected 0 to be greater than 0
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > KV Store > should increment counters
+     → expected 7 to be 1 // Object.is equality
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Envelope Format > should create envelope with defaults
+     → expected 'edc1d2b6-9cf7-4bdd-8ce0-f998d8fff26e' to be undefined
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Envelope Format > should retry envelope with incremented attempts
+     → expected '35b695c1-5fa8-454d-9a7f-9f8361117fe4' to be 'e9c49942-39c0-482d-9779-f6072fa75db8' // Object.is equality
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Envelope Format > should increment attempts on subsequent retries
+     → expected +0 to be undefined
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > End-to-End Message Flow > should complete full message cycle
+     → Cannot read properties of null (reading 'id')
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > End-to-End Message Flow > should handle message with idempotency and retry
+     → expected +0 to be 1 // Object.is equality
+   ❯ src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Error Handling > should continue processing after handler error
+     → expected 0 to be greater than 0
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/e2e/full-workflow.test.ts [ tests/e2e/full-workflow.test.ts ]
+Error: Failed to load url ../../src/state-machine/state-machine (resolved id: ../../src/state-machine/state-machine) in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/tests/e2e/full-workflow.test.ts. Does the file exist?
+ ❯ loadAndTransform ../../node_modules/.pnpm/vite@5.4.21_@types+node@20.19.24/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/31]⎯
+
+ FAIL  tests/e2e/scaffold-happy-path.test.ts [ tests/e2e/scaffold-happy-path.test.ts ]
+Error: Vitest cannot be imported in a CommonJS module using require(). Please use "import" instead.
+
+If you are using "import" in your source code, then it's possible it was bundled into require() automatically by your bundler. In that case, do not bundle CommonJS output since it will never work with Vitest, or use dynamic import() which is available in all CommonJS modules.
+ ❯ Object.<anonymous> ../../node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.24/node_modules/vitest/index.cjs:1:7
+ ❯ TracingChannel.traceSync node:diagnostics_channel:322:14
+ ❯ Object.<anonymous> ../shared/test-utils/src/mocks/redis.mock.ts:1:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/31]⎯
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 29 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/simple-happy-path.test.ts > Milestone 1: Simple Happy Path Validation > should support type branding for IDs
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/simple-happy-path.test.ts:123:32
+    121|     // Type guards should work
+    122|     expect(isWorkflowId(workflowId)).toBe(true);
+    123|     expect(isAgentId(agentId)).toBe(true);
+       |                                ^
+    124|     expect(isTaskId(taskId)).toBe(true);
+    125| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/31]⎯
+
+ FAIL  tests/simple-happy-path.test.ts > Milestone 1: Simple Happy Path Validation > should handle workflow state transitions
+AssertionError: expected [Function] to throw an error
+ ❯ tests/simple-happy-path.test.ts:161:8
+    159|     expect(() => {
+    160|       SchemaRegistry.validate('workflow', workflow);
+    161|     }).toThrow();
+       |        ^
+    162|   });
+    163| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/31]⎯
+
+ FAIL  tests/api/workflow.routes.test.ts > Workflow API Routes > POST /api/v1/workflows > should create a new workflow
+AssertionError: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ tests/api/workflow.routes.test.ts:47:35
+     45|       });
+     46| 
+     47|       expect(response.statusCode).toBe(200);
+       |                                   ^
+     48|       const body = JSON.parse(response.body);
+     49|       expect(body.workflow_id).toBe('test-workflow-id');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/31]⎯
+
+ FAIL  tests/api/workflow.routes.test.ts > Workflow API Routes > POST /api/v1/workflows > should handle service errors
+AssertionError: expected 400 to be 500 // Object.is equality
+
+- Expected
++ Received
+
+- 500
++ 400
+
+ ❯ tests/api/workflow.routes.test.ts:88:35
+     86|       });
+     87| 
+     88|       expect(response.statusCode).toBe(500);
+       |                                   ^
+     89|       const body = JSON.parse(response.body);
+     90|       expect(body.error).toBe('Internal server error');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/31]⎯
+
+ FAIL  tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Result Handling > should auto-remove handler after success status
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/services/agent-dispatcher.service.test.ts:220:40
+    218| 
+    219|       const handlers = (service as any).resultHandlers;
+    220|       expect(handlers.has(workflowId)).toBe(false);
+       |                                        ^
+    221|     });
+    222| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/31]⎯
+
+ FAIL  tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Result Handling > should auto-remove handler after failure status
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/services/agent-dispatcher.service.test.ts:239:40
+    237| 
+    238|       const handlers = (service as any).resultHandlers;
+    239|       expect(handlers.has(workflowId)).toBe(false);
+       |                                        ^
+    240|     });
+    241| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/31]⎯
+
+ FAIL  tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Real-world Scenarios > should handle complete workflow lifecycle
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/services/agent-dispatcher.service.test.ts:610:40
+    608|       // Handler should be auto-removed after success
+    609|       const handlers = (service as any).resultHandlers;
+    610|       expect(handlers.has(workflowId)).toBe(false);
+       |                                        ^
+    611|     });
+    612| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/31]⎯
+
+ FAIL  tests/services/agent-dispatcher.service.test.ts > AgentDispatcherService > Real-world Scenarios > should handle multiple concurrent workflows
+AssertionError: expected 3 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 3
+
+ ❯ tests/services/agent-dispatcher.service.test.ts:677:29
+    675|       // All handlers should be removed after success
+    676|       const handlers = (service as any).resultHandlers;
+    677|       expect(handlers.size).toBe(0);
+       |                             ^
+    678|     });
+    679|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/31]⎯
+
+ FAIL  tests/services/workflow.service.test.ts > WorkflowService > createWorkflow > should successfully create a workflow
+Error: Workflow test-workflow-id not found
+ ❯ WorkflowService.createTaskForStage src/services/workflow.service.ts:360:13
+    358|     if (!workflow) {
+    359|       logger.error('Workflow not found for task creation', { workflowI…
+    360|       throw new Error(`Workflow ${workflowId} not found`);
+       |             ^
+    361|     }
+    362| 
+ ❯ WorkflowService.createWorkflow src/services/workflow.service.ts:245:7
+ ❯ tests/services/workflow.service.test.ts:73:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/31]⎯
+
+ FAIL  src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > startPipeline > should start pipeline execution successfully
+AssertionError: expected 'running' to be 'queued' // Object.is equality
+
+- Expected
++ Received
+
+- queued
++ running
+
+ ❯ src/__tests__/services/pipeline-executor.service.test.ts:85:32
+     83|       expect(execution.pipeline_id).toBe(definition.id);
+     84|       expect(execution.workflow_id).toBe(definition.workflow_id);
+     85|       expect(execution.status).toBe('queued');
+       |                                ^
+     86|       expect(execution.trigger).toBe('manual');
+     87|       expect(execution.triggered_by).toBe('test-user');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/31]⎯
+
+ FAIL  src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > stage execution > should enforce quality gates
+AssertionError: Target cannot be null or undefined.
+ ❯ src/__tests__/services/pipeline-executor.service.test.ts:228:47
+    226| 
+    227|       // Stage should pass since mock returns 90% coverage
+    228|       expect(currentExecution?.stage_results).toHaveLength(1);
+       |                                               ^
+    229|       expect(currentExecution?.stage_results[0].status).toBe('success'…
+    230|       expect(currentExecution?.stage_results[0].quality_gate_results).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/31]⎯
+
+ FAIL  src/__tests__/services/pipeline-executor.service.test.ts > PipelineExecutorService > stage execution > should fail stage when blocking quality gate fails
+AssertionError: expected undefined to be 'failed' // Object.is equality
+
+- Expected: 
+"failed"
+
++ Received: 
+undefined
+
+ ❯ src/__tests__/services/pipeline-executor.service.test.ts:293:57
+    291| 
+    292|       // Stage should fail
+    293|       expect(currentExecution?.stage_results[0].status).toBe('failed');
+       |                                                         ^
+    294|       expect(currentExecution?.stage_results[0].error?.code).toBe('QUA…
+    295|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Message Bus (Pub/Sub) > should publish and receive a message
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/hexagonal/__tests__/integration.test.ts:88:24
+     86|       await new Promise((resolve) => setTimeout(resolve, 100));
+     87| 
+     88|       expect(messages).toHaveLength(1);
+       |                        ^
+     89|       expect(messages[0].id).toBe(envelope.id);
+     90|       expect(messages[0].payload.data).toBe('hello');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Message Bus (Pub/Sub) > should handle multiple subscribers
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/hexagonal/__tests__/integration.test.ts:114:25
+    112|       await new Promise((resolve) => setTimeout(resolve, 100));
+    113| 
+    114|       expect(messages1).toHaveLength(1);
+       |                         ^
+    115|       expect(messages2).toHaveLength(1);
+    116|       expect(messages1[0].id).toBe(messages2[0].id);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Message Bus (Pub/Sub) > should handle JSON serialization
+TypeError: Cannot read properties of undefined (reading 'nested')
+ ❯ src/hexagonal/__tests__/integration.test.ts:141:26
+    139|       await new Promise((resolve) => setTimeout(resolve, 100));
+    140| 
+    141|       expect(messages[0].nested).toEqual(complexPayload.nested);
+       |                          ^
+    142|       expect(messages[0].timestamp).toBe(complexPayload.timestamp);
+    143|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Message Bus (Pub/Sub) > should check health
+AssertionError: expected 0 to be greater than 0
+ ❯ src/hexagonal/__tests__/integration.test.ts:149:32
+    147| 
+    148|       expect(health.ok).toBe(true);
+    149|       expect(health.latencyMs).toBeGreaterThan(0);
+       |                                ^
+    150|       expect(health.details).toBeDefined();
+    151|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > KV Store > should increment counters
+AssertionError: expected 7 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 7
+
+ ❯ src/hexagonal/__tests__/integration.test.ts:187:20
+    185|     it('should increment counters', async () => {
+    186|       const val1 = await kv.incr('test:counter');
+    187|       expect(val1).toBe(1);
+       |                    ^
+    188| 
+    189|       const val2 = await kv.incr('test:counter');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Envelope Format > should create envelope with defaults
+AssertionError: expected 'edc1d2b6-9cf7-4bdd-8ce0-f998d8fff26e' to be undefined
+ ❯ src/hexagonal/__tests__/integration.test.ts:420:26
+    418|       expect(env.ts).toBeDefined();
+    419|       expect(env.payload).toEqual({ data: 'test' });
+    420|       expect(env.corrId).toBeUndefined();
+       |                          ^
+    421|       expect(env.attempts).toBeUndefined();
+    422|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Envelope Format > should retry envelope with incremented attempts
+AssertionError: expected '35b695c1-5fa8-454d-9a7f-9f8361117fe4' to be 'e9c49942-39c0-482d-9779-f6072fa75db8' // Object.is equality
+
+- Expected
++ Received
+
+- e9c49942-39c0-482d-9779-f6072fa75db8
++ 35b695c1-5fa8-454d-9a7f-9f8361117fe4
+
+ ❯ src/hexagonal/__tests__/integration.test.ts:445:23
+    443|       const env2 = retryEnvelope(env1, 'Connection timeout');
+    444| 
+    445|       expect(env2.id).toBe(env1.id);
+       |                       ^
+    446|       expect(env2.type).toBe(env1.type);
+    447|       expect(env2.attempts).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Envelope Format > should increment attempts on subsequent retries
+AssertionError: expected +0 to be undefined
+ ❯ src/hexagonal/__tests__/integration.test.ts:457:29
+    455|       const env4 = retryEnvelope(env3, 'Error 3');
+    456| 
+    457|       expect(env1.attempts).toBeUndefined();
+       |                             ^
+    458|       expect(env2.attempts).toBe(1);
+    459|       expect(env3.attempts).toBe(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > End-to-End Message Flow > should complete full message cycle
+TypeError: Cannot read properties of null (reading 'id')
+ ❯ src/hexagonal/__tests__/integration.test.ts:495:31
+    493|       // Verify
+    494|       expect(processedMessage).toBeDefined();
+    495|       expect(processedMessage.id).toBe(inputEnvelope.id);
+       |                               ^
+    496|       expect(processedMessage.processed).toBe(true);
+    497|       expect(processedMessage.corrId).toBe('e2e-trace');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > End-to-End Message Flow > should handle message with idempotency and retry
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/hexagonal/__tests__/integration.test.ts:533:28
+    531| 
+    532|       // Should only process once
+    533|       expect(messageCount).toBe(1);
+       |                            ^
+    534| 
+    535|       await unsub();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/31]⎯
+
+ FAIL  src/hexagonal/__tests__/integration.test.ts > Hexagonal Architecture Integration Tests > Error Handling > should continue processing after handler error
+AssertionError: expected 0 to be greater than 0
+ ❯ src/hexagonal/__tests__/integration.test.ts:589:33
+    587|       await new Promise((resolve) => setTimeout(resolve, 200));
+    588| 
+    589|       expect(handlerErrorCount).toBeGreaterThan(0);
+       |                                 ^
+    590|       expect(successMessages.length).toBe(1);
+    591| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/31]⎯
+
+ FAIL  src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Bootstrap & Container > should have healthy message bus
+AssertionError: expected 0 to be greater than 0
+ ❯ src/hexagonal/__tests__/smoke.test.ts:53:36
+     51| 
+     52|       expect(health.bus.ok).toBe(true);
+     53|       expect(health.bus.latencyMs).toBeGreaterThan(0);
+       |                                    ^
+     54|     });
+     55| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/31]⎯
+
+ FAIL  src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Pub/Sub Messaging > should publish and receive message
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/hexagonal/__tests__/smoke.test.ts:80:24
+     78|       await new Promise((resolve) => setTimeout(resolve, 100));
+     79| 
+     80|       expect(messages).toHaveLength(1);
+       |                        ^
+     81|       expect(messages[0].id).toBe(envelope.id);
+     82| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/31]⎯
+
+ FAIL  src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Pub/Sub Messaging > should handle multiple publish/subscribe cycles
+AssertionError: expected [] to have a length of 3 but got +0
+
+- Expected
++ Received
+
+- 3
++ 0
+
+ ❯ src/hexagonal/__tests__/smoke.test.ts:102:24
+    100|       await new Promise((resolve) => setTimeout(resolve, 200));
+    101| 
+    102|       expect(received).toHaveLength(3);
+       |                        ^
+    103|       expect(received[0].count).toBe(0);
+    104|       expect(received[1].count).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/31]⎯
+
+ FAIL  src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > KV Store Operations > should support atomic counters
+AssertionError: expected 9 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 9
+
+ ❯ src/hexagonal/__tests__/smoke.test.ts:130:20
+    128|       const val2 = await kv.incr('smoke:counter');
+    129| 
+    130|       expect(val1).toBe(1);
+       |                    ^
+    131|       expect(val2).toBe(2);
+    132|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/31]⎯
+
+ FAIL  src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Error Recovery > should continue after message error
+AssertionError: expected 0 to be greater than 0
+ ❯ src/hexagonal/__tests__/smoke.test.ts:212:26
+    210|       await new Promise((resolve) => setTimeout(resolve, 150));
+    211| 
+    212|       expect(errorCount).toBeGreaterThan(0);
+       |                          ^
+    213|       expect(received).toHaveLength(1);
+    214| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/31]⎯
+
+ FAIL  src/hexagonal/__tests__/smoke.test.ts > Hexagonal Framework - Smoke Tests > Correlation & Tracing > should preserve correlation ID through message flow
+TypeError: Cannot read properties of undefined (reading 'corrId')
+ ❯ src/hexagonal/__tests__/smoke.test.ts:235:26
+    233|       await new Promise((resolve) => setTimeout(resolve, 100));
+    234| 
+    235|       expect(received[0].corrId).toBe(traceId);
+       |                          ^
+    236| 
+    237|       await unsub();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/31]⎯
+
+ Test Files  9 failed | 13 passed (22)
+      Tests  29 failed | 351 passed (380)
+   Start at  07:14:12
+   Duration  5.21s (transform 368ms, setup 203ms, collect 1.01s, tests 11.14s, environment 1ms, prepare 711ms)
+
+
+ FAIL  Tests failed. Watching for file changes...
+       press h to show help, press q to quit
