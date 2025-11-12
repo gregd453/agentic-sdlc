@@ -29,14 +29,26 @@ describe('IntegrationAgent', () => {
   describe('executeTask', () => {
     it('should handle merge_branch task successfully', async () => {
       const mockTask = {
+        task_id: 'task_test-123',
+        workflow_id: 'wf_test-123',
+        agent_type: 'integration' as const,
         action: 'merge_branch' as const,
-        source_branch: 'feature/test',
-        target_branch: 'main',
-        strategy: 'merge' as const,
-        auto_resolve_conflicts: false,
-        conflict_strategy: 'ai' as const,
-        delete_source_after_merge: false,
-        run_tests_before_merge: false
+        status: 'pending' as const,
+        priority: 50,
+        payload: {
+          source_branch: 'feature/test',
+          target_branch: 'main',
+          strategy: 'merge' as const,
+          auto_resolve_conflicts: false,
+          conflict_strategy: 'ai' as const,
+          delete_source_after_merge: false,
+          run_tests_before_merge: false
+        },
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       // Mock git service methods
@@ -55,17 +67,29 @@ describe('IntegrationAgent', () => {
 
     it('should handle resolve_conflict task successfully', async () => {
       const mockTask = {
+        task_id: 'task_test-456',
+        workflow_id: 'wf_test-123',
+        agent_type: 'integration' as const,
         action: 'resolve_conflict' as const,
-        conflicts: [{
-          file_path: 'src/index.ts',
-          conflict_markers: {
-            ours: 'const x = 1;',
-            theirs: 'const x = 2;'
-          },
-          conflict_type: 'content' as const
-        }],
-        strategy: 'ai' as const,
-        target_branch: 'main'
+        status: 'pending' as const,
+        priority: 50,
+        payload: {
+          conflicts: [{
+            file_path: 'src/index.ts',
+            conflict_markers: {
+              ours: 'const x = 1;',
+              theirs: 'const x = 2;'
+            },
+            conflict_type: 'content' as const
+          }],
+          strategy: 'ai' as const,
+          target_branch: 'main'
+        },
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       // Mock services
@@ -88,11 +112,23 @@ describe('IntegrationAgent', () => {
 
     it('should handle update_dependencies task successfully', async () => {
       const mockTask = {
+        task_id: 'task_test-789',
+        workflow_id: 'wf_test-123',
+        agent_type: 'integration' as const,
         action: 'update_dependencies' as const,
-        package_manager: 'pnpm' as const,
-        update_type: 'minor' as const,
-        run_tests: false,
-        create_pull_request: false
+        status: 'pending' as const,
+        priority: 50,
+        payload: {
+          package_manager: 'pnpm' as const,
+          update_type: 'minor' as const,
+          run_tests: false,
+          create_pull_request: false
+        },
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       vi.spyOn(GitService.prototype, 'getCurrentCommitSha').mockResolvedValue('sha123');
@@ -109,10 +145,22 @@ describe('IntegrationAgent', () => {
 
     it('should handle run_integration_tests task successfully', async () => {
       const mockTask = {
+        task_id: 'task_test-101',
+        workflow_id: 'wf_test-123',
+        agent_type: 'integration' as const,
         action: 'run_integration_tests' as const,
-        environment: 'local' as const,
-        timeout_ms: 60000,
-        fail_fast: false
+        status: 'pending' as const,
+        priority: 50,
+        payload: {
+          environment: 'local' as const,
+          timeout_ms: 60000,
+          fail_fast: false
+        },
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       vi.spyOn(IntegrationTestRunnerService.prototype, 'runTests').mockResolvedValue(
@@ -128,7 +176,18 @@ describe('IntegrationAgent', () => {
 
     it('should throw error for unknown action', async () => {
       const mockTask = {
-        action: 'unknown_action' as any
+        task_id: 'task_test-999',
+        workflow_id: 'wf_test-123',
+        agent_type: 'integration' as const,
+        action: 'unknown_action' as any,
+        status: 'pending' as const,
+        priority: 50,
+        payload: {},
+        version: '1.0.0',
+        timeout_ms: 120000,
+        retry_count: 0,
+        max_retries: 3,
+        created_at: new Date().toISOString()
       };
 
       await expect(agent.executeTask(mockTask)).rejects.toThrow();
