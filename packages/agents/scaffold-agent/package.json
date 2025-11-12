@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/run-agent.ts",
     "start": "tsx src/run-agent.ts",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
