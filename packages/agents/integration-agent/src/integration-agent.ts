@@ -24,17 +24,20 @@ export class IntegrationAgent extends BaseAgent {
   private dependencyUpdater: DependencyUpdaterService;
   private testRunner: IntegrationTestRunnerService;
 
-  constructor(repoPath: string = process.cwd()) {
-    super({
-      type: 'integration',
-      version: '1.0.0',
-      capabilities: [
-        'branch_merging',
-        'conflict_resolution',
-        'dependency_updates',
-        'integration_testing'
-      ]
-    });
+  constructor(messageBus: any, repoPath: string = process.cwd()) {
+    super(
+      {
+        type: 'integration',
+        version: '1.0.0',
+        capabilities: [
+          'branch_merging',
+          'conflict_resolution',
+          'dependency_updates',
+          'integration_testing'
+        ]
+      },
+      messageBus
+    );
 
     this.gitService = new GitService(repoPath);
     this.conflictResolver = new ConflictResolverService(this.anthropic);

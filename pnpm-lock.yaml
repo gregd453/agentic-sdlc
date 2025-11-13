@@ -170,6 +170,9 @@ importers:
       '@agentic-sdlc/base-agent':
         specifier: workspace:*
         version: link:../base-agent
+      '@agentic-sdlc/orchestrator':
+        specifier: workspace:*
+        version: link:../../orchestrator
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -277,6 +280,9 @@ importers:
       '@agentic-sdlc/base-agent':
         specifier: workspace:*
         version: link:../base-agent
+      '@agentic-sdlc/orchestrator':
+        specifier: workspace:*
+        version: link:../../orchestrator
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -332,6 +338,9 @@ importers:
       '@agentic-sdlc/base-agent':
         specifier: workspace:*
         version: link:../base-agent
+      '@agentic-sdlc/orchestrator':
+        specifier: workspace:*
+        version: link:../../orchestrator
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../../shared/types

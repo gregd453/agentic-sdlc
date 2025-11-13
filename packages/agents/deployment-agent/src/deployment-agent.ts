@@ -27,19 +27,22 @@ export class DeploymentAgent extends BaseAgent {
   private deploymentStrategy: DeploymentStrategyService;
   private healthCheckService: HealthCheckService;
 
-  constructor() {
-    super({
-      type: 'deployment',
-      version: '1.0.0',
-      capabilities: [
-        'docker_build',
-        'ecr_push',
-        'ecs_deployment',
-        'blue_green_deployment',
-        'rollback',
-        'health_check'
-      ]
-    });
+  constructor(messageBus: any) {
+    super(
+      {
+        type: 'deployment',
+        version: '1.0.0',
+        capabilities: [
+          'docker_build',
+          'ecr_push',
+          'ecs_deployment',
+          'blue_green_deployment',
+          'rollback',
+          'health_check'
+        ]
+      },
+      messageBus
+    );
 
     this.dockerService = new DockerService();
     this.ecrService = new ECRService(

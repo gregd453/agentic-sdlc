@@ -18,20 +18,23 @@ import { generateE2EReport, formatE2EReportAsText } from './utils/report-generat
 export class E2EAgent extends BaseAgent {
   private anthropicApiKey: string;
 
-  constructor() {
-    super({
-      type: 'e2e',
-      version: '1.0.0',
-      capabilities: [
-        'test-generation',
-        'playwright-integration',
-        'page-object-model',
-        'multi-browser',
-        'screenshot-capture',
-        'video-capture',
-        'artifact-storage'
-      ]
-    });
+  constructor(messageBus: any) {
+    super(
+      {
+        type: 'e2e',
+        version: '1.0.0',
+        capabilities: [
+          'test-generation',
+          'playwright-integration',
+          'page-object-model',
+          'multi-browser',
+          'screenshot-capture',
+          'video-capture',
+          'artifact-storage'
+        ]
+      },
+      messageBus
+    );
 
     this.anthropicApiKey = process.env.ANTHROPIC_API_KEY || '';
 

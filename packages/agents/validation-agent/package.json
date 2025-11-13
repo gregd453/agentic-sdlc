@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@agentic-sdlc/base-agent": "workspace:*",
+    "@agentic-sdlc/orchestrator": "workspace:*",
     "@agentic-sdlc/shared-types": "workspace:*",
     "@anthropic-ai/sdk": "^0.24.3",
     "dotenv": "^16.4.5",

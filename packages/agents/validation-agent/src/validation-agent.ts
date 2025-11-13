@@ -19,22 +19,26 @@ import * as fs from 'fs-extra';
 
 /**
  * ValidationAgent - Performs code validation with quality gate enforcement
+ * Phase 3: Updated to accept messageBus parameter
  */
 export class ValidationAgent extends BaseAgent {
   private policy: PolicyConfig | null = null;
 
-  constructor() {
-    super({
-      type: 'validation',
-      version: '1.0.0',
-      capabilities: [
-        'typescript-compilation',
-        'eslint-validation',
-        'test-coverage',
-        'security-audit',
-        'quality-gates'
-      ]
-    });
+  constructor(messageBus: any) {
+    super(
+      {
+        type: 'validation',
+        version: '1.0.0',
+        capabilities: [
+          'typescript-compilation',
+          'eslint-validation',
+          'test-coverage',
+          'security-audit',
+          'quality-gates'
+        ]
+      },
+      messageBus
+    );
   }
 
   /**

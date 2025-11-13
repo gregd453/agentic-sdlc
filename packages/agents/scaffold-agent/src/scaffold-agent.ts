@@ -24,19 +24,22 @@ export class ScaffoldAgent extends BaseAgent {
   private readonly fileGenerator: FileGenerator;
   private readonly templateEngine: TemplateEngine;
 
-  constructor() {
-    super({
-      // SESSION #37: Use constants for agent type
-      type: AGENT_TYPES.SCAFFOLD,
-      version: '1.0.0',
-      capabilities: [
-        'analyze-requirements',
-        'generate-structure',
-        'create-boilerplate',
-        'generate-schemas',
-        'create-tests'
-      ]
-    });
+  constructor(messageBus: any) {
+    super(
+      {
+        // SESSION #37: Use constants for agent type
+        type: AGENT_TYPES.SCAFFOLD,
+        version: '1.0.0',
+        capabilities: [
+          'analyze-requirements',
+          'generate-structure',
+          'create-boilerplate',
+          'generate-schemas',
+          'create-tests'
+        ]
+      },
+      messageBus
+    );
 
     this.fileGenerator = new FileGenerator(this.logger);
     this.templateEngine = new TemplateEngine(
