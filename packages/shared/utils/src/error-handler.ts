@@ -194,6 +194,165 @@ export class ErrorHandler {
       };
     }
   }
+
+  /**
+   * Wrap async operation with error handling
+   * Pattern A: Basic + Re-throw
+   */
+  static async wrapAsync<T>(
+    operation: () => Promise<T>,
+    context: string,
+    logger?: Logger,
+    metadata?: Record<string, any>
+  ): Promise<T> {
+    try {
+      return await operation();
+    } catch (error) {
+      if (logger) {
+        this.logError(logger, context, error, metadata);
+      }
+      throw error; // Re-throw to maintain error propagation
+    }
+  }
+
+  /**
+   * Execute operation with fallback value on error
+   * Pattern B: With fallback
+   */
+  static async withFallback<T>(
+    operation: () => Promise<T>,
+    fallback: T,
+    context: string,
+    logger?: Logger
+  ): Promise<T> {
+    try {
+      return await operation();
+    } catch (error) {
+      if (logger) {
+        this.logError(logger, context, error, {
+          fallback_used: true,
+          fallback_value: fallback
+        });
+      }
+      return fallback;
+    }
+  }
+
+  /**
+   * Execute operation with retry logic
+   * Pattern C: Retry with exponential backoff
+   */
+  static async withRetry<T>(
+    operation: () => Promise<T>,
+    options: {
+      retries?: number;
+      delay?: number;
+      backoffFactor?: number;
+      context: string;
+      logger?: Logger;
+      shouldRetry?: (error: unknown) => boolean;
+    }
+  ): Promise<T> {
+    const {
+      retries = 3,
+      delay = 1000,
+      backoffFactor = 2,
+      context,
+      logger,
+      shouldRetry = () => true
+    } = options;
+
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error;
+
+        if (attempt === retries || !shouldRetry(error)) {
+          if (logger) {
+            this.logError(logger, context, error, {
+              attempt,
+              max_retries: retries,
+              final_failure: true
+            });
+          }
+          throw error;
+        }
+
+        const waitTime = delay * Math.pow(backoffFactor, attempt - 1);
+
+        if (logger) {
+          logger.warn(`[${context}] Retry attempt ${attempt}/${retries}`, {
+            error: this.toErrorInfo(error),
+            wait_time_ms: waitTime,
+            next_attempt: attempt + 1
+          });
+        }
+
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
+
+    throw lastError;
+  }
+
+  /**
+   * Check if error is retryable based on error type or code
+   */
+  static isRetryable(error: unknown): boolean {
+    if (error instanceof Error) {
+      const code = (error as any).code;
+
+      // Network and timeout errors are typically retryable
+      if (code && typeof code === 'string') {
+        const retryableCodes = [
+          'ETIMEDOUT', 'ECONNREFUSED', 'ENOTFOUND',
+          'ECONNRESET', 'EPIPE', 'EHOSTUNREACH'
+        ];
+        if (retryableCodes.includes(code)) {
+          return true;
+        }
+      }
+
+      // Check error message for common retryable patterns
+      const message = error.message.toLowerCase();
+      const retryablePatterns = [
+        'timeout', 'timed out',
+        'connection refused',
+        'connection reset',
+        'socket hang up',
+        'network error'
+      ];
+
+      return retryablePatterns.some(pattern => message.includes(pattern));
+    }
+
+    return false;
+  }
+
+  /**
+   * Extract all errors from a cause chain
+   */
+  static getCauseChain(error: unknown): ErrorInfo[] {
+    const chain: ErrorInfo[] = [];
+    let current = error;
+    const seen = new Set<unknown>();
+
+    while (current && !seen.has(current)) {
+      seen.add(current);
+      chain.push(this.toErrorInfo(current));
+
+      if (current instanceof Error && current.cause) {
+        current = current.cause;
+      } else {
+        break;
+      }
+    }
+
+    return chain;
+  }
 }
 
 /**
@@ -209,3 +368,12 @@ export function toErrorMessage(error: unknown): string {
 export function safeErrorLog(error: unknown): Record<string, any> {
   return ErrorHandler.toErrorInfo(error);
 }
+
+/**
+ * Export convenience methods
+ */
+export const wrapAsync = ErrorHandler.wrapAsync.bind(ErrorHandler);
+export const withFallback = ErrorHandler.withFallback.bind(ErrorHandler);
+export const withRetry = ErrorHandler.withRetry.bind(ErrorHandler);
+export const isRetryable = ErrorHandler.isRetryable.bind(ErrorHandler);
+export const getCauseChain = ErrorHandler.getCauseChain.bind(ErrorHandler);

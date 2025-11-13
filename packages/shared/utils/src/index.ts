@@ -36,6 +36,11 @@ export {
   ErrorHandler,
   toErrorMessage,
   safeErrorLog,
+  wrapAsync,
+  withFallback,
+  withRetry,
+  isRetryable,
+  getCauseChain,
   type ErrorInfo,
   type Logger
 } from './error-handler';

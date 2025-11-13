@@ -1,0 +1,41 @@
+
+> @agentic-sdlc/scaffold-agent@0.1.0 start
+> tsx src/run-agent.ts
+
+🚀 Starting Scaffold Agent...
+[PHASE-3] Initializing OrchestratorContainer for scaffold agent...
+{"ts":"2025-11-13T16:44:47.182Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-scaffold"}
+{"ts":"2025-11-13T16:44:47.183Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-13T16:44:47.197Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T16:44:47.197Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T16:44:47.197Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T16:44:47.197Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T16:44:47.198Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T16:44:47.198Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T16:44:47.198Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T16:44:47.198Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T16:44:47.198Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T16:44:47.198Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-scaffold"}
+{"ts":"2025-11-13T16:44:47.201Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+[PHASE-3] OrchestratorContainer initialized successfully
+{"ts":"2025-11-13T16:44:47.207Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:scaffold:tasks"}
+{"ts":"2025-11-13T16:44:47.208Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:scaffold:tasks","consumerGroup":"agent-scaffold-group","consumerName":"consumer-1763052287207"}
+{"ts":"2025-11-13T16:44:47.208Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:scaffold:tasks","count":1}
+✅ Scaffold Agent running and listening for tasks
+📡 Connected to Redis: redis://localhost:6380
+🔑 Using Anthropic API key: sk-ant-api03-DMugxEc...
+
+Agent is ready to receive tasks on channel: agent:scaffold:tasks
+Press Ctrl+C to stop
+
+[2025-11-13 16:44:47] [32mINFO[39m (scaffold-55201677/58404): [36mScaffold agent schemas registered[39m
+[2025-11-13 16:44:47] [32mINFO[39m (scaffold-55201677/58404): [36m[PHASE-3] Initializing agent with message bus[39m
+[2025-11-13 16:44:47] [32mINFO[39m (scaffold-55201677/58404): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+[2025-11-13 16:44:47] [32mINFO[39m (scaffold-55201677/58404): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+[2025-11-13 16:44:47] [32mINFO[39m (scaffold-55201677/58404): [36mRegistered with orchestrator[39m
+[2025-11-13 16:44:47] [32mINFO[39m (scaffold-55201677/58404): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+{"ts":"2025-11-13T16:45:20.846Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763052320844-0","messageType":"object","hasMessageProperty":false}
+[2025-11-13 16:45:20] [32mINFO[39m (scaffold-55201677/58404): [36m[PHASE-3] Agent received task from message bus[39m
+[2025-11-13 16:45:20] [32mINFO[39m (scaffold-55201677/58404): [36mTask received[39m
+[2025-11-13 16:45:20] [31mERROR[39m (scaffold-55201677/58404): [36m[PHASE-3] Failed to process task from message bus[39m
+{"ts":"2025-11-13T16:45:30.868Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"TypeError: listener is not a function"}

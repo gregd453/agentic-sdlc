@@ -127,21 +127,39 @@ export abstract class BaseAgent implements AgentLifecycle {
       async (message: any) => {
         try {
           // Message may be string or object depending on adapter
-          const agentMessage: AgentMessage = typeof message === 'string'
+          const envelope = typeof message === 'string'
             ? JSON.parse(message)
             : message;
 
           this.logger.info('[PHASE-3] Agent received task from message bus', {
-            workflow_id: agentMessage.workflow_id,
-            task_id: agentMessage.payload?.task_id,
+            workflow_id: envelope.workflow_id,
+            task_id: envelope.task_id,
+            agent_type: envelope.agent_type,
             channel: taskChannel
           });
+
+          // Convert envelope to AgentMessage format expected by receiveTask
+          const agentMessage: AgentMessage = {
+            id: envelope.task_id,
+            workflow_id: envelope.workflow_id,
+            agent_id: this.agentId,
+            type: 'task',
+            stage: envelope.workflow_context?.current_stage || 'unknown',
+            timestamp: envelope.created_at || new Date().toISOString(),
+            trace_id: envelope.trace_id,
+            payload: {
+              ...envelope.payload,
+              task_id: envelope.task_id,
+              context: envelope // Store the full envelope in context for backward compatibility
+            }
+          };
 
           await this.receiveTask(agentMessage);
         } catch (error) {
           this.logger.error('[PHASE-3] Failed to process task from message bus', {
             error: error instanceof Error ? error.message : String(error),
-            message
+            stack: error instanceof Error ? error.stack : undefined,
+            message: typeof message === 'object' ? JSON.stringify(message) : message
           });
           this.errorsCount++;
         }
@@ -169,6 +187,8 @@ export abstract class BaseAgent implements AgentLifecycle {
     this.logger.info('Task received', {
       task_type: message.type,
       workflow_id: message.workflow_id,
+      message_id: message.id,
+      stage: message.stage,
       trace_id: traceId
     });
 
@@ -176,9 +196,8 @@ export abstract class BaseAgent implements AgentLifecycle {
       // Validate task
       const task = this.validateTask(message.payload);
 
-      // SESSION #37: Extract workflow stage from envelope format
-      // Session #36 envelope is nested in message.payload.context
-      // Agent dispatcher wraps envelope: { payload: { context: envelope } }
+      // Extract workflow stage from envelope format
+      // The envelope is now stored in message.payload.context (set by the subscription handler)
       const envelope = (message.payload as any).context as any;
       const workflowStage = envelope?.workflow_context?.current_stage as string | undefined;
 
@@ -319,103 +338,50 @@ export abstract class BaseAgent implements AgentLifecycle {
       throw new Error(`Agent result does not comply with AgentResultSchema: ${(validationError as any).message}`);
     }
 
-    // Publish result to Redis using publisher client
-    // SESSION #37: Use constants for Redis channels
+    // Phase 3: Publish result via IMessageBus (symmetric architecture)
     const resultChannel = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
-    const message = {
-      id: randomUUID(),
-      type: 'result',
-      agent_id: this.agentId,
+
+    this.logger.info('[PHASE-3] Publishing result via IMessageBus', {
+      channel: resultChannel,
       workflow_id: validatedResult.workflow_id,
-      stage: stage,
-      payload: agentResult, // ✓ Now contains AgentResult, not TaskResult
-      timestamp: new Date().toISOString(),
-      trace_id: randomUUID()
-    } as AgentMessage;
+      task_id: validatedResult.task_id,
+      agent_id: this.agentId,
+      stage: stage
+    });
 
-    const messageJson = JSON.stringify(message);
-
-    // Phase 3: Dual publishing for durability
-    // 1. Publish to pub/sub channel (immediate delivery to subscribers)
     try {
-      await this.redisPublisher.publish(resultChannel, messageJson);
-      this.logger.info('[RESULT_DISPATCH] Successfully published result', {
-        channel: resultChannel,
-        workflow_id: validatedResult.workflow_id,
+      // Publish via message bus - adapter handles pub/sub, stream mirroring, and DLQ
+      await this.messageBus.publish(
+        resultChannel,
+        agentResult,  // Already validated against AgentResultSchema
+        {
+          key: validatedResult.workflow_id,
+          mirrorToStream: `stream:${resultChannel}`
+        }
+      );
+
+      this.logger.info('[PHASE-3] Result published successfully via IMessageBus', {
         task_id: validatedResult.task_id,
-        agent_id: this.agentId
+        workflow_id: validatedResult.workflow_id,
+        status: agentStatus,
+        success: success,
+        workflow_stage: stage,
+        agent_id: this.agentId,
+        version: VERSION
       });
     } catch (error) {
-      this.logger.error('[RESULT_DISPATCH] Failed to publish result to channel', {
+      this.logger.error('[PHASE-3] Failed to publish result via IMessageBus', {
         error: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
-        channel: resultChannel,
         workflow_id: validatedResult.workflow_id,
         task_id: validatedResult.task_id,
         agent_id: this.agentId
       });
 
-      // Attempt to send to dead letter queue
-      try {
-        const dlqChannel = `dlq:${resultChannel}`;
-        await this.redisPublisher.publish(dlqChannel, JSON.stringify({
-          original_message: message,
-          error: error instanceof Error ? error.message : String(error),
-          failed_at: new Date().toISOString(),
-          channel: resultChannel
-        }));
-        this.logger.warn('[RESULT_DISPATCH] Result sent to dead letter queue', {
-          dlq: dlqChannel,
-          workflow_id: validatedResult.workflow_id,
-          task_id: validatedResult.task_id
-        });
-      } catch (dlqError) {
-        this.logger.error('[RESULT_DISPATCH] Failed to send to dead letter queue', {
-          error: dlqError instanceof Error ? dlqError.message : String(dlqError),
-          workflow_id: validatedResult.workflow_id,
-          task_id: validatedResult.task_id
-        });
-      }
-
-      // Don't re-throw here - allow agent to continue processing other tasks
+      // Don't re-throw - allow agent to continue processing other tasks
       // The workflow will timeout if result is not received
       return;
     }
-
-    // 2. Mirror to Redis stream (durable, persistent, recoverable)
-    const streamKey = `stream:${resultChannel}`;
-    try {
-      await this.redisPublisher.xadd(
-        streamKey,
-        '*', // auto-generate ID
-        'message', messageJson,
-        'workflow_id', validatedResult.workflow_id,
-        'task_id', validatedResult.task_id,
-        'agent_id', this.agentId,
-        'timestamp', new Date().toISOString()
-      );
-      this.logger.info('[PHASE-3] Result mirrored to stream for durability', {
-        stream: streamKey,
-        workflow_id: validatedResult.workflow_id,
-        task_id: validatedResult.task_id
-      });
-    } catch (streamError) {
-      // Don't fail the task if stream mirroring fails
-      this.logger.error('[PHASE-3] Failed to mirror result to stream', {
-        error: streamError instanceof Error ? streamError.message : String(streamError),
-        workflow_id: validatedResult.workflow_id,
-        task_id: validatedResult.task_id
-      });
-    }
-
-    this.logger.info('AgentResultSchema-compliant result reported', {
-      task_id: validatedResult.task_id,
-      status: agentStatus,
-      success: success,
-      workflow_stage: stage,
-      agent_id: this.agentId,
-      version: VERSION
-    });
   }
 
   async cleanup(): Promise<void> {

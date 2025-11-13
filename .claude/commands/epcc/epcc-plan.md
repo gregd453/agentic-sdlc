@@ -108,28 +108,47 @@ Note: You can find details about the codebase in EPCC_EXPLORE.md if it exists.
 
 Use TodoWrite to create trackable tasks (DO NOT implement these tasks now - only document them):
 
-```python
-tasks = [
+For this TypeScript monorepo project, break down tasks by:
+1. **Hexagonal layer** (core domain, ports, adapters, orchestration)
+2. **Package scope** (which workspace package: orchestrator, agents, shared)
+3. **Build dependencies** (which packages need to build first)
+4. **Test coverage** (unit tests, integration tests, E2E tests)
+
+Example task breakdown:
+```typescript
+// Document in EPCC_PLAN.md
+const tasks = [
     {
         "id": "1",
-        "content": "Set up database schema",
+        "content": "Define domain interfaces in hexagonal/ports/",
+        "package": "@agentic-sdlc/orchestrator",
         "estimate": "2 hours",
         "dependencies": [],
         "priority": "high"
     },
     {
-        "id": "2", 
-        "content": "Implement authentication middleware",
+        "id": "2",
+        "content": "Implement adapter in hexagonal/adapters/",
+        "package": "@agentic-sdlc/orchestrator",
         "estimate": "3 hours",
         "dependencies": ["1"],
         "priority": "high"
     },
     {
         "id": "3",
-        "content": "Create API endpoints",
+        "content": "Add service to orchestrator services/",
+        "package": "@agentic-sdlc/orchestrator",
         "estimate": "4 hours",
         "dependencies": ["1", "2"],
         "priority": "medium"
+    },
+    {
+        "id": "4",
+        "content": "Write unit tests with Vitest",
+        "package": "@agentic-sdlc/orchestrator",
+        "estimate": "2 hours",
+        "dependencies": ["3"],
+        "priority": "high"
     }
 ]
 ```
@@ -152,29 +171,41 @@ tasks = [
 ```markdown
 ## Testing Plan
 
-### Unit Tests
-- [ ] Model validation tests
-- [ ] Service logic tests
+### Unit Tests (Vitest)
+- [ ] Domain logic tests in hexagonal/core/
+- [ ] Service logic tests (*.service.test.ts)
+- [ ] Adapter tests (mock ports)
 - [ ] Utility function tests
+- Run: `pnpm test` or `turbo run test`
 - Coverage target: 90%
 
-### Integration Tests
-- [ ] API endpoint tests
-- [ ] Database interaction tests
-- [ ] External service mock tests
+### Integration Tests (Vitest)
+- [ ] Message bus pub/sub tests
+- [ ] Redis stream tests
+- [ ] PostgreSQL integration tests
+- [ ] Agent-to-orchestrator communication tests
+- Run: `pnpm test` (integration tests in __tests__ directories)
 - Coverage target: 80%
 
 ### End-to-End Tests
-- [ ] User workflow tests
-- [ ] Error scenario tests
-- [ ] Performance tests
+- [ ] Full workflow tests (scaffold → validate → e2e)
+- [ ] Multi-agent coordination tests
+- [ ] Error recovery and retry tests
+- Run: `./scripts/run-pipeline-test.sh "Test Description"`
+- Environment: `./scripts/env/start-dev.sh`
 - Coverage target: Critical paths
 
+### Build Validation
+- [ ] TypeScript compilation: `turbo run build`
+- [ ] Type checking: `turbo run typecheck`
+- [ ] Linting: `turbo run lint`
+- [ ] All packages build in dependency order
+
 ### Security Tests
-- [ ] Authentication tests
-- [ ] Authorization tests
-- [ ] Input validation tests
-- [ ] SQL injection tests
+- [ ] Message validation tests
+- [ ] Schema validation tests
+- [ ] Input sanitization tests
+- [ ] Dependency audit: `pnpm audit`
 ```
 
 ## Planning Deliverables
@@ -240,7 +271,7 @@ TodoWrite.create([
 ])
 ```
 
-### 3. Technical Design Document (included in EPCC_PLAN.md)
+### 3. Technical Design  (included in EPCC_PLAN.md)
 
 ```markdown
 # Technical Design: [Feature Name]
@@ -289,16 +320,22 @@ CREATE TABLE resources (
 ### DO:
 - ✅ Break tasks into < 4 hour chunks
 - ✅ Include testing in every task
-- ✅ Consider edge cases explicitly
+- ✅ Consider which hexagonal layer (core/ports/adapters/orchestration)
+- ✅ Specify affected packages (@agentic-sdlc/*)
+- ✅ Plan for monorepo build order (shared → orchestrator → agents)
 - ✅ Document design decisions
-- ✅ Plan for rollback
+- ✅ Plan for message bus integration patterns
+- ✅ Consider agent coordination requirements
+- ✅ Include E2E validation step
 
 ### DON'T:
 - ❌ Skip risk assessment
 - ❌ Underestimate complexity
-- ❌ Ignore dependencies
+- ❌ Ignore package dependencies
 - ❌ Plan without exploration
-- ❌ Forget documentation tasks
+- ❌ Forget to update package.json dependencies
+- ❌ Mix concerns across hexagonal layers
+- ❌ Skip build validation steps
 
 ## Planning Checklist
 

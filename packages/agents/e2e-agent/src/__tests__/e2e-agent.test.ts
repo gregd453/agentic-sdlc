@@ -10,6 +10,7 @@ vi.mock('../utils/artifact-storage');
 
 describe('E2EAgent', () => {
   let agent: E2EAgent;
+  let mockMessageBus: any;
 
   beforeAll(() => {
     process.env.ANTHROPIC_API_KEY = 'test-key-sk-12345';
@@ -20,7 +21,14 @@ describe('E2EAgent', () => {
   });
 
   beforeEach(() => {
-    agent = new E2EAgent();
+    // Create mock message bus
+    mockMessageBus = {
+      publish: vi.fn(),
+      subscribe: vi.fn(),
+      health: vi.fn().mockResolvedValue({ ok: true }),
+      disconnect: vi.fn()
+    };
+    agent = new E2EAgent(mockMessageBus);
   });
 
   it('should create agent with correct configuration', () => {

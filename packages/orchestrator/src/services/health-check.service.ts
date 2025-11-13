@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { EventBus } from '../events/event-bus';
-import { AgentDispatcherService } from './agent-dispatcher.service';
+// Phase 2: AgentDispatcherService removed - agent health checks will be reimplemented via message bus
 import { logger } from '../utils/logger';
 import { existsSync, accessSync, constants } from 'fs';
 import { tmpdir } from 'os';
@@ -74,8 +74,8 @@ export class HealthCheckService {
 
   constructor(
     private readonly prisma: PrismaClient,
-    private readonly eventBus: EventBus,
-    private readonly agentDispatcher: AgentDispatcherService
+    private readonly eventBus: EventBus
+    // Phase 2: agentDispatcher parameter removed
   ) {
     this.startTime = Date.now();
     this.version = process.env.npm_package_version || '0.1.0';
@@ -235,10 +235,25 @@ export class HealthCheckService {
 
   /**
    * Check agent registry
+   * Phase 2: Temporarily disabled - will be reimplemented via message bus
    */
   private async checkAgents(): Promise<ComponentHealth> {
     const start = Date.now();
+    const responseTime = Date.now() - start;
 
+    // Phase 2: Agent health check temporarily disabled
+    // Will be reimplemented to use message bus health checks
+    return {
+      status: HealthStatus.DEGRADED,
+      message: 'Agent health check temporarily disabled (Phase 2 migration)',
+      timestamp: new Date().toISOString(),
+      responseTime,
+      details: {
+        note: 'Will be reimplemented via message bus in future phase'
+      }
+    };
+
+    /* Phase 2: Commented out for migration
     try {
       const registeredAgents = await this.agentDispatcher.getRegisteredAgents();
       const responseTime = Date.now() - start;
@@ -267,6 +282,7 @@ export class HealthCheckService {
         responseTime
       };
     }
+    */
   }
 
   /**

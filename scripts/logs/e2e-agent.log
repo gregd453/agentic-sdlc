@@ -1,0 +1,31 @@
+
+> @agentic-sdlc/e2e-agent@0.1.0 start
+> tsx src/run-agent.ts
+
+📦 @agentic-sdlc/shared-types loaded (Phase 5)
+🔖 Version: 1.0.0
+[PHASE-3] Initializing OrchestratorContainer for e2e agent...
+{"ts":"2025-11-13T16:43:45.894Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-e2e"}
+{"ts":"2025-11-13T16:43:45.894Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-13T16:43:45.910Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T16:43:45.910Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T16:43:45.910Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T16:43:45.910Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T16:43:45.911Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T16:43:45.911Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T16:43:45.911Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T16:43:45.911Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T16:43:45.911Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T16:43:45.911Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-e2e"}
+{"ts":"2025-11-13T16:43:45.915Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+[PHASE-3] OrchestratorContainer initialized successfully
+{"ts":"2025-11-13T16:43:45.920Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:e2e:tasks"}
+{"ts":"2025-11-13T16:43:45.921Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:e2e:tasks","consumerGroup":"agent-e2e-group","consumerName":"consumer-1763052225920"}
+{"ts":"2025-11-13T16:43:45.921Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:e2e:tasks","count":1}
+✅ E2E test agent started successfully
+📡 Listening for E2E test tasks...
+[2025-11-13 16:43:45] [32mINFO[39m (e2e-f47dd892/55379): [36m[PHASE-3] Initializing agent with message bus[39m
+[2025-11-13 16:43:45] [32mINFO[39m (e2e-f47dd892/55379): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+[2025-11-13 16:43:45] [32mINFO[39m (e2e-f47dd892/55379): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+[2025-11-13 16:43:45] [32mINFO[39m (e2e-f47dd892/55379): [36mRegistered with orchestrator[39m
+[2025-11-13 16:43:45] [32mINFO[39m (e2e-f47dd892/55379): [36m[PHASE-3] Agent initialized successfully with message bus[39m

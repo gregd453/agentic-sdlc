@@ -2,7 +2,6 @@ import 'dotenv/config';
 import { startServer } from './server';
 import { connectDatabase } from './db/client';
 import { logger } from './utils/logger';
-import { bootstrapOrchestrator } from './hexagonal/bootstrap';
 
 // Phase 3: Export hexagonal module for agents to import
 export * from './hexagonal';
@@ -14,13 +13,10 @@ async function main() {
     // Connect to database
     await connectDatabase();
 
-    // Initialize OrchestratorContainer (Phase 1)
-    logger.info('[PHASE-1] Initializing OrchestratorContainer...');
-    const container = await bootstrapOrchestrator();
-    logger.info('[PHASE-1] OrchestratorContainer initialized successfully');
-
-    // Start server with container (Phase 1: messageBus now available)
-    await startServer(container);
+    // Phase 3: Server now creates and manages its own OrchestratorContainer
+    // bootstrapOrchestrator() is only needed if running standalone orchestration services
+    // For workflow orchestration, server.ts creates the container internally
+    await startServer();
 
     logger.info('Orchestrator started successfully');
   } catch (error) {

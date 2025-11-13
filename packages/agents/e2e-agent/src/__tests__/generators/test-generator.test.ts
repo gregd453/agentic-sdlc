@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { scenarioToPlaywrightCode, generateTestFiles } from '../../generators/test-generator';
-import { TestScenario, PageObject } from '../../types';
+import { TestScenario } from '../../types';
 
 describe('Test Generator', () => {
   describe('scenarioToPlaywrightCode', () => {

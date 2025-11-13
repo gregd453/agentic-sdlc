@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { PrismaClient } from '@prisma/client';
 import { EventBus } from '../events/event-bus';
-import { AgentDispatcherService } from './agent-dispatcher.service';
+// Phase 2: AgentDispatcherService removed - message bus cleanup handled by OrchestratorContainer
 import { PipelineExecutorService } from './pipeline-executor.service';
 import { PipelineWebSocketHandler } from '../websocket/pipeline-websocket.handler';
 import { WorkflowService } from './workflow.service';
@@ -56,7 +56,7 @@ export class GracefulShutdownService {
     private readonly fastify: FastifyInstance,
     private readonly prisma: PrismaClient,
     private readonly eventBus: EventBus,
-    private readonly agentDispatcher: AgentDispatcherService,
+    // Phase 2: agentDispatcher parameter removed (no longer needed)
     private readonly pipelineExecutor: PipelineExecutorService,
     private readonly pipelineWebSocketHandler: PipelineWebSocketHandler,
     private readonly workflowService: WorkflowService
@@ -212,15 +212,7 @@ export class GracefulShutdownService {
       errors.push(msg);
     }
 
-    // Disconnect agent dispatcher
-    try {
-      await this.agentDispatcher.disconnect();
-      logger.info('Agent dispatcher disconnected');
-    } catch (error) {
-      const msg = `Agent dispatcher disconnect failed: ${error}`;
-      logger.error(msg);
-      errors.push(msg);
-    }
+    // Phase 2: Agent dispatcher cleanup removed - handled by OrchestratorContainer.shutdown()
 
     // Disconnect event bus (Redis)
     try {

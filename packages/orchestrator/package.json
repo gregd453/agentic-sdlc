@@ -12,6 +12,10 @@
     "./hexagonal": {
       "types": "./dist/hexagonal/index.d.ts",
       "default": "./dist/hexagonal/index.js"
+    },
+    "./hexagonal/bootstrap": {
+      "types": "./dist/hexagonal/bootstrap.d.ts",
+      "default": "./dist/hexagonal/bootstrap.js"
     }
   },
   "scripts": {

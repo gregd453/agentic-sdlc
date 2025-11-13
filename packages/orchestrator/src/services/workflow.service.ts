@@ -17,27 +17,28 @@ export class WorkflowService {
   private eventHandlers: Map<string, (event: any) => Promise<void>> = new Map();
   private processedTasks: Set<string> = new Set(); // Track completed tasks for idempotency
   private redisClient: Redis;
-  private messageBus?: IMessageBus; // Phase 1: Message bus from container
+  private messageBus: IMessageBus; // Phase 2: Message bus is required (no longer optional)
 
   constructor(
     private repository: WorkflowRepository,
     private eventBus: EventBus,
     private stateMachineService: WorkflowStateMachineService,
     redisUrl: string = process.env.REDIS_URL || 'redis://127.0.0.1:6379',
-    messageBus?: IMessageBus // Phase 3: messageBus now required for task dispatch
+    messageBus: IMessageBus // Phase 2: messageBus is now REQUIRED (not optional)
   ) {
+    // Phase 2: Validate messageBus is provided
+    if (!messageBus) {
+      throw new Error('[PHASE-2] WorkflowService requires IMessageBus - cannot initialize without it');
+    }
+
     this.messageBus = messageBus;
     logger.info('[WF:CONSTRUCTOR:START] WorkflowService instance created', {
       timestamp: new Date().toISOString(),
-      messageBusAvailable: !!messageBus,
+      messageBusAvailable: true,
       stack: new Error().stack?.split('\n').slice(0, 5).join(' | ')
     });
 
-    if (messageBus) {
-      logger.info('[PHASE-3] WorkflowService received messageBus from container');
-    } else {
-      logger.warn('[PHASE-3] WorkflowService initialized WITHOUT messageBus - task dispatch will fail');
-    }
+    logger.info('[PHASE-2] WorkflowService initialized with required messageBus');
 
     this.decisionGateService = new DecisionGateService();
 
@@ -47,11 +48,9 @@ export class WorkflowService {
     this.setupEventHandlers();
 
     // Phase 2: Set up message bus subscription for agent results (async, non-blocking)
-    if (messageBus) {
-      this.setupMessageBusSubscription().catch(err => {
-        logger.error('[PHASE-2] Failed to initialize message bus subscription', { error: err });
-      });
-    }
+    this.setupMessageBusSubscription().catch(err => {
+      logger.error('[PHASE-2] Failed to initialize message bus subscription', { error: err });
+    });
   }
 
   private setupEventHandlers(): void {
@@ -138,9 +137,10 @@ export class WorkflowService {
     }
     this.eventHandlers.clear();
 
-    // Phase 3: Agent dispatcher removed - no longer needed
+    // Phase 2: AgentDispatcherService completely removed
+    // Message bus cleanup is handled by OrchestratorContainer.shutdown()
 
-    // Disconnect Redis and Redlock clients
+    // Disconnect Redis client
     if (this.redisClient) {
       await this.redisClient.quit();
     }

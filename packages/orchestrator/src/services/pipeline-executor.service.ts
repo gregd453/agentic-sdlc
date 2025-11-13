@@ -8,7 +8,7 @@ import {
   PipelineDefinitionSchema
 } from '../types/pipeline.types';
 import { EventBus } from '../events/event-bus';
-import { AgentDispatcherService } from './agent-dispatcher.service';
+// Phase 2: AgentDispatcherService removed - pipeline executor will be refactored in future phase
 import { QualityGateService } from './quality-gate.service';
 import { logger, generateTraceId } from '../utils/logger';
 import { metrics } from '../utils/metrics';
@@ -37,7 +37,7 @@ export class PipelineExecutorService {
 
   constructor(
     private eventBus: EventBus,
-    private agentDispatcher: AgentDispatcherService,
+    // Phase 2: agentDispatcher parameter removed (will be refactored with message bus)
     private qualityGateService: QualityGateService
   ) {}
 
@@ -335,6 +335,11 @@ export class PipelineExecutorService {
     await this.publishUpdate(execution, 'stage_started', { stage_id: stage.id });
 
     try {
+      // Phase 2: Pipeline executor needs refactoring to use message bus
+      // This is a temporary placeholder - full refactor in future phase
+      throw new Error('[PHASE-2] Pipeline executor not yet refactored to use message bus architecture. This feature will be reimplemented in a future phase.');
+
+      /* Phase 2: Commented out during migration - needs message bus refactor
       // Dispatch task to agent
       const taskId = randomUUID();
       // TODO: Fix AgentDispatcherService.dispatchTask to return agent result
@@ -428,6 +433,7 @@ export class PipelineExecutorService {
       });
 
       return result;
+      */ // End of Phase 2 commented code
 
     } catch (error) {
       result.status = 'failed';

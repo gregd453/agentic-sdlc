@@ -39,20 +39,29 @@ Note: Original requirements can be found in EPCC_PLAN.md if it exists.
 
 ### Code Quality
 ```bash
-# Run all tests
-npm test  # or pytest
+# Run all tests across monorepo
+turbo run test
 
 # Check code coverage
-npm run coverage  # or pytest --cov
+turbo run test:coverage
+
+# Type checking (TypeScript)
+turbo run typecheck
 
 # Run linters
-npm run lint  # or flake8/black/isort
+turbo run lint
+
+# Build all packages
+turbo run build
 
 # Security scan
-npm audit  # or bandit -r .
+pnpm audit
 
 # Remove debug code
-grep -r "console.log\|debugger\|TODO\|FIXME" src/
+grep -r "console.log\|debugger\|TODO\|FIXME" packages/
+
+# Verify no build artifacts in git
+git status --ignored
 ```
 
 ### Documentation Check
@@ -60,11 +69,17 @@ grep -r "console.log\|debugger\|TODO\|FIXME" src/
 # Ensure documentation is updated
 ls -la EPCC_*.md
 
+# Check if CLAUDE.md needs updates (very important!)
+cat CLAUDE.md
+
 # Check if README needs updates
 grep -i "[feature-name]" README.md
 
-# Verify API documentation
-# Check inline comments
+# Verify TSDoc comments in code
+grep -r "@param\|@returns\|@throws" packages/[package]/src/
+
+# Check package.json exports if adding new modules
+cat packages/[package]/package.json
 ```
 
 ## Output File: EPCC_COMMIT.md
@@ -97,16 +112,28 @@ Generate `EPCC_COMMIT.md` to document the complete change:
 
 ## Files Changed
 ```
-Modified: src/feature.js
-Added: src/feature.test.js
-Updated: README.md
-Created: docs/feature.md
+Modified:
+  packages/orchestrator/src/hexagonal/ports/IFeature.ts
+  packages/orchestrator/src/hexagonal/adapters/FeatureAdapter.ts
+  packages/orchestrator/src/services/feature.service.ts
+
+Added:
+  packages/orchestrator/src/hexagonal/__tests__/feature.test.ts
+  packages/agents/my-agent/src/my-agent.ts
+
+Updated:
+  packages/orchestrator/package.json (added dependency)
+  packages/agents/my-agent/package.json (added dependency)
+  CLAUDE.md (updated status)
+  README.md
 ```
 
 ## Testing Summary
-- Unit Tests: ✅ All passing (X tests)
-- Integration Tests: ✅ All passing (X tests)
-- E2E Tests: ✅ All passing (X tests)
+- Unit Tests (Vitest): ✅ All passing (X tests)
+- Integration Tests (Vitest): ✅ All passing (X tests)
+- E2E Tests (Pipeline): ✅ All passing (X workflows)
+- TypeScript: ✅ No compilation errors
+- Build: ✅ All packages built successfully
 - Coverage: 95% (increased from 92%)
 
 ## Performance Impact
@@ -131,12 +158,28 @@ Created: docs/feature.md
 ## Commit Message
 
 ```
-feat: Add [feature name] with [key capability]
+feat(orchestrator): Add [feature name] with [key capability]
 
-- Implement [specific functionality]
-- Add comprehensive test coverage
-- Update documentation
-- Improve performance by X%
+- Implement [specific functionality] in hexagonal/[layer]
+- Add message bus integration for [purpose]
+- Update @agentic-sdlc/[package] with [changes]
+- Add comprehensive test coverage (Vitest)
+- Update documentation and CLAUDE.md
+
+Affected packages:
+- @agentic-sdlc/orchestrator
+- @agentic-sdlc/[agent-name]
+- @agentic-sdlc/shared-types
+
+Architecture:
+- Hexagonal layer: [core/ports/adapters/orchestration]
+- Message bus: [pub/sub pattern details]
+- Agent coordination: [details]
+
+Testing:
+- Unit tests: X added
+- Integration tests: X added
+- E2E validation: ./scripts/run-pipeline-test.sh
 
 Closes #[issue-number]
 
@@ -144,6 +187,10 @@ Based on:
 - Exploration: EPCC_EXPLORE.md
 - Plan: EPCC_PLAN.md
 - Implementation: EPCC_CODE.md
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ## Pull Request Description
@@ -304,31 +351,54 @@ Brief description of changes
 
 ### Clean Up EPCC Files
 ```bash
-# Archive EPCC documents
+# Archive EPCC documents (optional)
 mkdir -p .epcc-archive/[feature-name]
 mv EPCC_*.md .epcc-archive/[feature-name]/
 
-# Or keep for reference
+# Or keep for reference (recommended for this project)
 git add EPCC_*.md
 git commit -m "docs: Add EPCC documentation for [feature]"
+
+# Update CLAUDE.md with session summary
+# This is CRITICAL - CLAUDE.md tracks project state
 ```
 
 ## Integration with CI/CD
 
 ### Automated Checks
 ```yaml
-# .github/workflows/ci.yml
-- name: Run Tests
-  run: npm test
-  
-- name: Check Coverage
-  run: npm run coverage
-  
-- name: Lint Code
-  run: npm run lint
-  
-- name: Security Scan
-  run: npm audit
+# .github/workflows/ci.yml (example for this monorepo)
+- name: Install pnpm
+  uses: pnpm/action-setup@v2
+  with:
+    version: 8
+
+- name: Install dependencies
+  run: pnpm install
+
+- name: Type check
+  run: turbo run typecheck
+
+- name: Run tests
+  run: turbo run test
+
+- name: Check coverage
+  run: turbo run test:coverage
+
+- name: Lint code
+  run: turbo run lint
+
+- name: Build all packages
+  run: turbo run build
+
+- name: Security scan
+  run: pnpm audit
+
+- name: E2E tests
+  run: |
+    ./scripts/env/start-dev.sh
+    ./scripts/run-pipeline-test.sh "CI Test"
+    ./scripts/env/stop-dev.sh
 ```
 
 ## Final Output

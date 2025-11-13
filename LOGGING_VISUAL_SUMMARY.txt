@@ -1,0 +1,423 @@
+================================================================================
+                    LOGGING PATTERNS VISUAL SUMMARY
+                         Agent SDLC Codebase
+================================================================================
+
+DISTRIBUTION OF LOGGERS ACROSS THE CODEBASE
+────────────────────────────────────────────────────────────────────────────
+
+                        Pino Logger
+                      (Orchestrator)
+                      /            \
+                   /                  \
+            Services              Middleware
+            (15+ files)           & Observability
+                |                      |
+         workflow.service          .observe()
+         health-check              .metrics
+         scaffold-workflow
+         pipeline-executor              |
+         graceful-shutdown         [REQUEST TRACING]
+         decision-gate             - Trace ID
+         quality-gate              - Request ID
+         (+ 9 more)                - Correlation ID
+                                   - User ID
+                |                  - Session ID
+             [130+                  |
+             LOG CALLS]        [Pretty-print dev]
+                                [JSON prod]
+
+
+                     Scoped JSON Logger
+                    (Hexagonal Core)
+                           |
+                    redis-bus.adapter
+                    /
+                 [20 logs]
+                 /
+            [PHASE-3]
+            Stream consumer
+            Message handling
+
+
+                  Functional Logger
+                  (Shared Utils)
+                       |
+                  redis-core
+                  redis-subscription
+                       |
+                   [5 logs]
+                   /
+              [Testing]
+              makeLoggerWith()
+
+
+                console.log
+              (Agent Startup)
+                     |
+         scaffold-agent/run-agent
+         validation-agent/run-agent
+         e2e-agent/run-agent
+                     |
+                [10 logs]
+                     |
+          [PHASE-3] markers
+          Emoji status
+
+
+================================================================================
+PHASE-3 DIAGNOSTIC MARKER DISTRIBUTION
+================================================================================
+
+ORCHESTRATOR                    REDIS BUS ADAPTER               AGENT BASE
+────────────────────────────────────────────────────────────────────────────
+[PHASE-3]                       [PHASE-3]                       [PHASE-3]
+  |                               |                               |
+  +---> messageBus received       +---> Consumer group create     +---> Init
+  |                               |                               |
+  +---> messageBus NOT available  +---> Stream starting           +---> Subscribe
+  |                               |                               |
+  +---> Task dispatched           +---> Message processing        +---> Task received
+  |                               |                               |
+  +---> NO messageBus error       +---> Handler error             +---> Error
+  |                               |                               |
+  (4 markers)                     +---> Failed to process         +---> Subscribe OK
+                                  |                               |
+                                  +---> Retry/error states        +---> Init complete
+                                  |                               |
+                                  +---> Consumer stopped          +---> Result mirror
+                                  |                               |
+                                  (9 markers)                     +---> Mirror error
+                                                                  |
+                                                                  (8 markers)
+
+                                AGENT STARTUP (6 markers)
+                                /   |   \
+                         Scaffold  Validation  E2E
+                         (2 each)  (2 each)   (2 each)
+
+
+TOTAL PHASE-3 MARKERS: 27 ACROSS ALL LAYERS
+
+
+================================================================================
+LOGGER ARCHITECTURE COMPARISON
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          PINO (ORCHESTRATOR)                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Features:              Capabilities:          Output:                      │
+│  • 6 log levels         • AsyncLocalStorage    Dev: Pretty-printed +         │
+│  • Child loggers        • Distributed tracing    colors                      │
+│  • Metrics              • Request context      Prod: JSON-formatted         │
+│  • Duration tracking    • Error stacks         • ISO timestamps             │
+│  • Pretty-print (dev)   • Performance metrics  • Trace IDs included         │
+│                                                                              │
+│  Usage Files: 25+                                  Log Instances: ~130+      │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      SCOPED JSON (HEXAGONAL)                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Features:              Capabilities:          Output:                      │
+│  • 4 log levels         • Scope-based org      Always JSON format:          │
+│  • Simple API           • Lightweight          {ts, scope, msg,             │
+│  • console.log based    • Custom output        level, meta}                 │
+│  • No child loggers     • Testing ready        Plain console.log            │
+│  • Correlation IDs      • Minimal overhead     No pretty-print              │
+│                                                                              │
+│  Usage Files: 1 (redis-bus.adapter)            Log Instances: ~20           │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    FUNCTIONAL (SHARED UTILS)                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Features:              Capabilities:          Output:                      │
+│  • No log levels        • Factory pattern      JSON to stream:              │
+│  • Single Log type      • Testing support      {ts, scope, msg, meta}       │
+│  • makeLoggerWith()     • Custom output        Custom output support        │
+│  • Ultra-minimal        • for tests            for unit tests               │
+│  • 39 LOC total         • Scope tracking       No levels, timestamps        │
+│                                                only                         │
+│  Usage Files: 2 (redis-core, tests)            Log Instances: ~5            │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       CONSOLE.LOG (STARTUP)                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Features:              Output:                                              │
+│  • Direct stdout        Raw console.log                                     │
+│  • No JSON parsing      Emoji support (🚀, ✅, ❌)                           │
+│  • Instant feedback     [PHASE-3] markers                                   │
+│  • No overhead          No timestamps                                       │
+│  • Emoji status         No structure                                        │
+│                                                                              │
+│  Usage Files: 3 (run-agent.ts files)           Log Instances: ~10           │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+ERROR HANDLING PATTERNS
+================================================================================
+
+PATTERN A: instanceof Error Check (RECOMMENDED)
+──────────────────────────────────────────────
+try {
+  operation();
+} catch (error) {
+  logger.error('Failed', {
+    error: error instanceof Error ? error.message : String(error),
+    stack: error instanceof Error ? error.stack : undefined
+  });
+}
+Used in: 12+ instances (workflow.service, health-check, base-agent)
+
+
+PATTERN B: String() Conversion
+───────────────────────────────
+.catch(e => 
+  log.error('Error', { error: String(e) })
+)
+Used in: 8+ instances (redis-bus.adapter)
+
+
+PATTERN C: Direct Pass-Through
+───────────────────────────────
+.catch(err => {
+  logger.error('Error', { error: err });
+})
+Used in: 5+ instances (workflow.service async)
+
+
+PATTERN D: Full Error Object
+─────────────────────────────
+logger.error('Error', error, {
+  message: error.message,
+  stack: error.stack,
+  name: error.name
+})
+Used in: 3+ instances (middleware/observability)
+
+
+RECOMMENDATION: Standardize on Pattern A across entire codebase
+
+
+================================================================================
+LOG LEVEL DISTRIBUTION
+================================================================================
+
+ORCHESTRATOR (Pino) - ~130+ log instances
+────────────────────────────────────────
+INFO  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  ~65% (85+)
+      State transitions, task dispatch, business logic
+
+WARN  ▓▓▓▓▓▓▓▓                                ~15% (20+)
+      Missing resources, retry attempts, defensive gates
+
+ERROR ▓▓▓▓▓▓▓▓▓▓                             ~20% (25+)
+      Exceptions, failed operations, schema violations
+
+
+HEXAGONAL (Scoped JSON) - ~20 log instances
+────────────────────────────────────────
+INFO  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓          ~60% (12+)
+      Consumer groups, message processing, stream ops
+
+WARN  ▓▓▓▓                                   ~15% (3)
+      Group creation failures, missing groups
+
+ERROR ▓▓▓▓▓▓▓▓                               ~25% (5+)
+      Parse errors, handler crashes, consumer errors
+
+
+================================================================================
+CONTEXT PROPAGATION METHODS
+================================================================================
+
+METHOD 1: AsyncLocalStorage (Orchestrator)
+───────────────────────────────────────────
+Middleware sets context → Automatically injected in all logs
+Benefits: No manual propagation, inherited by async calls
+
+  Request Context (AsyncLocalStorage)
+          |
+          +----> requestId
+          +----> traceId
+          +----> correlationId
+          +----> userId
+          +----> sessionId
+          |
+     [Automatic injection via logger.mixin()]
+
+
+METHOD 2: Explicit Parameters (Redis Bus)
+──────────────────────────────────────────
+Each log call explicitly includes context
+Benefits: Explicit about what's logged, no hidden state
+
+  log.info('Message', {
+    workflow_id,
+    task_id,
+    channel,
+    error
+  })
+
+
+METHOD 3: Child Loggers (Scoped)
+────────────────────────────────
+Create child logger with scope context
+Benefits: Inherits parent context, clean API
+
+  const log = createLogger('redis-bus')
+  log.info('Message')  // scope: 'redis-bus' included
+
+
+================================================================================
+KEY INCONSISTENCIES
+================================================================================
+
+ISSUE 1: Timestamp Field Names
+──────────────────────────────
+Pino:       "timestamp": "2025-11-13T10:30:45.123Z"
+Scoped:     "ts": "2025-11-13T10:30:45.123Z"
+Functional: "ts": "2025-11-13T10:30:45.123Z"
+
+ISSUE 2: Log Level Format
+─────────────────────────
+Pino:       "level": "info"
+Scoped:     "level": "INFO"
+Functional: (no level field)
+
+ISSUE 3: Scope Indicator
+────────────────────────
+Pino:       "component": "workflow-service"
+Scoped:     "scope": "redis-bus"
+Functional: "scope": "redis-core"
+
+ISSUE 4: Error Serialization Inconsistency
+──────────────────────────────────────────
+Pattern A: error.message string only
+Pattern B: String(e) conversion
+Pattern C: Direct error object
+Pattern D: Full {message, stack, name}
+
+ISSUE 5: Missing Try-Catch on Task Dispatch
+───────────────────────────────────────────
+workflow.service.ts:478
+  await this.messageBus.publish(...)  // No error handling
+  
+Risk: Task lost silently if publish fails
+
+
+================================================================================
+CONSOLIDATION ROADMAP
+================================================================================
+
+LOW-HANGING FRUIT (1-2 hours each)
+──────────────────────────────────
+
+1. Add Error Handling to Task Dispatch
+   File: workflow.service.ts:478
+   Fix:  Wrap publish in try-catch
+   
+2. Standardize Error Serialization
+   Pattern: Use Pattern A everywhere
+   Impact: 4 error handling patterns → 1
+   
+3. Convert Agent Startup to Structured Logger
+   Files: run-agent.ts (3 files)
+   Preserve: [PHASE-3] markers
+
+
+MEDIUM-EFFORT (4-8 hours)
+─────────────────────────
+
+4. Create Unified Logger Interface
+   New: @agentic-sdlc/shared-logger
+   Export: Single interface + factory
+   
+5. Migrate Redis Bus Adapter
+   From:   Scoped JSON logger
+   To:     Pino with logger.child()
+
+
+FULL CONSOLIDATION (16+ hours)
+──────────────────────────────
+
+6. Replace All Three Logger Implementations
+   Create:  Single logger package
+   Unify:   All to Pino v8
+   Add:     Testing variant (makeLoggerWith)
+
+
+================================================================================
+DOCUMENT LOCATION REFERENCE
+================================================================================
+
+Analysis Documents Created:
+──────────────────────────
+1. LOGGING_PATTERNS_ANALYSIS.md
+   - Comprehensive 12-section analysis
+   - Logger implementations detailed
+   - Error patterns documented
+   - Consolidation recommendations
+   - 21 KB file
+
+2. LOGGING_PATTERNS_QUICK_REFERENCE.md
+   - Quick lookup table
+   - File locations and line numbers
+   - [PHASE-3] marker distribution
+   - Key statistics and audit checklist
+   - 9.7 KB file
+
+3. LOGGING_VISUAL_SUMMARY.txt (this file)
+   - Visual architecture diagrams
+   - Distribution charts
+   - Comparison matrices
+   - Roadmap visualization
+
+
+================================================================================
+SUMMARY STATISTICS
+================================================================================
+
+Logger Implementation Count:          3 distinct implementations
+Logger Definition Files:              4 files
+Files Using Loggers:                  25+ files
+Total Log Instances:                  ~165+ lines of logging
+
+Diagnostic Markers:
+  [PHASE-3] Markers:                  27 total
+  [SESSION #*] Markers:               17+ total
+
+Error Handling:
+  Distinct Patterns:                  4 patterns
+  Pattern A Usage:                    12+ instances
+  Pattern B Usage:                    8+ instances
+  Pattern C Usage:                    5+ instances
+  Pattern D Usage:                    3+ instances
+
+Log Level Distribution:
+  INFO logs:                          ~65-70%
+  WARN logs:                          ~15-20%
+  ERROR logs:                         ~15-25%
+
+Context Propagation:
+  Methods:                            3 different approaches
+  Timestamp Field Names:              2 variations
+  Log Level Formats:                  2 variations
+  Scope Indicators:                   2 variations
+
+
+================================================================================
+END OF VISUAL SUMMARY
+================================================================================

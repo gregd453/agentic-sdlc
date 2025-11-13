@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import 'dotenv/config';
-import { OrchestratorContainer } from '@agentic-sdlc/orchestrator';
+import { OrchestratorContainer } from '@agentic-sdlc/orchestrator/hexagonal/bootstrap';
 import { ValidationAgent } from './validation-agent';
 
 /**

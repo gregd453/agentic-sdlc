@@ -54,6 +54,9 @@ cat EPCC_PLAN.md
 
 # Check current task status
 grep -A 5 "Task Breakdown" EPCC_PLAN.md
+
+# Review CLAUDE.md for current project status
+cat CLAUDE.md
 ```
 
 ### Step 2: Set Up Development Environment
@@ -61,59 +64,136 @@ grep -A 5 "Task Breakdown" EPCC_PLAN.md
 # Create feature branch
 git checkout -b feature/[task-name]
 
-# Set up test watchers
-npm test --watch  # or pytest-watch
+# Install dependencies (if package.json changed)
+pnpm install
 
-# Open relevant files
-code src/[relevant-files]
+# Set up test watchers (Vitest)
+pnpm test --watch  # Watch mode for tests
+
+# Build affected packages
+turbo run build --filter=@agentic-sdlc/[package-name]
+
+# Start development environment (if needed for E2E)
+./scripts/env/start-dev.sh
+
+# Open relevant files in your editor
+# Focus on the specific package and hexagonal layer
 ```
 
 ### Step 3: Test-Driven Development (if --tdd flag)
-```python
-# 1. Write failing test first
-def test_new_feature():
-    result = new_feature(input_data)
-    assert result == expected_output
+```typescript
+// 1. Write failing test first (Vitest)
+// File: packages/[package]/src/__tests__/feature.test.ts
+import { describe, it, expect } from 'vitest'
+import { newFeature } from '../feature'
 
-# 2. Run test to confirm it fails
-pytest test_new_feature.py
+describe('newFeature', () => {
+    it('should process input correctly', () => {
+        const result = newFeature(inputData)
+        expect(result).toEqual(expectedOutput)
+    })
+})
 
-# 3. Write minimal code to pass
-def new_feature(data):
+// 2. Run test to confirm it fails
+// pnpm test feature.test.ts
+
+// 3. Write minimal code to pass
+// File: packages/[package]/src/feature.ts
+export function newFeature(data: InputType): OutputType {
     return process(data)
+}
 
-# 4. Refactor while keeping tests green
+// 4. Refactor while keeping tests green
+// 5. Build to verify TypeScript compilation
+// turbo run build --filter=@agentic-sdlc/[package]
 ```
 
 ### Step 4: Implementation Patterns
 
-#### Pattern: Input Validation
-```python
-def process_data(input_data):
-    # Always validate inputs
-    if not validate_input(input_data):
-        raise ValueError("Invalid input")
-    
-    # Process with confidence
-    return transform(input_data)
+#### Pattern: Hexagonal Architecture - Port (Interface)
+```typescript
+// File: packages/orchestrator/src/hexagonal/ports/IFeaturePort.ts
+export interface IFeaturePort {
+    processData(input: InputType): Promise<OutputType>
+    validateData(input: InputType): boolean
+}
 ```
 
-#### Pattern: Error Handling
-```python
-try:
-    result = risky_operation()
-except SpecificError as e:
-    logger.error(f"Operation failed: {e}")
-    return fallback_value
-finally:
-    cleanup_resources()
+#### Pattern: Hexagonal Architecture - Adapter (Implementation)
+```typescript
+// File: packages/orchestrator/src/hexagonal/adapters/FeatureAdapter.ts
+import { IFeaturePort } from '../ports/IFeaturePort'
+
+export class FeatureAdapter implements IFeaturePort {
+    async processData(input: InputType): Promise<OutputType> {
+        if (!this.validateData(input)) {
+            throw new Error('Invalid input')
+        }
+        return await this.transform(input)
+    }
+
+    validateData(input: InputType): boolean {
+        // Validation logic
+        return true
+    }
+
+    private async transform(input: InputType): Promise<OutputType> {
+        // Transformation logic
+    }
+}
 ```
 
-#### Pattern: Logging
-```python
-logger.info(f"Starting process for {item_id}")
-logger.debug(f"Processing with params: {params}")
-logger.error(f"Failed to process: {error}")
+#### Pattern: Service Layer
+```typescript
+// File: packages/orchestrator/src/services/feature.service.ts
+import { IMessageBus } from '../hexagonal/ports/IMessageBus'
+
+export class FeatureService {
+    constructor(
+        private readonly messageBus: IMessageBus,
+        private readonly featureAdapter: IFeaturePort
+    ) {}
+
+    async execute(input: InputType): Promise<void> {
+        try {
+            const result = await this.featureAdapter.processData(input)
+
+            // Publish result via message bus
+            await this.messageBus.publish('feature:result', result, {
+                key: input.id,
+                mirrorToStream: 'stream:feature:results'
+            })
+        } catch (error) {
+            console.error('[FeatureService] Failed to process:', error)
+            throw error
+        }
+    }
+}
+```
+
+#### Pattern: Message Bus Integration
+```typescript
+// Subscribe to messages
+await this.messageBus.subscribe(
+    'agent:scaffold:tasks',
+    async (message) => {
+        await this.handleTask(message)
+    },
+    {
+        consumerGroup: 'agent-scaffold-group',
+        fromBeginning: false
+    }
+)
+
+// Publish messages
+await this.messageBus.publish(
+    'agent:scaffold:results',
+    resultData,
+    {
+        key: workflowId,
+        mirrorToStream: 'stream:agent:scaffold:results'
+    }
+)
 ```
 
 ## Code Quality Checklist
@@ -132,11 +212,15 @@ logger.error(f"Failed to process: {error}")
 - [ ] Log important operations
 
 ### After Coding
-- [ ] Run all tests
-- [ ] Check code coverage
-- [ ] Run linters
+- [ ] Run all tests: `pnpm test` or `turbo run test`
+- [ ] Check code coverage: `turbo run test:coverage`
+- [ ] Build packages: `turbo run build`
+- [ ] Run type checking: `turbo run typecheck`
+- [ ] Run linters: `turbo run lint`
+- [ ] Update package.json if new dependencies added
 - [ ] Update documentation
 - [ ] Review for security issues
+- [ ] Run E2E tests if applicable: `./scripts/run-pipeline-test.sh "Test Name"`
 
 ## Output File: EPCC_CODE.md
 
@@ -194,47 +278,80 @@ Document your implementation progress in `EPCC_CODE.md`:
 
 ## Common Implementation Patterns
 
-### API Endpoint Implementation
-```python
-@app.route('/api/resource', methods=['POST'])
-@authenticate
-@validate_input
-def create_resource():
-    try:
-        data = request.get_json()
-        resource = ResourceService.create(data)
-        return jsonify(resource), 201
-    except ValidationError as e:
-        return jsonify({'error': str(e)}), 400
-    except Exception as e:
-        logger.error(f"Failed to create resource: {e}")
-        return jsonify({'error': 'Internal error'}), 500
+### Agent Implementation
+```typescript
+// File: packages/agents/[agent-name]/src/[agent-name]-agent.ts
+import { BaseAgent } from '@agentic-sdlc/base-agent'
+import { IMessageBus } from '@agentic-sdlc/orchestrator/hexagonal'
+
+export class MyAgent extends BaseAgent {
+    constructor(messageBus: IMessageBus) {
+        super(messageBus, {
+            type: 'my-agent',
+            version: '1.0.0',
+            capabilities: ['capability1', 'capability2']
+        })
+    }
+
+    async processTask(task: TaskType): Promise<ResultType> {
+        console.log(`[MyAgent] Processing task: ${task.id}`)
+
+        // Implementation logic
+        const result = await this.doWork(task)
+
+        // Report result via message bus
+        await this.reportResult(task.workflowId, result)
+
+        return result
+    }
+}
 ```
 
-### Database Operations
-```python
-def save_to_database(data):
-    with get_db_connection() as conn:
-        try:
-            conn.begin()
-            result = conn.execute(query, data)
-            conn.commit()
-            return result
-        except Exception as e:
-            conn.rollback()
-            raise DatabaseError(f"Save failed: {e}")
+### Container Integration
+```typescript
+// File: packages/agents/[agent-name]/src/run-agent.ts
+import { OrchestratorContainer } from '@agentic-sdlc/orchestrator/hexagonal'
+import { MyAgent } from './my-agent'
+
+async function main() {
+    const container = new OrchestratorContainer({
+        redisUrl: process.env.REDIS_URL || 'redis://localhost:6380',
+        redisNamespace: 'agent-my-agent',
+        coordinators: {}
+    })
+
+    await container.initialize()
+    const messageBus = container.getBus()
+
+    const agent = new MyAgent(messageBus)
+    await agent.start()
+
+    console.log('[MyAgent] Started successfully')
+}
+
+main().catch(console.error)
 ```
 
-### Async Operations
-```python
-async def process_async(items):
-    tasks = []
-    for item in items:
-        task = asyncio.create_task(process_item(item))
-        tasks.append(task)
-    
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-    return [r for r in results if not isinstance(r, Exception)]
+### Dependency Injection Pattern
+```typescript
+// File: packages/orchestrator/src/hexagonal/bootstrap.ts
+export class OrchestratorContainer {
+    private messageBus: IMessageBus
+    private stateManager: IStateManager
+
+    async initialize(): Promise<void> {
+        // Initialize dependencies
+        this.messageBus = new RedisMessageBus(this.config)
+        this.stateManager = new PostgresStateManager(this.config)
+
+        await this.messageBus.connect()
+        await this.stateManager.connect()
+    }
+
+    getBus(): IMessageBus {
+        return this.messageBus
+    }
+}
 ```
 
 ## Integration with Other Phases

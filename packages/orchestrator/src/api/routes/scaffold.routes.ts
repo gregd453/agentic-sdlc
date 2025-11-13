@@ -33,9 +33,8 @@ type CreateScaffoldRequest = z.infer<typeof CreateScaffoldRequestSchema>;
 
 export const scaffoldRoutes: FastifyPluginAsync<any> = async (fastify, options: any) => {
   const repository = new WorkflowRepository(prisma);
-  // Use the global agentDispatcher instance from server.ts instead of creating a new one
-  const agentDispatcher = options.agentDispatcher;
-  const scaffoldService = new ScaffoldWorkflowService(repository, agentDispatcher);
+  // Phase 2: agentDispatcher removed - ScaffoldWorkflowService no longer uses it
+  const scaffoldService = new ScaffoldWorkflowService(repository);
 
   /**
    * Create a new scaffold workflow
@@ -205,11 +204,8 @@ export const scaffoldRoutes: FastifyPluginAsync<any> = async (fastify, options: 
     }
   );
 
-  // Note: Result handlers are now registered per-workflow in scaffold-workflow.service.ts
-  // This ensures handlers are registered with the workflow_id key, not the agent type
+  // Phase 2: Result handlers removed - message bus handles subscription lifecycle
+  // Cleanup is handled by OrchestratorContainer.shutdown()
 
-  // Cleanup on close
-  fastify.addHook('onClose', async () => {
-    await agentDispatcher.disconnect();
-  });
+  // Phase 2: No cleanup needed - message bus cleanup handled by container
 };

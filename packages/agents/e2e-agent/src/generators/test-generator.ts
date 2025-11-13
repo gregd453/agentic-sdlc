@@ -109,7 +109,7 @@ export function scenarioToPlaywrightCode(scenario: TestScenario, pageObjects: Pa
   // Generate test body
   const testSteps: string[] = [];
 
-  steps.forEach((step, index) => {
+  steps.forEach((step) => {
     switch (step.action) {
       case 'navigate':
         testSteps.push(`  await page.goto('${step.value || '/'}');`);

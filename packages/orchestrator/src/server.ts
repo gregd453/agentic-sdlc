@@ -26,7 +26,7 @@ import { OrchestratorContainer } from './hexagonal/bootstrap';
 import { IMessageBus } from './hexagonal/ports/message-bus.port';
 import { WorkflowStateManager } from './hexagonal/persistence/workflow-state-manager';
 
-export async function createServer(container?: OrchestratorContainer) {
+export async function createServer() {
   // Initialize Fastify
   const fastify = Fastify({
     logger: false, // We use our own logger
@@ -85,25 +85,35 @@ export async function createServer(container?: OrchestratorContainer) {
     transformSpecificationClone: true
   });
 
+  // Phase 3: Initialize hexagonal container
+  logger.info('[PHASE-3] Initializing OrchestratorContainer');
+  const container = new OrchestratorContainer({
+    redisUrl: process.env.REDIS_URL || 'redis://localhost:6380',
+    redisNamespace: 'agentic-sdlc',
+    redisDefaultTtl: 3600, // 1 hour
+    coordinators: {} // No coordinators needed for workflow orchestration
+  });
+
+  await container.initialize();
+  logger.info('[PHASE-3] OrchestratorContainer initialized successfully');
+
   // Initialize services
   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   const eventBus = new EventBus(redisUrl);
   const workflowRepository = new WorkflowRepository(prisma);
 
-  // Phase 1: Extract messageBus from container (if available)
-  let messageBus: IMessageBus | undefined;
-  let stateManager: WorkflowStateManager | undefined;
+  // Phase 3: Extract dependencies from container
+  logger.info('[PHASE-3] Extracting dependencies from container');
+  const messageBus = container.getBus();
+  const kv = container.getKV();
+  logger.info('[PHASE-3] Extracted dependencies from container', {
+    messageBusAvailable: !!messageBus,
+    kvStoreAvailable: !!kv
+  });
 
-  if (container) {
-    logger.info('[PHASE-1] Extracting messageBus from OrchestratorContainer');
-    messageBus = container.getBus();
-    logger.info('[PHASE-1] messageBus extracted successfully');
-
-    // Phase 6: Initialize WorkflowStateManager with KV store
-    const kv = container.getKV();
-    stateManager = new WorkflowStateManager(kv, messageBus);
-    logger.info('[PHASE-6] WorkflowStateManager initialized');
-  }
+  // Phase 3: Initialize WorkflowStateManager with KV store
+  const stateManager = new WorkflowStateManager(kv, messageBus);
+  logger.info('[PHASE-3] WorkflowStateManager initialized');
 
   // Phase 4 & 6: Pass messageBus and stateManager to state machine
   const stateMachineService = new WorkflowStateMachineService(
@@ -113,21 +123,21 @@ export async function createServer(container?: OrchestratorContainer) {
     stateManager // Phase 6: State machine persists to KV store
   );
 
-  // Phase 3: AgentDispatcherService completely removed
-  // Tasks now dispatched via messageBus, agents subscribe via messageBus
+  // Phase 3: Create WorkflowService with messageBus from container
+  logger.info('[PHASE-3] WorkflowService created with messageBus');
   const workflowService = new WorkflowService(
     workflowRepository,
     eventBus,
     stateMachineService,
     redisUrl,
-    messageBus // Phase 3: messageBus used for both task dispatch and result subscription
+    messageBus // Phase 3: messageBus always available from container
   );
 
   // Initialize pipeline services
   const qualityGateService = new QualityGateService();
   const pipelineExecutor = new PipelineExecutorService(
     eventBus,
-    undefined as any, // Phase 3: AgentDispatcherService removed
+    // Phase 2: AgentDispatcherService removed (2 args now)
     qualityGateService
   );
 
@@ -135,7 +145,7 @@ export async function createServer(container?: OrchestratorContainer) {
   const pipelineWebSocketHandler = new PipelineWebSocketHandler(eventBus);
 
   // Initialize health check service
-  const healthCheckService = new HealthCheckService(prisma, eventBus, undefined as any); // Phase 3: AgentDispatcherService removed
+  const healthCheckService = new HealthCheckService(prisma, eventBus); // Phase 2: AgentDispatcherService removed (2 args now)
 
   // Register WebSocket support
   await fastify.register(require('@fastify/websocket'));
@@ -190,7 +200,7 @@ export async function createServer(container?: OrchestratorContainer) {
     fastify,
     prisma,
     eventBus,
-    undefined as any, // Phase 3: AgentDispatcherService removed
+    // Phase 2: AgentDispatcherService removed (6 args now)
     pipelineExecutor,
     pipelineWebSocketHandler,
     workflowService
@@ -199,15 +209,58 @@ export async function createServer(container?: OrchestratorContainer) {
   // Initialize shutdown handlers
   gracefulShutdown.initialize();
 
+  // Phase 3: Add shutdown hook for OrchestratorContainer
+  fastify.addHook('onClose', async () => {
+    logger.info('[PHASE-3] Shutting down OrchestratorContainer');
+    await container.shutdown();
+    logger.info('[PHASE-3] Container shutdown complete');
+  });
+
+  // Phase 3: Add health check endpoint for hexagonal components
+  fastify.get('/health/hexagonal', {
+    schema: {
+      tags: ['health'],
+      summary: 'Hexagonal architecture health check',
+      description: 'Returns health status of hexagonal components (message bus, KV store)',
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            timestamp: { type: 'string', format: 'date-time' },
+            hexagonal: {
+              type: 'object',
+              properties: {
+                ok: { type: 'boolean' },
+                bus: {
+                  type: 'object',
+                  properties: {
+                    ok: { type: 'boolean' }
+                  }
+                },
+                kv: { type: 'boolean' }
+              }
+            }
+          }
+        }
+      }
+    }
+  }, async (_request, reply) => {
+    const health = await container.health();
+    return reply.send({
+      timestamp: new Date().toISOString(),
+      hexagonal: health
+    });
+  });
+
   return fastify;
 }
 
-export async function startServer(container?: OrchestratorContainer) {
+export async function startServer() {
   const port = parseInt(process.env.ORCHESTRATOR_PORT || '3000', 10);
   const host = process.env.HOST || '0.0.0.0';
 
   try {
-    const server = await createServer(container);
+    const server = await createServer();
 
     await server.listen({ port, host });
 

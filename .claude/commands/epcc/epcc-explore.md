@@ -95,25 +95,42 @@ grep -r "export default" . --include="*.js" --include="*.ts"
 
 ### Step 3: Technology Stack Discovery
 ```bash
-# Identify frameworks and libraries (READ ONLY - do not modify any files)
-# Check for package files
-if [ -f "package.json" ]; then echo "Found Node.js project"; fi
-if [ -f "requirements.txt" ]; then echo "Found Python project"; fi
-if [ -f "Gemfile" ]; then echo "Found Ruby project"; fi
-if [ -f "pom.xml" ]; then echo "Found Java project"; fi
-if [ -f "Cargo.toml" ]; then echo "Found Rust project"; fi
-if [ -f "go.mod" ]; then echo "Found Go project"; fi
+# This is a TypeScript monorepo using pnpm workspaces and turbo
+# Check for package files and workspace structure
+cat package.json  # Root workspace config
+cat turbo.json    # Turbo pipeline configuration
+cat pnpm-workspace.yaml  # Workspace packages
+
+# List all packages in monorepo
+ls -la packages/
+
+# Check individual package configurations
+find packages -name "package.json" -exec echo {} \; -exec cat {} \;
 
 # Document findings in EPCC_EXPLORE.md, do not create new files
 ```
 
 ### Step 4: Pattern Recognition
 ```bash
-# Identify coding patterns (OBSERVATION ONLY - do not implement any patterns)
-# Look for architectural patterns
-grep -r "Controller" --include="*.py" --include="*.js" | head -10
-grep -r "Service" --include="*.py" --include="*.js" | head -10
-grep -r "Repository" --include="*.py" --include="*.js" | head -10
+# This project uses Hexagonal Architecture (Ports & Adapters)
+# Look for hexagonal architecture patterns
+find packages/orchestrator/src/hexagonal -type f -name "*.ts"
+
+# Check for architectural layers
+ls -la packages/orchestrator/src/hexagonal/core/      # Domain logic
+ls -la packages/orchestrator/src/hexagonal/ports/     # Interfaces
+ls -la packages/orchestrator/src/hexagonal/adapters/  # Implementations
+ls -la packages/orchestrator/src/hexagonal/orchestration/ # Orchestration
+
+# Look for Service pattern (*.service.ts files)
+find packages -name "*.service.ts" | head -20
+
+# Check for message bus and pub/sub patterns
+grep -r "messageBus" packages/orchestrator/src/ --include="*.ts" | head -10
+grep -r "publish\|subscribe" packages/orchestrator/src/hexagonal/ --include="*.ts" | head -10
+
+# Look for Agent patterns
+find packages/agents -name "base-agent.ts" -o -name "*-agent.ts"
 
 # Document patterns found in EPCC_EXPLORE.md
 # DO NOT create new pattern implementations
@@ -128,12 +145,20 @@ grep -r "Repository" --include="*.py" --include="*.js" | head -10
 
 ### Step 6: Similar Implementation Search
 ```bash
-# Find similar features or patterns
-grep -r "authentication" --include="*.py" --include="*.js"
-grep -r "similar_feature_name" --include="*.py" --include="*.js"
+# Find similar features or patterns in TypeScript
+grep -r "authentication" packages/ --include="*.ts"
+grep -r "similar_feature_name" packages/ --include="*.ts"
 
-# Look for existing solutions
-find . -name "*auth*" -o -name "*login*" -o -name "*session*"
+# Look for existing test patterns
+find packages -name "*.test.ts" -o -name "*.spec.ts" | head -10
+
+# Check environment setup scripts
+ls -la scripts/env/
+cat scripts/env/start-dev.sh  # How to start dev environment
+cat scripts/env/stop-dev.sh   # How to stop dev environment
+
+# Review E2E test patterns
+cat scripts/run-pipeline-test.sh  # How E2E tests are run
 ```
 
 ## Exploration Deliverables
@@ -147,18 +172,38 @@ All exploration findings will be documented in `EPCC_EXPLORE.md` in the project 
 # Exploration Report: [Feature/Area]
 
 ## Executive Summary
-- Project type: [Web app/API/Library/etc.]
-- Primary language: [Python/JavaScript/etc.]
-- Architecture: [Monolith/Microservices/etc.]
-- Current state: [Production/Development/Legacy]
+- Project type: Autonomous AI-driven SDLC System
+- Primary language: TypeScript
+- Architecture: Hexagonal (Ports & Adapters) + Message Bus + Agent-based
+- Monorepo: pnpm workspaces with Turbo build system
+- Current state: Active Development (Phase 3 complete, E2E validation in progress)
 
 ## Project Structure
 ```
-project/
-├── src/           # Main application code
-├── tests/         # Test suites
-├── docs/          # Documentation
-└── config/        # Configuration files
+agent-sdlc/
+├── packages/
+│   ├── orchestrator/          # Central orchestration service
+│   │   └── src/
+│   │       ├── hexagonal/     # Hexagonal architecture
+│   │       │   ├── core/      # Domain logic
+│   │       │   ├── ports/     # Interfaces
+│   │       │   ├── adapters/  # Implementations
+│   │       │   ├── orchestration/  # Orchestrators
+│   │       │   └── persistence/    # State management
+│   │       └── services/      # Application services
+│   ├── agents/                # Agent packages
+│   │   ├── base-agent/        # Base agent implementation
+│   │   ├── scaffold-agent/    # Scaffolding agent
+│   │   ├── validation-agent/  # Validation agent
+│   │   └── e2e-agent/         # E2E testing agent
+│   └── shared/                # Shared packages
+│       ├── types/             # Shared TypeScript types
+│       └── utils/             # Shared utilities
+├── scripts/                   # Build, test, deployment scripts
+│   ├── env/                   # Environment management
+│   └── tests/                 # Test execution scripts
+└── .claude/                   # Claude Code configuration
+    └── commands/              # Custom slash commands
 ```
 
 ## Project Instructions (from CLAUDE.md)
@@ -172,9 +217,17 @@ project/
 2. **Component B**: Description and purpose
 
 ## Patterns & Conventions
-- Coding style: [PEP8/Airbnb/etc. - check CLAUDE.md]
-- Design patterns: [MVC/Repository/etc.]
-- Testing approach: [TDD/BDD/etc. - verify against CLAUDE.md]
+- Language: TypeScript with strict mode
+- Architecture: Hexagonal (Ports & Adapters)
+- Design patterns:
+  - Dependency Injection via Container
+  - Message Bus (pub/sub + streams)
+  - Service layer pattern (*.service.ts)
+  - Agent pattern (BaseAgent extended by specific agents)
+- Testing: Vitest for unit/integration tests
+- Build: Turbo for monorepo build orchestration
+- Package manager: pnpm workspaces
+- Naming: kebab-case for packages, PascalCase for classes, camelCase for functions
 
 ## Dependencies
 ### External

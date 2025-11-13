@@ -6,7 +6,7 @@ import {
   toTaskId,
   VERSION
 } from '@agentic-sdlc/shared-types';
-import { AgentDispatcherService } from './agent-dispatcher.service';
+// Phase 2: AgentDispatcherService removed - scaffold workflow will be refactored in future phase
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { logger } from '../utils/logger';
 import { randomUUID } from 'crypto';
@@ -17,8 +17,8 @@ import { randomUUID } from 'crypto';
  */
 export class ScaffoldWorkflowService {
   constructor(
-    private repository: WorkflowRepository,
-    private agentDispatcher: AgentDispatcherService
+    private repository: WorkflowRepository
+    // Phase 2: agentDispatcher parameter removed (will be refactored with message bus)
   ) {
     // Register schemas if not already registered
     this.ensureSchemasRegistered();
@@ -184,6 +184,10 @@ export class ScaffoldWorkflowService {
       }
     };
 
+    // Phase 2: This service needs refactoring to use message bus
+    throw new Error('[PHASE-2] ScaffoldWorkflowService not yet refactored to use message bus architecture. Use WorkflowService instead.');
+
+    /* Phase 2: Commented out during migration
     await this.agentDispatcher.dispatchTask(taskAssignment as any);
 
     logger.info('Scaffold task dispatched to agent', {
@@ -191,6 +195,7 @@ export class ScaffoldWorkflowService {
       workflow_id: task.workflow_id,
       agent_type: 'scaffold'
     });
+    */
   }
 
   /**

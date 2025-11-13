@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'dotenv/config';
 import { AGENT_TYPES, REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
-import { OrchestratorContainer } from '@agentic-sdlc/orchestrator';
+import { OrchestratorContainer } from '@agentic-sdlc/orchestrator/hexagonal/bootstrap';
 import { ScaffoldAgent } from './scaffold-agent';
 
 /**

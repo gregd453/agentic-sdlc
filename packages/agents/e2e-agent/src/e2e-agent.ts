@@ -3,7 +3,6 @@ import path from 'path';
 import {
   E2ETaskContext,
   E2ETaskContextSchema,
-  E2ETestReport,
   TestExecutionResult
 } from './types';
 import { generateTestScenarios, generateTestFiles } from './generators/test-generator';
@@ -62,7 +61,7 @@ export class E2EAgent extends BaseAgent {
 
       // Phase 1: Generate tests
       const generationStart = Date.now();
-      const { testFiles, pageObjectFiles, scenariosGenerated, pageObjectsGenerated } =
+      const { testFiles, pageObjectFiles, scenariosGenerated } =
         await this.generateTests(context);
       const generationTime = Date.now() - generationStart;
 
@@ -274,8 +273,12 @@ export class E2EAgent extends BaseAgent {
 
 /**
  * Calculate overall pass rate from test results
+ * Exported for potential use in enhanced reporting features
+ * @param results - Array of test execution results
+ * @returns Pass rate percentage (0-100)
+ * @public
  */
-function calculatePassRate(results: TestExecutionResult[]): number {
+export function calculatePassRate(results: TestExecutionResult[]): number {
   const totalTests = results.reduce((sum, r) => sum + r.total_tests, 0);
   const totalPassed = results.reduce((sum, r) => sum + r.passed, 0);
 

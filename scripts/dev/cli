@@ -1,0 +1,288 @@
+#!/bin/bash
+# Agentic SDLC Development CLI
+# Main entry point for all development operations
+#
+# Usage: dev <command> [arguments]
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+COMMANDS_DIR="$SCRIPT_DIR/commands"
+
+source "$SCRIPT_DIR/lib/colors.sh"
+source "$SCRIPT_DIR/lib/helpers.sh"
+
+# Make all command scripts executable
+chmod +x "$COMMANDS_DIR"/*.sh 2>/dev/null || true
+
+# Display help
+show_help() {
+  cat << 'EOF'
+╔════════════════════════════════════════════════════════════════════════════╗
+║              Agentic SDLC - Development CLI                                ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+USAGE:
+  dev <command> [arguments]
+
+COMMANDS:
+
+  Core Operations:
+    start       Start development environment
+                Usage: dev start [MODE] [OPTIONS]
+                Modes: docker (default), local
+                Docker options: --build, --clean, --logs
+                Local options: --no-db, --logs
+                Examples:
+                  dev start              # Docker (default)
+                  dev start docker --build
+                  dev start local --logs
+
+    docker-start  Start with Docker (orchestrator + agents in containers)
+                Options: --build, --clean, --logs
+                Example: dev docker-start --build --logs
+
+    local-start   Start locally (services on your machine)
+                Options: --no-db (skip db startup), --logs
+                Example: dev local-start
+
+    stop        Stop development environment
+                Options: --hard (remove volumes)
+                Example: dev stop --hard
+
+    restart     Restart services
+                Arguments: [service] (optional)
+                Example: dev restart orchestrator
+
+    status      Show status of all services
+                Example: dev status
+
+  Agent Operations:
+    agents      Display agent status and details
+                Arguments: [agent-name] (optional)
+                Examples:
+                  dev agents                  # Show all agents
+                  dev agents scaffold-agent   # Detailed agent info
+
+    pipeline    Run a complete workflow pipeline
+                Arguments: [description] (optional)
+                Example: dev pipeline "Test Hello World API"
+
+  Monitoring & Debugging:
+    logs        View service logs in real-time
+                Arguments: [service] (optional, shows all if not specified)
+                Examples:
+                  dev logs                    # All services
+                  dev logs orchestrator       # Orchestrator only
+                  dev logs scaffold-agent     # Agent logs
+
+    health      Run health checks on all services
+                Checks: Infrastructure, Orchestrator, Agents, Message Bus
+                Example: dev health
+
+    shell       Open interactive shell in service container
+                Arguments: [service] (defaults to orchestrator)
+                Example: dev shell scaffold-agent
+
+  Database & Code:
+    migrate     Run database migrations
+                Arguments: [service] (optional)
+                Example: dev migrate orchestrator
+
+    local-db    Manage local postgres/redis (for local-start)
+                Commands: start, stop, status
+                Example: dev local-db start
+
+    build       Build/rebuild Docker images
+                Options: --force (rebuild without cache)
+                Example: dev build --force
+
+  Testing:
+    e2e-test    Run End-to-End workflow tests
+                Options:
+                  --start-services  Auto-start services
+                  --report          Show test report
+                Examples:
+                  dev e2e-test                   # Run E2E tests
+                  dev e2e-test --start-services  # Auto-start first
+
+  Maintenance:
+    reset       Full reset of environment
+                Options: --rebuild (also rebuild images)
+                Example: dev reset --rebuild
+
+    clean       Remove containers and volumes
+                (Alias for: dev stop --hard)
+                Example: dev clean
+
+  Information:
+    services    List all available services
+                Example: dev services
+
+    urls        Show service URLs and ports
+                Example: dev urls
+
+    help        Show this help message
+                Example: dev help
+
+EXAMPLES:
+
+  Quick Start (Docker):
+    dev start                        # Start with Docker (cached images)
+    dev start docker --logs          # Start Docker and follow logs
+    dev start docker --build --clean # Fresh Docker build from scratch
+    dev docker-start                 # Explicit docker start
+
+  Quick Start (Local):
+    dev start local                  # Start locally with postgres/redis
+    dev start local --logs           # Start locally with visible logs
+    dev start local --no-db          # Start locally (db already running)
+    dev local-start                  # Explicit local start
+    dev local-db start               # Start postgres/redis manually
+
+  During Development:
+    dev status                       # Check what's running
+    dev logs                         # Watch all logs
+    dev logs user-core-api           # Watch specific service
+    dev shell user-core-api          # Open container shell (Docker mode)
+    dev migrate                      # Run all migrations
+
+  Troubleshooting:
+    dev health                 # Check service health
+    dev restart user-core-api  # Restart stuck service
+    dev reset                  # Full reset (keeps data)
+    dev reset --rebuild        # Reset + rebuild images
+
+COMMON WORKFLOWS:
+
+  1. Initial Setup:
+     dev start --build --logs
+
+  2. Daily Development:
+     dev start        # Morning startup
+     dev stop         # Evening shutdown
+
+  3. Testing Feature:
+     dev logs                 # Monitor
+     dev shell [service]      # Debug
+     dev migrate              # Apply DB changes
+
+  4. Troubleshooting:
+     dev health               # Check all services
+     dev restart [service]    # Restart specific service
+     dev reset                # Nuclear option
+
+  5. Clean Slate:
+     dev reset --rebuild      # Full rebuild + reset
+
+TIPS:
+  • Most commands run without parameters (sensible defaults)
+  • Use 'dev logs' in a second terminal for real-time monitoring
+  • 'dev shell' opens bash in the container for debugging
+  • Services start automatically in dependency order
+  • Ctrl+C stops log following (doesn't stop services)
+
+For more information, see the README or documentation.
+EOF
+}
+
+# Show available services
+show_services() {
+  print_header "Available Services"
+  list_services
+}
+
+# Show service URLs
+show_urls() {
+  print_header "Service URLs and Ports"
+  list_service_urls
+}
+
+# Main command dispatcher
+COMMAND=${1:-help}
+
+case "$COMMAND" in
+  start)
+    shift
+    "$COMMANDS_DIR/start.sh" "$@"
+    ;;
+  docker-start)
+    shift
+    "$COMMANDS_DIR/docker-start.sh" "$@"
+    ;;
+  local-start)
+    shift
+    "$COMMANDS_DIR/local-start.sh" "$@"
+    ;;
+  local-db)
+    shift
+    "$COMMANDS_DIR/local-db.sh" "$@"
+    ;;
+  stop)
+    shift
+    "$COMMANDS_DIR/stop.sh" "$@"
+    ;;
+  restart)
+    shift
+    "$COMMANDS_DIR/restart.sh" "$@"
+    ;;
+  status)
+    shift
+    "$COMMANDS_DIR/status.sh" "$@"
+    ;;
+  logs)
+    shift
+    "$COMMANDS_DIR/logs.sh" "$@"
+    ;;
+  health)
+    shift
+    "$COMMANDS_DIR/health.sh" "$@"
+    ;;
+  shell)
+    shift
+    "$COMMANDS_DIR/shell.sh" "$@"
+    ;;
+  migrate)
+    shift
+    "$COMMANDS_DIR/migrate.sh" "$@"
+    ;;
+  build)
+    shift
+    "$COMMANDS_DIR/build.sh" "$@"
+    ;;
+  agents)
+    shift
+    "$COMMANDS_DIR/agents.sh" "$@"
+    ;;
+  pipeline)
+    shift
+    "$COMMANDS_DIR/pipeline.sh" "$@"
+    ;;
+  e2e-test)
+    shift
+    "$COMMANDS_DIR/e2e-test.sh" "$@"
+    ;;
+  reset)
+    shift
+    "$COMMANDS_DIR/reset.sh" "$@"
+    ;;
+  clean)
+    shift
+    "$COMMANDS_DIR/stop.sh" --hard
+    ;;
+  services)
+    show_services
+    ;;
+  urls)
+    show_urls
+    ;;
+  help|--help|-h)
+    show_help
+    ;;
+  *)
+    echo -e "${RED}Unknown command: ${BOLD}$COMMAND${NC}"
+    echo ""
+    echo "Run '${BLUE}dev help${NC}' for available commands"
+    exit 1
+    ;;
+esac
