@@ -60,6 +60,9 @@ importers:
 
   packages/agents/base-agent:
     dependencies:
+      '@agentic-sdlc/orchestrator':
+        specifier: workspace:*
+        version: link:../../orchestrator
       '@agentic-sdlc/shared-types':
         specifier: workspace:^
         version: link:../../shared/types

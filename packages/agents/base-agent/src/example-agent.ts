@@ -1,17 +1,23 @@
+import type { IMessageBus } from '@agentic-sdlc/orchestrator';
 import { BaseAgent } from './base-agent';
 import { TaskAssignment, TaskResult } from './types';
 
 /**
  * Example agent implementation showing how to extend BaseAgent
  * This agent analyzes requirements and generates a structured response
+ *
+ * Phase 3: Updated to require messageBus parameter
  */
 export class ExampleAgent extends BaseAgent {
-  constructor() {
-    super({
-      type: 'example',
-      version: '1.0.0',
-      capabilities: ['analyze', 'generate', 'validate']
-    });
+  constructor(messageBus: IMessageBus) {
+    super(
+      {
+        type: 'example',
+        version: '1.0.0',
+        capabilities: ['analyze', 'generate', 'validate']
+      },
+      messageBus
+    );
   }
 
   async execute(task: TaskAssignment): Promise<TaskResult> {

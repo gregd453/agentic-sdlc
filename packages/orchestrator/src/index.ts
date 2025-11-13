@@ -4,6 +4,9 @@ import { connectDatabase } from './db/client';
 import { logger } from './utils/logger';
 import { bootstrapOrchestrator } from './hexagonal/bootstrap';
 
+// Phase 3: Export hexagonal module for agents to import
+export * from './hexagonal';
+
 async function main() {
   logger.info('Starting Agentic SDLC Orchestrator...');
 

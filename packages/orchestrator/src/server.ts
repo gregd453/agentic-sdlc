@@ -113,26 +113,21 @@ export async function createServer(container?: OrchestratorContainer) {
     stateManager // Phase 6: State machine persists to KV store
   );
 
-  // Phase 2: AgentDispatcherService kept for task dispatch
-  // Note: Per-workflow callbacks removed, using messageBus subscription instead
-  // TODO Phase 3: Agents will publish directly to messageBus, then AgentDispatcherService can be fully removed
-  const { AgentDispatcherService } = await import('./services/agent-dispatcher.service');
-  const agentDispatcher = new AgentDispatcherService(redisUrl);
-
+  // Phase 3: AgentDispatcherService completely removed
+  // Tasks now dispatched via messageBus, agents subscribe via messageBus
   const workflowService = new WorkflowService(
     workflowRepository,
     eventBus,
     stateMachineService,
-    agentDispatcher, // Phase 2: Used for dispatch only, not callbacks
     redisUrl,
-    messageBus // Phase 2: messageBus subscription active for agent results
+    messageBus // Phase 3: messageBus used for both task dispatch and result subscription
   );
 
   // Initialize pipeline services
   const qualityGateService = new QualityGateService();
   const pipelineExecutor = new PipelineExecutorService(
     eventBus,
-    agentDispatcher,
+    undefined as any, // Phase 3: AgentDispatcherService removed
     qualityGateService
   );
 
@@ -140,7 +135,7 @@ export async function createServer(container?: OrchestratorContainer) {
   const pipelineWebSocketHandler = new PipelineWebSocketHandler(eventBus);
 
   // Initialize health check service
-  const healthCheckService = new HealthCheckService(prisma, eventBus, agentDispatcher);
+  const healthCheckService = new HealthCheckService(prisma, eventBus, undefined as any); // Phase 3: AgentDispatcherService removed
 
   // Register WebSocket support
   await fastify.register(require('@fastify/websocket'));
@@ -156,9 +151,7 @@ export async function createServer(container?: OrchestratorContainer) {
   await fastify.register(workflowRoutes, { workflowService });
   await fastify.register(pipelineRoutes, { pipelineExecutor });
 
-  // Import and register scaffold routes with agentDispatcher dependency
-  const { scaffoldRoutes } = await import('./api/routes/scaffold.routes');
-  await fastify.register(scaffoldRoutes, { agentDispatcher });
+  // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 
   // Metrics endpoints
   fastify.get('/metrics', {
@@ -197,7 +190,7 @@ export async function createServer(container?: OrchestratorContainer) {
     fastify,
     prisma,
     eventBus,
-    agentDispatcher,
+    undefined as any, // Phase 3: AgentDispatcherService removed
     pipelineExecutor,
     pipelineWebSocketHandler,
     workflowService

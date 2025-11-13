@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import 'dotenv/config';
 import { AGENT_TYPES, REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
+import { OrchestratorContainer } from '@agentic-sdlc/orchestrator';
 import { ScaffoldAgent } from './scaffold-agent';
 
 /**
  * Standalone runner for Scaffold Agent
- * This allows the agent to run as a service and listen for tasks
+ * Phase 3: Initializes with OrchestratorContainer for message bus integration
  */
 async function main() {
   console.log('🚀 Starting Scaffold Agent...');
@@ -16,7 +17,19 @@ async function main() {
     process.exit(1);
   }
 
-  const agent = new ScaffoldAgent();
+  // Phase 3: Create and initialize OrchestratorContainer
+  console.log('[PHASE-3] Initializing OrchestratorContainer for scaffold agent...');
+  const container = new OrchestratorContainer({
+    redisUrl: process.env.REDIS_URL || 'redis://localhost:6380',
+    redisNamespace: 'agent-scaffold',
+    coordinators: {} // No coordinators needed for agents
+  });
+
+  await container.initialize();
+  console.log('[PHASE-3] OrchestratorContainer initialized successfully');
+
+  const messageBus = container.getBus();
+  const agent = new ScaffoldAgent(messageBus);
 
   try {
     // Initialize agent (connects to Redis, registers with orchestrator)
@@ -33,12 +46,14 @@ async function main() {
     process.on('SIGINT', async () => {
       console.log('\n\n🛑 Shutting down Scaffold Agent...');
       await agent.cleanup();
+      await container.shutdown(); // Phase 3: Shutdown container
       process.exit(0);
     });
 
     process.on('SIGTERM', async () => {
       console.log('\n\n🛑 Shutting down Scaffold Agent...');
       await agent.cleanup();
+      await container.shutdown(); // Phase 3: Shutdown container
       process.exit(0);
     });
 

@@ -35,12 +35,13 @@ describe('WorkflowService - Phase 3 Verification Tests', () => {
     };
 
     // Create service with mocks
+    // Phase 3: AgentDispatcherService parameter removed
     workflowService = new WorkflowService(
       mockRepository as WorkflowRepository,
       mockEventBus as EventBus,
       mockStateMachineService as WorkflowStateMachineService,
-      undefined,
-      'redis://localhost:6379'
+      'redis://localhost:6379',
+      undefined as any // messageBus (mock not needed for these tests)
     );
   });
 

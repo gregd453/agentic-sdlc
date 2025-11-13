@@ -5,6 +5,8 @@ import Redis from 'ioredis';
 import { retry, RetryPresets, CircuitBreaker } from '@agentic-sdlc/shared-utils';
 import { REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
 import { AgentResultSchema, VERSION } from '@agentic-sdlc/shared-types/src/core/schemas';
+// Phase 3: Import IMessageBus from orchestrator
+import type { IMessageBus } from '@agentic-sdlc/orchestrator';
 import {
   AgentLifecycle,
   AgentCapabilities,
@@ -23,6 +25,7 @@ export abstract class BaseAgent implements AgentLifecycle {
   protected readonly anthropic: Anthropic;
   protected readonly redisSubscriber: Redis;  // For subscribing to task channel
   protected readonly redisPublisher: Redis;    // For publishing results and registration
+  protected readonly messageBus: IMessageBus; // Phase 3: Message bus for task subscription
   protected readonly agentId: string;
   protected readonly capabilities: AgentCapabilities;
   protected readonly claudeCircuitBreaker: CircuitBreaker;
@@ -32,9 +35,18 @@ export abstract class BaseAgent implements AgentLifecycle {
   private errorsCount: number = 0;
   private lastTaskAt?: string;
 
-  constructor(capabilities: AgentCapabilities) {
+  constructor(
+    capabilities: AgentCapabilities,
+    messageBus: IMessageBus  // Phase 3: Inject message bus via DI
+  ) {
     this.agentId = `${capabilities.type}-${randomUUID().slice(0, 8)}`;
     this.capabilities = capabilities;
+    this.messageBus = messageBus;
+
+    // Phase 3: Validate messageBus
+    if (!messageBus) {
+      throw new AgentError('messageBus is required for Phase 3 message bus integration', 'CONFIG_ERROR');
+    }
 
     // Initialize logger
     this.logger = pino({
@@ -91,37 +103,64 @@ export abstract class BaseAgent implements AgentLifecycle {
   }
 
   async initialize(): Promise<void> {
-    this.logger.info('Initializing agent', {
+    this.logger.info('[PHASE-3] Initializing agent with message bus', {
       type: this.capabilities.type,
       version: this.capabilities.version,
-      capabilities: this.capabilities.capabilities
+      capabilities: this.capabilities.capabilities,
+      messageBus_available: !!this.messageBus
     });
 
-    // Test Redis connections
+    // Test Redis connections (still needed for result publishing)
     await this.redisPublisher.ping();
 
-    // Set up message handler BEFORE subscribing
-    this.redisSubscriber.on('message', async (_channel, message) => {
-      try {
-        const agentMessage: AgentMessage = JSON.parse(message);
-        await this.receiveTask(agentMessage);
-      } catch (error) {
-        this.logger.error('Failed to process message', { error, message });
-        this.errorsCount++;
-      }
+    // Phase 3: Subscribe to tasks via message bus with stream consumer groups
+    const taskChannel = REDIS_CHANNELS.AGENT_TASKS(this.capabilities.type);
+    const consumerGroup = `agent-${this.capabilities.type}-group`;
+
+    this.logger.info('[PHASE-3] Subscribing to message bus for tasks', {
+      taskChannel,
+      consumerGroup
     });
 
-    // Subscribe to task channel (this puts connection in subscriber mode)
-    // SESSION #37: Use constants for Redis channels
-    const taskChannel = REDIS_CHANNELS.AGENT_TASKS(this.capabilities.type);
-    await this.redisSubscriber.subscribe(taskChannel);
+    await this.messageBus.subscribe(
+      taskChannel,
+      async (message: any) => {
+        try {
+          // Message may be string or object depending on adapter
+          const agentMessage: AgentMessage = typeof message === 'string'
+            ? JSON.parse(message)
+            : message;
 
-    this.logger.info('Subscribed to task channel', { taskChannel });
+          this.logger.info('[PHASE-3] Agent received task from message bus', {
+            workflow_id: agentMessage.workflow_id,
+            task_id: agentMessage.payload?.task_id,
+            channel: taskChannel
+          });
+
+          await this.receiveTask(agentMessage);
+        } catch (error) {
+          this.logger.error('[PHASE-3] Failed to process task from message bus', {
+            error: error instanceof Error ? error.message : String(error),
+            message
+          });
+          this.errorsCount++;
+        }
+      },
+      {
+        consumerGroup,
+        fromBeginning: false // Only new messages
+      }
+    );
+
+    this.logger.info('[PHASE-3] Agent subscribed to message bus for tasks', {
+      taskChannel,
+      consumerGroup
+    });
 
     // Register agent with orchestrator (use publisher connection)
     await this.registerWithOrchestrator();
 
-    this.logger.info('Agent initialized successfully');
+    this.logger.info('[PHASE-3] Agent initialized successfully with message bus');
   }
 
   async receiveTask(message: AgentMessage): Promise<void> {

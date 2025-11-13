@@ -5,7 +5,7 @@ import { CreateWorkflowRequest, TaskAssignment, WorkflowResponse } from '../type
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
 import { WorkflowStateMachineService } from '../state-machine/workflow-state-machine';
-import { AgentDispatcherService } from './agent-dispatcher.service';
+// Phase 3: AgentDispatcherService removed - tasks now dispatched via messageBus
 import { DecisionGateService } from './decision-gate.service';
 import { logger, generateTraceId } from '../utils/logger';
 import { metrics } from '../utils/metrics';
@@ -23,19 +23,20 @@ export class WorkflowService {
     private repository: WorkflowRepository,
     private eventBus: EventBus,
     private stateMachineService: WorkflowStateMachineService,
-    private agentDispatcher?: AgentDispatcherService,
     redisUrl: string = process.env.REDIS_URL || 'redis://127.0.0.1:6379',
-    messageBus?: IMessageBus // Phase 1: Accept messageBus parameter
+    messageBus?: IMessageBus // Phase 3: messageBus now required for task dispatch
   ) {
     this.messageBus = messageBus;
     logger.info('[WF:CONSTRUCTOR:START] WorkflowService instance created', {
       timestamp: new Date().toISOString(),
-      messageBusAvailable: !!messageBus, // Phase 1: Log messageBus availability
+      messageBusAvailable: !!messageBus,
       stack: new Error().stack?.split('\n').slice(0, 5).join(' | ')
     });
 
     if (messageBus) {
-      logger.info('[PHASE-1] WorkflowService received messageBus from container');
+      logger.info('[PHASE-3] WorkflowService received messageBus from container');
+    } else {
+      logger.warn('[PHASE-3] WorkflowService initialized WITHOUT messageBus - task dispatch will fail');
     }
 
     this.decisionGateService = new DecisionGateService();
@@ -137,10 +138,7 @@ export class WorkflowService {
     }
     this.eventHandlers.clear();
 
-    // Disconnect agent dispatcher if present
-    if (this.agentDispatcher) {
-      await this.agentDispatcher.disconnect();
-    }
+    // Phase 3: Agent dispatcher removed - no longer needed
 
     // Disconnect Redis and Redlock clients
     if (this.redisClient) {
@@ -464,22 +462,34 @@ export class WorkflowService {
       trace_id: envelope.trace_id
     });
 
-    // Dispatch envelope to agent via Redis
-    if (this.agentDispatcher) {
-      // Phase 2: Removed per-workflow callback registration
-      // Results now handled by persistent messageBus subscription in setupMessageBusSubscription()
-      // No more: this.agentDispatcher.onResult(workflowId, handler)
+    // Phase 3: Dispatch envelope to agent via message bus
+    if (this.messageBus) {
+      const taskChannel = `agent:${agentType}:tasks`;
 
-      // Dispatch the envelope to agent
-      await this.agentDispatcher.dispatchTask(envelope, workflowData);
+      await this.messageBus.publish(
+        taskChannel,
+        envelope,
+        {
+          key: workflowId,
+          mirrorToStream: `stream:${taskChannel}` // Durability via stream
+        }
+      );
+
+      logger.info('[PHASE-3] Task dispatched via message bus', {
+        task_id: taskId,
+        workflow_id: workflowId,
+        stage,
+        agent_type: agentType,
+        channel: taskChannel,
+        stream_mirrored: true
+      });
+    } else {
+      logger.error('[PHASE-3] messageBus not available for task dispatch', {
+        workflow_id: workflowId,
+        stage
+      });
+      throw new Error('Message bus not initialized - cannot dispatch task');
     }
-
-    logger.info('[SESSION #36] Envelope dispatched to agent', {
-      task_id: taskId,
-      workflow_id: workflowId,
-      stage,
-      agent_type: agentType
-    });
   }
 
   private async handleAgentResult(result: any): Promise<void> {

@@ -10,10 +10,13 @@
 // ===== Core Exports =====
 export * from './core/brands';
 export * from './core/schemas';
+import { VERSION } from './core/schemas';
 
 // ===== Phase 5: Schema Registry & Contract Validator =====
-export * from './core/schema-registry';
-export * from './core/contract-validator';
+// Note: Explicitly export to avoid naming conflicts
+export { SchemaRegistry } from './core/schema-registry';
+export type { ValidationResult, ValidationError } from './core/schema-registry';
+export { ContractValidator } from './core/contract-validator';
 
 // ===== Agent Type Exports =====
 export * from './agents/scaffold';

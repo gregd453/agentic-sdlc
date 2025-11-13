@@ -4,6 +4,16 @@
   "description": "Central orchestrator for Agentic SDLC",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./hexagonal": {
+      "types": "./dist/hexagonal/index.d.ts",
+      "default": "./dist/hexagonal/index.js"
+    }
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",

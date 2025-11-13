@@ -1,13 +1,27 @@
 #!/usr/bin/env node
 
 import 'dotenv/config';
+import { OrchestratorContainer } from '@agentic-sdlc/orchestrator';
 import { ValidationAgent } from './validation-agent';
 
 /**
  * Main entry point for running the validation agent
+ * Phase 3: Initializes with OrchestratorContainer for message bus integration
  */
 async function main() {
-  const agent = new ValidationAgent();
+  // Phase 3: Create and initialize OrchestratorContainer
+  console.log('[PHASE-3] Initializing OrchestratorContainer for validation agent...');
+  const container = new OrchestratorContainer({
+    redisUrl: process.env.REDIS_URL || 'redis://localhost:6380',
+    redisNamespace: 'agent-validation',
+    coordinators: {} // No coordinators needed for agents
+  });
+
+  await container.initialize();
+  console.log('[PHASE-3] OrchestratorContainer initialized successfully');
+
+  const messageBus = container.getBus();
+  const agent = new ValidationAgent(messageBus);
   let isShuttingDown = false;
 
   // Handle graceful shutdown
@@ -17,6 +31,7 @@ async function main() {
 
     console.log('\nShutting down validation agent...');
     await agent.cleanup();
+    await container.shutdown(); // Phase 3: Shutdown container
     process.exit(0);
   };
 

@@ -25,10 +25,9 @@ export class ScaffoldWorkflowService {
   }
 
   private ensureSchemasRegistered(): void {
-    // Schemas are auto-registered in shared-types, but we can verify
-    if (!SchemaRegistry.has('workflow')) {
-      logger.warn('Schemas not registered, this should not happen');
-    }
+    // Schemas are auto-registered in shared-types on import
+    // No verification needed - SchemaRegistry doesn't expose a 'has' method
+    logger.debug('Schema registry initialized via shared-types import');
   }
 
   /**
@@ -146,8 +145,12 @@ export class ScaffoldWorkflowService {
     };
 
     // Validate the task
-    const validatedTask = SchemaRegistry.validate<ScaffoldTask>('scaffold.task', task);
-    return validatedTask;
+    const validationResult = SchemaRegistry.validate<ScaffoldTask>('scaffold.task', task);
+    if (!validationResult.success || !validationResult.data) {
+      logger.error('Task validation failed', { errors: validationResult.errors });
+      throw new Error(`Task validation failed: ${validationResult.errors?.[0]?.message || 'Unknown error'}`);
+    }
+    return validationResult.data;
   }
 
   /**

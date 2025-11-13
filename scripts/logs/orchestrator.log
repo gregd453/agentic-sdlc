@@ -1,0 +1,455 @@
+
+> @agentic-sdlc/orchestrator@0.1.0 dev
+> tsx watch src/index.ts
+
+/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/index.ts:35
+export const SCHEMA_VERSION = VERSION;
+                              ^
+
+
+ReferenceError: VERSION is not defined
+    at Object.<anonymous> (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types/src/index.ts:35:31)
+    at Module._compile (node:internal/modules/cjs/loader:1688:14)
+    at Object.transformer (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/tsx@4.20.6/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1423:32)
+    at Function._load (node:internal/modules/cjs/loader:1246:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1445:12)
+    at require (node:internal/modules/helpers:135:16)
+    at <anonymous> (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/workflow.service.ts:3:55)
+
+Node.js v22.18.0
+10:34:40 PM [tsx] change in ./../shared/types/dist/index.js Rerunning...
+c📦 @agentic-sdlc/shared-types loaded (Phase 5)
+🔖 Version: 1.0.0
+prisma:info Starting a postgresql pool with 29 connections.
+{"ts":"2025-11-13T03:34:40.980Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:34:40.980Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-13T03:34:40.993Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:34:40.993Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:34:40.993Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:34:40.993Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:34:40.994Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:34:40.994Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:34:40.994Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T03:34:40.994Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T03:34:40.994Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T03:34:40.994Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:34:40.998Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+{"ts":"2025-11-13T03:34:40.998Z","scope":"bootstrap","msg":"Starting orchestrators","level":"INFO","plan":true,"code":false,"certify":false,"deploy":false,"monitor":false}
+{"ts":"2025-11-13T03:34:40.998Z","scope":"PlanCoordinator","msg":"Starting orchestrator","level":"INFO","inputTopic":"phase.plan.in","outputTopic":"phase.plan.out"}
+{"ts":"2025-11-13T03:34:40.999Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:34:40.999Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:phase.plan.in","consumerGroup":"orchestrator-group","consumerName":"consumer-1763004880999"}
+{"ts":"2025-11-13T03:34:40.999Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"phase.plan.in","count":1}
+{"ts":"2025-11-13T03:34:40.999Z","scope":"PlanCoordinator","msg":"Orchestrator started","level":"INFO"}
+{"ts":"2025-11-13T03:34:40.999Z","scope":"bootstrap","msg":"Plan coordinator started","level":"INFO"}
+{"ts":"2025-11-13T03:34:41.000Z","scope":"bootstrap","msg":"All orchestrators started","level":"INFO","count":1}
+[METRIC] server.started{}: 1
+{"ts":"2025-11-13T03:34:41.084Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"orchestrator:results","count":1}
+{"ts":"2025-11-13T03:34:41.086Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"orchestrator:results"}
+[03:34:40 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[03:34:40 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[03:34:40 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Initializing OrchestratorContainer...[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] OrchestratorContainer initialized successfully[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Extracting messageBus from OrchestratorContainer[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] messageBus extracted successfully[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateManager initialized[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Setting up autonomous state machine event handling[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateMachineService initialized with state persistence[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-3] WorkflowService received messageBus from container[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Setting up message bus subscription for agent results[39m
+[03:34:41 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Autonomous state machine event handling initialized[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:34:41 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+{"ts":"2025-11-13T03:34:46.072Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:orchestrator:results","consumerGroup":"orchestrator-group","consumerName":"consumer-1763004881086"}
+{"ts":"2025-11-13T03:34:46.072Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"orchestrator:results","count":2}
+[03:34:46 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Message bus subscription established successfully[39m
+10:35:32 PM [tsx] change in ./../shared/types/dist/index.js Restarting...
+{"ts":"2025-11-13T03:35:32.267Z","scope":"bootstrap","msg":"SIGTERM received","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.267Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.268Z","scope":"PlanCoordinator","msg":"Stopping orchestrator","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.269Z","scope":"redis-bus","msg":"Unsubscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:35:32.270Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.270Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.270Z","scope":"PlanCoordinator","msg":"Orchestrator stopped","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.270Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.270Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.270Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+c📦 @agentic-sdlc/shared-types loaded (Phase 5)
+🔖 Version: 1.0.0
+prisma:info Starting a postgresql pool with 29 connections.
+{"ts":"2025-11-13T03:35:32.797Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:35:32.797Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-13T03:35:32.813Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:35:32.813Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:35:32.813Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:35:32.814Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:35:32.815Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:35:32.815Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:35:32.815Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.815Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.815Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.816Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:35:32.820Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+{"ts":"2025-11-13T03:35:32.820Z","scope":"bootstrap","msg":"Starting orchestrators","level":"INFO","plan":true,"code":false,"certify":false,"deploy":false,"monitor":false}
+{"ts":"2025-11-13T03:35:32.820Z","scope":"PlanCoordinator","msg":"Starting orchestrator","level":"INFO","inputTopic":"phase.plan.in","outputTopic":"phase.plan.out"}
+{"ts":"2025-11-13T03:35:32.821Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:35:32.821Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:phase.plan.in","consumerGroup":"orchestrator-group","consumerName":"consumer-1763004932821"}
+{"ts":"2025-11-13T03:35:32.821Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"phase.plan.in","count":1}
+{"ts":"2025-11-13T03:35:32.821Z","scope":"PlanCoordinator","msg":"Orchestrator started","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.821Z","scope":"bootstrap","msg":"Plan coordinator started","level":"INFO"}
+{"ts":"2025-11-13T03:35:32.821Z","scope":"bootstrap","msg":"All orchestrators started","level":"INFO","count":1}
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Initializing OrchestratorContainer...[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] OrchestratorContainer initialized successfully[39m
+=================== SERVER START ERROR ===================
+Error: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+Message: listen EADDRINUSE: address already in use 0.0.0.0:3000
+Stack: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+==========================================================
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Extracting messageBus from OrchestratorContainer[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] messageBus extracted successfully[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateManager initialized[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Setting up autonomous state machine event handling[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateMachineService initialized with state persistence[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-3] WorkflowService received messageBus from container[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Setting up message bus subscription for agent results[39m
+[03:35:32 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[03:35:32 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[03:35:32 UTC] [31mERROR[39m (orchestrator): [36mFailed to start server[39m
+10:35:54 PM [tsx] change in ./../shared/types/dist/index.js Rerunning...
+c📦 @agentic-sdlc/shared-types loaded (Phase 5)
+🔖 Version: 1.0.0
+prisma:info Starting a postgresql pool with 29 connections.
+{"ts":"2025-11-13T03:35:55.180Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:35:55.181Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-13T03:35:55.195Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:35:55.196Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:35:55.196Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:35:55.196Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:35:55.197Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:35:55.197Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:35:55.197Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T03:35:55.197Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T03:35:55.197Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T03:35:55.197Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:35:55.200Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+{"ts":"2025-11-13T03:35:55.200Z","scope":"bootstrap","msg":"Starting orchestrators","level":"INFO","plan":true,"code":false,"certify":false,"deploy":false,"monitor":false}
+{"ts":"2025-11-13T03:35:55.200Z","scope":"PlanCoordinator","msg":"Starting orchestrator","level":"INFO","inputTopic":"phase.plan.in","outputTopic":"phase.plan.out"}
+{"ts":"2025-11-13T03:35:55.201Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:35:55.202Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:phase.plan.in","consumerGroup":"orchestrator-group","consumerName":"consumer-1763004955201"}
+{"ts":"2025-11-13T03:35:55.202Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"phase.plan.in","count":1}
+{"ts":"2025-11-13T03:35:55.202Z","scope":"PlanCoordinator","msg":"Orchestrator started","level":"INFO"}
+{"ts":"2025-11-13T03:35:55.202Z","scope":"bootstrap","msg":"Plan coordinator started","level":"INFO"}
+{"ts":"2025-11-13T03:35:55.202Z","scope":"bootstrap","msg":"All orchestrators started","level":"INFO","count":1}
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Initializing OrchestratorContainer...[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] OrchestratorContainer initialized successfully[39m
+[METRIC] server.started{}: 1
+{"ts":"2025-11-13T03:35:55.282Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"orchestrator:results","count":1}
+{"ts":"2025-11-13T03:35:55.283Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"orchestrator:results"}
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Extracting messageBus from OrchestratorContainer[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] messageBus extracted successfully[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateManager initialized[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Setting up autonomous state machine event handling[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateMachineService initialized with state persistence[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-3] WorkflowService received messageBus from container[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Setting up message bus subscription for agent results[39m
+[03:35:55 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Autonomous state machine event handling initialized[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:35:55 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+{"ts":"2025-11-13T03:36:00.321Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:orchestrator:results","consumerGroup":"orchestrator-group","consumerName":"consumer-1763004955283"}
+{"ts":"2025-11-13T03:36:00.321Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"orchestrator:results","count":2}
+[03:36:00 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Message bus subscription established successfully[39m
+10:36:50 PM [tsx] change in ./../shared/types/dist/index.js Restarting...
+{"ts":"2025-11-13T03:36:50.054Z","scope":"bootstrap","msg":"SIGTERM received","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.054Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.054Z","scope":"PlanCoordinator","msg":"Stopping orchestrator","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.056Z","scope":"redis-bus","msg":"Unsubscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:36:50.057Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.057Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.057Z","scope":"PlanCoordinator","msg":"Orchestrator stopped","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.057Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.057Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.057Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[03:36:50 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: TypeError: Cannot read properties of undefined (reading 'disconnect')[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[03:36:50 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+c📦 @agentic-sdlc/shared-types loaded (Phase 5)
+🔖 Version: 1.0.0
+prisma:info Starting a postgresql pool with 29 connections.
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+{"ts":"2025-11-13T03:36:50.770Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:36:50.770Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-13T03:36:50.782Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:36:50.783Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:36:50.783Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:36:50.784Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:36:50.784Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:36:50.784Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:36:50.784Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.784Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.784Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.784Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agentic-sdlc"}
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Initializing OrchestratorContainer...[39m
+{"ts":"2025-11-13T03:36:50.788Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+{"ts":"2025-11-13T03:36:50.788Z","scope":"bootstrap","msg":"Starting orchestrators","level":"INFO","plan":true,"code":false,"certify":false,"deploy":false,"monitor":false}
+{"ts":"2025-11-13T03:36:50.788Z","scope":"PlanCoordinator","msg":"Starting orchestrator","level":"INFO","inputTopic":"phase.plan.in","outputTopic":"phase.plan.out"}
+{"ts":"2025-11-13T03:36:50.788Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:36:50.789Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:phase.plan.in","consumerGroup":"orchestrator-group","consumerName":"consumer-1763005010788"}
+{"ts":"2025-11-13T03:36:50.789Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"phase.plan.in","count":1}
+{"ts":"2025-11-13T03:36:50.789Z","scope":"PlanCoordinator","msg":"Orchestrator started","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.789Z","scope":"bootstrap","msg":"Plan coordinator started","level":"INFO"}
+{"ts":"2025-11-13T03:36:50.789Z","scope":"bootstrap","msg":"All orchestrators started","level":"INFO","count":1}
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] OrchestratorContainer initialized successfully[39m
+=================== SERVER START ERROR ===================
+Error: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+Message: listen EADDRINUSE: address already in use 0.0.0.0:3000
+Stack: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+==========================================================
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Extracting messageBus from OrchestratorContainer[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] messageBus extracted successfully[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateManager initialized[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Setting up autonomous state machine event handling[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateMachineService initialized with state persistence[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-3] WorkflowService received messageBus from container[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Setting up message bus subscription for agent results[39m
+[03:36:50 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[03:36:50 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[03:36:50 UTC] [31mERROR[39m (orchestrator): [36mFailed to start server[39m
+10:37:19 PM [tsx] change in ./../shared/types/dist/index.js Rerunning...
+c📦 @agentic-sdlc/shared-types loaded (Phase 5)
+🔖 Version: 1.0.0
+prisma:info Starting a postgresql pool with 29 connections.
+{"ts":"2025-11-13T03:37:19.684Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:37:19.684Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-13T03:37:19.698Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:37:19.698Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:37:19.698Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:37:19.699Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:37:19.699Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:37:19.699Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:37:19.699Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T03:37:19.699Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T03:37:19.699Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T03:37:19.699Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:37:19.705Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+{"ts":"2025-11-13T03:37:19.705Z","scope":"bootstrap","msg":"Starting orchestrators","level":"INFO","plan":true,"code":false,"certify":false,"deploy":false,"monitor":false}
+{"ts":"2025-11-13T03:37:19.705Z","scope":"PlanCoordinator","msg":"Starting orchestrator","level":"INFO","inputTopic":"phase.plan.in","outputTopic":"phase.plan.out"}
+{"ts":"2025-11-13T03:37:19.706Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:37:19.706Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:phase.plan.in","consumerGroup":"orchestrator-group","consumerName":"consumer-1763005039706"}
+{"ts":"2025-11-13T03:37:19.707Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"phase.plan.in","count":1}
+{"ts":"2025-11-13T03:37:19.707Z","scope":"PlanCoordinator","msg":"Orchestrator started","level":"INFO"}
+{"ts":"2025-11-13T03:37:19.707Z","scope":"bootstrap","msg":"Plan coordinator started","level":"INFO"}
+{"ts":"2025-11-13T03:37:19.707Z","scope":"bootstrap","msg":"All orchestrators started","level":"INFO","count":1}
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Initializing OrchestratorContainer...[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] OrchestratorContainer initialized successfully[39m
+[METRIC] server.started{}: 1
+{"ts":"2025-11-13T03:37:19.781Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"orchestrator:results","count":1}
+{"ts":"2025-11-13T03:37:19.782Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"orchestrator:results"}
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Extracting messageBus from OrchestratorContainer[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] messageBus extracted successfully[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateManager initialized[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Setting up autonomous state machine event handling[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateMachineService initialized with state persistence[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-3] WorkflowService received messageBus from container[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Setting up message bus subscription for agent results[39m
+[03:37:19 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator server listening on 0.0.0.0:3000[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mAPI documentation available at http://0.0.0.0:3000/documentation[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36mOrchestrator started successfully[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Autonomous state machine event handling initialized[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:REDIS_SUBSCRIBED] Subscribed to Redis channel[39m
+[03:37:19 UTC] [32mINFO[39m (orchestrator): [36m[EB:HANDLER_REGISTERED] Handler registered for event[39m
+{"ts":"2025-11-13T03:37:24.798Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:orchestrator:results","consumerGroup":"orchestrator-group","consumerName":"consumer-1763005039782"}
+{"ts":"2025-11-13T03:37:24.798Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"orchestrator:results","count":2}
+[03:37:24 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Message bus subscription established successfully[39m
+10:37:42 PM [tsx] change in ./../shared/types/dist/index.js Restarting...
+{"ts":"2025-11-13T03:37:42.080Z","scope":"bootstrap","msg":"SIGTERM received","level":"INFO"}
+{"ts":"2025-11-13T03:37:42.080Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+{"ts":"2025-11-13T03:37:42.080Z","scope":"PlanCoordinator","msg":"Stopping orchestrator","level":"INFO"}
+{"ts":"2025-11-13T03:37:42.082Z","scope":"redis-bus","msg":"Unsubscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:37:42.083Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:37:42.083Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:37:42.083Z","scope":"PlanCoordinator","msg":"Orchestrator stopped","level":"INFO"}
+{"ts":"2025-11-13T03:37:42.083Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:37:42.083Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T03:37:42.083Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown initiated[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mActive requests drained successfully[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mNo active pipelines to save[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mCleaning up Pipeline WebSocket handler[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mWebSocket connections closed[39m
+[03:37:42 UTC] [31mERROR[39m (orchestrator): [36mAgent dispatcher disconnect failed: TypeError: Cannot read properties of undefined (reading 'disconnect')[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mEvent bus disconnected[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mDatabase connection closed[39m
+[03:37:42 UTC] [31mERROR[39m (orchestrator): [36mGraceful shutdown failed[39m
+[03:37:42 UTC] [32mINFO[39m (orchestrator): [36mShutdown phase update[39m
+c📦 @agentic-sdlc/shared-types loaded (Phase 5)
+🔖 Version: 1.0.0
+prisma:info Starting a postgresql pool with 29 connections.
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36mStarting Agentic SDLC Orchestrator...[39m
+{"ts":"2025-11-13T03:37:43.241Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:37:43.241Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36mDatabase connected successfully[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Initializing OrchestratorContainer...[39m
+{"ts":"2025-11-13T03:37:43.254Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:37:43.254Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:37:43.254Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T03:37:43.255Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:37:43.255Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:37:43.255Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T03:37:43.255Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T03:37:43.255Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T03:37:43.255Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T03:37:43.255Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agentic-sdlc"}
+{"ts":"2025-11-13T03:37:43.258Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+{"ts":"2025-11-13T03:37:43.258Z","scope":"bootstrap","msg":"Starting orchestrators","level":"INFO","plan":true,"code":false,"certify":false,"deploy":false,"monitor":false}
+{"ts":"2025-11-13T03:37:43.258Z","scope":"PlanCoordinator","msg":"Starting orchestrator","level":"INFO","inputTopic":"phase.plan.in","outputTopic":"phase.plan.out"}
+{"ts":"2025-11-13T03:37:43.258Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"phase.plan.in"}
+{"ts":"2025-11-13T03:37:43.259Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:phase.plan.in","consumerGroup":"orchestrator-group","consumerName":"consumer-1763005063258"}
+{"ts":"2025-11-13T03:37:43.259Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"phase.plan.in","count":1}
+{"ts":"2025-11-13T03:37:43.259Z","scope":"PlanCoordinator","msg":"Orchestrator started","level":"INFO"}
+{"ts":"2025-11-13T03:37:43.259Z","scope":"bootstrap","msg":"Plan coordinator started","level":"INFO"}
+{"ts":"2025-11-13T03:37:43.259Z","scope":"bootstrap","msg":"All orchestrators started","level":"INFO","count":1}
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] OrchestratorContainer initialized successfully[39m
+=================== SERVER START ERROR ===================
+Error: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+Message: listen EADDRINUSE: address already in use 0.0.0.0:3000
+Stack: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+==========================================================
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] Extracting messageBus from OrchestratorContainer[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-1] messageBus extracted successfully[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateManager initialized[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-4] Setting up autonomous state machine event handling[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-6] WorkflowStateMachineService initialized with state persistence[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[WF:CONSTRUCTOR:START] WorkflowService instance created[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-3] WorkflowService received messageBus from container[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[WF:SETUP_HANDLERS] Registering event handlers[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[WF:SUBSCRIBING] Subscribing to TASK_COMPLETED[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36m[PHASE-2] Setting up message bus subscription for agent results[39m
+[03:37:43 UTC] [33mWARN[39m (orchestrator): [36mFailed to load policy gates, using defaults[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36mLoaded default quality gates[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36mPipeline WebSocket handler listening for updates[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36mWebSocket routes registered at /ws/pipelines[39m
+[03:37:43 UTC] [32mINFO[39m (orchestrator): [36mGraceful shutdown handlers initialized[39m
+[03:37:43 UTC] [31mERROR[39m (orchestrator): [36mFailed to start server[39m
