@@ -120,7 +120,12 @@ else
 fi
 
 # Orchestrator API
-if check_service "Orchestrator" "http://localhost:3000/api/v1/health" "healthy"; then
+if check_service "Orchestrator API" "http://localhost:3000/api/v1/health" "healthy"; then
+  :
+fi
+
+# Hexagonal Architecture Health (Phase 3)
+if check_service "Message Bus & KV" "http://localhost:3000/health/hexagonal" "ok"; then
   :
 fi
 
@@ -140,7 +145,7 @@ fi
 echo ""
 echo -e "${BLUE}================================================${NC}"
 if [ "$HEALTHY" = true ]; then
-  echo -e "${GREEN}✓ Environment Healthy ($CHECKS_PASSED/5 checks passed)${NC}"
+  echo -e "${GREEN}✓ Environment Healthy ($CHECKS_PASSED/6 checks passed)${NC}"
 else
   echo -e "${RED}✗ Environment Issues Detected ($CHECKS_FAILED failed, $CHECKS_PASSED passed)${NC}"
 fi

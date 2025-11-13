@@ -97,7 +97,8 @@ export function makeRedisBus(
       // Ensure handler set exists
       if (!subscriptions.has(topic)) {
         subscriptions.set(topic, new Set());
-        await sub.subscribe(topic);
+        // Note: pSubscribe('*') at initialization already catches all channels
+        // No need to call sub.subscribe() again - just register the handler
         log.info('Subscribed', { topic });
 
         // Phase 3: Also consume from stream if available for durability
@@ -138,15 +139,21 @@ export function makeRedisBus(
                     try {
                       const messageData = message.message as any;
 
-                      // Fix: Check if messageData.message is a string before parsing
+                      // Fix: Parse stream message envelope structure
                       let parsedMessage: any;
-                      if (typeof messageData.message === 'string') {
+
+                      // Stream messages have format: {topic, payload: '{"key":"...","msg":{...}}'}
+                      if (messageData.payload && typeof messageData.payload === 'string') {
+                        const envelope = JSON.parse(messageData.payload);
+                        // Extract the actual message from the envelope
+                        parsedMessage = envelope.msg || envelope;
+                      } else if (typeof messageData.message === 'string') {
                         parsedMessage = JSON.parse(messageData.message);
                       } else if (typeof messageData === 'string') {
                         parsedMessage = JSON.parse(messageData);
                       } else {
-                        // Already an object, use as is
-                        parsedMessage = messageData.message || messageData;
+                        // Already an object, try to unwrap envelope
+                        parsedMessage = messageData.msg || messageData.message || messageData;
                       }
 
                       log.info('[PHASE-3] Processing message from stream', {

@@ -98,7 +98,8 @@ export async function createServer() {
   logger.info('[PHASE-3] OrchestratorContainer initialized successfully');
 
   // Initialize services
-  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+  // Use same Redis URL as container for consistency
+  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6380';
   const eventBus = new EventBus(redisUrl);
   const workflowRepository = new WorkflowRepository(prisma);
 
