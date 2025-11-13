@@ -137,11 +137,23 @@ export function makeRedisBus(
                   for (const message of streamResult.messages) {
                     try {
                       const messageData = message.message as any;
-                      const parsedMessage = JSON.parse(messageData.message || messageData);
+
+                      // Fix: Check if messageData.message is a string before parsing
+                      let parsedMessage: any;
+                      if (typeof messageData.message === 'string') {
+                        parsedMessage = JSON.parse(messageData.message);
+                      } else if (typeof messageData === 'string') {
+                        parsedMessage = JSON.parse(messageData);
+                      } else {
+                        // Already an object, use as is
+                        parsedMessage = messageData.message || messageData;
+                      }
 
                       log.info('[PHASE-3] Processing message from stream', {
                         streamKey,
                         messageId: message.id,
+                        messageType: typeof messageData,
+                        hasMessageProperty: messageData.message !== undefined,
                         workflow_id: messageData.workflow_id
                       });
 

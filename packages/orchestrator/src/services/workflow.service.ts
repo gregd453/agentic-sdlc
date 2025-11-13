@@ -466,23 +466,48 @@ export class WorkflowService {
     if (this.messageBus) {
       const taskChannel = `agent:${agentType}:tasks`;
 
-      await this.messageBus.publish(
-        taskChannel,
-        envelope,
-        {
-          key: workflowId,
-          mirrorToStream: `stream:${taskChannel}` // Durability via stream
-        }
-      );
+      try {
+        await this.messageBus.publish(
+          taskChannel,
+          envelope,
+          {
+            key: workflowId,
+            mirrorToStream: `stream:${taskChannel}` // Durability via stream
+          }
+        );
 
-      logger.info('[PHASE-3] Task dispatched via message bus', {
-        task_id: taskId,
-        workflow_id: workflowId,
-        stage,
-        agent_type: agentType,
-        channel: taskChannel,
-        stream_mirrored: true
-      });
+        logger.info('[PHASE-3] Task dispatched via message bus', {
+          task_id: taskId,
+          workflow_id: workflowId,
+          stage,
+          agent_type: agentType,
+          channel: taskChannel,
+          stream_mirrored: true
+        });
+      } catch (error) {
+        logger.error('[TASK_DISPATCH] Failed to publish task to message bus', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+          task_id: taskId,
+          workflow_id: workflowId,
+          stage,
+          agent_type: agentType,
+          channel: taskChannel
+        });
+
+        // Mark workflow as failed using state machine
+        const stateMachine = this.stateMachineService.getStateMachine(workflowId);
+        if (stateMachine) {
+          stateMachine.send({
+            type: 'STAGE_FAILED',
+            stage,
+            error: `Task dispatch failed: ${error instanceof Error ? error.message : String(error)}`
+          });
+        }
+
+        // Re-throw to ensure proper error propagation
+        throw new Error(`Task dispatch failed for workflow ${workflowId}: ${error instanceof Error ? error.message : String(error)}`);
+      }
     } else {
       logger.error('[PHASE-3] messageBus not available for task dispatch', {
         workflow_id: workflowId,

@@ -337,7 +337,50 @@ export abstract class BaseAgent implements AgentLifecycle {
 
     // Phase 3: Dual publishing for durability
     // 1. Publish to pub/sub channel (immediate delivery to subscribers)
-    await this.redisPublisher.publish(resultChannel, messageJson);
+    try {
+      await this.redisPublisher.publish(resultChannel, messageJson);
+      this.logger.info('[RESULT_DISPATCH] Successfully published result', {
+        channel: resultChannel,
+        workflow_id: validatedResult.workflow_id,
+        task_id: validatedResult.task_id,
+        agent_id: this.agentId
+      });
+    } catch (error) {
+      this.logger.error('[RESULT_DISPATCH] Failed to publish result to channel', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        channel: resultChannel,
+        workflow_id: validatedResult.workflow_id,
+        task_id: validatedResult.task_id,
+        agent_id: this.agentId
+      });
+
+      // Attempt to send to dead letter queue
+      try {
+        const dlqChannel = `dlq:${resultChannel}`;
+        await this.redisPublisher.publish(dlqChannel, JSON.stringify({
+          original_message: message,
+          error: error instanceof Error ? error.message : String(error),
+          failed_at: new Date().toISOString(),
+          channel: resultChannel
+        }));
+        this.logger.warn('[RESULT_DISPATCH] Result sent to dead letter queue', {
+          dlq: dlqChannel,
+          workflow_id: validatedResult.workflow_id,
+          task_id: validatedResult.task_id
+        });
+      } catch (dlqError) {
+        this.logger.error('[RESULT_DISPATCH] Failed to send to dead letter queue', {
+          error: dlqError instanceof Error ? dlqError.message : String(dlqError),
+          workflow_id: validatedResult.workflow_id,
+          task_id: validatedResult.task_id
+        });
+      }
+
+      // Don't re-throw here - allow agent to continue processing other tasks
+      // The workflow will timeout if result is not received
+      return;
+    }
 
     // 2. Mirror to Redis stream (durable, persistent, recoverable)
     const streamKey = `stream:${resultChannel}`;

@@ -30,3 +30,12 @@ export {
   createRobustRedisSubscriber,
   type RedisSubscriptionConfig
 } from './redis-subscription';
+
+// Error handling utilities
+export {
+  ErrorHandler,
+  toErrorMessage,
+  safeErrorLog,
+  type ErrorInfo,
+  type Logger
+} from './error-handler';
