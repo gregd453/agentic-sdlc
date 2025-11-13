@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { startServer } from './server';
 import { connectDatabase } from './db/client';
 import { logger } from './utils/logger';
+import { bootstrapOrchestrator } from './hexagonal/bootstrap';
 
 async function main() {
   logger.info('Starting Agentic SDLC Orchestrator...');
@@ -10,8 +11,13 @@ async function main() {
     // Connect to database
     await connectDatabase();
 
-    // Start server
-    await startServer();
+    // Initialize OrchestratorContainer (Phase 1)
+    logger.info('[PHASE-1] Initializing OrchestratorContainer...');
+    const container = await bootstrapOrchestrator();
+    logger.info('[PHASE-1] OrchestratorContainer initialized successfully');
+
+    // Start server with container (Phase 1: messageBus now available)
+    await startServer(container);
 
     logger.info('Orchestrator started successfully');
   } catch (error) {

@@ -67,13 +67,12 @@ if [ "$CONTAINERS_ONLY" = false ]; then
 
   # Phase 1: Send SIGTERM to all tracked processes
   if [ -f "$PIDS_FILE" ]; then
-    local services_file="${PIDS_FILE}.services"
+    services_file="${PIDS_FILE}.services"
 
     while IFS= read -r pid; do
       [ -z "$pid" ] && continue
 
       if kill -0 "$pid" 2>/dev/null; then
-        local service_name
         service_name=$(get_service_name "$pid" "$services_file")
 
         if [ "$FORCE" = true ]; then
@@ -99,7 +98,6 @@ if [ "$CONTAINERS_ONLY" = false ]; then
         [ -z "$pid" ] && continue
 
         if kill -0 "$pid" 2>/dev/null; then
-          local service_name
           service_name=$(get_service_name "$pid" "$services_file")
           kill -9 "$pid" 2>/dev/null || true
           echo -e "  ${GREEN}✓${NC} Force killed $service_name (PID: $pid)"
@@ -139,7 +137,6 @@ declare -a KILL_PATTERNS=(
 
 ORPHAN_COUNT=0
 for pattern in "${KILL_PATTERNS[@]}"; do
-  local count
   count=$(pgrep -f "$pattern" 2>/dev/null | wc -l || true)
   if [ "$count" -gt 0 ]; then
     echo -e "  Killing $count orphaned process(es) matching: $pattern"

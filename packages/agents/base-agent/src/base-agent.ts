@@ -4,6 +4,7 @@ import pino from 'pino';
 import Redis from 'ioredis';
 import { retry, RetryPresets, CircuitBreaker } from '@agentic-sdlc/shared-utils';
 import { REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
+import { AgentResultSchema, VERSION } from '@agentic-sdlc/shared-types/src/core/schemas';
 import {
   AgentLifecycle,
   AgentCapabilities,
@@ -210,34 +211,128 @@ export abstract class BaseAgent implements AgentLifecycle {
   abstract execute(task: TaskAssignment): Promise<TaskResult>;
 
   async reportResult(result: TaskResult, workflowStage?: string): Promise<void> {
-    // Validate result
+    // Validate result against local schema first
     const validatedResult = TaskResultSchema.parse(result);
 
     // Use workflow stage if provided, otherwise fall back to agent type
     // SESSION #27 FIX: Send workflow stage (e.g., "initialization") not agent type (e.g., "scaffold")
     const stage = workflowStage || this.capabilities.type;
 
+    // Convert status enum from TaskResult to AgentResultSchema
+    // TaskResult: 'success'|'failure'|'partial'
+    // AgentResultSchema: 'success'|'failed'|'timeout'|'cancelled'|...
+    let agentStatus: 'success' | 'failed' | 'timeout' | 'cancelled' | 'running' | 'pending' | 'queued' | 'retrying';
+    let success: boolean;
+
+    if (validatedResult.status === 'success') {
+      agentStatus = 'success';
+      success = true;
+    } else if (validatedResult.status === 'failure') {
+      agentStatus = 'failed';
+      success = false;
+    } else { // 'partial'
+      agentStatus = 'success'; // Treat partial as success for workflow progression
+      success = true;
+    }
+
+    // Build AgentResultSchema-compliant envelope
+    // CRITICAL: Wrap the actual payload in 'result' field, not top-level
+    const agentResult = {
+      task_id: validatedResult.task_id,
+      workflow_id: validatedResult.workflow_id,
+      agent_id: this.agentId,
+      agent_type: this.capabilities.type as any, // e.g., 'scaffold', 'validation', etc.
+      success: success,
+      status: agentStatus,
+      action: stage, // The action taken (stage name)
+      // ✓ CRITICAL: Wrap payload in 'result' field for schema compliance
+      result: {
+        output: validatedResult.output,
+        status: validatedResult.status, // Include original status in result
+        ...(validatedResult.errors && { errors: validatedResult.errors }),
+        ...(validatedResult.next_stage && { next_stage: validatedResult.next_stage })
+      },
+      metrics: {
+        duration_ms: validatedResult.metrics?.duration_ms || 0,
+        tokens_used: validatedResult.metrics?.tokens_used,
+        api_calls: validatedResult.metrics?.api_calls
+      },
+      ...(validatedResult.errors && { error: {
+        code: 'TASK_EXECUTION_ERROR',
+        message: validatedResult.errors.join('; '),
+        retryable: true
+      }}),
+      timestamp: new Date().toISOString(),
+      version: VERSION
+    };
+
+    // Validate against AgentResultSchema before publishing
+    // This is the critical validation boundary - ensures all emitted results are schema-compliant
+    try {
+      AgentResultSchema.parse(agentResult);
+    } catch (validationError) {
+      this.logger.error('AgentResultSchema validation failed - SCHEMA COMPLIANCE BREACH', {
+        task_id: validatedResult.task_id,
+        agent_id: this.agentId,
+        validation_error: (validationError as any).message,
+        attempted_result: JSON.stringify(agentResult).substring(0, 500)
+      });
+      throw new Error(`Agent result does not comply with AgentResultSchema: ${(validationError as any).message}`);
+    }
+
     // Publish result to Redis using publisher client
     // SESSION #37: Use constants for Redis channels
     const resultChannel = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
-    await this.redisPublisher.publish(
-      resultChannel,
-      JSON.stringify({
-        id: randomUUID(),
-        type: 'result',
-        agent_id: this.agentId,
-        workflow_id: validatedResult.workflow_id,
-        stage: stage,
-        payload: validatedResult,
-        timestamp: new Date().toISOString(),
-        trace_id: randomUUID()
-      } as AgentMessage)
-    );
+    const message = {
+      id: randomUUID(),
+      type: 'result',
+      agent_id: this.agentId,
+      workflow_id: validatedResult.workflow_id,
+      stage: stage,
+      payload: agentResult, // ✓ Now contains AgentResult, not TaskResult
+      timestamp: new Date().toISOString(),
+      trace_id: randomUUID()
+    } as AgentMessage;
 
-    this.logger.info('Result reported', {
+    const messageJson = JSON.stringify(message);
+
+    // Phase 3: Dual publishing for durability
+    // 1. Publish to pub/sub channel (immediate delivery to subscribers)
+    await this.redisPublisher.publish(resultChannel, messageJson);
+
+    // 2. Mirror to Redis stream (durable, persistent, recoverable)
+    const streamKey = `stream:${resultChannel}`;
+    try {
+      await this.redisPublisher.xadd(
+        streamKey,
+        '*', // auto-generate ID
+        'message', messageJson,
+        'workflow_id', validatedResult.workflow_id,
+        'task_id', validatedResult.task_id,
+        'agent_id', this.agentId,
+        'timestamp', new Date().toISOString()
+      );
+      this.logger.info('[PHASE-3] Result mirrored to stream for durability', {
+        stream: streamKey,
+        workflow_id: validatedResult.workflow_id,
+        task_id: validatedResult.task_id
+      });
+    } catch (streamError) {
+      // Don't fail the task if stream mirroring fails
+      this.logger.error('[PHASE-3] Failed to mirror result to stream', {
+        error: streamError instanceof Error ? streamError.message : String(streamError),
+        workflow_id: validatedResult.workflow_id,
+        task_id: validatedResult.task_id
+      });
+    }
+
+    this.logger.info('AgentResultSchema-compliant result reported', {
       task_id: validatedResult.task_id,
-      status: validatedResult.status,
-      workflow_stage: stage
+      status: agentStatus,
+      success: success,
+      workflow_stage: stage,
+      agent_id: this.agentId,
+      version: VERSION
     });
   }
 

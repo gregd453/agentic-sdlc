@@ -10,30 +10,47 @@ import { DecisionGateService } from './decision-gate.service';
 import { logger, generateTraceId } from '../utils/logger';
 import { metrics } from '../utils/metrics';
 import { NotFoundError } from '../utils/errors';
+import { IMessageBus } from '../hexagonal/ports/message-bus.port';
 
 export class WorkflowService {
   private decisionGateService: DecisionGateService;
   private eventHandlers: Map<string, (event: any) => Promise<void>> = new Map();
   private processedTasks: Set<string> = new Set(); // Track completed tasks for idempotency
   private redisClient: Redis;
+  private messageBus?: IMessageBus; // Phase 1: Message bus from container
 
   constructor(
     private repository: WorkflowRepository,
     private eventBus: EventBus,
     private stateMachineService: WorkflowStateMachineService,
     private agentDispatcher?: AgentDispatcherService,
-    redisUrl: string = process.env.REDIS_URL || 'redis://127.0.0.1:6379'
+    redisUrl: string = process.env.REDIS_URL || 'redis://127.0.0.1:6379',
+    messageBus?: IMessageBus // Phase 1: Accept messageBus parameter
   ) {
+    this.messageBus = messageBus;
     logger.info('[WF:CONSTRUCTOR:START] WorkflowService instance created', {
       timestamp: new Date().toISOString(),
+      messageBusAvailable: !!messageBus, // Phase 1: Log messageBus availability
       stack: new Error().stack?.split('\n').slice(0, 5).join(' | ')
     });
+
+    if (messageBus) {
+      logger.info('[PHASE-1] WorkflowService received messageBus from container');
+    }
+
     this.decisionGateService = new DecisionGateService();
 
     // Initialize Redis client for Phase 1 hardening
     this.redisClient = new Redis(redisUrl);
 
     this.setupEventHandlers();
+
+    // Phase 2: Set up message bus subscription for agent results (async, non-blocking)
+    if (messageBus) {
+      this.setupMessageBusSubscription().catch(err => {
+        logger.error('[PHASE-2] Failed to initialize message bus subscription', { error: err });
+      });
+    }
   }
 
   private setupEventHandlers(): void {
@@ -66,6 +83,46 @@ export class WorkflowService {
     };
     this.eventHandlers.set('TASK_FAILED', taskFailedHandler);
     this.eventBus.subscribe('TASK_FAILED', taskFailedHandler);
+  }
+
+  /**
+   * Phase 2: Set up message bus subscription for agent results
+   * Replaces per-workflow callback registration with single persistent subscription
+   */
+  private async setupMessageBusSubscription(): Promise<void> {
+    if (!this.messageBus) {
+      logger.warn('[PHASE-2] setupMessageBusSubscription called but messageBus not available');
+      return;
+    }
+
+    logger.info('[PHASE-2] Setting up message bus subscription for agent results');
+
+    try {
+      const { REDIS_CHANNELS } = await import('@agentic-sdlc/shared-types');
+      const topic = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
+
+      // Subscribe to agent results topic with centralized handler
+      await this.messageBus.subscribe(topic, async (message: any) => {
+        logger.info('[PHASE-2] Received agent result from message bus', {
+          message_id: message.id,
+          workflow_id: message.workflow_id,
+          agent_id: message.agent_id,
+          type: message.type
+        });
+
+        // Handle the agent result using existing handler
+        await this.handleAgentResult(message);
+      });
+
+      logger.info('[PHASE-2] Message bus subscription established successfully', {
+        topic
+      });
+    } catch (error) {
+      logger.error('[PHASE-2] Failed to set up message bus subscription', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      throw error;
+    }
   }
 
   /**
@@ -409,12 +466,11 @@ export class WorkflowService {
 
     // Dispatch envelope to agent via Redis
     if (this.agentDispatcher) {
-      // Register handler for agent result FIRST (before dispatching task)
-      this.agentDispatcher.onResult(workflowId, async (result) => {
-        await this.handleAgentResult(result);
-      });
+      // Phase 2: Removed per-workflow callback registration
+      // Results now handled by persistent messageBus subscription in setupMessageBusSubscription()
+      // No more: this.agentDispatcher.onResult(workflowId, handler)
 
-      // THEN dispatch the envelope
+      // Dispatch the envelope to agent
       await this.agentDispatcher.dispatchTask(envelope, workflowData);
     }
 
@@ -427,50 +483,85 @@ export class WorkflowService {
   }
 
   private async handleAgentResult(result: any): Promise<void> {
-    const payload = result.payload;
+    // Extract AgentResultSchema-compliant payload
+    const agentResult = result.payload;
 
-    logger.info('Handling agent result', {
-      workflow_id: result.workflow_id,
-      task_id: payload.task_id,
-      status: payload.status,
-      stage_from_result: result.stage,
-      payload_stage: payload.stage
+    // ✓ CRITICAL: Validate against AgentResultSchema to ensure compliance
+    try {
+      const { AgentResultSchema } = require('@agentic-sdlc/shared-types/src/core/schemas');
+      AgentResultSchema.parse(agentResult);
+    } catch (validationError) {
+      logger.error('AgentResultSchema validation failed in orchestrator - SCHEMA COMPLIANCE BREACH', {
+        workflow_id: result.workflow_id,
+        agent_id: result.agent_id,
+        validation_error: (validationError as any).message,
+        result_keys: Object.keys(agentResult || {}).join(',')
+      });
+      throw new Error(`Invalid agent result - does not comply with AgentResultSchema: ${(validationError as any).message}`);
+    }
+
+    logger.info('Handling AgentResultSchema-compliant result', {
+      workflow_id: agentResult.workflow_id,
+      task_id: agentResult.task_id,
+      agent_id: agentResult.agent_id,
+      success: agentResult.success,
+      status: agentResult.status,
+      stage_from_message: result.stage
     });
 
-    if (payload.status === 'success') {
-      // Use payload.stage if available, fallback to result.stage
-      const completedStage = payload.stage || result.stage;
-      logger.info('Task completed - determining stage', {
-        workflow_id: result.workflow_id,
-        task_id: payload.task_id,
-        final_stage_value: completedStage
+    // Determine the stage from result.stage (the workflow stage, not the action)
+    const completedStage = result.stage;
+
+    if (agentResult.success) {
+      logger.info('Task completed successfully - transitioning workflow', {
+        workflow_id: agentResult.workflow_id,
+        task_id: agentResult.task_id,
+        completed_stage: completedStage,
+        agent_id: agentResult.agent_id
       });
 
       // SESSION #30: Store stage output before transitioning
-      await this.storeStageOutput(result.workflow_id, completedStage, payload.output);
+      // ✓ Extract from result.result field (AgentResultSchema compliance)
+      const stageOutput = {
+        agent_id: agentResult.agent_id,
+        agent_type: agentResult.agent_type,
+        status: agentResult.status,
+        ...(agentResult.result && { output: agentResult.result.output || agentResult.result }),
+        ...(agentResult.metrics && { metrics: agentResult.metrics }),
+        ...(agentResult.artifacts && { artifacts: agentResult.artifacts }),
+        timestamp: agentResult.timestamp
+      };
+
+      await this.storeStageOutput(agentResult.workflow_id, completedStage, stageOutput);
 
       await this.handleTaskCompletion({
         payload: {
-          task_id: payload.task_id,
-          workflow_id: result.workflow_id,
+          task_id: agentResult.task_id,
+          workflow_id: agentResult.workflow_id,
           stage: completedStage
         }
       });
     } else {
       // SESSION #32: Store stage output even on failure for audit trail
-      const failedStage = result.stage;
-      await this.storeStageOutput(result.workflow_id, failedStage, {
-        ...payload.output,
-        status: 'failed',
-        errors: payload.errors
-      });
+      const failureOutput = {
+        agent_id: agentResult.agent_id,
+        agent_type: agentResult.agent_type,
+        status: agentResult.status,
+        success: false,
+        ...(agentResult.result && { output: agentResult.result }),
+        ...(agentResult.error && { error: agentResult.error }),
+        ...(agentResult.metrics && { metrics: agentResult.metrics }),
+        timestamp: agentResult.timestamp
+      };
+
+      await this.storeStageOutput(agentResult.workflow_id, completedStage, failureOutput);
 
       await this.handleTaskFailure({
         payload: {
-          task_id: payload.task_id,
-          workflow_id: result.workflow_id,
-          stage: result.stage,
-          error: payload.errors?.join(', ')
+          task_id: agentResult.task_id,
+          workflow_id: agentResult.workflow_id,
+          stage: completedStage,
+          error: agentResult.error?.message || 'Agent task failed'
         }
       });
     }

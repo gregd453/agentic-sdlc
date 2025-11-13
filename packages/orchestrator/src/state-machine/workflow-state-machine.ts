@@ -2,6 +2,8 @@ import { createMachine, interpret, fromPromise, assign } from 'xstate';
 import { logger } from '../utils/logger';
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
+import { IMessageBus } from '../hexagonal/ports/message-bus.port';
+import { WorkflowStateManager, WorkflowStateSnapshot } from '../hexagonal/persistence/workflow-state-manager';
 
 export interface WorkflowContext {
   workflow_id: string;
@@ -557,11 +559,28 @@ function getStagesForType(type: string): string[] {
 
 export class WorkflowStateMachineService {
   private machines = new Map<string, any>();
+  private messageBus?: IMessageBus; // Phase 4: Message bus for autonomous event handling
+  private stateManager?: WorkflowStateManager; // Phase 6: State persistence and recovery
 
   constructor(
     private repository: WorkflowRepository,
-    private eventBus: EventBus
-  ) {}
+    private eventBus: EventBus,
+    messageBus?: IMessageBus, // Phase 4: Optional message bus
+    stateManager?: WorkflowStateManager // Phase 6: Optional state manager
+  ) {
+    this.messageBus = messageBus;
+    this.stateManager = stateManager;
+
+    // Phase 4: Set up autonomous event subscription
+    if (messageBus) {
+      this.setupAutonomousEventHandling();
+    }
+
+    // Phase 6: Log state manager availability
+    if (stateManager) {
+      logger.info('[PHASE-6] WorkflowStateMachineService initialized with state persistence');
+    }
+  }
 
   createStateMachine(workflowId: string, type: string): any {
     const context: WorkflowContext = {
@@ -574,6 +593,18 @@ export class WorkflowStateMachineService {
 
     const machine = createWorkflowStateMachine(context, this.repository, this.eventBus);
     const service = interpret(machine).start();
+
+    // Phase 6: Subscribe to state changes for persistence
+    if (this.stateManager) {
+      service.subscribe((state: any) => {
+        this.saveStateSnapshot(state.context).catch(err => {
+          logger.error('[PHASE-6] Failed to save state snapshot', {
+            workflow_id: workflowId,
+            error: err
+          });
+        });
+      });
+    }
 
     this.machines.set(workflowId, service);
     return service;
@@ -588,6 +619,189 @@ export class WorkflowStateMachineService {
     if (service) {
       service.stop();
       this.machines.delete(workflowId);
+
+      // Phase 6: Clean up state on removal
+      if (this.stateManager) {
+        this.stateManager.cleanupWorkflow(workflowId).catch(err => {
+          logger.error('[PHASE-6] Failed to cleanup workflow state', {
+            workflow_id: workflowId,
+            error: err
+          });
+        });
+      }
+    }
+  }
+
+  /**
+   * Phase 6: Save workflow state snapshot to KV store
+   */
+  private async saveStateSnapshot(context: WorkflowContext): Promise<void> {
+    if (!this.stateManager) return;
+
+    const snapshot: WorkflowStateSnapshot = {
+      workflow_id: context.workflow_id,
+      current_stage: context.current_stage,
+      status: context.error ? 'failed' : 'running',
+      progress: context.progress,
+      metadata: context.metadata,
+      last_updated: new Date().toISOString(),
+      version: '1.0.0',
+      state_machine_context: {
+        type: context.type,
+        nextStage: context.nextStage,
+        pending_decision: context.pending_decision,
+        pending_clarification: context.pending_clarification
+      }
+    };
+
+    await this.stateManager.saveSnapshot(snapshot);
+  }
+
+  /**
+   * Phase 6: Recover workflow from persisted state
+   */
+  async recoverWorkflow(workflowId: string): Promise<boolean> {
+    if (!this.stateManager) {
+      logger.warn('[PHASE-6] Cannot recover workflow - state manager not available', {
+        workflow_id: workflowId
+      });
+      return false;
+    }
+
+    logger.info('[PHASE-6] Attempting to recover workflow', { workflow_id: workflowId });
+
+    const snapshot = await this.stateManager.recoverWorkflow(workflowId);
+
+    if (!snapshot) {
+      logger.warn('[PHASE-6] No state snapshot found for recovery', { workflow_id: workflowId });
+      return false;
+    }
+
+    // Recreate state machine with recovered context
+    const context: WorkflowContext = {
+      workflow_id: snapshot.workflow_id,
+      type: snapshot.state_machine_context?.type || 'app',
+      current_stage: snapshot.current_stage,
+      progress: snapshot.progress,
+      metadata: snapshot.metadata,
+      nextStage: snapshot.state_machine_context?.nextStage,
+      pending_decision: snapshot.state_machine_context?.pending_decision,
+      pending_clarification: snapshot.state_machine_context?.pending_clarification
+    };
+
+    const machine = createWorkflowStateMachine(context, this.repository, this.eventBus);
+    const service = interpret(machine).start();
+
+    // Subscribe to state changes
+    if (this.stateManager) {
+      service.subscribe((state: any) => {
+        this.saveStateSnapshot(state.context).catch(err => {
+          logger.error('[PHASE-6] Failed to save state snapshot', {
+            workflow_id: workflowId,
+            error: err
+          });
+        });
+      });
+    }
+
+    this.machines.set(workflowId, service);
+
+    logger.info('[PHASE-6] Workflow recovered successfully', {
+      workflow_id: workflowId,
+      current_stage: snapshot.current_stage,
+      progress: snapshot.progress
+    });
+
+    return true;
+  }
+
+  /**
+   * Phase 4: Set up autonomous event handling
+   * State machine subscribes to events and reacts autonomously
+   */
+  private async setupAutonomousEventHandling(): Promise<void> {
+    if (!this.messageBus) {
+      logger.warn('[PHASE-4] setupAutonomousEventHandling called but messageBus not available');
+      return;
+    }
+
+    logger.info('[PHASE-4] Setting up autonomous state machine event handling');
+
+    try {
+      const { REDIS_CHANNELS } = await import('@agentic-sdlc/shared-types');
+
+      // Subscribe to agent results for autonomous STAGE_COMPLETE events
+      await this.messageBus.subscribe(REDIS_CHANNELS.ORCHESTRATOR_RESULTS, async (message: any) => {
+        try {
+          logger.info('[PHASE-4] State machine received agent result', {
+            workflow_id: message.workflow_id,
+            agent_id: message.agent_id,
+            message_id: message.id
+          });
+
+          // Extract payload
+          const agentResult = message.payload;
+          if (!agentResult) {
+            logger.warn('[PHASE-4] No payload in agent result message', { message_id: message.id });
+            return;
+          }
+
+          const workflowId = agentResult.workflow_id;
+          const stateMachine = this.getStateMachine(workflowId);
+
+          if (!stateMachine) {
+            logger.warn('[PHASE-4] No state machine found for workflow', {
+              workflow_id: workflowId,
+              message_id: message.id
+            });
+            return;
+          }
+
+          // Determine event based on agent result
+          if (agentResult.success) {
+            logger.info('[PHASE-4] Sending STAGE_COMPLETE to state machine', {
+              workflow_id: workflowId,
+              stage: message.stage,
+              task_id: agentResult.task_id
+            });
+
+            stateMachine.send({
+              type: 'STAGE_COMPLETE',
+              stage: message.stage,
+              eventId: message.id
+            });
+          } else {
+            logger.info('[PHASE-4] Sending STAGE_FAILED to state machine', {
+              workflow_id: workflowId,
+              stage: message.stage,
+              task_id: agentResult.task_id
+            });
+
+            stateMachine.send({
+              type: 'STAGE_FAILED',
+              stage: message.stage,
+              error: new Error(agentResult.error?.message || 'Stage failed')
+            });
+          }
+
+          logger.info('[PHASE-4] State machine event sent autonomously', {
+            workflow_id: workflowId,
+            event_type: agentResult.success ? 'STAGE_COMPLETE' : 'STAGE_FAILED'
+          });
+        } catch (error) {
+          logger.error('[PHASE-4] Error in autonomous event handler', {
+            error: error instanceof Error ? error.message : String(error),
+            message_id: message.id
+          });
+        }
+      });
+
+      logger.info('[PHASE-4] Autonomous state machine event handling initialized');
+    } catch (error) {
+      logger.error('[PHASE-4] Failed to set up autonomous event handling', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      throw error;
     }
   }
 }

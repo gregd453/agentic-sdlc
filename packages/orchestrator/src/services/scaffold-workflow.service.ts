@@ -75,17 +75,11 @@ export class ScaffoldWorkflowService {
         request.options
       );
 
-      // Register result handler BEFORE dispatching to avoid race condition
-      // Handler key MUST be workflow_id to match agent dispatcher's result lookup
-      this.agentDispatcher.onResult(workflow.workflow_id, async (result) => {
-        logger.info('🎯 SCAFFOLD RESULT HANDLER CALLED', {
-          workflow_id: workflow.workflow_id,
-          status: result.status
-        });
-        await this.handleScaffoldResult(result);
-      });
+      // Phase 2: Removed per-workflow callback registration
+      // Results now handled by WorkflowService's persistent messageBus subscription
+      // No more: this.agentDispatcher.onResult(workflow.workflow_id, handler)
 
-      // Dispatch to scaffold agent (now handler is ready)
+      // Dispatch to scaffold agent
       await this.dispatchScaffoldTask(scaffoldTask);
 
       logger.info('Scaffold workflow created and task dispatched', {

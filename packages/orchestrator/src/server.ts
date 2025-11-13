@@ -22,8 +22,11 @@ import {
   createMetricsEndpoint,
   createMetricsSummaryEndpoint
 } from './middleware/observability.middleware';
+import { OrchestratorContainer } from './hexagonal/bootstrap';
+import { IMessageBus } from './hexagonal/ports/message-bus.port';
+import { WorkflowStateManager } from './hexagonal/persistence/workflow-state-manager';
 
-export async function createServer() {
+export async function createServer(container?: OrchestratorContainer) {
   // Initialize Fastify
   const fastify = Fastify({
     logger: false, // We use our own logger
@@ -86,9 +89,33 @@ export async function createServer() {
   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   const eventBus = new EventBus(redisUrl);
   const workflowRepository = new WorkflowRepository(prisma);
-  const stateMachineService = new WorkflowStateMachineService(workflowRepository, eventBus);
 
-  // Import and initialize agent dispatcher
+  // Phase 1: Extract messageBus from container (if available)
+  let messageBus: IMessageBus | undefined;
+  let stateManager: WorkflowStateManager | undefined;
+
+  if (container) {
+    logger.info('[PHASE-1] Extracting messageBus from OrchestratorContainer');
+    messageBus = container.getBus();
+    logger.info('[PHASE-1] messageBus extracted successfully');
+
+    // Phase 6: Initialize WorkflowStateManager with KV store
+    const kv = container.getKV();
+    stateManager = new WorkflowStateManager(kv, messageBus);
+    logger.info('[PHASE-6] WorkflowStateManager initialized');
+  }
+
+  // Phase 4 & 6: Pass messageBus and stateManager to state machine
+  const stateMachineService = new WorkflowStateMachineService(
+    workflowRepository,
+    eventBus,
+    messageBus, // Phase 4: State machine receives events autonomously
+    stateManager // Phase 6: State machine persists to KV store
+  );
+
+  // Phase 2: AgentDispatcherService kept for task dispatch
+  // Note: Per-workflow callbacks removed, using messageBus subscription instead
+  // TODO Phase 3: Agents will publish directly to messageBus, then AgentDispatcherService can be fully removed
   const { AgentDispatcherService } = await import('./services/agent-dispatcher.service');
   const agentDispatcher = new AgentDispatcherService(redisUrl);
 
@@ -96,7 +123,9 @@ export async function createServer() {
     workflowRepository,
     eventBus,
     stateMachineService,
-    agentDispatcher
+    agentDispatcher, // Phase 2: Used for dispatch only, not callbacks
+    redisUrl,
+    messageBus // Phase 2: messageBus subscription active for agent results
   );
 
   // Initialize pipeline services
@@ -180,12 +209,12 @@ export async function createServer() {
   return fastify;
 }
 
-export async function startServer() {
+export async function startServer(container?: OrchestratorContainer) {
   const port = parseInt(process.env.ORCHESTRATOR_PORT || '3000', 10);
   const host = process.env.HOST || '0.0.0.0';
 
   try {
-    const server = await createServer();
+    const server = await createServer(container);
 
     await server.listen({ port, host });
 

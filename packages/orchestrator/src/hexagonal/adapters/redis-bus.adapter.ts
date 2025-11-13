@@ -99,6 +99,93 @@ export function makeRedisBus(
         subscriptions.set(topic, new Set());
         await sub.subscribe(topic);
         log.info('Subscribed', { topic });
+
+        // Phase 3: Also consume from stream if available for durability
+        const streamKey = `stream:${topic}`;
+        const consumerGroup = opts?.consumerGroup || 'orchestrator-group';
+        const consumerName = `consumer-${Date.now()}`;
+
+        // Create consumer group if it doesn't exist (ignore error if exists)
+        try {
+          await pub.xGroupCreate(streamKey, consumerGroup, '0', { MKSTREAM: true });
+          log.info('[PHASE-3] Created consumer group for stream', { streamKey, consumerGroup });
+        } catch (error: any) {
+          if (!error.message?.includes('BUSYGROUP')) {
+            log.warn('[PHASE-3] Failed to create consumer group', {
+              streamKey,
+              error: error.message
+            });
+          }
+        }
+
+        // Start stream consumer in background
+        (async () => {
+          log.info('[PHASE-3] Starting stream consumer', { streamKey, consumerGroup, consumerName });
+
+          while (subscriptions.has(topic)) {
+            try {
+              // Read from stream with XREADGROUP
+              const results = await pub.xReadGroup(
+                consumerGroup,
+                consumerName,
+                [{ key: streamKey, id: '>' }], // '>' means only new messages
+                { COUNT: 10, BLOCK: 5000 } // Block for 5 seconds
+              );
+
+              if (results && results.length > 0) {
+                for (const streamResult of results) {
+                  for (const message of streamResult.messages) {
+                    try {
+                      const messageData = message.message as any;
+                      const parsedMessage = JSON.parse(messageData.message || messageData);
+
+                      log.info('[PHASE-3] Processing message from stream', {
+                        streamKey,
+                        messageId: message.id,
+                        workflow_id: messageData.workflow_id
+                      });
+
+                      // Invoke all handlers
+                      const handlers = subscriptions.get(topic);
+                      if (handlers) {
+                        await Promise.all(
+                          Array.from(handlers).map(h =>
+                            h(parsedMessage).catch(e =>
+                              log.error('[PHASE-3] Stream handler error', { error: String(e) })
+                            )
+                          )
+                        );
+                      }
+
+                      // Acknowledge message
+                      await pub.xAck(streamKey, consumerGroup, message.id);
+                    } catch (msgError) {
+                      log.error('[PHASE-3] Failed to process stream message', {
+                        error: msgError instanceof Error ? msgError.message : String(msgError)
+                      });
+                    }
+                  }
+                }
+              }
+            } catch (error: any) {
+              if (error.message?.includes('NOGROUP')) {
+                log.warn('[PHASE-3] Consumer group does not exist, will retry', { streamKey });
+                await new Promise(resolve => setTimeout(resolve, 5000));
+              } else if (!subscriptions.has(topic)) {
+                // Topic was unsubscribed, exit loop
+                break;
+              } else {
+                log.error('[PHASE-3] Stream consumer error', {
+                  error: error.message,
+                  streamKey
+                });
+                await new Promise(resolve => setTimeout(resolve, 1000));
+              }
+            }
+          }
+
+          log.info('[PHASE-3] Stream consumer stopped', { streamKey });
+        })().catch(e => log.error('[PHASE-3] Stream consumer crashed', { error: String(e) }));
       }
 
       // Add this handler
