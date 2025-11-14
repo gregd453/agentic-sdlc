@@ -502,3 +502,59 @@
 2025-11-14 02:00:23 -05:00: AggregateError [ECONNREFUSED]: 
 2025-11-14 02:00:23 -05:00:     at internalConnectMultiple (node:net:1134:18)
 2025-11-14 02:00:23 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:02:33 -05:00: 2:02:33 AM [vite] http proxy error: /api/v1/workflows
+2025-11-14 02:02:33 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:02:33 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:02:33 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:02:34 -05:00: 2:02:34 AM [vite] http proxy error: /api/v1/workflows
+2025-11-14 02:02:34 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:02:34 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:02:34 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:02:39 -05:00: 2:02:39 AM [vite] http proxy error: /api/v1/workflows
+2025-11-14 02:02:39 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:02:39 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:02:39 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:02:40 -05:00: 2:02:40 AM [vite] http proxy error: /api/v1/workflows
+2025-11-14 02:02:40 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:02:40 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:02:40 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:08:00 -05:00: 2:08:00 AM [vite] http proxy error: /api/v1/stats/overview
+2025-11-14 02:08:00 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:08:00 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:08:00 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:08:00 -05:00: 2:08:00 AM [vite] http proxy error: /api/v1/workflows?status=running
+2025-11-14 02:08:00 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:08:00 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:08:00 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:08:01 -05:00: 2:08:01 AM [vite] http proxy error: /api/v1/stats/overview
+2025-11-14 02:08:01 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:08:01 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:08:01 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:08:01 -05:00: 2:08:01 AM [vite] http proxy error: /api/v1/workflows?status=running
+2025-11-14 02:08:01 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:08:01 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:08:01 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 02:08:06 -05:00: 2:08:06 AM [vite] http proxy error: /api/v1/workflows?status=running
+2025-11-14 02:08:06 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 02:08:06 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 02:08:06 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 07:50:50 -05:00: 7:50:50 AM [vite] http proxy error: /api/v1/workflows
+2025-11-14 07:50:50 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 07:50:50 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 07:50:50 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 08:46:35 -05:00: 8:46:35 AM [vite] http proxy error: /api/v1/workflows/67d9b56e-ea33-4901-8554-da5808f38cbb
+2025-11-14 08:46:35 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 08:46:35 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 08:46:35 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 08:46:36 -05:00: 8:46:36 AM [vite] http proxy error: /api/v1/workflows/67d9b56e-ea33-4901-8554-da5808f38cbb
+2025-11-14 08:46:36 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 08:46:36 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 08:46:36 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 08:46:41 -05:00: 8:46:41 AM [vite] http proxy error: /api/v1/workflows/67d9b56e-ea33-4901-8554-da5808f38cbb
+2025-11-14 08:46:41 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 08:46:41 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 08:46:41 -05:00:     at afterConnectMultiple (node:net:1715:7)
+2025-11-14 08:46:42 -05:00: 8:46:42 AM [vite] http proxy error: /api/v1/workflows/67d9b56e-ea33-4901-8554-da5808f38cbb
+2025-11-14 08:46:42 -05:00: AggregateError [ECONNREFUSED]: 
+2025-11-14 08:46:42 -05:00:     at internalConnectMultiple (node:net:1134:18)
+2025-11-14 08:46:42 -05:00:     at afterConnectMultiple (node:net:1715:7)

@@ -12,6 +12,11 @@ export * from './core/brands';
 export * from './core/schemas';
 import { VERSION } from './core/schemas';
 
+// ===== SESSION #64: Canonical Message Contracts =====
+// These are the ONLY valid schemas for orchestrator-agent communication
+// All agents MUST import and use these schemas
+export * from './messages/task-contracts';
+
 // ===== Phase 5: Schema Registry & Contract Validator =====
 // Note: Explicitly export to avoid naming conflicts
 export { SchemaRegistry } from './core/schema-registry';

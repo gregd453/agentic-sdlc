@@ -103,3 +103,21 @@
 2025-11-14 02:00:21 -05:00:   ➜  Local:   http://localhost:3001/
 2025-11-14 02:00:21 -05:00:   ➜  Network: http://192.168.1.171:3001/
 2025-11-14 02:00:58 -05:00: 2:00:58 AM [vite] hmr update /src/index.css, /src/pages/Dashboard.tsx, /src/pages/WorkflowsPage.tsx, /src/pages/WorkflowPage.tsx
+2025-11-14 02:02:59 -05:00: 
+2025-11-14 02:02:59 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 02:02:59 -05:00: > vite
+2025-11-14 02:02:59 -05:00: 
+2025-11-14 02:02:59 -05:00: 
+2025-11-14 02:02:59 -05:00:   VITE v5.4.21  ready in 97 ms
+2025-11-14 02:02:59 -05:00: 
+2025-11-14 02:02:59 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-14 02:02:59 -05:00:   ➜  Network: http://192.168.1.171:3001/
+2025-11-14 07:24:37 -05:00: 
+2025-11-14 07:24:37 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 07:24:37 -05:00: > vite
+2025-11-14 07:24:37 -05:00: 
+2025-11-14 07:24:37 -05:00: 
+2025-11-14 07:24:37 -05:00:   VITE v5.4.21  ready in 127 ms
+2025-11-14 07:24:37 -05:00: 
+2025-11-14 07:24:37 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-14 07:24:37 -05:00:   ➜  Network: http://192.168.1.171:3001/

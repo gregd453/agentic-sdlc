@@ -1,0 +1,86 @@
+
+> agentic-sdlc@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc
+> turbo run build
+
+• Packages in scope: @agentic-sdlc/base-agent, @agentic-sdlc/contracts, @agentic-sdlc/dashboard, @agentic-sdlc/deployment-agent, @agentic-sdlc/e2e-agent, @agentic-sdlc/integration-agent, @agentic-sdlc/ops, @agentic-sdlc/orchestrator, @agentic-sdlc/scaffold-agent, @agentic-sdlc/shared-types, @agentic-sdlc/shared-utils, @agentic-sdlc/test-utils, @agentic-sdlc/validation-agent
+• Running build in 13 packages
+• Remote caching disabled
+@agentic-sdlc/dashboard:build: cache hit, replaying logs 7201f9359119d443
+@agentic-sdlc/dashboard:build: 
+@agentic-sdlc/dashboard:build: > @agentic-sdlc/dashboard@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+@agentic-sdlc/dashboard:build: > tsc && vite build
+@agentic-sdlc/dashboard:build: 
+@agentic-sdlc/dashboard:build: vite v5.4.21 building for production...
+@agentic-sdlc/dashboard:build: transforming...
+@agentic-sdlc/dashboard:build: ✓ 424 modules transformed.
+@agentic-sdlc/dashboard:build: rendering chunks...
+@agentic-sdlc/dashboard:build: computing gzip size...
+@agentic-sdlc/dashboard:build: dist/index.html                   0.41 kB │ gzip:  0.28 kB
+@agentic-sdlc/dashboard:build: dist/assets/index-Btr-lMIH.css   13.35 kB │ gzip:  3.32 kB
+@agentic-sdlc/dashboard:build: dist/assets/index-BQn00AZ3.js   247.22 kB │ gzip: 75.66 kB
+@agentic-sdlc/dashboard:build: ✓ built in 765ms
+@agentic-sdlc/shared-utils:build: cache hit, replaying logs 5ca9a672db0388f6
+@agentic-sdlc/shared-utils:build: 
+@agentic-sdlc/shared-utils:build: > @agentic-sdlc/shared-utils@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/utils
+@agentic-sdlc/shared-utils:build: > tsc
+@agentic-sdlc/shared-utils:build: 
+@agentic-sdlc/ops:build: cache hit, replaying logs 0c62849d9d9284a5
+@agentic-sdlc/ops:build: 
+@agentic-sdlc/ops:build: > @agentic-sdlc/ops@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/ops/agentic
+@agentic-sdlc/ops:build: > tsc
+@agentic-sdlc/ops:build: 
+@agentic-sdlc/shared-types:build: cache hit, replaying logs fdcaa61cdcae073e
+@agentic-sdlc/shared-types:build: 
+@agentic-sdlc/shared-types:build: > @agentic-sdlc/shared-types@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types
+@agentic-sdlc/shared-types:build: > tsc
+@agentic-sdlc/shared-types:build: 
+@agentic-sdlc/test-utils:build: cache hit, replaying logs 9195ba5d4721d035
+@agentic-sdlc/test-utils:build: 
+@agentic-sdlc/test-utils:build: > @agentic-sdlc/test-utils@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/test-utils
+@agentic-sdlc/test-utils:build: > tsc
+@agentic-sdlc/test-utils:build: 
+@agentic-sdlc/contracts:build: cache hit, replaying logs a579a0bc5a419e8e
+@agentic-sdlc/contracts:build: 
+@agentic-sdlc/contracts:build: > @agentic-sdlc/contracts@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/contracts
+@agentic-sdlc/contracts:build: > tsc
+@agentic-sdlc/contracts:build: 
+@agentic-sdlc/orchestrator:build: cache miss, executing ac5e6b89ebf37c07
+@agentic-sdlc/orchestrator:build: 
+@agentic-sdlc/orchestrator:build: > @agentic-sdlc/orchestrator@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+@agentic-sdlc/orchestrator:build: > tsc
+@agentic-sdlc/orchestrator:build: 
+@agentic-sdlc/base-agent:build: cache miss, executing 228b82162d804760
+@agentic-sdlc/base-agent:build: 
+@agentic-sdlc/base-agent:build: > @agentic-sdlc/base-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:build: > tsc
+@agentic-sdlc/base-agent:build: 
+@agentic-sdlc/scaffold-agent:build: cache miss, executing e654a06c0626178d
+@agentic-sdlc/validation-agent:build: cache miss, executing b2a33756189459bc
+@agentic-sdlc/e2e-agent:build: cache miss, executing 51464293aae3cb07
+@agentic-sdlc/deployment-agent:build: cache miss, executing c3b847cfc7bade24
+@agentic-sdlc/integration-agent:build: cache miss, executing fae0ae4669be2988
+@agentic-sdlc/scaffold-agent:build: 
+@agentic-sdlc/scaffold-agent:build: > @agentic-sdlc/scaffold-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent
+@agentic-sdlc/scaffold-agent:build: > tsc
+@agentic-sdlc/scaffold-agent:build: 
+@agentic-sdlc/validation-agent:build: 
+@agentic-sdlc/validation-agent:build: > @agentic-sdlc/validation-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent
+@agentic-sdlc/validation-agent:build: > tsc
+@agentic-sdlc/validation-agent:build: 
+@agentic-sdlc/e2e-agent:build: 
+@agentic-sdlc/e2e-agent:build: > @agentic-sdlc/e2e-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/e2e-agent
+@agentic-sdlc/e2e-agent:build: > tsc
+@agentic-sdlc/e2e-agent:build: 
+@agentic-sdlc/integration-agent:build: 
+@agentic-sdlc/integration-agent:build: > @agentic-sdlc/integration-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/integration-agent
+@agentic-sdlc/integration-agent:build: > tsc
+@agentic-sdlc/integration-agent:build: 
+@agentic-sdlc/deployment-agent:build: 
+@agentic-sdlc/deployment-agent:build: > @agentic-sdlc/deployment-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/deployment-agent
+@agentic-sdlc/deployment-agent:build: > tsc
+@agentic-sdlc/deployment-agent:build: 
+
+ Tasks:    13 successful, 13 total
+Cached:    6 cached, 13 total
+  Time:    4.174s 
+

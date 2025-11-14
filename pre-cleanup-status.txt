@@ -1,0 +1,15 @@
+
+> agentic-sdlc@0.1.0 pm2:status /Users/Greg/Projects/apps/zyp/agent-sdlc
+> pm2 status
+
+┌────┬──────────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name                 │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼──────────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 5  │ agent-deployment     │ default     │ 0.1.0   │ fork    │ 0        │ 0      │ 126  │ waiting … │ 0%       │ 0b       │ Greg     │ disabled │
+│ 3  │ agent-e2e            │ default     │ 0.1.0   │ fork    │ 22731    │ 78m    │ 9    │ online    │ 0%       │ 48.6mb   │ Greg     │ disabled │
+│ 4  │ agent-integration    │ default     │ 0.1.0   │ fork    │ 0        │ 0      │ 128  │ waiting … │ 0%       │ 0b       │ Greg     │ disabled │
+│ 1  │ agent-scaffold       │ default     │ 0.1.0   │ fork    │ 22693    │ 78m    │ 9    │ online    │ 0%       │ 48.9mb   │ Greg     │ disabled │
+│ 2  │ agent-validation     │ default     │ 0.1.0   │ fork    │ 22725    │ 78m    │ 9    │ online    │ 0%       │ 48.8mb   │ Greg     │ disabled │
+│ 7  │ dashboard            │ default     │ 0.40.3  │ fork    │ 22789    │ 78m    │ 8    │ online    │ 0%       │ 48.2mb   │ Greg     │ disabled │
+│ 0  │ orchestrator         │ default     │ 0.1.0   │ fork    │ 44235    │ 52m    │ 38   │ online    │ 0%       │ 103.8mb  │ Greg     │ disabled │
+└────┴──────────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘

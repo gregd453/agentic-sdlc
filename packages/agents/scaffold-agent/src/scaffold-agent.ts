@@ -2,8 +2,7 @@ import { BaseAgent } from '@agentic-sdlc/base-agent';
 import { TaskAssignment, TaskResult } from '@agentic-sdlc/base-agent';
 import {
   ScaffoldTask,
-  AGENT_TYPES,
-  WORKFLOW_STAGES
+  AGENT_TYPES
 } from '@agentic-sdlc/shared-types';
 import path from 'path';
 import { TemplateEngine } from './template-engine';
@@ -67,37 +66,36 @@ export class ScaffoldAgent extends BaseAgent {
     });
 
     try {
-      // SESSION #37: Use envelope payload directly (Session #36 envelope format)
-      const envelope = task as any;
+      // SESSION #64: Extract scaffold data directly from task.payload
+      const payload = task.payload as any;
       const scaffoldTask: ScaffoldTask = {
         task_id: task.task_id as any,
         workflow_id: task.workflow_id as any,
-        // SESSION #37: Use constants for agent type
         agent_type: AGENT_TYPES.SCAFFOLD as any,
-        action: 'generate_structure',
+        action: (task.action || 'generate_structure') as any,
         status: 'pending',
         priority: task.priority === 'critical' ? 90 :
                   task.priority === 'high' ? 70 :
                   task.priority === 'medium' ? 50 : 30,
         payload: {
-          project_type: envelope.payload?.project_type || 'app',
-          name: envelope.payload?.name || task.name || 'untitled',
-          description: envelope.payload?.description || task.description || '',
-          tech_stack: envelope.payload?.tech_stack || {
+          project_type: payload.project_type || payload.type || 'app',
+          name: payload.name || 'untitled',
+          description: payload.description || '',
+          tech_stack: payload.tech_stack || {
             language: 'typescript',
             runtime: 'node',
             testing: 'vitest',
             package_manager: 'pnpm'
           },
-          requirements: Array.isArray(envelope.payload?.requirements)
-            ? envelope.payload.requirements
-            : (task.requirements || '').split('. ').filter(r => r.length > 0)
+          requirements: Array.isArray(payload.requirements)
+            ? payload.requirements
+            : (payload.requirements || '').split('. ').filter((r: string) => r.length > 0)
         },
         version: '1.0.0',
-        timeout_ms: envelope.timeout_ms || 120000,
-        retry_count: envelope.retry_count || 0,
-        max_retries: envelope.max_retries || 3,
-        created_at: envelope.created_at || new Date().toISOString()
+        timeout_ms: task.constraints.timeout_ms,
+        retry_count: 0,
+        max_retries: task.constraints.max_retries,
+        created_at: task.metadata.created_at
       };
 
       // Step 1: Analyze requirements using Claude
@@ -124,34 +122,47 @@ export class ScaffoldAgent extends BaseAgent {
         duration_ms: duration
       });
 
-      // Create result conforming to TaskResult schema
+      // SESSION #64: Create result conforming to canonical TaskResult schema
       const result: TaskResult = {
+        message_id: task.message_id,
         task_id: scaffoldTask.task_id,
         workflow_id: scaffoldTask.workflow_id,
+        agent_id: this.agentId,
         status: 'success',
-        output: {
-          files_generated: structure.files_generated,
-          structure: structure,
-          templates_used: createResult.templatesUsed || [],
-          analysis: analysis,
-          generation_metrics: {
-            total_files: createResult.filesCreated,
-            total_directories: structure.directories.length,
-            total_size_bytes: createResult.totalSize || 0,
-            generation_time_ms: duration,
-            template_processing_ms: createResult.templateTime || 0,
-            ai_analysis_ms: analysis?.analysis_time_ms || 0
+        result: {
+          data: {
+            files_generated: structure.files_generated,
+            structure: structure,
+            templates_used: createResult.templatesUsed || [],
+            analysis: analysis,
+            generation_metrics: {
+              total_files: createResult.filesCreated,
+              total_directories: structure.directories.length,
+              total_size_bytes: createResult.totalSize || 0,
+              generation_time_ms: duration,
+              template_processing_ms: createResult.templateTime || 0,
+              ai_analysis_ms: analysis?.analysis_time_ms || 0
+            },
+            next_steps: this.determineNextSteps(scaffoldTask, structure),
+            summary: `Successfully scaffolded ${scaffoldTask.payload.project_type} project: ${scaffoldTask.payload.name}`
           },
-          next_steps: this.determineNextSteps(scaffoldTask, structure),
-          summary: `Successfully scaffolded ${scaffoldTask.payload.project_type} project: ${scaffoldTask.payload.name}`
+          metrics: {
+            duration_ms: duration,
+            resource_usage: {
+              tokens_used: analysis?.tokens_used || 0,
+              api_calls: analysis?.api_calls || 1
+            }
+          }
         },
-        metrics: {
-          duration_ms: duration,
-          tokens_used: analysis?.tokens_used || 0,
-          api_calls: analysis?.api_calls || 1
-        },
-        // SESSION #37: Use constants for workflow stages
-        next_stage: WORKFLOW_STAGES.VALIDATION
+        next_actions: [{
+          action: 'validate',
+          agent_type: 'validation',
+          priority: 'high'
+        }],
+        metadata: {
+          completed_at: new Date().toISOString(),
+          trace_id: task.metadata.trace_id
+        }
       };
 
       return result;
@@ -166,18 +177,31 @@ export class ScaffoldAgent extends BaseAgent {
         duration_ms: duration
       });
 
-      // Return failure result
+      // SESSION #64: Return failure result using canonical schema
       const failureResult: TaskResult = {
+        message_id: task.message_id,
         task_id: task.task_id,
         workflow_id: task.workflow_id,
+        agent_id: this.agentId,
         status: 'failure',
-        output: {
-          error_code: 'SCAFFOLD_ERROR',
-          error_details: { trace_id: traceId }
+        result: {
+          data: {
+            error_code: 'SCAFFOLD_ERROR',
+            error_details: { trace_id: traceId }
+          },
+          metrics: {
+            duration_ms: duration
+          }
         },
-        errors: [error instanceof Error ? error.message : 'Unknown error'],
-        metrics: {
-          duration_ms: duration
+        errors: [{
+          code: 'SCAFFOLD_ERROR',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          recoverable: true,
+          details: { trace_id: traceId }
+        }],
+        metadata: {
+          completed_at: new Date().toISOString(),
+          trace_id: task.metadata.trace_id
         }
       };
 

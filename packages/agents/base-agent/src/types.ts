@@ -1,5 +1,17 @@
 import { z } from 'zod';
 
+// SESSION #64: Import canonical schemas from shared-types
+// These are the ONLY valid schemas for task assignments and results
+import {
+  TaskAssignmentSchema,
+  TaskAssignment,
+  TaskResultSchema,
+  TaskResult
+} from '@agentic-sdlc/shared-types';
+
+// Re-export for backward compatibility during migration
+export { TaskAssignmentSchema, TaskAssignment, TaskResultSchema, TaskResult };
+
 // Agent message types for communication
 export const AgentMessageSchema = z.object({
   id: z.string(),
@@ -14,38 +26,6 @@ export const AgentMessageSchema = z.object({
 });
 
 export type AgentMessage = z.infer<typeof AgentMessageSchema>;
-
-// Task assignment schema
-export const TaskAssignmentSchema = z.object({
-  task_id: z.string().uuid(),
-  workflow_id: z.string().uuid(),
-  type: z.string(),
-  name: z.string(),
-  description: z.string(),
-  requirements: z.string(),
-  priority: z.enum(['critical', 'high', 'medium', 'low']),
-  context: z.record(z.unknown()).optional(),
-  deadline: z.string().optional()
-});
-
-export type TaskAssignment = z.infer<typeof TaskAssignmentSchema>;
-
-// Task result schema
-export const TaskResultSchema = z.object({
-  task_id: z.string().uuid(),
-  workflow_id: z.string().uuid(),
-  status: z.enum(['success', 'failure', 'partial']),
-  output: z.record(z.unknown()),
-  errors: z.array(z.string()).optional(),
-  metrics: z.object({
-    duration_ms: z.number(),
-    tokens_used: z.number().optional(),
-    api_calls: z.number().optional()
-  }).optional(),
-  next_stage: z.string().optional()
-});
-
-export type TaskResult = z.infer<typeof TaskResultSchema>;
 
 // Agent capabilities
 export interface AgentCapabilities {

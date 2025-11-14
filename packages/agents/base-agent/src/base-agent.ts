@@ -258,11 +258,26 @@ export abstract class BaseAgent implements AgentLifecycle {
       // This prevents duplicate reportResult calls that cause CAS failures
       try {
         const errorResult: TaskResult = {
+          message_id: randomUUID(),
           task_id: message.payload.task_id as string || randomUUID(),
           workflow_id: message.workflow_id,
+          agent_id: this.agentId,
           status: 'failure',
-          output: {},
-          errors: [error instanceof Error ? error.message : String(error)]
+          result: {
+            data: {},
+            metrics: {
+              duration_ms: 0
+            }
+          },
+          errors: [{
+            code: 'TASK_EXECUTION_ERROR',
+            message: error instanceof Error ? error.message : String(error),
+            recoverable: true
+          }],
+          metadata: {
+            completed_at: new Date().toISOString(),
+            trace_id: this.currentTraceContext?.trace_id || randomUUID()
+          }
         };
 
         await this.reportResult(errorResult, workflowStage);
@@ -320,34 +335,19 @@ export abstract class BaseAgent implements AgentLifecycle {
       success = true;
     }
 
-    // Build AgentResultSchema-compliant envelope
-    // CRITICAL: Wrap the actual payload in 'result' field, not top-level
+    // SESSION #64: Build result using canonical TaskResult schema
+    // New schema structure: result.data (not output), result.metrics, errors[{code, message, recoverable}]
     const agentResult = {
+      message_id: validatedResult.message_id,
       task_id: validatedResult.task_id,
       workflow_id: validatedResult.workflow_id,
       agent_id: this.agentId,
-      agent_type: this.capabilities.type as any, // e.g., 'scaffold', 'validation', etc.
-      success: success,
-      status: agentStatus,
-      action: stage, // The action taken (stage name)
-      // ✓ CRITICAL: Wrap payload in 'result' field for schema compliance
-      result: {
-        output: validatedResult.output,
-        status: validatedResult.status, // Include original status in result
-        ...(validatedResult.errors && { errors: validatedResult.errors }),
-        ...(validatedResult.next_stage && { next_stage: validatedResult.next_stage })
-      },
-      metrics: {
-        duration_ms: validatedResult.metrics?.duration_ms || 0,
-        tokens_used: validatedResult.metrics?.tokens_used,
-        api_calls: validatedResult.metrics?.api_calls
-      },
-      ...(validatedResult.errors && { error: {
-        code: 'TASK_EXECUTION_ERROR',
-        message: validatedResult.errors.join('; '),
-        retryable: true
-      }}),
-      // Phase 3: Include trace context for distributed tracing
+      status: validatedResult.status,
+      result: validatedResult.result, // Already in correct format
+      errors: validatedResult.errors, // Already in correct format: [{code, message, recoverable}]
+      next_actions: validatedResult.next_actions,
+      metadata: validatedResult.metadata,
+      // Phase 3: Include trace context for distributed tracing (already in metadata)
       trace_id: this.currentTraceContext?.trace_id,
       span_id: this.currentTraceContext?.span_id,
       parent_span_id: this.currentTraceContext?.parent_span_id,

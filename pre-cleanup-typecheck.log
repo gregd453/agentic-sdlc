@@ -1,0 +1,107 @@
+
+> agentic-sdlc@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc
+> turbo run typecheck
+
+• Packages in scope: @agentic-sdlc/base-agent, @agentic-sdlc/contracts, @agentic-sdlc/dashboard, @agentic-sdlc/deployment-agent, @agentic-sdlc/e2e-agent, @agentic-sdlc/integration-agent, @agentic-sdlc/ops, @agentic-sdlc/orchestrator, @agentic-sdlc/scaffold-agent, @agentic-sdlc/shared-types, @agentic-sdlc/shared-utils, @agentic-sdlc/test-utils, @agentic-sdlc/validation-agent
+• Running typecheck in 13 packages
+• Remote caching disabled
+@agentic-sdlc/shared-types:typecheck: cache hit, replaying logs 56f1c47945ded9e2
+@agentic-sdlc/shared-types:typecheck: 
+@agentic-sdlc/shared-types:typecheck: > @agentic-sdlc/shared-types@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types
+@agentic-sdlc/shared-types:typecheck: > tsc --noEmit
+@agentic-sdlc/shared-types:typecheck: 
+@agentic-sdlc/dashboard:typecheck: cache hit, replaying logs 4bf133c9bc58bd89
+@agentic-sdlc/dashboard:typecheck: 
+@agentic-sdlc/dashboard:typecheck: > @agentic-sdlc/dashboard@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+@agentic-sdlc/dashboard:typecheck: > tsc --noEmit
+@agentic-sdlc/dashboard:typecheck: 
+@agentic-sdlc/ops:typecheck: cache hit, replaying logs 0de8565ae5c54719
+@agentic-sdlc/ops:typecheck: 
+@agentic-sdlc/ops:typecheck: > @agentic-sdlc/ops@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/ops/agentic
+@agentic-sdlc/ops:typecheck: > tsc --noEmit
+@agentic-sdlc/ops:typecheck: 
+@agentic-sdlc/shared-utils:typecheck: cache hit, replaying logs 47897102f467a7a8
+@agentic-sdlc/shared-utils:typecheck: 
+@agentic-sdlc/shared-utils:typecheck: > @agentic-sdlc/shared-utils@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/utils
+@agentic-sdlc/shared-utils:typecheck: > tsc --noEmit
+@agentic-sdlc/shared-utils:typecheck: 
+@agentic-sdlc/shared-utils:build: cache hit, replaying logs 5ca9a672db0388f6
+@agentic-sdlc/shared-utils:build: 
+@agentic-sdlc/shared-utils:build: > @agentic-sdlc/shared-utils@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/utils
+@agentic-sdlc/shared-utils:build: > tsc
+@agentic-sdlc/shared-utils:build: 
+@agentic-sdlc/shared-types:build: cache hit, replaying logs fdcaa61cdcae073e
+@agentic-sdlc/shared-types:build: 
+@agentic-sdlc/shared-types:build: > @agentic-sdlc/shared-types@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types
+@agentic-sdlc/shared-types:build: > tsc
+@agentic-sdlc/shared-types:build: 
+@agentic-sdlc/contracts:typecheck: cache hit, replaying logs 1731fb56f5e51dc8
+@agentic-sdlc/contracts:typecheck: 
+@agentic-sdlc/contracts:typecheck: > @agentic-sdlc/contracts@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/contracts
+@agentic-sdlc/contracts:typecheck: > tsc --noEmit
+@agentic-sdlc/contracts:typecheck: 
+@agentic-sdlc/test-utils:typecheck: cache hit, replaying logs dedb5a148f84a4d4
+@agentic-sdlc/test-utils:typecheck: 
+@agentic-sdlc/test-utils:typecheck: > @agentic-sdlc/test-utils@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/test-utils
+@agentic-sdlc/test-utils:typecheck: > tsc --noEmit
+@agentic-sdlc/test-utils:typecheck: 
+@agentic-sdlc/test-utils:build: cache hit, replaying logs 9195ba5d4721d035
+@agentic-sdlc/test-utils:build: 
+@agentic-sdlc/test-utils:build: > @agentic-sdlc/test-utils@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/test-utils
+@agentic-sdlc/test-utils:build: > tsc
+@agentic-sdlc/test-utils:build: 
+@agentic-sdlc/contracts:build: cache hit, replaying logs a579a0bc5a419e8e
+@agentic-sdlc/contracts:build: 
+@agentic-sdlc/contracts:build: > @agentic-sdlc/contracts@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/contracts
+@agentic-sdlc/contracts:build: > tsc
+@agentic-sdlc/contracts:build: 
+@agentic-sdlc/orchestrator:typecheck: cache miss, executing a8fe14b48cd8fbfa
+@agentic-sdlc/orchestrator:build: cache hit, replaying logs ac5e6b89ebf37c07
+@agentic-sdlc/orchestrator:build: 
+@agentic-sdlc/orchestrator:build: > @agentic-sdlc/orchestrator@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+@agentic-sdlc/orchestrator:build: > tsc
+@agentic-sdlc/orchestrator:build: 
+@agentic-sdlc/base-agent:typecheck: cache miss, executing 2c13c4f602b3671b
+@agentic-sdlc/base-agent:build: cache hit, replaying logs 228b82162d804760
+@agentic-sdlc/base-agent:build: 
+@agentic-sdlc/base-agent:build: > @agentic-sdlc/base-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:build: > tsc
+@agentic-sdlc/base-agent:build: 
+@agentic-sdlc/validation-agent:typecheck: cache miss, executing 7332df7a4482d193
+@agentic-sdlc/integration-agent:typecheck: cache miss, executing d3d66a43889aa0b2
+@agentic-sdlc/deployment-agent:typecheck: cache miss, executing daaad3118b9754e1
+@agentic-sdlc/scaffold-agent:typecheck: cache miss, executing 04950ce64c5d62a0
+@agentic-sdlc/e2e-agent:typecheck: cache miss, executing c703ec422f2833b4
+@agentic-sdlc/orchestrator:typecheck: 
+@agentic-sdlc/orchestrator:typecheck: > @agentic-sdlc/orchestrator@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+@agentic-sdlc/orchestrator:typecheck: > tsc --noEmit
+@agentic-sdlc/orchestrator:typecheck: 
+@agentic-sdlc/validation-agent:typecheck: 
+@agentic-sdlc/validation-agent:typecheck: > @agentic-sdlc/validation-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent
+@agentic-sdlc/validation-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/validation-agent:typecheck: 
+@agentic-sdlc/base-agent:typecheck: 
+@agentic-sdlc/base-agent:typecheck: > @agentic-sdlc/base-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/base-agent:typecheck: 
+@agentic-sdlc/integration-agent:typecheck: 
+@agentic-sdlc/integration-agent:typecheck: > @agentic-sdlc/integration-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/integration-agent
+@agentic-sdlc/integration-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/integration-agent:typecheck: 
+@agentic-sdlc/deployment-agent:typecheck: 
+@agentic-sdlc/deployment-agent:typecheck: > @agentic-sdlc/deployment-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/deployment-agent
+@agentic-sdlc/deployment-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/deployment-agent:typecheck: 
+@agentic-sdlc/e2e-agent:typecheck: 
+@agentic-sdlc/e2e-agent:typecheck: > @agentic-sdlc/e2e-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/e2e-agent
+@agentic-sdlc/e2e-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/e2e-agent:typecheck: 
+@agentic-sdlc/scaffold-agent:typecheck: 
+@agentic-sdlc/scaffold-agent:typecheck: > @agentic-sdlc/scaffold-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent
+@agentic-sdlc/scaffold-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/scaffold-agent:typecheck: 
+
+ Tasks:    19 successful, 19 total
+Cached:    12 cached, 19 total
+  Time:    2.3s 
+

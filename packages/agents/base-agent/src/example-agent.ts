@@ -23,10 +23,13 @@ export class ExampleAgent extends BaseAgent {
   async execute(task: TaskAssignment): Promise<TaskResult> {
     const startTime = Date.now();
 
+    // SESSION #64: Extract task data from payload
+    const taskData = task.payload as any;
+
     this.logger.info('Executing example task', {
       task_id: task.task_id,
-      type: task.type,
-      name: task.name
+      agent_type: task.agent_type,
+      payload: taskData
     });
 
     try {
@@ -34,9 +37,9 @@ export class ExampleAgent extends BaseAgent {
       const systemPrompt = `You are an AI agent that analyzes requirements and generates structured responses.
 Your task is to analyze the given requirements and provide a clear, actionable response.`;
 
-      const prompt = `Task: ${task.name}
-Description: ${task.description}
-Requirements: ${task.requirements}
+      const prompt = `Task: ${taskData.name || 'Untitled'}
+Description: ${taskData.description || 'No description'}
+Requirements: ${Array.isArray(taskData.requirements) ? taskData.requirements.join(', ') : taskData.requirements || 'None'}
 
 Please analyze these requirements and provide:
 1. A summary of the main objectives
@@ -64,19 +67,30 @@ Format your response as JSON.`;
         duration_ms: duration
       });
 
+      // SESSION #64: Return result using canonical schema structure
       return {
+        message_id: task.message_id,
         task_id: task.task_id,
         workflow_id: task.workflow_id,
+        agent_id: this.agentId,
         status: 'success',
-        output: {
-          analysis: analysisResult,
-          processed_at: new Date().toISOString(),
-          agent_id: this.agentId
+        result: {
+          data: {
+            analysis: analysisResult,
+            processed_at: new Date().toISOString(),
+            agent_id: this.agentId
+          },
+          metrics: {
+            duration_ms: duration,
+            resource_usage: {
+              tokens_used: response.length / 4, // Rough estimate
+              api_calls: 1
+            }
+          }
         },
-        metrics: {
-          duration_ms: duration,
-          tokens_used: response.length / 4, // Rough estimate
-          api_calls: 1
+        metadata: {
+          completed_at: new Date().toISOString(),
+          trace_id: task.metadata.trace_id
         }
       };
 
@@ -87,13 +101,25 @@ Format your response as JSON.`;
       });
 
       return {
+        message_id: task.message_id,
         task_id: task.task_id,
         workflow_id: task.workflow_id,
+        agent_id: this.agentId,
         status: 'failure',
-        output: {},
-        errors: [error instanceof Error ? error.message : 'Unknown error occurred'],
-        metrics: {
-          duration_ms: Date.now() - startTime
+        result: {
+          data: {},
+          metrics: {
+            duration_ms: Date.now() - startTime
+          }
+        },
+        errors: [{
+          code: 'TASK_EXECUTION_ERROR',
+          message: error instanceof Error ? error.message : 'Unknown error occurred',
+          recoverable: true
+        }],
+        metadata: {
+          completed_at: new Date().toISOString(),
+          trace_id: task.metadata.trace_id
         }
       };
     }
