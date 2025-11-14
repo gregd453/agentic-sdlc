@@ -1,12 +1,98 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 31.0 | **Last Updated:** 2025-11-14 (Session #62) | **Status:** ✅ **DASHBOARD OPERATIONAL** - All Systems Running
+**Version:** 32.0 | **Last Updated:** 2025-11-14 (Session #63) | **Status:** 🔍 **INVESTIGATING CONCURRENCY** - Strategic Refactor Planned
 
 **📚 DEBUGGING HELP:** See [AGENTIC_SDLC_RUNBOOK.md](./AGENTIC_SDLC_RUNBOOK.md) for troubleshooting workflows, agents, and message bus issues.
+**🏗️ ARCHITECTURE:** See [STRATEGIC-BUS-REFACTOR.md](./STRATEGIC-BUS-REFACTOR.md) for message bus redesign blueprint.
 
 ---
 
-## 🎉 LATEST UPDATE (Session #62)
+## 🎉 LATEST UPDATE (Session #63)
+
+**🔍 CONCURRENCY INVESTIGATION + STRATEGIC ARCHITECTURE**
+
+### What Was Accomplished:
+
+#### 🏗️ Strategic Architecture Documentation
+**Comprehensive Message Bus Redesign** - `STRATEGIC-BUS-REFACTOR.md` (1,035 lines)
+
+Created complete blueprint for fixing concurrency issues:
+- **9 Strategic Principles:** ExecutionBus/NotificationBus split, ExecutionEnvelope pattern, idempotency layer
+- **Root Cause Analysis:** Dual delivery (pub/sub + streams) causing 2-4x duplicate message processing
+- **Solution Patterns:** Streams-only execution, Postgres idempotency table, CAS retry with backoff
+- **Implementation Phases:** Quick fix → Strategic refactor (6 hours estimated)
+
+**Key Design Decisions:**
+```typescript
+// Principle 1: One Delivery Semantics per Domain
+ExecutionBus (Streams-only, durable) → workflow execution
+NotificationBus (Pub/Sub, ephemeral) → monitoring/dashboards
+
+// Principle 3: ExecutionEnvelope - First-Class Idempotency
+type ExecutionEnvelope<Payload> = {
+  message_id: string;      // UUID v4 - stable idempotency key
+  trace_id: string;        // Workflow trace (Session #60)
+  span_id?: string;
+  workflow_id?: string;
+  payload: Payload;
+};
+```
+
+#### 🔧 Quick Fix Applied
+**Disabled Pub/Sub Delivery** - `redis-bus.adapter.ts:87-92`
+
+```typescript
+// SESSION #63: Quick Fix - Disable pub/sub to eliminate duplicate delivery
+// const receivers = await pub.publish(topic, payload);
+log.info('[SESSION #63] Published to stream only (pub/sub disabled)', { topic, stream: opts?.mirrorToStream });
+```
+
+**Result:** ❌ Did not resolve workflow stuck issue (deeper problem identified)
+
+#### 🔬 Root Cause Discovery
+**Finding:** Workflows stuck BEFORE quick fix - issue predates duplicate delivery
+
+Evidence gathered:
+- ✅ Messages ARE in Redis Streams (34 messages in `stream:agent:scaffold:tasks`)
+- ✅ Stream consumer code exists (lines 122-207 in redis-bus.adapter.ts)
+- ❌ Handlers not being invoked despite messages in streams
+- ❌ Agents not consuming ANY messages
+
+**Likely Issue:** Stream consumer loop (lines 122-207) not properly connected to handler invocation.
+
+#### 🧹 Environment Cleanup
+- Database: `TRUNCATE TABLE "Workflow" CASCADE` (all workflows cleared)
+- Redis: `FLUSHALL` (all streams cleared)
+- All services restarted via PM2
+
+#### ✅ Build & Quality Checks
+- ✅ **Full Build:** All 13 packages build successfully (turbo cache)
+- ✅ **Type Checks:** All 19 typecheck tasks passing
+- ⚠️ **Lint:** ESLint configs missing (pre-existing issue in ESLINT_ISSUES_REPORT.md)
+- **Fixed:** Dashboard TypeScript error (unused parameter in useWorkflows.ts)
+
+### Files Modified (Session #63):
+1. `EPCC_EXPLORE.md` → `STRATEGIC-BUS-REFACTOR.md` (renamed, 1,035 lines added)
+2. `packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts` (pub/sub disabled)
+3. `packages/dashboard/src/hooks/useWorkflows.ts` (TypeScript fix)
+
+**Total Impact:** 125 files, 125,082 insertions, 6,793 deletions (includes all Session #60-62 work)
+
+### Current Status:
+- ✅ **Strategic Architecture:** Fully documented and ready for implementation
+- ✅ **Builds:** All passing
+- ✅ **Services:** All online (orchestrator, dashboard, 5 agents)
+- ✅ **Database:** Cleared (fresh start)
+- ❌ **Workflows:** Still stuck at 0% (stream consumer issue)
+
+### Known Issues:
+- 🔴 **CRITICAL:** Agents not consuming messages from Redis Streams
+- 🔴 Stream consumer loop (redis-bus.adapter.ts:122-207) not invoking handlers
+- ⚠️ ESLint configs missing (8 packages - see ESLINT_ISSUES_REPORT.md)
+
+---
+
+## 📖 SESSION #62 HISTORY
 
 **✅ DASHBOARD API PROXY FIX** - Dashboard Now Connects to Orchestrator
 
@@ -261,7 +347,35 @@ await this.repository.createTask({
 
 ## 🎯 NEXT SESSION PRIORITIES
 
-### 1. Complete Dashboard E2E Tests (MEDIUM PRIORITY)
+### 1. Fix Stream Consumer Handler Invocation (CRITICAL PRIORITY)
+**Status:** Workflows stuck at 0%, agents not consuming messages
+**Estimated Time:** 2-3 hours
+
+**Root Cause:** Stream consumer loop (redis-bus.adapter.ts:122-207) not invoking handlers
+
+**Investigation Steps:**
+1. Add debug logging to stream consumer loop
+2. Verify handler registration in subscriptions Map
+3. Check if stream consumer loop is actually running
+4. Test message parsing in stream consumer
+5. Verify consumer group membership
+
+**Success Criteria:**
+- Agents receive and process tasks from Redis Streams
+- Workflows advance beyond 0%
+- No duplicate message processing
+
+### 2. Strategic Message Bus Refactor (HIGH PRIORITY - AFTER #1)
+**Document:** `STRATEGIC-BUS-REFACTOR.md`
+**Estimated Time:** 6 hours (after quick fix validation)
+
+**Implementation Phases:**
+- Phase 1: Split ExecutionBus/NotificationBus (2 hours)
+- Phase 2: ExecutionEnvelope schema (1 hour)
+- Phase 3: Idempotency layer (2 hours)
+- Phase 4: Consumer topology fixes (1 hour)
+
+### 3. Complete Dashboard E2E Tests (MEDIUM PRIORITY)
 **Status:** 8/11 passing, 3 timing-related failures
 **Estimated Time:** 1-2 hours
 
