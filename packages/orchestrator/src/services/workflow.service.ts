@@ -1,7 +1,7 @@
 import { randomUUID, createHash } from 'crypto';
 import Redis from 'ioredis';
-import { getAgentTypeForStage, WORKFLOW_STAGES } from '@agentic-sdlc/shared-types';
-import { CreateWorkflowRequest, TaskAssignment, WorkflowResponse } from '../types';
+import { getAgentTypeForStage, WORKFLOW_STAGES, AgentEnvelope } from '@agentic-sdlc/shared-types';
+import { CreateWorkflowRequest, WorkflowResponse } from '../types';
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
 import { WorkflowStateMachineService } from '../state-machine/workflow-state-machine';
@@ -987,9 +987,8 @@ export class WorkflowService {
    * SESSION #30: Build stage-specific payload with context from previous stages
    */
   /**
-   * SESSION #36: Build agent envelope for a stage
-   * Replaces TaskAssignment with typed envelope format
-   * Phase 3: Enhanced to propagate trace context from workflow
+   * SESSION #65: Build agent envelope conforming to AgentEnvelopeSchema v2.0.0
+   * This is the canonical task format - single source of truth
    */
   private buildAgentEnvelope(
     taskId: string,
@@ -1002,35 +1001,82 @@ export class WorkflowService {
   ): any {
     const now = new Date().toISOString();
 
-    // Phase 3: Propagate trace_id from workflow and create child span context
+    // Generate message_id for idempotency (NEW in v2.0.0)
+    const messageId = randomUUID();
+
+    // Propagate trace_id from workflow and create child span context (Session #60)
     const traceId = workflow.trace_id || generateTraceIdUtil();
     const parentSpanId = workflow.current_span_id;
-    const taskSpanId = generateSpanId(); // New span for this task
+    const taskSpanId = generateSpanId();
 
-    logger.info('🔍 [WORKFLOW-TRACE] Building agent envelope with trace context', {
-      workflow_id: workflowId,
+    logger.info('🔍 [SESSION #65] Building AgentEnvelope v2.0.0', {
+      message_id: messageId,
       task_id: taskId,
+      workflow_id: workflowId,
       trace_id: traceId,
-      parent_span_id: parentSpanId,
       span_id: taskSpanId,
+      parent_span_id: parentSpanId,
       stage,
       agent_type: agentType
     });
 
-    // Common envelope metadata
+    // Map agent type to enum value
+    let agentTypeEnum: string;
+    switch (agentType) {
+      case 'scaffold':
+        agentTypeEnum = 'scaffold';
+        break;
+      case 'validation':
+        agentTypeEnum = 'validation';
+        break;
+      case 'e2e':
+        agentTypeEnum = 'e2e_test';  // Note: enum uses e2e_test
+        break;
+      case 'integration':
+        agentTypeEnum = 'integration';
+        break;
+      case 'deployment':
+        agentTypeEnum = 'deployment';
+        break;
+      default:
+        throw new Error(`Unknown agent type: ${agentType}`);
+    }
+
+    // Common envelope base conforming to AgentEnvelopeSchema v2.0.0
     const envelopeBase = {
+      // Identification & Idempotency
+      message_id: messageId,
       task_id: taskId,
       workflow_id: workflowId,
+
+      // Routing
+      agent_type: agentTypeEnum,
+
+      // Execution Control
       priority: 'medium' as const,
       status: 'pending' as const,
+      constraints: {
+        timeout_ms: 300000,
+        max_retries: 3,
+        required_confidence: 80
+      },
       retry_count: 0,
-      max_retries: 3,
-      timeout_ms: 300000,
-      created_at: now,
-      trace_id: traceId, // Phase 3: Inherited from workflow
-      span_id: taskSpanId, // Phase 3: New span for this task
-      parent_span_id: parentSpanId, // Phase 3: Link to workflow span
-      envelope_version: '1.0.0' as const,
+
+      // Metadata
+      metadata: {
+        created_at: now,
+        created_by: 'orchestrator',
+        envelope_version: '2.0.0' as const
+      },
+
+      // Distributed Tracing
+      trace: {
+        trace_id: traceId,
+        span_id: taskSpanId,
+        parent_span_id: parentSpanId
+      },
+
+      // Workflow Context
       workflow_context: {
         workflow_type: workflow.type,
         workflow_name: workflow.name,

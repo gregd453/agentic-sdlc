@@ -12,10 +12,32 @@ export * from './core/brands';
 export * from './core/schemas';
 import { VERSION } from './core/schemas';
 
-// ===== SESSION #64: Canonical Message Contracts =====
-// These are the ONLY valid schemas for orchestrator-agent communication
-// All agents MUST import and use these schemas
-export * from './messages/task-contracts';
+// ===== SESSION #65: AgentEnvelope - THE Canonical Task Format =====
+// AgentEnvelope v2.0.0 is the ONLY valid schema for task assignments
+// All agents MUST import and use AgentEnvelope
+export {
+  AgentEnvelopeSchema,
+  AgentEnvelope,
+  PriorityEnum,
+  Priority,
+  TaskStatusEnum as AgentTaskStatusEnum,  // Rename to avoid conflict with core/schemas
+  TaskStatus as AgentTaskStatus,          // Rename to avoid conflict with core/schemas
+  AgentTypeEnum as AgentEnvelopeTypeEnum, // Rename to avoid conflict with core/schemas
+  AgentType as AgentEnvelopeType,         // Rename to avoid conflict with core/schemas
+  ExecutionConstraintsSchema,
+  ExecutionConstraints,
+  EnvelopeMetadataSchema as AgentEnvelopeMetadataSchema,  // Rename to avoid conflict with envelope/
+  EnvelopeMetadata as AgentEnvelopeMetadata,              // Rename to avoid conflict with envelope/
+  TraceContextSchema,
+  TraceContext,
+  WorkflowContextSchema,
+  WorkflowContext,
+  isAgentEnvelope,
+  validateAgentEnvelope
+} from './messages/agent-envelope';
+
+// Keep TaskResult schema (unchanged, working correctly)
+export { TaskResultSchema, TaskResult } from './messages/task-contracts';
 
 // ===== Phase 5: Schema Registry & Contract Validator =====
 // Note: Explicitly export to avoid naming conflicts
@@ -30,7 +52,7 @@ export * from './agents/e2e';
 export * from './agents/integration';
 export * from './agents/deployment';
 
-// ===== Envelope Exports (Session #36) =====
+// ===== Envelope Exports (Session #36 - OLD, keep for backward compat) =====
 export * from './envelope/agent-envelope';
 
 // ===== Constants Exports (Session #37) =====

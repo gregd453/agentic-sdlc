@@ -1,36 +1,10 @@
 import { z } from 'zod';
 
-// Core Message Contracts
-export const TaskAssignmentSchema = z.object({
-  message_id: z.string().uuid(),
-  task_id: z.string().uuid(),
-  workflow_id: z.string().uuid(),
-  agent_type: z.enum([
-    'scaffold',
-    'validation',
-    'e2e_test',
-    'integration',
-    'deployment',
-    'monitoring',
-    'debug',
-    'recovery'
-  ]),
-  action: z.string().optional(), // SESSION #33: Add action at root level for agent schema compatibility
-  priority: z.enum(['low', 'medium', 'high', 'critical']),
-  payload: z.record(z.unknown()), // SESSION #33: Simplified to allow flexible payloads for different agents
-  constraints: z.object({
-    timeout_ms: z.number().default(300000),
-    max_retries: z.number().default(3),
-    required_confidence: z.number().min(0).max(100).default(80)
-  }),
-  metadata: z.object({
-    created_at: z.string().datetime(),
-    created_by: z.string(),
-    trace_id: z.string(),
-    parent_task_id: z.string().optional()
-  })
-});
+// SESSION #65: Import AgentEnvelope from shared-types (canonical task format)
+export type { AgentEnvelope } from '@agentic-sdlc/shared-types';
+export { AgentEnvelopeSchema } from '@agentic-sdlc/shared-types';
 
+// Keep TaskResult (unchanged, working correctly)
 export const TaskResultSchema = z.object({
   message_id: z.string().uuid(),
   task_id: z.string().uuid(),
@@ -95,7 +69,6 @@ export const WorkflowResponseSchema = z.object({
 });
 
 // Type exports
-export type TaskAssignment = z.infer<typeof TaskAssignmentSchema>;
 export type TaskResult = z.infer<typeof TaskResultSchema>;
 export type CreateWorkflowRequest = z.infer<typeof CreateWorkflowSchema>;
 export type WorkflowResponse = z.infer<typeof WorkflowResponseSchema>;

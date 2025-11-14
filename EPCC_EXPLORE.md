@@ -1,1788 +1,941 @@
-# Strategic BaseAgent Design Exploration
+# Exploration Report: AgentEnvelope Schema Unification
 
-**Session:** #63 Follow-up
+**Session:** #65 (EPCC Explore Phase)
 **Date:** 2025-11-14
-**Status:** EXPLORATION COMPLETE
-**Scope:** Comprehensive agent architecture analysis for strategic BaseAgent refactor
+**Status:** EXPLORATION COMPLETE ✅
+**Context:** Exploring corrected approach to fix "Invalid task assignment" errors
+**Previous Session:** #64 (Nuclear Cleanup Phase 1-3.1 - 40% complete, discovered false assumption)
 
 ---
 
 ## Executive Summary
 
-### Current State
-The BaseAgent implements a **mixture of pipeline and business logic** with significant duplication and inconsistency across concrete agents. The architecture suffers from:
+### What We're Exploring
+Understanding the **root cause** of schema mismatch between orchestrator and agents, and documenting the **correct unification approach** after Session #64 discovered the original plan was based on a false assumption.
 
-1. **Pipeline logic scattered**: Task intake, error handling, retry, and result emission duplicated in concrete agents
-2. **Idempotency missing**: No message_id tracking, no duplicate detection at agent level
-3. **Tracing incomplete**: Session #60 added trace context, but agents don't create child spans properly
-4. **Error classification absent**: All errors treated equally (no transient vs permanent distinction)
-5. **Prompt auditing nonexistent**: AI agent LLM calls not tracked for cost/compliance
+### Key Discovery from Session #64
+❌ **FALSE ASSUMPTION:** "Orchestrator and agents have duplicate TaskAssignmentSchema definitions"
+✅ **ACTUAL TRUTH:** "Orchestrator doesn't use TaskAssignmentSchema at all - it uses `buildAgentEnvelope()` function"
 
-### Strategic Vision
-BaseAgent should own the **EXECUTION PIPELINE**, not business logic. This exploration documents:
-- Current responsibilities (what BaseAgent owns vs what agents own)
-- Gap analysis (what's missing, what's duplicated, what's inconsistent)
-- Migration path (3 phases: consolidate → refactor → enhance)
-- Template method design (abstract interface for concrete agents)
-- Risk assessment (breaking changes, migration complexity)
+### Current State (After Session #64 Phase 1-3.1)
+- ✅ **40% Complete:** shared-types package created with canonical TaskAssignmentSchema
+- ✅ **base-agent updated:** Now imports TaskAssignmentSchema from shared-types
+- ✅ **scaffold-agent updated:** Extracts data from task.payload
+- ❌ **4 agents NOT updated:** validation, e2e, integration, deployment still expect old format
+- ❌ **Orchestrator NOT updated:** buildAgentEnvelope() still produces custom structure
 
----
-
-## 1. Current State Assessment
-
-### 1.1 What BaseAgent Owns Today
-
-**File:** `packages/agents/base-agent/src/base-agent.ts` (562 lines)
-
-#### Infrastructure ✅
+### The Real Problem
+**Schema Mismatch at the Source:**
 ```typescript
-// Lines 24-107: Constructor
-- agentId generation (line 46)
-- Logger setup (lines 56-65)
-- Anthropic client initialization (lines 73-75)
-- Redis pub/sub clients (lines 84-85)
-- IMessageBus injection (Phase 3, line 44)
-- Circuit breaker for Claude API (lines 88-104)
-```
-
-#### Message Bus Wiring ✅
-```typescript
-// Lines 109-193: initialize()
-- messageBus.subscribe() (lines 129-182)
-- Task channel subscription with consumer groups (lines 121-127)
-- Message parsing and envelope extraction (lines 134-166)
-- Handler invocation (line 168: receiveTask)
-- Agent registration with orchestrator (line 190)
-```
-
-#### Task Intake (Partial) ⚠️
-```typescript
-// Lines 195-283: receiveTask()
-- Envelope unwrapping (lines 199-200)
-- Trace context extraction (lines 199-210)
-- Trace logging (lines 202-210)
-- Task validation (line 214)
-- Stage extraction from envelope (lines 216-227)
-- Retry wrapper around execute() (lines 230-242)
-- Error handling with reportResult (lines 250-283)
-```
-
-**Missing:**
-- ❌ Message_id/task_id idempotency check
-- ❌ Duplicate message detection
-- ❌ Task persistence updates (status changes to database)
-
-#### Result Emission ✅
-```typescript
-// Lines 298-426: reportResult()
-- Status enum mapping (lines 309-321)
-- AgentResultSchema construction (lines 325-356)
-- Schema validation enforcement (lines 361-370)
-- Trace context propagation (lines 351-353)
-- IMessageBus.publish() (lines 387-394)
-- Result logging (lines 375-412)
-```
-
-#### Error Handling (Basic) ⚠️
-```typescript
-// Lines 250-283: receiveTask() catch block
-- Error logging (lines 277-281)
-- Failure result construction (lines 260-275)
-- reportResult() invocation for errors (line 268)
-```
-
-**Missing:**
-- ❌ Error classification (transient vs permanent vs upstream)
-- ❌ Retry strategy (just uses RetryPresets.standard)
-- ❌ Backoff configuration per agent type
-
-#### Utilities ✅
-```typescript
-// Lines 465-536: Helper methods
-- executeWithRetry (lines 466-490)
-- callClaude with circuit breaker (lines 492-531)
-- generateTraceId (lines 534-536)
-```
-
-#### Cleanup ✅
-```typescript
-// Lines 428-450: cleanup()
-- Orchestrator deregistration (line 432)
-- Redis unsubscribe (line 435)
-- Listener removal (lines 438-443)
-- Redis disconnect (lines 446-447)
-```
-
----
-
-### 1.2 What Concrete Agents Own Today
-
-Analyzed 5 agents: ScaffoldAgent, ValidationAgent, E2EAgent, IntegrationAgent, DeploymentAgent
-
-#### ScaffoldAgent (`packages/agents/scaffold-agent/src/scaffold-agent.ts`)
-
-**Business Logic** (Correct) ✅
-```typescript
-// Lines 59-186: execute() method
-- Requirements analysis via Claude (lines 103-105)
-- Project structure generation (lines 108-109)
-- File creation from templates (lines 112-117)
-- Result construction (lines 128-156)
-```
-
-**Agent-Specific Utilities** (Correct) ✅
-```typescript
-- TemplateEngine (lines 24-25, 45-47)
-- FileGenerator (lines 24-25, 44)
-- parseClaudeJsonResponse (lines 957-1034)
-- buildRequirementsPrompt (lines 893-928)
-- getFallbackContent (lines 652-857)
-```
-
-**Pipeline Logic** (Should be in BaseAgent) ❌
-```typescript
-// Lines 59-67: execute() entry
-- Duplicate trace ID generation (line 61) - BaseAgent already has one!
-- Start time tracking (line 60)
-- Task logging (lines 63-67)
-
-// Lines 159-185: execute() exit
-- Failure handling (lines 159-185)
-- Error result construction (lines 170-182)
-```
-
-**Observations:**
-- ✅ Clean separation in execution logic (lines 103-156)
-- ❌ Duplicates tracing setup already in BaseAgent.receiveTask
-- ❌ Duplicates error handling already in BaseAgent.receiveTask catch block
-
-#### ValidationAgent (`packages/agents/validation-agent/src/validation-agent.ts`)
-
-**Business Logic** (Correct) ✅
-```typescript
-// Lines 67-293: execute() method
-- Envelope validation (lines 79-151)
-- Working directory check (lines 173-198)
-- Validation checks execution (lines 201)
-- Quality gates evaluation (lines 204-207)
-- Report generation (lines 210-241)
-```
-
-**Agent-Specific Utilities** (Correct) ✅
-```typescript
-- Policy loading (lines 46-59)
-- Validator modules (typescript, eslint, coverage, security)
-- Report generation utilities
-```
-
-**Pipeline Logic** (Should be in BaseAgent) ❌
-```typescript
-// Lines 67-75: execute() entry
-- Duplicate trace ID generation (line 69)
-- Start time tracking (line 68)
-- Session #36 envelope extraction (lines 78-151) - too much boilerplate
-
-// Lines 267-293: execute() error handling
-- Error logging (lines 269-279)
-- AgentError wrapping (lines 282-291)
-```
-
-**Observations:**
-- ⚠️ Envelope extraction is 73 lines of defensive parsing (lines 78-151)
-- ❌ Duplicates tracing/timing setup from BaseAgent
-- ✅ Type guards (isValidationEnvelope) are agent-specific - correct placement
-
-#### E2EAgent (`packages/agents/e2e-agent/src/e2e-agent.ts`)
-
-**Business Logic** (Correct) ✅
-```typescript
-// Lines 48-214: execute() method
-- Task context parsing (line 60)
-- Test generation (lines 63-66)
-- Test file storage (lines 69-102)
-- Test execution (lines 105-146)
-- Report generation (lines 149-167)
-```
-
-**Agent-Specific Utilities** (Correct) ✅
-```typescript
-- Test generators (test-generator.ts, page-object-generator.ts)
-- Playwright runner (playwright-runner.ts)
-- Artifact storage (artifact-storage.ts)
-```
-
-**Pipeline Logic** (Should be in BaseAgent) ❌
-```typescript
-// Lines 48-56: execute() entry
-- Duplicate trace ID generation (line 50)
-- Start time tracking (line 49)
-- Task logging (lines 52-56)
-
-// Lines 201-213: execute() error handling
-- Error logging (line 202)
-- Failure result construction (lines 204-212)
-```
-
-**Observations:**
-- ✅ Clean separation: E2E logic is pure domain (Playwright, test gen)
-- ❌ Same tracing/timing/logging duplication as other agents
-
-#### IntegrationAgent (`packages/agents/integration-agent/src/integration-agent.ts`)
-
-**Business Logic** (Correct) ✅
-```typescript
-// Lines 51-115: executeTask() method (note: different signature!)
-- Action routing (lines 64-84)
-- Merge/conflict/dependency/test handling (private methods)
-```
-
-**Agent-Specific Utilities** (Correct) ✅
-```typescript
-- GitService
-- ConflictResolverService
-- DependencyUpdaterService
-- IntegrationTestRunnerService
-```
-
-**Anti-Pattern** ❌
-```typescript
-// Lines 404-413: execute() wrapper
-// Wraps executeTask() to conform to BaseAgent signature
-// This is a sign that BaseAgent interface is too rigid!
-async execute(task: any): Promise<any> {
-  const result = await this.executeTask(task);
-  return {
-    task_id: task.task_id || this.generateTraceId(),
-    workflow_id: task.workflow_id || 'integration-workflow',
-    status: result.result.success ? 'success' : 'failure',
-    output: result,
-    errors: result.result.success ? [] : ['Task execution failed']
-  };
-}
-```
-
-**Observations:**
-- ⚠️ IntegrationAgent doesn't follow BaseAgent pattern cleanly
-- ❌ Has its own schemas (IntegrationTaskSchema, IntegrationResultSchema)
-- ❌ executeTask() doesn't match BaseAgent.execute() signature
-
-#### DeploymentAgent (`packages/agents/deployment-agent/src/deployment-agent.ts`)
-
-**Business Logic** (Correct) ✅
-```typescript
-// Lines 64-138: executeTask() method (same anti-pattern as Integration)
-- Action routing (Docker, ECR, ECS, rollback, health check)
-```
-
-**Agent-Specific Utilities** (Correct) ✅
-```typescript
-- DockerService
-- ECRService
-- ECSService
-- DeploymentStrategyService
-- HealthCheckService
-```
-
-**Anti-Pattern** ❌
-```typescript
-// Lines 456-472: execute() wrapper (same as IntegrationAgent)
-```
-
-**Observations:**
-- ⚠️ Same executeTask() + execute() wrapper anti-pattern
-- ❌ Has its own schemas (DeploymentTaskSchema, DeploymentResultSchema)
-
----
-
-### 1.3 Duplication Matrix
-
-| Concern | BaseAgent | Scaffold | Validation | E2E | Integration | Deployment |
-|---------|-----------|----------|------------|-----|-------------|------------|
-| **Trace ID generation** | ✅ Line 61 | ❌ Dup 61 | ❌ Dup 69 | ❌ Dup 50 | ❌ Dup 66 | ❌ Dup 66 |
-| **Start time tracking** | ❌ None | ✅ Line 60 | ✅ Line 68 | ✅ Line 49 | ✅ Line 65 | ✅ Line 65 |
-| **Task logging** | ✅ Lines 202-210 | ❌ Dup 63-67 | ❌ Dup 71-75 | ❌ Dup 52-56 | ❌ Dup 71-76 | ❌ Dup 71-76 |
-| **Error handling** | ✅ Lines 250-283 | ❌ Dup 159-185 | ❌ Dup 267-293 | ❌ Dup 201-213 | ❌ None | ❌ None |
-| **Result construction** | ✅ Lines 325-356 | ❌ Dup 128-156 | ❌ Dup 255-266 | ❌ Dup 178-199 | ❌ Custom | ❌ Custom |
-| **Idempotency check** | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None |
-| **Task status update** | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None |
-| **Prompt auditing** | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None |
-
-**Key Findings:**
-- 🔴 **High duplication**: Trace ID, task logging, error handling (5/5 agents duplicate)
-- 🟡 **Inconsistent ownership**: Start time tracking in agents, not BaseAgent
-- 🟡 **Zero idempotency**: No agent checks message_id for duplicates
-- 🟡 **Integration/Deployment divergence**: Custom execute() wrappers, different schemas
-
----
-
-### 1.4 Inconsistency Catalog
-
-#### Inconsistency 1: Schema Handling
-**Scaffold/Validation/E2E:**
-- Use base TaskAssignment/TaskResult schemas
-- Extend with agent-specific payload validation
-
-**Integration/Deployment:**
-- Define completely custom schemas (IntegrationTaskSchema, DeploymentTaskSchema)
-- Wrap BaseAgent.execute() to convert custom schema → TaskResult
-
-**Problem:** No consistent schema pattern. Should all agents have typed payloads?
-
-#### Inconsistency 2: Execute Signature
-**Scaffold/Validation/E2E:**
-```typescript
-async execute(task: TaskAssignment): Promise<TaskResult>
-```
-
-**Integration/Deployment:**
-```typescript
-async executeTask(task: IntegrationTask): Promise<IntegrationResult>
-async execute(task: any): Promise<any> // Wrapper
-```
-
-**Problem:** Integration/Deployment don't follow BaseAgent contract cleanly.
-
-#### Inconsistency 3: Trace ID Generation
-**BaseAgent (line 534):**
-```typescript
-protected generateTraceId(): string {
-  return `trace_${randomUUID()}`;
-}
-```
-
-**All Agents (execute() method):**
-```typescript
-const traceId = this.generateTraceId(); // Duplicates BaseAgent.receiveTask line 61
-```
-
-**Problem:** Agents regenerate trace IDs that were already generated in receiveTask().
-
-#### Inconsistency 4: Error Result Construction
-**Scaffold (lines 170-182):**
-```typescript
-const failureResult: TaskResult = {
-  task_id: task.task_id,
-  workflow_id: task.workflow_id,
-  status: 'failure',
-  output: { error_code: 'SCAFFOLD_ERROR', error_details: {...} },
-  errors: [error message],
-  metrics: { duration_ms }
-};
-```
-
-**Validation (lines 255-266):**
-```typescript
-return {
-  task_id, workflow_id,
-  status: taskStatus,
-  output: { report, validation_checks, quality_gates },
-  errors: errors.length > 0 ? errors : undefined,
-  metrics: { duration_ms, api_calls: 0 },
-  next_stage: taskStatus === 'success' ? 'integration' : undefined
-};
-```
-
-**E2E (lines 204-212):**
-```typescript
-return {
-  task_id, workflow_id,
-  status: 'failure',
-  output: { error: `E2E test failed: ${error message}` },
-  errors: [error message]
-};
-```
-
-**Problem:** Different error result structures, inconsistent field presence.
-
----
-
-## 2. Gap Analysis
-
-### 2.1 What's Missing from BaseAgent
-
-#### Priority 1: Idempotency ❌ CRITICAL
-**Missing:** Message-level duplicate detection
-
-**Why Critical:**
-- Session #63 bug: Duplicate message delivery → CAS failures
-- No protection against at-least-once delivery semantics
-- Agents process same task multiple times
-
-**What's Needed:**
-```typescript
-// In BaseAgent.receiveTask(), before execute():
-const isDuplicate = await this.idempotencyStore.has(envelope.message_id);
-if (isDuplicate) {
-  this.logger.debug('Duplicate message detected', {
-    message_id: envelope.message_id,
-    task_id: envelope.task_id
-  });
-  return; // Skip silently
-}
-```
-
-**Implementation Options:**
-1. **Postgres table** (recommended, see STRATEGIC-BUS-REFACTOR.md:209-226)
-   - Same transactional boundary as task updates
-   - Durable audit trail
-2. **Redis KV** (fallback, see STRATEGIC-BUS-REFACTOR.md:227-240)
-   - Faster lookups
-   - TTL-based cleanup
-
-**Estimate:** 2-3 hours (Postgres) or 1 hour (Redis)
-
-#### Priority 2: Task Persistence ❌ CRITICAL
-**Missing:** AgentTask row updates during task lifecycle
-
-**Current State:**
-- Orchestrator creates AgentTask row (workflow.service.ts:479)
-- BaseAgent never updates task status
-- Task stays "pending" forever in database
-
-**What's Needed:**
-```typescript
-// In BaseAgent.receiveTask(), at key lifecycle points:
-1. Before execute(): updateTaskStatus(task_id, 'running')
-2. After execute() success: updateTaskStatus(task_id, 'completed')
-3. After execute() failure: updateTaskStatus(task_id, 'failed')
-```
-
-**Database Schema (already exists):**
-```sql
--- packages/orchestrator/prisma/schema.prisma:59-87
-model AgentTask {
-  id              String   @id
-  task_id         String   @unique
-  status          TaskStatus  // pending | assigned | running | completed | failed
-  started_at      DateTime?
-  completed_at    DateTime?
-  ...
-}
-```
-
-**Problem:** BaseAgent doesn't have PrismaClient access. Need to inject ITaskRepository.
-
-**Estimate:** 3-4 hours (add repository injection + implement updates)
-
-#### Priority 3: Error Classification ❌ HIGH
-**Missing:** Transient vs permanent vs upstream error distinction
-
-**Current State:**
-- All errors caught and wrapped uniformly (base-agent.ts:250-283)
-- No retry decision based on error type
-- No upstream error propagation (e.g., Claude API rate limit vs business logic error)
-
-**What's Needed:**
-```typescript
-enum ErrorClass {
-  TRANSIENT,    // Network timeout, Redis unavailable → retry
-  PERMANENT,    // Schema validation error, missing file → fail immediately
-  UPSTREAM,     // Claude API rate limit → propagate to orchestrator for backoff
-  TIMEOUT       // Task timeout → cancel and report
+// What buildAgentEnvelope() ACTUALLY produces (workflow.service.ts:994-1100):
+{
+  task_id: string,
+  workflow_id: string,
+  agent_type: "scaffold",           // ← Key: agent_type (not "type")
+  payload: {                         // ← Key: payload is nested object
+    project_type: string,
+    name: string,
+    description: string,
+    tech_stack: {},
+    requirements: []
+  },
+  priority: "medium",
+  status: "pending",
+  trace_id: string,
+  span_id: string,
+  parent_span_id: string,
+  workflow_context: {},
+  // ... more fields
 }
 
-function classifyError(error: unknown): ErrorClass {
-  if (error instanceof NetworkError) return ErrorClass.TRANSIENT;
-  if (error instanceof ValidationError) return ErrorClass.PERMANENT;
-  if (error instanceof Anthropic.RateLimitError) return ErrorClass.UPSTREAM;
-  if (error instanceof TimeoutError) return ErrorClass.TIMEOUT;
-  return ErrorClass.TRANSIENT; // Conservative default
-}
-```
-
-**Integrate with RetryPresets:**
-```typescript
-await retry(
-  () => this.execute(task),
-  {
-    ...RetryPresets.standard,
-    shouldRetry: (error, attempt) => {
-      const errorClass = classifyError(error);
-      return errorClass === ErrorClass.TRANSIENT && attempt < 3;
-    }
+// What TaskAssignmentSchema expects (shared-types/messages/task-contracts.ts:27-55):
+{
+  message_id: string,                // ← Missing from buildAgentEnvelope
+  task_id: string,
+  workflow_id: string,
+  agent_type: enum,
+  action: string,
+  priority: enum,
+  payload: Record<string, unknown>,  // ← Generic payload
+  constraints: {                     // ← Missing from buildAgentEnvelope
+    timeout_ms: number,
+    max_retries: number,
+    required_confidence: number
+  },
+  metadata: {                        // ← Missing from buildAgentEnvelope
+    created_at: string,
+    created_by: string,
+    trace_id: string,
+    parent_task_id?: string
   }
-);
+}
 ```
 
-**Estimate:** 2-3 hours
+**Result:** Agents receive messages that don't match any schema they validate against!
 
-#### Priority 4: Tracing Enhancements ⚠️ MEDIUM
-**Missing:** Child span creation for agent operations
+---
 
-**Current State:**
-- Session #60 added trace_id/span_id propagation ✅
-- Agents extract trace context (base-agent.ts:199-210) ✅
-- But agents don't create child spans for sub-operations ❌
+## 1. Project Context
 
-**What's Needed:**
-```typescript
-// In BaseAgent.execute() wrapper:
-const childContext = createChildContext(this.currentTraceContext);
-this.logger.info('Agent operation started', {
-  trace_id: childContext.trace_id,
-  span_id: childContext.span_id,
-  parent_span_id: childContext.parent_span_id,
-  operation: 'agent_execute'
-});
+### 1.1 Architecture Overview
 
-// Pass child context to result:
-await this.reportResult(result, workflowStage, childContext);
+**System:** Agentic SDLC - Autonomous AI-driven Software Development Lifecycle
+**Pattern:** Hexagonal Architecture (Ports & Adapters) + Message Bus
+**Language:** TypeScript (strict mode)
+**Monorepo:** pnpm workspaces with Turbo build system
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   MESSAGE FLOW (Current)                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  HTTP Request                                               │
+│       ↓                                                     │
+│  Orchestrator (workflow.service.ts)                         │
+│       ↓                                                     │
+│  buildAgentEnvelope() (Lines 994-1100)                      │
+│       ↓ Produces custom envelope structure                 │
+│  Redis Message Bus                                          │
+│       ↓ Published to stream:agent:{type}:tasks             │
+│  BaseAgent.subscribe() (base-agent.ts:129-182)              │
+│       ↓ Receives message                                   │
+│  BaseAgent.validateTask() (base-agent.ts:285-296)           │
+│       ↓ ❌ Validation fails with TaskAssignmentSchema      │
+│  ❌ "Invalid task assignment" error                        │
+│       ↓                                                     │
+│  Agent never executes                                       │
+│  Workflow stuck at 0%                                       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Estimate:** 1-2 hours
+### 1.2 Key Components
 
-#### Priority 5: Prompt Auditing ⚠️ MEDIUM
-**Missing:** LLM call tracking for AI agents
+**Orchestrator Package** (`packages/orchestrator/`)
+- **workflow.service.ts:** Core workflow orchestration logic
+  - `buildAgentEnvelope()` (Lines 994-1100+): Creates task envelopes
+  - `createWorkflow()`: Workflow initialization
+  - `handleAgentResult()`: Processes agent responses
+- **hexagonal/core/envelope-schema.ts:** Old envelope validation system (Session #39)
+- **hexagonal/adapters/redis-bus.adapter.ts:** Message bus implementation
 
-**Current State:**
-- callClaude() exists (base-agent.ts:492-531) ✅
-- Circuit breaker tracks failures ✅
-- But no cost/token/latency audit trail ❌
+**Shared Types Package** (`packages/shared/types/`)
+- **messages/task-contracts.ts:** Canonical schemas (Created Session #64)
+  - `TaskAssignmentSchema`: Standard task format
+  - `TaskResultSchema`: Standard result format
+- **core/schemas.ts:** Legacy core schemas (pre-Session #64)
+- **envelope/agent-envelope.ts:** Agent-specific envelope types
 
-**What's Needed:**
+**Base Agent Package** (`packages/agents/base-agent/`)
+- **base-agent.ts:** Abstract agent implementation
+  - `initialize()`: Message bus subscription
+  - `receiveTask()`: Task intake and execution wrapper
+  - `validateTask()`: Schema validation (Lines 285-296)
+  - `execute()`: Abstract method (implemented by concrete agents)
+  - `reportResult()`: Result publishing
+- **types.ts:** Agent type definitions (Updated Session #64 to import from shared-types)
+
+**Concrete Agents** (`packages/agents/{scaffold,validation,e2e,integration,deployment}-agent/`)
+- **scaffold-agent:** ✅ Updated Session #64 Phase 3.1
+- **validation-agent:** ❌ NOT updated (expects task.context envelope)
+- **e2e-agent:** ❌ NOT updated
+- **integration-agent:** ❌ NOT updated
+- **deployment-agent:** ❌ NOT updated
+
+---
+
+## 2. Deep Dive: buildAgentEnvelope() Implementation
+
+### 2.1 Function Location & Signature
+
+**File:** `packages/orchestrator/src/services/workflow.service.ts`
+**Lines:** 994-1100+
+**Visibility:** `private` (only used within WorkflowService)
+
 ```typescript
-// In BaseAgent.callClaude():
-const startTime = Date.now();
-const response = await this.anthropic.messages.create({...});
+private buildAgentEnvelope(
+  taskId: string,
+  workflowId: string,
+  stage: string,
+  agentType: string,
+  stageOutputs: Record<string, any>,
+  workflowData: any,
+  workflow: any
+): any {
+  // Returns custom envelope structure
+}
+```
 
-await this.auditStore.record({
-  agent_id: this.agentId,
-  task_id: this.currentTaskId,
-  trace_id: this.currentTraceContext?.trace_id,
-  model: 'claude-3-haiku-20240307',
-  prompt_tokens: response.usage.input_tokens,
-  completion_tokens: response.usage.output_tokens,
-  latency_ms: Date.now() - startTime,
-  cost_usd: calculateCost(response.usage),
-  timestamp: new Date().toISOString()
+### 2.2 What It Actually Produces
+
+**Common Base Structure** (Lines 1020-1040):
+```typescript
+{
+  // Task identification
+  task_id: taskId,                          // UUID
+  workflow_id: workflowId,                  // UUID
+
+  // Agent routing
+  agent_type: agentType,                    // 'scaffold' | 'validation' | etc.
+
+  // Execution metadata
+  priority: 'medium' as const,
+  status: 'pending' as const,
+  retry_count: 0,
+  max_retries: 3,
+  timeout_ms: 300000,                       // 5 minutes
+  created_at: now,                          // ISO timestamp
+
+  // Distributed tracing (Session #60)
+  trace_id: traceId,                        // Inherited from workflow
+  span_id: taskSpanId,                      // New span for this task
+  parent_span_id: parentSpanId,             // Link to workflow span
+
+  // Versioning
+  envelope_version: '1.0.0' as const,
+
+  // Context
+  workflow_context: {
+    workflow_type: workflow.type,           // 'app' | 'service' | etc.
+    workflow_name: workflow.name,
+    current_stage: stage,
+    stage_outputs: stageOutputs             // Previous stage outputs
+  }
+}
+```
+
+**Agent-Specific Payloads** (Switch statement Lines 1042+):
+
+**Scaffold Agent** (Lines 1044-1059):
+```typescript
+{
+  ...envelopeBase,
+  agent_type: 'scaffold' as const,
+  payload: {
+    project_type: workflow.type,            // 'app' | 'service' | etc.
+    name: workflow.name,
+    description: workflow.description || '',
+    tech_stack: workflowData.tech_stack || {},
+    requirements: workflowData.requirements || []
+  }
+}
+```
+
+**Validation Agent** (Lines 1060-1075):
+```typescript
+{
+  ...envelopeBase,
+  agent_type: 'validation' as const,
+  payload: {
+    project_path: stageOutputs.initialization?.project_path,
+    policies: workflowData.validation_policies || {},
+    quality_gates: workflowData.quality_gates || {}
+  }
+}
+```
+
+**E2E Agent** (Lines 1076-1091):
+```typescript
+{
+  ...envelopeBase,
+  agent_type: 'e2e_test' as const,
+  payload: {
+    project_path: stageOutputs.initialization?.project_path,
+    base_url: workflowData.base_url || 'http://localhost:3000',
+    test_framework: workflowData.test_framework || 'playwright'
+  }
+}
+```
+
+### 2.3 Key Observations
+
+**What's Present:**
+- ✅ `agent_type` field (matches TaskAssignmentSchema)
+- ✅ `task_id`, `workflow_id` (matches)
+- ✅ `payload` field (matches - generic Record<string, unknown>)
+- ✅ `priority` field (but as string, not enum)
+- ✅ Trace fields: `trace_id`, `span_id`, `parent_span_id` (Session #60)
+
+**What's Missing (compared to TaskAssignmentSchema):**
+- ❌ `message_id` (idempotency key) - CRITICAL for deduplication
+- ❌ `action` field (optional in schema)
+- ❌ `constraints` object (timeout, retries, confidence) - scattered in root
+- ❌ `metadata` object (created_at, created_by, trace_id) - scattered in root
+
+**What's Extra (not in TaskAssignmentSchema):**
+- ➕ `status`, `retry_count`, `max_retries` (task execution state)
+- ➕ `span_id`, `parent_span_id` (should be in metadata.trace_id)
+- ➕ `envelope_version` (versioning)
+- ➕ `workflow_context` (context passing)
+
+### 2.4 Why This Matters
+
+**Implication 1: TaskAssignmentSchema is NOT the canonical format**
+- buildAgentEnvelope() predates TaskAssignmentSchema (created Session #64)
+- All production workflows use buildAgentEnvelope() output
+- TaskAssignmentSchema was created as an "ideal" schema, not documenting reality
+
+**Implication 2: Agents can't validate correctly**
+- BaseAgent.validateTask() calls `TaskAssignmentSchema.parse(task)`
+- Parse fails because buildAgentEnvelope() output doesn't match schema
+- Agents reject valid orchestrator messages
+
+**Implication 3: Two conflicting approaches**
+- **Approach A:** Update buildAgentEnvelope() to produce TaskAssignmentSchema format
+  - Pros: Clean, canonical schema
+  - Cons: Breaks workflow_context, trace propagation, loses state fields
+- **Approach B:** Update TaskAssignmentSchema to match buildAgentEnvelope() output
+  - Pros: Minimal changes, preserves existing logic
+  - Cons: Schema has scattered fields, less clean structure
+
+---
+
+## 3. Schema Analysis
+
+### 3.1 Current Schemas in Codebase
+
+**Schema 1: TaskAssignmentSchema** (Created Session #64)
+- **File:** `packages/shared/types/src/messages/task-contracts.ts`
+- **Lines:** 27-55
+- **Purpose:** Intended canonical task format
+- **Status:** ⚠️ NOT USED by orchestrator buildAgentEnvelope()
+- **Compliance:** ❌ Orchestrator doesn't produce this format
+
+```typescript
+export const TaskAssignmentSchema = z.object({
+  message_id: z.string().uuid(),           // ❌ Missing from buildAgentEnvelope
+  task_id: z.string().uuid(),              // ✅ Present
+  workflow_id: z.string().uuid(),          // ✅ Present
+  agent_type: z.enum([...]),               // ✅ Present
+  action: z.string().optional(),           // ⚠️ Missing from buildAgentEnvelope
+  priority: z.enum([...]),                 // ⚠️ String in envelope, enum in schema
+  payload: z.record(z.unknown()),          // ✅ Present
+  constraints: z.object({                  // ❌ Missing from buildAgentEnvelope
+    timeout_ms: z.number().default(300000),
+    max_retries: z.number().default(3),
+    required_confidence: z.number().min(0).max(100).default(80)
+  }),
+  metadata: z.object({                     // ❌ Missing from buildAgentEnvelope
+    created_at: z.string().datetime(),
+    created_by: z.string(),
+    trace_id: z.string(),
+    parent_task_id: z.string().optional()
+  })
 });
 ```
 
-**Database Schema (new table):**
-```sql
-CREATE TABLE llm_audit_log (
-  id UUID PRIMARY KEY,
-  agent_id VARCHAR(100),
-  task_id UUID,
-  trace_id UUID,
-  model VARCHAR(100),
-  prompt_tokens INTEGER,
-  completion_tokens INTEGER,
-  latency_ms INTEGER,
-  cost_usd DECIMAL(10, 6),
-  timestamp TIMESTAMP,
-  INDEX idx_trace_id (trace_id),
-  INDEX idx_task_id (task_id)
-);
-```
-
-**Estimate:** 3-4 hours (schema + implementation + cost calculation)
-
-#### Priority 6: Retry Strategy Configuration ⚠️ LOW
-**Missing:** Per-agent retry configuration
-
-**Current State:**
-- BaseAgent hardcodes RetryPresets.standard (base-agent.ts:233)
-- No way for ScaffoldAgent to use aggressive retry, ValidationAgent to use quick
-
-**What's Needed:**
-```typescript
-// In BaseAgent constructor:
-constructor(
-  capabilities: AgentCapabilities,
-  messageBus: IMessageBus,
-  options?: {
-    retryPreset?: keyof typeof RetryPresets; // 'quick' | 'standard' | 'aggressive'
-    customRetry?: RetryOptions;
-  }
-) {
-  this.retryOptions = options?.customRetry ||
-                      RetryPresets[options?.retryPreset || 'standard'];
-}
-
-// In receiveTask():
-await retry(() => this.execute(task), this.retryOptions);
-```
-
-**Estimate:** 1 hour
-
----
-
-### 2.2 What Needs to be Extracted from Concrete Agents
-
-#### Extract 1: Trace ID Generation
-**Current:** Every agent duplicates (5/5 agents)
-**Move to:** BaseAgent.receiveTask() (already has it at line 61!)
-**Action:** Remove from all concrete agents' execute() methods
-
-**Estimate:** 15 minutes (delete code from 5 files)
-
-#### Extract 2: Start Time Tracking
-**Current:** Every agent implements (5/5 agents)
-**Move to:** BaseAgent.receiveTask() before execute()
-**Pass to:** execute() as parameter or store in BaseAgent field
-
-**Estimate:** 30 minutes
-
-#### Extract 3: Task Logging
-**Current:** Duplicated in all agents
-**Move to:** BaseAgent.receiveTask() (already logs at lines 202-210)
-**Action:** Remove from concrete agents
-
-**Estimate:** 15 minutes
-
-#### Extract 4: Error Result Construction
-**Current:** Inconsistent across agents
-**Move to:** BaseAgent.receiveTask() catch block (lines 260-275)
-**Standardize:** Common error result structure
-
-**Estimate:** 1 hour (including schema alignment)
-
----
-
-### 2.3 What Needs to be Added New
-
-#### Add 1: ITaskRepository Injection
-**Why:** BaseAgent needs to update AgentTask rows
-**What:** Add repository parameter to constructor
-**Where:** `packages/orchestrator/src/repositories/workflow.repository.ts`
-
-**Changes:**
-```typescript
-// BaseAgent constructor:
-constructor(
-  capabilities: AgentCapabilities,
-  messageBus: IMessageBus,
-  taskRepository: ITaskRepository // NEW
-) { ... }
-
-// ITaskRepository interface:
-interface ITaskRepository {
-  updateTask(task_id: string, updates: {
-    status: TaskStatus;
-    started_at?: Date;
-    completed_at?: Date;
-  }): Promise<void>;
-}
-```
-
-**Estimate:** 2 hours (interface + implementation + wiring)
-
-#### Add 2: IdempotencyStore Injection
-**Why:** Message-level duplicate detection
-**What:** Add idempotency store parameter to constructor
-**Where:** `packages/shared/utils/src/idempotency.ts` (new file)
-
-**Changes:**
-```typescript
-// BaseAgent constructor:
-constructor(
-  capabilities: AgentCapabilities,
-  messageBus: IMessageBus,
-  taskRepository: ITaskRepository,
-  idempotencyStore: IIdempotencyStore // NEW
-) { ... }
-
-// IIdempotencyStore interface:
-interface IIdempotencyStore {
-  has(message_id: string): Promise<boolean>;
-  add(message_id: string, metadata: IdempotencyMetadata): Promise<void>;
-}
-```
-
-**Estimate:** 2-3 hours (interface + Postgres impl + Redis impl)
-
-#### Add 3: Error Classifier
-**Why:** Retry decision logic
-**What:** Add error classification utility
-**Where:** `packages/shared/utils/src/error-classifier.ts` (new file)
-
-**Estimate:** 2 hours
-
-#### Add 4: Prompt Audit Store
-**Why:** LLM cost tracking
-**What:** Add audit store parameter to constructor
-**Where:** `packages/shared/utils/src/prompt-audit.ts` (new file)
-
-**Estimate:** 3-4 hours (schema + store + cost calculation)
-
----
-
-## 3. Migration Path
-
-### Phase 1: Consolidate (3-4 hours)
-**Goal:** Move duplicated code from concrete agents into BaseAgent
-
-**Changes:**
-1. ✅ Extract trace ID generation (already in BaseAgent.receiveTask:61)
-   - **Action:** Delete from all concrete agents
-   - **Files:** 5 agent files
-   - **Estimate:** 15 min
-
-2. ✅ Extract start time tracking
-   - **Action:** Add to BaseAgent.receiveTask() before execute()
-   - **Store:** `this.currentTaskStartTime`
-   - **Pass:** To reportResult() for metrics
-   - **Estimate:** 30 min
-
-3. ✅ Extract task logging
-   - **Action:** Already in BaseAgent.receiveTask:202-210
-   - **Remove:** Duplicate logs from agents
-   - **Estimate:** 15 min
-
-4. ✅ Standardize error result construction
-   - **Action:** Consolidate into BaseAgent.receiveTask:260-275 catch block
-   - **Standardize:** Error result structure
-   - **Estimate:** 1 hour
-
-**Deliverable:** Reduced duplication, zero functional change
-
-**Risk:** Low (mostly deletions)
-
----
-
-### Phase 2: Refactor (8-10 hours)
-**Goal:** Add missing pipeline concerns to BaseAgent
-
-**Changes:**
-1. ✅ Add ITaskRepository injection (2 hours)
-   - Create ITaskRepository interface
-   - Implement in WorkflowRepository
-   - Inject into BaseAgent constructor
-   - Wire through run-agent.ts files (5 agents)
-
-2. ✅ Implement task status updates (1 hour)
-   - Call repository.updateTask() at lifecycle points
-   - Add started_at/completed_at timestamps
-
-3. ✅ Add IIdempotencyStore injection (2-3 hours)
-   - Create IIdempotencyStore interface
-   - Implement PostgresIdempotencyStore
-   - Implement RedisIdempotencyStore (optional)
-   - Add to BaseAgent constructor
-   - Wire through run-agent.ts files
-
-4. ✅ Implement idempotency check (1 hour)
-   - Add to BaseAgent.receiveTask() before execute()
-   - Skip duplicate messages silently
-   - Log duplicate detection
-
-5. ✅ Add error classifier (2 hours)
-   - Create ErrorClass enum
-   - Implement classifyError()
-   - Integrate with retry shouldRetry callback
-
-**Deliverable:** BaseAgent owns complete execution pipeline
-
-**Risk:** Medium (requires dependency injection changes)
-
----
-
-### Phase 3: Enhance (4-6 hours)
-**Goal:** Add advanced features (tracing, auditing, configurability)
-
-**Changes:**
-1. ✅ Child span creation (1-2 hours)
-   - Call createChildContext() in execute() wrapper
-   - Pass child context to reportResult()
-   - Log span hierarchy
-
-2. ✅ Prompt auditing (3-4 hours)
-   - Create llm_audit_log table
-   - Implement IPromptAuditStore
-   - Add to callClaude()
-   - Calculate cost per model
-
-3. ✅ Retry configuration (1 hour)
-   - Add RetryOptions to constructor
-   - Allow per-agent customization
-   - Document presets (quick/standard/aggressive)
-
-**Deliverable:** Production-ready BaseAgent with full observability
-
-**Risk:** Low (additive changes)
-
----
-
-### Total Estimate: 15-20 hours across 3 phases
-
----
-
-## 4. Template Method Design
-
-### 4.1 Proposed BaseAgent<TPayload, TRawResult, TResult> Interface
+**Schema 2: buildAgentEnvelope() Output** (Production Format)
+- **File:** `packages/orchestrator/src/services/workflow.service.ts`
+- **Lines:** 994-1100+
+- **Purpose:** Actual runtime task format
+- **Status:** ✅ ACTIVELY USED by orchestrator
+- **Compliance:** ❌ Doesn't match any Zod schema
 
 ```typescript
-/**
- * Strategic BaseAgent - Owns the Execution Pipeline
- *
- * Responsibilities:
- * - Message bus subscription and task intake
- * - Idempotency checking (message_id deduplication)
- * - Task persistence (AgentTask row updates)
- * - Distributed tracing (trace_id/span_id propagation)
- * - Error classification and retry strategy
- * - Result emission and schema validation
- * - Prompt auditing (for AI agents)
- * - Observability (structured logs, metrics)
- *
- * Concrete agents implement:
- * - Task payload schema (validatePayload)
- * - Execution logic (execute)
- * - Result mapping (mapResult)
- */
-export abstract class BaseAgent<TPayload, TRawResult, TResult> {
-  // ============================================================================
-  // DEPENDENCIES (Injected via Constructor)
-  // ============================================================================
-  protected readonly logger: pino.Logger;
-  protected readonly anthropic: Anthropic;
-  protected readonly messageBus: IMessageBus;
-  protected readonly taskRepository: ITaskRepository;
-  protected readonly idempotencyStore: IIdempotencyStore;
-  protected readonly promptAuditStore?: IPromptAuditStore; // Optional
-  protected readonly agentId: string;
-  protected readonly capabilities: AgentCapabilities;
-  protected readonly retryOptions: RetryOptions;
-
-  // Circuit breaker for external API calls
-  protected readonly claudeCircuitBreaker: CircuitBreaker;
-
-  // ============================================================================
-  // STATE (Task Execution Context)
-  // ============================================================================
-  protected currentTraceContext?: TraceContext;
-  protected currentTaskId?: string;
-  protected currentTaskStartTime?: number;
-
-  constructor(
-    capabilities: AgentCapabilities,
-    messageBus: IMessageBus,
-    taskRepository: ITaskRepository,
-    idempotencyStore: IIdempotencyStore,
-    options?: {
-      retryPreset?: keyof typeof RetryPresets;
-      customRetry?: RetryOptions;
-      promptAuditStore?: IPromptAuditStore;
-    }
-  ) {
-    this.capabilities = capabilities;
-    this.messageBus = messageBus;
-    this.taskRepository = taskRepository;
-    this.idempotencyStore = idempotencyStore;
-    this.promptAuditStore = options?.promptAuditStore;
-
-    // Retry configuration
-    this.retryOptions = options?.customRetry ||
-                        RetryPresets[options?.retryPreset || 'standard'];
-
-    // Agent ID generation
-    this.agentId = `${capabilities.type}-${randomUUID().slice(0, 8)}`;
-
-    // Logger setup
-    this.logger = pino({ name: this.agentId, ... });
-
-    // Anthropic client
-    this.anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-    // Circuit breaker
-    this.claudeCircuitBreaker = new CircuitBreaker({...});
-  }
-
-  // ============================================================================
-  // LIFECYCLE (Implemented in BaseAgent)
-  // ============================================================================
-
-  async initialize(): Promise<void> {
-    // 1. Connect to message bus
-    // 2. Subscribe to agent task channel
-    // 3. Register with orchestrator
-    // 4. Set up message handler → this.handleTaskMessage()
-  }
-
-  async cleanup(): Promise<void> {
-    // 1. Deregister from orchestrator
-    // 2. Unsubscribe from message bus
-    // 3. Disconnect Redis clients
-  }
-
-  async healthCheck(): Promise<HealthStatus> {
-    // Return agent health metrics
-  }
-
-  // ============================================================================
-  // TASK INTAKE (Implemented in BaseAgent)
-  // ============================================================================
-
-  private async handleTaskMessage(envelope: ExecutionEnvelope<TPayload>): Promise<void> {
-    const { message_id, task_id, trace_id, span_id, payload } = envelope;
-
-    // Step 1: Idempotency Check
-    const isDuplicate = await this.idempotencyStore.has(message_id);
-    if (isDuplicate) {
-      this.logger.debug('Duplicate message detected', { message_id, task_id });
-      return; // Skip silently
-    }
-
-    // Step 2: Extract Trace Context
-    this.currentTraceContext = extractTraceContext(envelope);
-    this.currentTaskId = task_id;
-    this.currentTaskStartTime = Date.now();
-
-    // Step 3: Log Task Receipt
-    this.logger.info('🔍 [AGENT-TRACE] Task received', {
-      task_id,
-      trace_id: this.currentTraceContext.trace_id,
-      span_id: this.currentTraceContext.span_id,
-      agent_type: this.capabilities.type
-    });
-
-    // Step 4: Update Task Status → RUNNING
-    await this.taskRepository.updateTask(task_id, {
-      status: 'running',
-      started_at: new Date()
-    });
-
-    try {
-      // Step 5: Validate Payload Schema
-      const validatedPayload = await this.validatePayload(payload);
-
-      // Step 6: Execute with Retry + Error Classification
-      const rawResult = await retry(
-        () => this.execute(validatedPayload),
-        {
-          ...this.retryOptions,
-          shouldRetry: (error, attempt) => {
-            const errorClass = this.classifyError(error);
-            return errorClass === ErrorClass.TRANSIENT && attempt < this.retryOptions.maxAttempts!;
-          },
-          onRetry: (error, attempt, delayMs) => {
-            this.logger.warn('Task execution failed, retrying', {
-              task_id,
-              attempt,
-              delayMs,
-              error: error instanceof Error ? error.message : String(error)
-            });
-          }
-        }
-      );
-
-      // Step 7: Map Result to Standard Schema
-      const mappedResult = await this.mapResult(rawResult, envelope);
-
-      // Step 8: Report Success
-      await this.reportSuccess(task_id, mappedResult);
-
-      // Step 9: Update Task Status → COMPLETED
-      await this.taskRepository.updateTask(task_id, {
-        status: 'completed',
-        completed_at: new Date()
-      });
-
-      // Step 10: Mark Message as Processed (Idempotency)
-      await this.idempotencyStore.add(message_id, {
-        task_id,
-        trace_id: this.currentTraceContext.trace_id,
-        processed_at: new Date().toISOString(),
-        handler: `${this.capabilities.type}.handleTaskMessage`
-      });
-
-    } catch (error) {
-      // Step 11: Classify Error
-      const errorClass = this.classifyError(error);
-
-      // Step 12: Update Task Status → FAILED
-      await this.taskRepository.updateTask(task_id, {
-        status: 'failed',
-        completed_at: new Date()
-      });
-
-      // Step 13: Report Failure
-      await this.reportFailure(task_id, error, errorClass);
-
-      // Step 14: Mark as Processed (even on failure, to prevent retry loops)
-      await this.idempotencyStore.add(message_id, {
-        task_id,
-        trace_id: this.currentTraceContext.trace_id,
-        processed_at: new Date().toISOString(),
-        handler: `${this.capabilities.type}.handleTaskMessage`,
-        error_class: errorClass,
-        error_message: error instanceof Error ? error.message : String(error)
-      });
-    }
-  }
-
-  // ============================================================================
-  // ERROR CLASSIFICATION (Implemented in BaseAgent)
-  // ============================================================================
-
-  protected classifyError(error: unknown): ErrorClass {
-    if (error instanceof NetworkError) return ErrorClass.TRANSIENT;
-    if (error instanceof ValidationError) return ErrorClass.PERMANENT;
-    if (error instanceof Anthropic.RateLimitError) return ErrorClass.UPSTREAM;
-    if (error instanceof TimeoutError) return ErrorClass.TIMEOUT;
-
-    // Check error message for common patterns
-    if (error instanceof Error) {
-      const msg = error.message.toLowerCase();
-      if (msg.includes('timeout') || msg.includes('econnrefused')) {
-        return ErrorClass.TRANSIENT;
-      }
-      if (msg.includes('validation') || msg.includes('invalid')) {
-        return ErrorClass.PERMANENT;
-      }
-    }
-
-    return ErrorClass.TRANSIENT; // Conservative default
-  }
-
-  // ============================================================================
-  // RESULT EMISSION (Implemented in BaseAgent)
-  // ============================================================================
-
-  private async reportSuccess(
-    task_id: string,
-    result: TResult
-  ): Promise<void> {
-    const duration_ms = Date.now() - this.currentTaskStartTime!;
-
-    // Construct AgentResultSchema-compliant envelope
-    const agentResult: AgentResult = {
-      task_id,
-      workflow_id: envelope.workflow_id,
-      agent_id: this.agentId,
-      agent_type: this.capabilities.type,
-      success: true,
-      status: 'success',
-      action: envelope.stage || this.capabilities.type,
-      result: result as any,
-      metrics: {
-        duration_ms,
-        tokens_used: result.tokens_used,
-        api_calls: result.api_calls
-      },
-      trace_id: this.currentTraceContext?.trace_id,
-      span_id: this.currentTraceContext?.span_id,
-      parent_span_id: this.currentTraceContext?.parent_span_id,
-      timestamp: new Date().toISOString(),
-      version: VERSION
-    };
-
-    // Validate schema compliance
-    AgentResultSchema.parse(agentResult);
-
-    // Publish via message bus
-    await this.messageBus.publish(
-      REDIS_CHANNELS.ORCHESTRATOR_RESULTS,
-      agentResult,
-      {
-        key: envelope.workflow_id,
-        mirrorToStream: `stream:${REDIS_CHANNELS.ORCHESTRATOR_RESULTS}`
-      }
-    );
-
-    this.logger.info('🔍 [AGENT-TRACE] Result published', {
-      task_id,
-      status: 'success',
-      duration_ms
-    });
-  }
-
-  private async reportFailure(
-    task_id: string,
-    error: unknown,
-    errorClass: ErrorClass
-  ): Promise<void> {
-    const duration_ms = Date.now() - this.currentTaskStartTime!;
-
-    const agentResult: AgentResult = {
-      task_id,
-      workflow_id: envelope.workflow_id,
-      agent_id: this.agentId,
-      agent_type: this.capabilities.type,
-      success: false,
-      status: 'failed',
-      action: envelope.stage || this.capabilities.type,
-      result: {},
-      error: {
-        code: errorClass,
-        message: error instanceof Error ? error.message : String(error),
-        retryable: errorClass === ErrorClass.TRANSIENT
-      },
-      metrics: { duration_ms },
-      trace_id: this.currentTraceContext?.trace_id,
-      span_id: this.currentTraceContext?.span_id,
-      parent_span_id: this.currentTraceContext?.parent_span_id,
-      timestamp: new Date().toISOString(),
-      version: VERSION
-    };
-
-    AgentResultSchema.parse(agentResult);
-
-    await this.messageBus.publish(
-      REDIS_CHANNELS.ORCHESTRATOR_RESULTS,
-      agentResult,
-      {
-        key: envelope.workflow_id,
-        mirrorToStream: `stream:${REDIS_CHANNELS.ORCHESTRATOR_RESULTS}`
-      }
-    );
-
-    this.logger.error('🔍 [AGENT-TRACE] Failure published', {
-      task_id,
-      error_class: errorClass,
-      duration_ms
-    });
-  }
-
-  // ============================================================================
-  // PROMPT AUDITING (Implemented in BaseAgent)
-  // ============================================================================
-
-  protected async callClaude(
-    prompt: string,
-    systemPrompt?: string,
-    maxTokens: number = 4096
-  ): Promise<string> {
-    const startTime = Date.now();
-
-    const response = await this.claudeCircuitBreaker.execute(async () => {
-      return await this.anthropic.messages.create({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: maxTokens,
-        temperature: 0.3,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: prompt }]
-      });
-    });
-
-    const latency_ms = Date.now() - startTime;
-
-    // Audit if store is available
-    if (this.promptAuditStore) {
-      await this.promptAuditStore.record({
-        agent_id: this.agentId,
-        task_id: this.currentTaskId,
-        trace_id: this.currentTraceContext?.trace_id,
-        model: 'claude-3-haiku-20240307',
-        prompt_tokens: response.usage.input_tokens,
-        completion_tokens: response.usage.output_tokens,
-        latency_ms,
-        cost_usd: calculateCost('claude-3-haiku-20240307', response.usage),
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    // Extract text
-    const textContent = response.content.find(c => c.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
-      throw new AgentError('No text content in Claude response', 'API_ERROR');
-    }
-
-    return textContent.text;
-  }
-
-  // ============================================================================
-  // ABSTRACT METHODS (Implemented by Concrete Agents)
-  // ============================================================================
-
-  /**
-   * Validate task payload against agent-specific schema
-   * @throws ValidationError if payload is invalid
-   */
-  protected abstract validatePayload(payload: unknown): Promise<TPayload>;
-
-  /**
-   * Execute agent-specific business logic
-   * @throws AgentError on execution failure
-   */
-  protected abstract execute(payload: TPayload): Promise<TRawResult>;
-
-  /**
-   * Map agent-specific result to standard schema
-   */
-  protected abstract mapResult(
-    rawResult: TRawResult,
-    envelope: ExecutionEnvelope<TPayload>
-  ): Promise<TResult>;
-}
-```
-
----
-
-### 4.2 Concrete Agent Example: ScaffoldAgent
-
-```typescript
-/**
- * Scaffold Agent - Code Generation
- *
- * Payload: { project_type, name, description, tech_stack, requirements }
- * RawResult: { files_generated, structure, templates_used, analysis }
- * Result: TaskResult (standardized)
- */
-export class ScaffoldAgent extends BaseAgent<
-  ScaffoldPayload,
-  ScaffoldRawResult,
-  TaskResult
-> {
-  private readonly fileGenerator: FileGenerator;
-  private readonly templateEngine: TemplateEngine;
-
-  constructor(
-    messageBus: IMessageBus,
-    taskRepository: ITaskRepository,
-    idempotencyStore: IIdempotencyStore,
-    promptAuditStore?: IPromptAuditStore
-  ) {
-    super(
-      {
-        type: AGENT_TYPES.SCAFFOLD,
-        version: '1.0.0',
-        capabilities: ['analyze-requirements', 'generate-structure', 'create-boilerplate']
-      },
-      messageBus,
-      taskRepository,
-      idempotencyStore,
-      {
-        retryPreset: 'standard', // 3 attempts, 2s initial delay
-        promptAuditStore
-      }
-    );
-
-    this.fileGenerator = new FileGenerator(this.logger);
-    this.templateEngine = new TemplateEngine(path.join(__dirname, '../templates'));
-  }
-
-  // ============================================================================
-  // AGENT-SPECIFIC IMPLEMENTATION
-  // ============================================================================
-
-  protected async validatePayload(payload: unknown): Promise<ScaffoldPayload> {
-    // Zod schema validation
-    return ScaffoldPayloadSchema.parse(payload);
-  }
-
-  protected async execute(payload: ScaffoldPayload): Promise<ScaffoldRawResult> {
-    // Step 1: Analyze requirements using Claude (callClaude() is in BaseAgent)
-    const analysis = await this.analyzeRequirements(payload);
-
-    // Step 2: Generate project structure
-    const structure = await this.generateProjectStructure(payload, analysis);
-
-    // Step 3: Create files from templates
-    const createResult = await this.createFiles(structure, payload);
-
-    return {
-      files_generated: structure.files_generated,
-      structure,
-      templates_used: createResult.templatesUsed,
-      analysis,
-      generation_metrics: {
-        total_files: createResult.filesCreated,
-        total_directories: structure.directories.length,
-        total_size_bytes: createResult.totalSize,
-        generation_time_ms: createResult.templateTime,
-        ai_analysis_ms: analysis.analysis_time_ms
-      }
-    };
-  }
-
-  protected async mapResult(
-    rawResult: ScaffoldRawResult,
-    envelope: ExecutionEnvelope<ScaffoldPayload>
-  ): Promise<TaskResult> {
-    return {
-      task_id: envelope.task_id,
-      workflow_id: envelope.workflow_id,
-      status: 'success',
-      output: {
-        files_generated: rawResult.files_generated,
-        structure: rawResult.structure,
-        templates_used: rawResult.templates_used,
-        analysis: rawResult.analysis,
-        generation_metrics: rawResult.generation_metrics,
-        next_steps: this.determineNextSteps(envelope.payload, rawResult.structure),
-        summary: `Successfully scaffolded ${envelope.payload.project_type} project`
-      },
-      metrics: {
-        duration_ms: rawResult.generation_metrics.generation_time_ms,
-        tokens_used: rawResult.analysis.tokens_used,
-        api_calls: rawResult.analysis.api_calls
-      },
-      next_stage: WORKFLOW_STAGES.VALIDATION
-    };
-  }
-
-  // ============================================================================
-  // PRIVATE UTILITIES (Agent-Specific)
-  // ============================================================================
-
-  private async analyzeRequirements(payload: ScaffoldPayload): Promise<RequirementsAnalysis> {
-    const prompt = this.buildRequirementsPrompt(payload);
-
-    // callClaude() is in BaseAgent, handles prompt auditing automatically
-    const response = await this.callClaude(
-      prompt,
-      'You are a software architect analyzing project requirements. Return JSON only.'
-    );
-
-    return this.parseClaudeJsonResponse(response, payload.task_id);
-  }
-
-  private async generateProjectStructure(
-    payload: ScaffoldPayload,
-    analysis: RequirementsAnalysis
-  ): Promise<ProjectStructure> {
-    // ... scaffold-specific logic ...
-  }
-
-  private async createFiles(
-    structure: ProjectStructure,
-    payload: ScaffoldPayload
-  ): Promise<FileCreationResult> {
-    // ... scaffold-specific logic ...
-  }
-
-  private buildRequirementsPrompt(payload: ScaffoldPayload): string {
-    // ... scaffold-specific logic ...
-  }
-
-  private parseClaudeJsonResponse(response: string, taskId: string): RequirementsAnalysis {
-    // ... scaffold-specific logic ...
-  }
-
-  private determineNextSteps(
-    payload: ScaffoldPayload,
-    structure: ProjectStructure
-  ): NextStep[] {
-    // ... scaffold-specific logic ...
+// Inferred type (no explicit schema):
+{
+  task_id: string,
+  workflow_id: string,
+  agent_type: string,
+  payload: Record<string, unknown>,
+  priority: 'medium',                      // Literal, not enum
+  status: 'pending',                       // Extra field
+  retry_count: number,                     // Extra field
+  max_retries: number,                     // Extra field
+  timeout_ms: number,                      // In root, not constraints
+  created_at: string,                      // In root, not metadata
+  trace_id: string,                        // In root, not metadata
+  span_id: string,                         // Extra field (tracing)
+  parent_span_id?: string,                 // Extra field (tracing)
+  envelope_version: '1.0.0',               // Extra field (versioning)
+  workflow_context: {                      // Extra field (context)
+    workflow_type: string,
+    workflow_name: string,
+    current_stage: string,
+    stage_outputs: Record<string, any>
   }
 }
 ```
 
-**Key Observations:**
-- ✅ No tracing boilerplate (handled by BaseAgent)
-- ✅ No start time tracking (handled by BaseAgent)
-- ✅ No error handling wrapper (handled by BaseAgent)
-- ✅ No result publishing (handled by BaseAgent)
-- ✅ Just pure business logic: requirements analysis → structure generation → file creation
+**Schema 3: Old EnvelopeSchema** (Session #39)
+- **File:** `packages/orchestrator/src/hexagonal/core/envelope-schema.ts`
+- **Lines:** 32-49
+- **Purpose:** Generic envelope wrapper (not task-specific)
+- **Status:** ⚠️ Still in codebase but NOT used for tasks
+- **Compliance:** Different abstraction level (generic events, not tasks)
+
+```typescript
+export const EnvelopeBaseSchema = z.object({
+  id: z.string().uuid('Envelope ID must be UUID'),
+  type: z.string().min(1).regex(/^[a-z0-9.]+$/),
+  ts: z.string().datetime('Timestamp must be ISO 8601'),
+  corrId: z.string().optional(),
+  tenantId: z.string().optional(),
+  source: z.string().optional(),
+  meta: EnvelopeMetaSchema.optional(),
+  payload: z.unknown()  // Generic payload
+});
+```
+
+### 3.2 Schema Comparison Matrix
+
+| Field | TaskAssignmentSchema | buildAgentEnvelope() | EnvelopeSchema |
+|-------|---------------------|----------------------|----------------|
+| **Identification** ||||
+| message_id | ✅ Required (UUID) | ❌ Missing | ✅ id (UUID) |
+| task_id | ✅ Required (UUID) | ✅ Present (UUID) | N/A |
+| workflow_id | ✅ Required (UUID) | ✅ Present (UUID) | N/A |
+| **Routing** ||||
+| agent_type | ✅ Enum | ✅ String | N/A |
+| action | ⚠️ Optional | ❌ Missing | N/A |
+| type | N/A | N/A | ✅ String pattern |
+| **Priority** ||||
+| priority | ✅ Enum (4 levels) | ✅ String literal | N/A |
+| **Payload** ||||
+| payload | ✅ Generic Record | ✅ Agent-specific | ✅ unknown |
+| **Execution Control** ||||
+| constraints.timeout_ms | ✅ In object | ✅ In root | N/A |
+| constraints.max_retries | ✅ In object | ✅ In root (max_retries) | N/A |
+| constraints.required_confidence | ✅ In object | ❌ Missing | N/A |
+| status | N/A | ✅ 'pending' | N/A |
+| retry_count | N/A | ✅ Number | ✅ meta.attempts |
+| **Metadata** ||||
+| metadata.created_at | ✅ In object | ✅ In root (created_at) | ✅ ts |
+| metadata.created_by | ✅ In object | ❌ Missing | ✅ source |
+| metadata.trace_id | ✅ In object | ✅ In root (trace_id) | ✅ corrId |
+| metadata.parent_task_id | ⚠️ Optional | ❌ Missing | N/A |
+| **Tracing (Session #60)** ||||
+| trace_id | ✅ In metadata | ✅ In root | ✅ corrId |
+| span_id | N/A | ✅ In root | N/A |
+| parent_span_id | N/A | ✅ In root | N/A |
+| **Versioning** ||||
+| version | N/A | ✅ envelope_version | ✅ meta.version |
+| **Context** ||||
+| workflow_context | N/A | ✅ Object | N/A |
+
+### 3.3 Compatibility Analysis
+
+**TaskAssignmentSchema vs buildAgentEnvelope():**
+- ✅ **Compatible:** 40% (task_id, workflow_id, agent_type, payload, trace_id)
+- ⚠️ **Partially Compatible:** 30% (priority type mismatch, scattered fields)
+- ❌ **Incompatible:** 30% (missing message_id, missing constraints object, missing metadata object)
+
+**Verdict:** ❌ **NOT COMPATIBLE** - Would fail Zod validation
 
 ---
 
-### 4.3 Concrete Agent Example: ValidationAgent
+## 4. Agent Implementation Analysis
+
+### 4.1 BaseAgent Task Validation (Current)
+
+**File:** `packages/agents/base-agent/src/base-agent.ts`
+**Method:** `validateTask()` (Lines 285-296)
 
 ```typescript
-export class ValidationAgent extends BaseAgent<
-  ValidationPayload,
-  ValidationRawResult,
-  TaskResult
-> {
-  private policy: PolicyConfig | null = null;
-
-  constructor(
-    messageBus: IMessageBus,
-    taskRepository: ITaskRepository,
-    idempotencyStore: IIdempotencyStore
-  ) {
-    super(
-      {
-        type: AGENT_TYPES.VALIDATION,
-        version: '1.0.0',
-        capabilities: ['typescript-compilation', 'eslint', 'test-coverage', 'security-audit']
-      },
-      messageBus,
-      taskRepository,
-      idempotencyStore,
-      {
-        retryPreset: 'quick' // Fast retry for validation (file system operations)
-      }
-    );
-  }
-
-  async initialize(): Promise<void> {
-    await super.initialize();
-
-    // Load policy configuration
-    this.policy = await loadPolicyConfig();
-  }
-
-  protected async validatePayload(payload: unknown): Promise<ValidationPayload> {
-    return ValidationPayloadSchema.parse(payload);
-  }
-
-  protected async execute(payload: ValidationPayload): Promise<ValidationRawResult> {
-    // Check working directory exists
-    const exists = await fs.pathExists(payload.working_directory);
-    if (!exists) {
+validateTask(task: unknown): TaskAssignment {
+  try {
+    return TaskAssignmentSchema.parse(task);  // ❌ Fails on buildAgentEnvelope() output
+  } catch (error) {
+    if (error instanceof z.ZodError) {
       throw new ValidationError(
-        `Working directory does not exist: ${payload.working_directory}`,
-        ['DIRECTORY_NOT_FOUND']
+        'Invalid task assignment',
+        error.errors
       );
     }
-
-    // Run validation checks
-    const checks = await this.runValidationChecks(payload);
-
-    // Evaluate quality gates
-    const qualityGates = evaluateQualityGates(checks, this.policy);
-
-    // Generate report
-    const report = generateValidationReport(
-      payload.task_id,
-      payload.workflow_id,
-      payload.working_directory,
-      checks,
-      qualityGates
-    );
-
-    return {
-      report,
-      validation_checks: checks,
-      quality_gates: qualityGates
-    };
-  }
-
-  protected async mapResult(
-    rawResult: ValidationRawResult,
-    envelope: ExecutionEnvelope<ValidationPayload>
-  ): Promise<TaskResult> {
-    const taskStatus =
-      rawResult.report.overall_status === 'passed' ? 'success' :
-      rawResult.report.overall_status === 'warning' ? 'partial' : 'failure';
-
-    const errors: string[] = [];
-    if (rawResult.report.overall_status === 'failed') {
-      errors.push(...rawResult.report.quality_gates.blocking_failures);
-    }
-
-    return {
-      task_id: envelope.task_id,
-      workflow_id: envelope.workflow_id,
-      status: taskStatus,
-      output: {
-        report: rawResult.report,
-        validation_checks: rawResult.validation_checks,
-        quality_gates: rawResult.quality_gates
-      },
-      errors: errors.length > 0 ? errors : undefined,
-      metrics: {
-        duration_ms: rawResult.report.summary.total_duration_ms,
-        api_calls: 0 // No Claude API calls
-      },
-      next_stage: taskStatus === 'success' ? WORKFLOW_STAGES.INTEGRATION : undefined
-    };
-  }
-
-  private async runValidationChecks(
-    payload: ValidationPayload
-  ): Promise<ValidationCheckResult[]> {
-    // ... validation-specific logic ...
+    throw error;
   }
 }
 ```
+
+**Problem:** Validates against TaskAssignmentSchema, which doesn't match buildAgentEnvelope() output.
+
+### 4.2 Concrete Agent Status
+
+**Scaffold Agent** ✅ (Updated Session #64 Phase 3.1)
+- **File:** `packages/agents/scaffold-agent/src/scaffold-agent.ts`
+- **Status:** WORKING (extracts from task.payload)
+- **Lines:** 69-99 (execute method)
+- **Approach:**
+  ```typescript
+  const payload = task.payload as any;
+  const scaffoldTask: ScaffoldTask = {
+    // ... extract from payload
+    project_type: payload.project_type || payload.type,
+    name: payload.name,
+    description: payload.description,
+    // ...
+  };
+  ```
+
+**Validation Agent** ❌ (NOT Updated)
+- **File:** `packages/agents/validation-agent/src/validation-agent.ts`
+- **Status:** BROKEN (expects task.context envelope)
+- **Lines:** 78-151 (envelope extraction)
+- **Problem:**
+  ```typescript
+  const taskObj = task as any;
+  const envelopeData = taskObj.context;  // ❌ Expects task.context, but buildAgentEnvelope doesn't produce this
+
+  if (!envelopeData) {
+    throw new AgentError('No context envelope found in task', 'ENVELOPE_MISSING_ERROR');
+  }
+  ```
+- **Root Cause:** Expects old agent-dispatcher format (Session #36-37)
+
+**E2E Agent** ❌ (NOT Updated)
+- **File:** `packages/agents/e2e-agent/src/e2e-agent.ts`
+- **Status:** UNKNOWN (needs parsing analysis)
+- **Lines:** 60 (parseTaskContext)
+- **Approach:**
+  ```typescript
+  const context = this.parseTaskContext(task);  // Need to check this method
+  ```
+
+**Integration Agent** ❌ (NOT Updated)
+- **File:** `packages/agents/integration-agent/src/integration-agent.ts`
+- **Status:** UNKNOWN (needs inspection)
+
+**Deployment Agent** ❌ (NOT Updated)
+- **File:** `packages/agents/deployment-agent/src/deployment-agent.ts`
+- **Status:** UNKNOWN (needs inspection)
+
+### 4.3 Migration Patterns Observed
+
+**Pattern 1: Direct payload extraction** (Scaffold Agent)
+```typescript
+const payload = task.payload as any;
+const data = {
+  field1: payload.field1,
+  field2: payload.field2
+};
+```
+- ✅ **Pros:** Simple, works with buildAgentEnvelope() output
+- ⚠️ **Cons:** No validation, relies on any casting
+
+**Pattern 2: Envelope context extraction** (Validation Agent - OLD)
+```typescript
+const taskObj = task as any;
+const envelopeData = taskObj.context;
+const envelope = validateEnvelope(envelopeData);
+```
+- ❌ **Incompatible** with buildAgentEnvelope() output (no .context field)
+- ⚠️ Expects old agent-dispatcher format
 
 ---
 
-## 5. Common Utilities Needed
+## 5. Root Cause Summary
 
-### 5.1 TestingAgentUtils (for unit tests)
+### 5.1 The Core Problem
 
-**Purpose:** Common mocks and fixtures for testing concrete agents
+**Two Parallel Schema Systems:**
+1. **Intended (TaskAssignmentSchema):** Created Session #64 as "canonical" format
+2. **Actual (buildAgentEnvelope):** Pre-existing production format
 
-**File:** `packages/agents/base-agent/src/testing/agent-utils.ts` (new)
+**Result:** Orchestrator publishes format B, agents validate against format A → validation fails.
 
+### 5.2 Why This Happened
+
+**Historical Context:**
+- **Sessions #36-37:** Agent envelope system created (agent-dispatcher wrapper)
+- **Sessions #53-57:** Message bus migration (Phase 1-6 complete)
+- **Session #60:** Distributed tracing added (trace_id, span_id fields)
+- **Session #64:** TaskAssignmentSchema created as "ideal" without checking orchestrator
+
+**False Assumption in Session #64:**
+> "Agents have duplicate TaskAssignmentSchema, let's consolidate them"
+
+**Reality:**
+> "Orchestrator doesn't use any TaskAssignmentSchema - it builds custom envelopes"
+
+### 5.3 Current Blockers
+
+**Blocker 1: Schema Validation Failure**
+- BaseAgent.validateTask() rejects buildAgentEnvelope() output
+- Workflows stuck at 0% (agents never execute)
+
+**Blocker 2: Partial Migration State**
+- Scaffold agent updated to new approach (extract from payload)
+- Validation agent still expects old approach (task.context)
+- Mixed state prevents any workflow from completing
+
+**Blocker 3: Missing Idempotency**
+- buildAgentEnvelope() doesn't include message_id
+- No duplicate detection possible
+- Agents may process same task multiple times (if message bus delivers duplicates)
+
+---
+
+## 6. Solution Options
+
+### Option A: Update buildAgentEnvelope() to Produce TaskAssignmentSchema
+
+**Approach:** Make orchestrator conform to the canonical schema
+
+**Changes Required:**
+1. Add `message_id` generation in buildAgentEnvelope()
+2. Restructure flat fields into `constraints` object
+3. Restructure flat fields into `metadata` object
+4. Move `span_id`, `parent_span_id` into metadata
+5. Handle `workflow_context` (either add to schema or pass via payload)
+
+**Pros:**
+- ✅ Clean canonical schema
+- ✅ Agents validate with one schema
+- ✅ Future-proof (clear contract)
+
+**Cons:**
+- ❌ Large orchestrator changes (workflow.service.ts)
+- ❌ May break workflow_context usage
+- ❌ May break trace propagation (span_id in root vs metadata)
+- ⚠️ Medium risk (orchestrator is complex)
+
+**Estimated Effort:** 4-6 hours
+
+### Option B: Update TaskAssignmentSchema to Match buildAgentEnvelope()
+
+**Approach:** Make schema document reality
+
+**Changes Required:**
+1. Add optional `message_id` to schema
+2. Make `constraints` optional, allow flat timeout_ms, max_retries
+3. Make `metadata` optional, allow flat created_at, trace_id
+4. Add `span_id`, `parent_span_id` as optional root fields
+5. Add `status`, `retry_count` as optional root fields
+6. Add `envelope_version` as optional root field
+7. Add `workflow_context` as optional root field
+
+**Pros:**
+- ✅ Minimal orchestrator changes
+- ✅ Preserves existing logic
+- ✅ Low risk (schema change only)
+- ✅ Fast to implement
+
+**Cons:**
+- ❌ Schema has scattered structure
+- ❌ Less clean (fields in both root and nested)
+- ⚠️ Future maintenance harder
+
+**Estimated Effort:** 2-3 hours
+
+### Option C: Hybrid Approach (RECOMMENDED)
+
+**Approach:** Core fields match schema, extensions in payload or workflow_context
+
+**Changes Required:**
+1. **Orchestrator (buildAgentEnvelope):**
+   - Add `message_id: randomUUID()`
+   - Wrap timeout_ms, max_retries in `constraints` object
+   - Wrap created_at, trace_id in `metadata` object
+   - Keep `span_id`, `parent_span_id` in root (trace fields)
+   - Keep `workflow_context` in root (extension)
+
+2. **Schema (TaskAssignmentSchema):**
+   - Add optional `span_id`, `parent_span_id` (trace fields from Session #60)
+   - Add optional `workflow_context` (context passing)
+   - Keep `constraints` and `metadata` as required objects
+
+3. **Agents:**
+   - Update validation-agent to extract from task.payload (like scaffold-agent)
+   - Update e2e-agent, integration-agent, deployment-agent similarly
+   - Remove task.context expectations
+
+**Pros:**
+- ✅ Clean core schema (constraints, metadata as objects)
+- ✅ Preserves trace fields at root (Session #60 design)
+- ✅ Preserves workflow_context (context passing)
+- ✅ Adds idempotency (message_id)
+- ✅ Moderate risk (both orchestrator and schema change)
+
+**Cons:**
+- ⚠️ Schema has some "extensions" beyond core
+- ⚠️ Requires changes in both orchestrator and agents
+
+**Estimated Effort:** 5-7 hours
+
+---
+
+## 7. Recommended Implementation Plan
+
+### Phase 1: Validate Current State (1 hour)
+1. Run workflow and capture exact envelope produced by buildAgentEnvelope()
+2. Attempt to parse with TaskAssignmentSchema and document all errors
+3. Confirm validation-agent, e2e-agent, integration-agent, deployment-agent status
+
+### Phase 2: Update TaskAssignmentSchema (1 hour)
+1. Add optional fields to support buildAgentEnvelope() output:
+   - `span_id`, `parent_span_id` (distributed tracing)
+   - `workflow_context` (context passing)
+   - Make `action` optional (not always provided)
+2. Keep `message_id` required (idempotency)
+3. Keep `constraints` and `metadata` as required objects
+
+### Phase 3: Update buildAgentEnvelope() (2-3 hours)
+1. Add `message_id: randomUUID()` generation
+2. Restructure timeout_ms, max_retries into `constraints` object
+3. Restructure created_at, trace_id into `metadata` object
+4. Add `created_by: 'orchestrator'` to metadata
+5. Keep `span_id`, `parent_span_id` at root (pass to schema)
+6. Keep `workflow_context` at root (pass to schema)
+7. Update priority to use enum values
+
+### Phase 4: Update Remaining Agents (2-3 hours)
+1. **validation-agent:**
+   - Remove task.context extraction (Lines 78-151)
+   - Extract directly from task.payload (like scaffold-agent)
+   - Remove old envelope validation
+
+2. **e2e-agent, integration-agent, deployment-agent:**
+   - Update parseTaskContext() methods to extract from task.payload
+   - Remove any envelope wrapper expectations
+
+### Phase 5: Testing & Validation (1-2 hours)
+1. Run full E2E workflow test
+2. Verify all agents receive and validate tasks
+3. Confirm no "Invalid task assignment" errors
+4. Verify workflows advance through all stages
+5. Check trace propagation still works (Session #60)
+
+**Total Estimated Time:** 7-10 hours
+
+---
+
+## 8. Dependencies & Constraints
+
+### 8.1 Technical Dependencies
+
+**Must NOT Break:**
+- ✅ Distributed tracing (Session #60) - trace_id, span_id, parent_span_id
+- ✅ Message bus architecture (Sessions #53-57) - IMessageBus interface
+- ✅ Workflow context passing - stage_outputs between stages
+- ✅ Result schema (TaskResultSchema) - already working
+
+**Can Modify:**
+- ✅ TaskAssignmentSchema (add optional fields)
+- ✅ buildAgentEnvelope() (restructure fields)
+- ✅ Agent task parsing (update all agents)
+
+### 8.2 Business Constraints
+
+**Non-Goals (NOT Changing):**
+- Message bus delivery mechanism (Redis pub/sub + streams)
+- Database schema (Workflow, AgentTask tables)
+- Agent business logic (validation rules, scaffolding templates, etc.)
+- API routes (HTTP endpoints)
+
+### 8.3 Architectural Constraints
+
+**Hexagonal Architecture Principles:**
+- Orchestrator owns message format (producer authority)
+- Agents consume via IMessageBus port (consumer role)
+- Schemas live in shared-types (neutral package)
+
+**Message Bus Principles (Sessions #53-57):**
+- Symmetric architecture (no callbacks)
+- Agents subscribe to streams with consumer groups
+- Orchestrator publishes to agent-specific channels
+- Results published to orchestrator:results channel
+
+---
+
+## 9. Risks & Mitigations
+
+### Risk 1: Breaking Existing Workflows
+**Probability:** MEDIUM
+**Impact:** HIGH (all workflows would fail)
+**Mitigation:**
+- Add comprehensive logging at envelope creation
+- Add schema validation logging at agent intake
+- Test with multiple workflow types before committing
+- Keep rollback script handy (git reset)
+
+### Risk 2: Trace Propagation Regression
+**Probability:** LOW
+**Impact:** MEDIUM (lose trace correlation)
+**Mitigation:**
+- Preserve trace fields at root level (don't nest in metadata)
+- Add trace_id validation in tests
+- Verify trace queries still work (DATABASE_QUERY_GUIDE.md)
+
+### Risk 3: Agent Parsing Errors
+**Probability:** MEDIUM
+**Impact:** MEDIUM (individual agents fail)
+**Mitigation:**
+- Update agents one at a time (scaffold ✅, then validation, then e2e, etc.)
+- Test each agent independently
+- Add defensive parsing with clear error messages
+
+### Risk 4: Idempotency Issues
+**Probability:** LOW
+**Impact:** HIGH (duplicate task processing)
+**Mitigation:**
+- Add message_id tracking in agents (Phase 2 enhancement)
+- Log message_id in all task processing
+- Add idempotency table (future - STRATEGIC-BUS-REFACTOR.md)
+
+---
+
+## 10. Testing Strategy
+
+### 10.1 Unit Tests
+
+**Package: @agentic-sdlc/orchestrator**
 ```typescript
-import { IMessageBus, ITaskRepository, IIdempotencyStore } from '../interfaces';
-
-/**
- * Mock message bus for testing
- */
-export class MockMessageBus implements IMessageBus {
-  public publishedMessages: any[] = [];
-  public subscriptions: Map<string, Function> = new Map();
-
-  async publish(topic: string, message: any, options?: any): Promise<void> {
-    this.publishedMessages.push({ topic, message, options });
-  }
-
-  async subscribe(topic: string, handler: Function, options?: any): Promise<() => Promise<void>> {
-    this.subscriptions.set(topic, handler);
-    return async () => { this.subscriptions.delete(topic); };
-  }
-
-  async health(): Promise<any> {
-    return { ok: true };
-  }
-
-  async disconnect(): Promise<void> {}
-}
-
-/**
- * Mock task repository for testing
- */
-export class MockTaskRepository implements ITaskRepository {
-  public updatedTasks: Map<string, any> = new Map();
-
-  async updateTask(task_id: string, updates: any): Promise<void> {
-    this.updatedTasks.set(task_id, { ...this.updatedTasks.get(task_id), ...updates });
-  }
-}
-
-/**
- * Mock idempotency store for testing
- */
-export class MockIdempotencyStore implements IIdempotencyStore {
-  private seen: Set<string> = new Set();
-
-  async has(message_id: string): Promise<boolean> {
-    return this.seen.has(message_id);
-  }
-
-  async add(message_id: string, metadata: any): Promise<void> {
-    this.seen.add(message_id);
-  }
-}
-
-/**
- * Create test envelope
- */
-export function createTestEnvelope<TPayload>(
-  payload: TPayload,
-  overrides?: Partial<ExecutionEnvelope<TPayload>>
-): ExecutionEnvelope<TPayload> {
-  return {
-    message_id: randomUUID(),
-    task_id: randomUUID(),
-    workflow_id: randomUUID(),
-    trace_id: generateTraceId(),
-    span_id: generateSpanId(),
-    stage: 'initialization',
-    agent_type: 'scaffold',
-    created_at: new Date().toISOString(),
-    payload,
-    ...overrides
-  };
-}
-```
-
-**Usage in concrete agent tests:**
-```typescript
-describe('ScaffoldAgent', () => {
-  let agent: ScaffoldAgent;
-  let messageBus: MockMessageBus;
-  let taskRepository: MockTaskRepository;
-  let idempotencyStore: MockIdempotencyStore;
-
-  beforeEach(() => {
-    messageBus = new MockMessageBus();
-    taskRepository = new MockTaskRepository();
-    idempotencyStore = new MockIdempotencyStore();
-
-    agent = new ScaffoldAgent(messageBus, taskRepository, idempotencyStore);
+describe('buildAgentEnvelope', () => {
+  it('should produce TaskAssignmentSchema-compliant envelope', () => {
+    const envelope = buildAgentEnvelope(...);
+    expect(() => TaskAssignmentSchema.parse(envelope)).not.toThrow();
   });
 
-  it('should generate project structure', async () => {
-    const payload: ScaffoldPayload = {
-      project_type: 'app',
-      name: 'test-app',
-      description: 'Test application',
-      tech_stack: { language: 'typescript', runtime: 'node' },
-      requirements: ['REST API', 'Database']
-    };
+  it('should include message_id for idempotency', () => {
+    const envelope = buildAgentEnvelope(...);
+    expect(envelope.message_id).toMatch(/^[a-f0-9-]{36}$/);
+  });
 
-    const envelope = createTestEnvelope(payload);
-    const result = await agent.execute(payload);
-
-    expect(result.files_generated).toHaveLength(10);
-    expect(taskRepository.updatedTasks.get(envelope.task_id).status).toBe('completed');
+  it('should nest timeout_ms in constraints object', () => {
+    const envelope = buildAgentEnvelope(...);
+    expect(envelope.constraints.timeout_ms).toBe(300000);
   });
 });
 ```
 
----
+**Package: @agentic-sdlc/base-agent**
+```typescript
+describe('BaseAgent.validateTask', () => {
+  it('should accept envelope from buildAgentEnvelope', () => {
+    const envelope = mockBuildAgentEnvelope();
+    const agent = new MockAgent(messageBus);
+    expect(() => agent.validateTask(envelope)).not.toThrow();
+  });
+});
+```
 
-## 6. Risk Assessment
+### 10.2 Integration Tests
 
-### 6.1 Breaking Changes
+**Test 1: Orchestrator → Agent Message Flow**
+1. Create workflow via API
+2. Capture envelope published to Redis
+3. Parse envelope with TaskAssignmentSchema
+4. Assert validation passes
 
-#### High Risk ⚠️
-1. **BaseAgent Constructor Signature Change**
-   - **Old:** `constructor(capabilities, messageBus)`
-   - **New:** `constructor(capabilities, messageBus, taskRepository, idempotencyStore, options?)`
-   - **Impact:** All 5 agents + 5 run-agent.ts files
-   - **Mitigation:** Phase 1 keeps old signature, Phase 2 adds new parameters
+**Test 2: All Agents Process Tasks**
+1. Create workflow requiring all 5 agents
+2. Verify scaffold-agent executes
+3. Verify validation-agent executes
+4. Verify e2e-agent executes
+5. Verify integration-agent executes
+6. Verify deployment-agent executes
 
-2. **Integration/Deployment Agent Refactor**
-   - **Issue:** executeTask() + execute() wrapper anti-pattern
-   - **Impact:** Major refactor needed to align with BaseAgent contract
-   - **Mitigation:** Keep wrapper initially, refactor in Phase 3
+### 10.3 E2E Tests
 
-#### Medium Risk ⚠️
-3. **Schema Changes**
-   - **Issue:** ExecutionEnvelope replaces ad-hoc envelope formats
-   - **Impact:** Orchestrator task dispatch logic (workflow.service.ts:456-465)
-   - **Mitigation:** ExecutionEnvelope as superset of current envelope
+**Test Script:** `./scripts/run-pipeline-test.sh "Hello World API"`
 
-4. **IMessageBus Interface Changes**
-   - **Issue:** May need ExecutionEnvelope<T> parameter type
-   - **Impact:** OrchestratorContainer wiring
-   - **Mitigation:** Keep generic `any` type initially
-
-#### Low Risk ✅
-5. **Consolidation Changes (Phase 1)**
-   - **Impact:** Code deletions, no functional change
-   - **Mitigation:** Comprehensive tests before/after
-
-6. **Additive Changes (Phase 3)**
-   - **Impact:** New features (prompt auditing, child spans)
-   - **Mitigation:** Optional parameters, backward compatible
-
----
-
-### 6.2 Migration Complexity
-
-#### Phase 1 (Consolidate) - Easy ✅
-- **Complexity:** Low
-- **Time:** 3-4 hours
-- **Risk:** Low (mostly deletions)
-- **Testing:** Existing E2E tests should pass unchanged
-
-#### Phase 2 (Refactor) - Moderate ⚠️
-- **Complexity:** Medium
-- **Time:** 8-10 hours
-- **Risk:** Medium (dependency injection changes)
-- **Testing:** Need to update constructor calls in 10 files
-- **Rollback:** Revert commits if E2E tests fail
-
-#### Phase 3 (Enhance) - Easy ✅
-- **Complexity:** Low-Medium
-- **Time:** 4-6 hours
-- **Risk:** Low (additive changes)
-- **Testing:** Can deploy incrementally
-
-**Total Migration Complexity:** Moderate (15-20 hours)
+**Success Criteria:**
+- ✅ Workflow advances from 0% to 100%
+- ✅ All agents execute without "Invalid task assignment" errors
+- ✅ Workflow completes in <5 minutes
+- ✅ All stage_outputs populated
+- ✅ Trace correlation works (query by trace_id)
 
 ---
 
-### 6.3 Testing Requirements
+## 11. Documentation Requirements
 
-#### Unit Tests
-- ✅ Mock dependencies (MockMessageBus, MockTaskRepository, MockIdempotencyStore)
-- ✅ Test validatePayload() schema validation
-- ✅ Test execute() business logic
-- ✅ Test mapResult() transformations
+### Files to Create/Update
 
-#### Integration Tests
-- ✅ Test BaseAgent.handleTaskMessage() end-to-end
-- ✅ Test idempotency (duplicate message detection)
-- ✅ Test task persistence (status updates)
-- ✅ Test error classification and retry
+**1. AGENTENVELOPE_IMPLEMENTATION_PLAN.md** (This exploration → Plan)
+- Detailed implementation steps
+- Code snippets for each change
+- Before/after comparisons
+- Testing checklist
 
-#### E2E Tests
-- ✅ Run existing workflow tests (./scripts/run-pipeline-test.sh)
-- ✅ Verify zero regression in workflow completion
-- ✅ Verify trace_id propagation (Session #60 tests)
+**2. VALIDATION_REPORT.md** (After implementation)
+- Build status (typecheck, lint)
+- Test results (unit, integration, E2E)
+- Agent status (all 5 agents working)
+- Performance metrics (workflow completion time)
 
-**Testing Estimate:** 6-8 hours (write new tests for Phase 2 changes)
+**3. CLAUDE.md** (Session #65 update)
+- Session summary
+- Files modified
+- Migration status (100% complete)
+- Known issues (none, hopefully!)
 
----
-
-### 6.4 Rollback Strategy
-
-#### Phase 1 Rollback - Easy ✅
-- **Action:** Revert commits (git revert)
-- **Impact:** Zero functional change, safe rollback
-- **Time:** 5 minutes
-
-#### Phase 2 Rollback - Moderate ⚠️
-- **Action:** Revert commits + restore old constructor signatures
-- **Impact:** May need to rebuild agents
-- **Time:** 30 minutes
-
-#### Phase 3 Rollback - Easy ✅
-- **Action:** Disable new features (feature flags if available)
-- **Impact:** No functional impact, additive changes
-- **Time:** 5 minutes
-
-**Overall Rollback Risk:** Low-Medium
+**4. SCHEMA_MIGRATION_GUIDE.md** (For future reference)
+- Schema evolution history
+- Migration patterns used
+- Lessons learned
+- Best practices for schema changes
 
 ---
 
-## 7. Recommendations
+## 12. Success Criteria
 
-### Immediate Action Items (Session #64)
+### Definition of Done
 
-1. **Fix Stream Consumer Issue First** (CRITICAL - 2-3 hours)
-   - **Why:** Workflows stuck at 0%, agents not consuming messages
-   - **Root Cause:** Stream consumer loop (redis-bus.adapter.ts:122-207) not invoking handlers
-   - **Do this BEFORE BaseAgent refactor**
+**Technical:**
+- [ ] TaskAssignmentSchema accepts buildAgentEnvelope() output (validation passes)
+- [ ] All 5 agents extract data from task.payload (no task.context dependencies)
+- [ ] buildAgentEnvelope() includes message_id, constraints, metadata
+- [ ] All unit tests pass (0 failures)
+- [ ] All integration tests pass (0 failures)
+- [ ] E2E workflow completes successfully (0% → 100%)
 
-2. **Quick Win: Phase 1 Consolidation** (4 hours)
-   - **Why:** Zero risk, reduces duplication immediately
-   - **Impact:** Cleaner codebase, easier to maintain
-   - **Do this AFTER stream consumer fix**
+**Quality:**
+- [ ] Zero TypeScript compilation errors (pnpm typecheck)
+- [ ] Zero "Invalid task assignment" errors in logs
+- [ ] Trace propagation works (can query by trace_id)
+- [ ] PM2 processes all show "online" with zero restarts
 
-3. **Strategic: Message Bus Refactor** (STRATEGIC-BUS-REFACTOR.md)
-   - **Why:** Fixes root cause of duplicate delivery (Session #63 bug)
-   - **Impact:** Eliminates CAS failures, enables idempotency
-   - **Do this BEFORE Phase 2 (BaseAgent needs idempotency store)**
-
-### Long-Term Roadmap
-
-**Week 1-2: Fix Critical Bugs**
-- Stream consumer handler invocation fix
-- Message bus dual delivery fix (ExecutionBus/NotificationBus split)
-- Idempotency layer implementation (Postgres or Redis)
-
-**Week 3: BaseAgent Refactor Phase 1**
-- Consolidate duplicated code
-- Standardize error handling
-- Extract tracing boilerplate
-
-**Week 4: BaseAgent Refactor Phase 2**
-- Add task persistence
-- Add idempotency checking
-- Add error classification
-
-**Week 5: BaseAgent Refactor Phase 3**
-- Add child span creation
-- Add prompt auditing
-- Add retry configuration
-
-**Week 6: Integration/Deployment Alignment**
-- Refactor executeTask() → execute() alignment
-- Standardize schemas
-- Remove execute() wrapper anti-pattern
-
-**Total Timeline:** 6 weeks (30 hours of implementation + 10 hours of testing)
+**Documentation:**
+- [ ] CLAUDE.md updated with Session #65 status
+- [ ] VALIDATION_REPORT.md created
+- [ ] All code changes commented with Session #65 markers
 
 ---
 
-## Conclusion
+## 13. Next Steps
 
-The current BaseAgent architecture is a **good foundation** but suffers from:
-- **Pipeline logic scattered** across concrete agents (duplication)
-- **Missing critical features** (idempotency, task persistence, error classification)
-- **Inconsistent patterns** (Integration/Deployment divergence)
+### Immediate Actions (Next Session)
 
-The strategic refactor will:
-- ✅ **Consolidate** pipeline logic into BaseAgent
-- ✅ **Add** missing features (idempotency, tracing, auditing)
-- ✅ **Standardize** patterns across all agents
-- ✅ **Enable** production-ready observability and reliability
+1. **Review this exploration** with user for approval
+2. **Create EPCC_PLAN.md** with detailed implementation steps
+3. **Execute EPCC_CODE.md** phase with careful validation
+4. **Run E2E tests** to confirm workflow completion
+5. **Commit changes** with EPCC_COMMIT.md
 
-**Estimated Effort:** 15-20 hours (3 phases)
-**Risk Level:** Medium (manageable with incremental approach)
-**Business Value:** High (eliminates duplicates, prevents CAS failures, enables cost tracking)
+### Future Enhancements (Not in Scope)
 
-**Next Steps:**
-1. Review and approve this exploration
-2. Fix stream consumer bug (Session #64 Priority #1)
-3. Implement message bus refactor (STRATEGIC-BUS-REFACTOR.md)
-4. Execute Phase 1 (consolidate) in Session #65
-5. Execute Phase 2 (refactor) in Session #66
-6. Execute Phase 3 (enhance) in Session #67
+- Idempotency layer (STRATEGIC-BUS-REFACTOR.md Phase 3)
+- Message deduplication (Redis Streams consumer groups)
+- Prompt auditing (BaseAgent enhancement)
+- Error classification (transient vs permanent)
 
 ---
 
-**END OF EXPLORATION REPORT**
+## 14. References
+
+### Session History
+- **Session #60:** Distributed tracing implementation (trace_id, span_id)
+- **Session #64:** Nuclear Cleanup attempt (40% complete, false assumption discovered)
+- **Sessions #53-57:** Message bus migration (Phase 1-6 complete)
+- **Sessions #36-37:** Agent envelope system creation
+
+### Related Documents
+- `EPCC_PLAN.md` (Session #64 - flawed plan)
+- `EPCC_CODE.md` (Session #60 - tracing implementation)
+- `STRATEGIC-BUS-REFACTOR.md` (Session #63 - future enhancements)
+- `AGENTIC_SDLC_RUNBOOK.md` (Debugging guide)
+- `TRACE_IMPLEMENTATION_REVIEW.md` (Session #60 - tracing validation)
+
+### Code References
+- `packages/orchestrator/src/services/workflow.service.ts:994-1100+` (buildAgentEnvelope)
+- `packages/shared/types/src/messages/task-contracts.ts:27-55` (TaskAssignmentSchema)
+- `packages/agents/base-agent/src/base-agent.ts:285-296` (validateTask)
+- `packages/agents/scaffold-agent/src/scaffold-agent.ts:69-99` (execute - WORKING)
+- `packages/agents/validation-agent/src/validation-agent.ts:78-151` (execute - BROKEN)
+
+---
+
+**Exploration Complete** ✅
+
+Ready for EPCC_PLAN.md phase.
