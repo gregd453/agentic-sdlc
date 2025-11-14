@@ -44,3 +44,16 @@ export {
   type ErrorInfo,
   type Logger
 } from './error-handler';
+
+// Distributed tracing utilities
+export {
+  generateTraceId,
+  generateSpanId,
+  generateRequestId,
+  createChildContext,
+  extractTraceContext,
+  type TraceId,
+  type SpanId,
+  type RequestId,
+  type TraceContext
+} from './tracing';

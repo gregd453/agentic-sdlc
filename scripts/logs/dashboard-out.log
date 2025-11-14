@@ -1,0 +1,105 @@
+2025-11-13 22:59:06 -05:00: 
+2025-11-13 22:59:06 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-13 22:59:06 -05:00: > vite
+2025-11-13 22:59:06 -05:00: 
+2025-11-13 22:59:06 -05:00: 
+2025-11-13 22:59:06 -05:00:   VITE v5.4.21  ready in 103 ms
+2025-11-13 22:59:06 -05:00: 
+2025-11-13 22:59:06 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-13 22:59:06 -05:00:   ➜  Network: use --host to expose
+2025-11-13 23:10:51 -05:00: 11:10:51 PM [vite] hmr update /src/App.tsx, /src/index.css
+2025-11-14 00:02:25 -05:00: 
+2025-11-14 00:02:25 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 00:02:25 -05:00: > vite
+2025-11-14 00:02:25 -05:00: 
+2025-11-14 00:02:25 -05:00: 
+2025-11-14 00:02:25 -05:00:   VITE v5.4.21  ready in 108 ms
+2025-11-14 00:02:25 -05:00: 
+2025-11-14 00:02:25 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-14 00:02:25 -05:00:   ➜  Network: use --host to expose
+2025-11-14 00:03:55 -05:00: 12:03:55 AM [vite] page reload playwright-report/index.html
+2025-11-14 00:15:56 -05:00: 12:15:56 AM [vite] page reload playwright-report/index.html
+2025-11-14 00:18:27 -05:00: 12:18:27 AM [vite] page reload playwright-report/index.html
+2025-11-14 00:29:19 -05:00: 
+2025-11-14 00:29:19 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 00:29:19 -05:00: > vite
+2025-11-14 00:29:19 -05:00: 
+2025-11-14 00:29:19 -05:00: 
+2025-11-14 00:29:19 -05:00:   VITE v5.4.21  ready in 97 ms
+2025-11-14 00:29:19 -05:00: 
+2025-11-14 00:29:19 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-14 00:29:19 -05:00:   ➜  Network: use --host to expose
+2025-11-14 00:43:03 -05:00: 12:43:03 AM [vite] hmr update /src/pages/WorkflowsPage.tsx, /src/index.css
+2025-11-14 00:43:09 -05:00: 12:43:09 AM [vite] hmr update /src/pages/WorkflowsPage.tsx, /src/index.css
+2025-11-14 00:51:43 -05:00: 12:51:43 AM [vite] hmr update /src/index.css, /src/pages/WorkflowsPage.tsx, /src/pages/Dashboard.tsx, /src/pages/WorkflowPage.tsx
+2025-11-14 01:04:22 -05:00: 
+2025-11-14 01:04:22 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 01:04:22 -05:00: > vite
+2025-11-14 01:04:22 -05:00: 
+2025-11-14 01:04:22 -05:00: Port 3001 is in use, trying another one...
+2025-11-14 01:04:22 -05:00: 
+2025-11-14 01:04:22 -05:00:   VITE v5.4.21  ready in 96 ms
+2025-11-14 01:04:22 -05:00: 
+2025-11-14 01:04:22 -05:00:   ➜  Local:   http://localhost:3002/
+2025-11-14 01:04:22 -05:00:   ➜  Network: http://192.168.1.171:3002/
+2025-11-14 01:11:05 -05:00: 1:11:05 AM [vite] vite.config.ts changed, restarting server...
+2025-11-14 01:11:05 -05:00: 1:11:05 AM [vite] server restarted.
+2025-11-14 01:11:23 -05:00: 
+2025-11-14 01:11:23 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 01:11:23 -05:00: > vite
+2025-11-14 01:11:23 -05:00: 
+2025-11-14 01:11:23 -05:00: Port 3001 is in use, trying another one...
+2025-11-14 01:11:23 -05:00: 
+2025-11-14 01:11:23 -05:00:   VITE v5.4.21  ready in 82 ms
+2025-11-14 01:11:23 -05:00: 
+2025-11-14 01:11:23 -05:00:   ➜  Local:   http://localhost:3002/
+2025-11-14 01:11:23 -05:00:   ➜  Network: http://192.168.1.171:3002/
+2025-11-14 01:14:12 -05:00: 
+2025-11-14 01:14:12 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 01:14:12 -05:00: > vite
+2025-11-14 01:14:12 -05:00: 
+2025-11-14 01:14:13 -05:00: Port 3001 is in use, trying another one...
+2025-11-14 01:14:13 -05:00: 
+2025-11-14 01:14:13 -05:00:   VITE v5.4.21  ready in 100 ms
+2025-11-14 01:14:13 -05:00: 
+2025-11-14 01:14:13 -05:00:   ➜  Local:   http://localhost:3002/
+2025-11-14 01:14:13 -05:00:   ➜  Network: http://192.168.1.171:3002/
+2025-11-14 01:18:41 -05:00: 
+2025-11-14 01:18:41 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 01:18:41 -05:00: > vite
+2025-11-14 01:18:41 -05:00: 
+2025-11-14 01:18:41 -05:00: 
+2025-11-14 01:18:41 -05:00:   VITE v5.4.21  ready in 81 ms
+2025-11-14 01:18:41 -05:00: 
+2025-11-14 01:18:41 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-14 01:18:41 -05:00:   ➜  Network: http://192.168.1.171:3001/
+2025-11-14 01:21:26 -05:00: 1:21:26 AM [vite] hmr update /src/index.css, /src/pages/Dashboard.tsx, /src/pages/WorkflowPage.tsx, /src/pages/WorkflowsPage.tsx
+2025-11-14 01:23:03 -05:00: 1:23:03 AM [vite] hmr update /src/index.css, /src/pages/WorkflowPage.tsx, /src/pages/WorkflowsPage.tsx, /src/pages/Dashboard.tsx
+2025-11-14 01:25:52 -05:00: 
+2025-11-14 01:25:52 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 01:25:52 -05:00: > vite
+2025-11-14 01:25:52 -05:00: 
+2025-11-14 01:25:52 -05:00: 
+2025-11-14 01:25:52 -05:00:   VITE v5.4.21  ready in 86 ms
+2025-11-14 01:25:52 -05:00: 
+2025-11-14 01:25:52 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-14 01:25:52 -05:00:   ➜  Network: http://192.168.1.171:3001/
+2025-11-14 01:57:06 -05:00: 
+2025-11-14 01:57:06 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 01:57:06 -05:00: > vite
+2025-11-14 01:57:06 -05:00: 
+2025-11-14 01:57:06 -05:00: 
+2025-11-14 01:57:06 -05:00:   VITE v5.4.21  ready in 87 ms
+2025-11-14 01:57:06 -05:00: 
+2025-11-14 01:57:06 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-14 01:57:06 -05:00:   ➜  Network: http://192.168.1.171:3001/
+2025-11-14 02:00:21 -05:00: 
+2025-11-14 02:00:21 -05:00: > @agentic-sdlc/dashboard@0.1.0 dev /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+2025-11-14 02:00:21 -05:00: > vite
+2025-11-14 02:00:21 -05:00: 
+2025-11-14 02:00:21 -05:00: 
+2025-11-14 02:00:21 -05:00:   VITE v5.4.21  ready in 85 ms
+2025-11-14 02:00:21 -05:00: 
+2025-11-14 02:00:21 -05:00:   ➜  Local:   http://localhost:3001/
+2025-11-14 02:00:21 -05:00:   ➜  Network: http://192.168.1.171:3001/
+2025-11-14 02:00:58 -05:00: 2:00:58 AM [vite] hmr update /src/index.css, /src/pages/Dashboard.tsx, /src/pages/WorkflowsPage.tsx, /src/pages/WorkflowPage.tsx

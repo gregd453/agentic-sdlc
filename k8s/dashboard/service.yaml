@@ -1,0 +1,68 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard
+  namespace: production
+  labels:
+    app: dashboard
+    component: frontend
+  annotations:
+    # Prometheus service discovery
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3001"
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  selector:
+    app: dashboard
+    version: blue  # Default to blue (switch to green for rollback)
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3001
+    protocol: TCP
+
+---
+# Service for blue deployment (internal)
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-blue
+  namespace: production
+  labels:
+    app: dashboard
+    component: frontend
+    version: blue
+spec:
+  type: ClusterIP
+  selector:
+    app: dashboard
+    version: blue
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3001
+    protocol: TCP
+
+---
+# Service for green deployment (internal)
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-green
+  namespace: production
+  labels:
+    app: dashboard
+    component: frontend
+    version: green
+spec:
+  type: ClusterIP
+  selector:
+    app: dashboard
+    version: green
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3001
+    protocol: TCP

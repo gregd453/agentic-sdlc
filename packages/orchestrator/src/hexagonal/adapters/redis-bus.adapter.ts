@@ -84,9 +84,12 @@ export function makeRedisBus(
         log.info('Mirrored to stream', { topic, stream: opts.mirrorToStream });
       }
 
-      // Publish to pub/sub
-      const receivers = await pub.publish(topic, payload);
-      log.info('Published', { topic, receivers, hasMirror: !!opts?.mirrorToStream });
+      // SESSION #63: Quick Fix - Disable pub/sub to eliminate duplicate delivery
+      // Pub/sub + streams causes 2x message processing → CAS conflicts
+      // TODO: Strategic refactor to ExecutionBus/NotificationBus split (see STRATEGIC-BUS-REFACTOR.md)
+      // const receivers = await pub.publish(topic, payload);
+      // log.info('Published', { topic, receivers, hasMirror: !!opts?.mirrorToStream });
+      log.info('[SESSION #63] Published to stream only (pub/sub disabled)', { topic, stream: opts?.mirrorToStream });
     },
 
     async subscribe(

@@ -5,7 +5,11 @@ import swaggerUI from '@fastify/swagger-ui';
 import { prisma } from './db/client';
 import { EventBus } from './events/event-bus';
 import { WorkflowRepository } from './repositories/workflow.repository';
+import { StatsRepository } from './repositories/stats.repository';
+import { TraceRepository } from './repositories/trace.repository';
 import { WorkflowService } from './services/workflow.service';
+import { StatsService } from './services/stats.service';
+import { TraceService } from './services/trace.service';
 import { WorkflowStateMachineService } from './state-machine/workflow-state-machine';
 import { PipelineExecutorService } from './services/pipeline-executor.service';
 import { QualityGateService } from './services/quality-gate.service';
@@ -14,6 +18,9 @@ import { GracefulShutdownService } from './services/graceful-shutdown.service';
 import { workflowRoutes } from './api/routes/workflow.routes';
 import { pipelineRoutes } from './api/routes/pipeline.routes';
 import { healthRoutes } from './api/routes/health.routes';
+import { statsRoutes } from './api/routes/stats.routes';
+import { traceRoutes } from './api/routes/trace.routes';
+import { taskRoutes } from './api/routes/task.routes';
 import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
 import { logger } from './utils/logger';
 import { metrics } from './utils/metrics';
@@ -64,7 +71,10 @@ export async function createServer() {
         { name: 'workflows', description: 'Workflow management operations' },
         { name: 'pipelines', description: 'Pipeline execution and control operations' },
         { name: 'health', description: 'Health check endpoints' },
-        { name: 'metrics', description: 'Metrics and observability endpoints' }
+        { name: 'metrics', description: 'Metrics and observability endpoints' },
+        { name: 'stats', description: 'Dashboard statistics and analytics' },
+        { name: 'traces', description: 'Distributed tracing operations' },
+        { name: 'tasks', description: 'Agent task operations' }
       ]
     }
   });
@@ -102,6 +112,8 @@ export async function createServer() {
   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6380';
   const eventBus = new EventBus(redisUrl);
   const workflowRepository = new WorkflowRepository(prisma);
+  const statsRepository = new StatsRepository(prisma);
+  const traceRepository = new TraceRepository(prisma);
 
   // Phase 3: Extract dependencies from container
   logger.info('[PHASE-3] Extracting dependencies from container');
@@ -134,6 +146,11 @@ export async function createServer() {
     messageBus // Phase 3: messageBus always available from container
   );
 
+  // Initialize dashboard services
+  const statsService = new StatsService(statsRepository);
+  const traceService = new TraceService(traceRepository, workflowRepository);
+  logger.info('Dashboard services initialized (StatsService, TraceService)');
+
   // Initialize pipeline services
   const qualityGateService = new QualityGateService();
   const pipelineExecutor = new PipelineExecutorService(
@@ -161,6 +178,9 @@ export async function createServer() {
   await fastify.register(healthRoutes, { healthCheckService });
   await fastify.register(workflowRoutes, { workflowService });
   await fastify.register(pipelineRoutes, { pipelineExecutor });
+  await fastify.register(statsRoutes, { statsService });
+  await fastify.register(traceRoutes, { traceService });
+  await fastify.register(taskRoutes, { workflowRepository });
 
   // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 
@@ -281,4 +301,12 @@ export async function startServer() {
     logger.error('Failed to start server', { error });
     process.exit(1);
   }
+}
+
+// Start server when run directly (not when imported as a module)
+if (require.main === module) {
+  startServer().catch((error) => {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  });
 }

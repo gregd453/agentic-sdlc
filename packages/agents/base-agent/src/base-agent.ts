@@ -4,9 +4,10 @@ import pino from 'pino';
 import Redis from 'ioredis';
 import { retry, RetryPresets, CircuitBreaker } from '@agentic-sdlc/shared-utils';
 import { REDIS_CHANNELS } from '@agentic-sdlc/shared-types';
-import { AgentResultSchema, VERSION } from '@agentic-sdlc/shared-types/src/core/schemas';
-// Phase 3: Import IMessageBus from orchestrator
+import { AgentResultSchema, VERSION } from '@agentic-sdlc/shared-types';
+// Phase 3: Import IMessageBus from orchestrator and trace utilities
 import type { IMessageBus } from '@agentic-sdlc/orchestrator';
+import { extractTraceContext, type TraceContext } from '@agentic-sdlc/shared-utils';
 import {
   AgentLifecycle,
   AgentCapabilities,
@@ -34,6 +35,9 @@ export abstract class BaseAgent implements AgentLifecycle {
   private tasksProcessed: number = 0;
   private errorsCount: number = 0;
   private lastTaskAt?: string;
+
+  // Phase 3: Current trace context for active task
+  protected currentTraceContext?: TraceContext;
 
   constructor(
     capabilities: AgentCapabilities,
@@ -138,6 +142,13 @@ export abstract class BaseAgent implements AgentLifecycle {
             channel: taskChannel
           });
 
+          // 🔍 AGENT TRACE: Task received
+          this.logger.info('🔍 [AGENT-TRACE] Task received', {
+            workflow_id: envelope.workflow_id,
+            task_id: envelope.task_id,
+            stage: envelope.workflow_context?.current_stage
+          });
+
           // Convert envelope to AgentMessage format expected by receiveTask
           const agentMessage: AgentMessage = {
             id: envelope.task_id,
@@ -184,12 +195,18 @@ export abstract class BaseAgent implements AgentLifecycle {
   async receiveTask(message: AgentMessage): Promise<void> {
     const traceId = message.trace_id;
 
-    this.logger.info('Task received', {
+    // Phase 3: Extract and store trace context from envelope
+    const envelope = (message.payload as any).context as any;
+    this.currentTraceContext = extractTraceContext(envelope);
+
+    this.logger.info('🔍 [AGENT-TRACE] Task received', {
       task_type: message.type,
       workflow_id: message.workflow_id,
       message_id: message.id,
       stage: message.stage,
-      trace_id: traceId
+      trace_id: this.currentTraceContext?.trace_id || traceId,
+      span_id: this.currentTraceContext?.span_id,
+      parent_span_id: this.currentTraceContext?.parent_span_id
     });
 
     try {
@@ -198,7 +215,6 @@ export abstract class BaseAgent implements AgentLifecycle {
 
       // Extract workflow stage from envelope format
       // The envelope is now stored in message.payload.context (set by the subscription handler)
-      const envelope = (message.payload as any).context as any;
       const workflowStage = envelope?.workflow_context?.current_stage as string | undefined;
 
       this.logger.info('[SESSION #37 DEBUG] Stage extraction', {
@@ -206,7 +222,8 @@ export abstract class BaseAgent implements AgentLifecycle {
         has_workflow_context: !!envelope?.workflow_context,
         workflow_stage: workflowStage,
         payload_keys: Object.keys(message.payload || {}).join(','),
-        envelope_keys: envelope ? Object.keys(envelope).join(',') : 'none'
+        envelope_keys: envelope ? Object.keys(envelope).join(',') : 'none',
+        trace_context: this.currentTraceContext
       });
 
       // Execute task with retry (using new retry utility)
@@ -237,15 +254,25 @@ export abstract class BaseAgent implements AgentLifecycle {
       const envelope = (message.payload as any).context as any;
       const workflowStage = envelope?.workflow_context?.current_stage as string | undefined;
 
-      const errorResult: TaskResult = {
-        task_id: message.payload.task_id as string || randomUUID(),
-        workflow_id: message.workflow_id,
-        status: 'failure',
-        output: {},
-        errors: [error instanceof Error ? error.message : String(error)]
-      };
+      // Only report error result if we haven't already reported a successful result
+      // This prevents duplicate reportResult calls that cause CAS failures
+      try {
+        const errorResult: TaskResult = {
+          task_id: message.payload.task_id as string || randomUUID(),
+          workflow_id: message.workflow_id,
+          status: 'failure',
+          output: {},
+          errors: [error instanceof Error ? error.message : String(error)]
+        };
 
-      await this.reportResult(errorResult, workflowStage);
+        await this.reportResult(errorResult, workflowStage);
+      } catch (reportError) {
+        this.logger.error('Failed to report error result', {
+          originalError: error instanceof Error ? error.message : String(error),
+          reportError: reportError instanceof Error ? reportError.message : String(reportError),
+          workflow_id: message.workflow_id
+        });
+      }
 
       this.logger.error('Task execution failed', {
         error,
@@ -320,6 +347,10 @@ export abstract class BaseAgent implements AgentLifecycle {
         message: validatedResult.errors.join('; '),
         retryable: true
       }}),
+      // Phase 3: Include trace context for distributed tracing
+      trace_id: this.currentTraceContext?.trace_id,
+      span_id: this.currentTraceContext?.span_id,
+      parent_span_id: this.currentTraceContext?.parent_span_id,
       timestamp: new Date().toISOString(),
       version: VERSION
     };
@@ -341,12 +372,14 @@ export abstract class BaseAgent implements AgentLifecycle {
     // Phase 3: Publish result via IMessageBus (symmetric architecture)
     const resultChannel = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
 
-    this.logger.info('[PHASE-3] Publishing result via IMessageBus', {
+    this.logger.info('🔍 [AGENT-TRACE] Publishing result via IMessageBus', {
       channel: resultChannel,
       workflow_id: validatedResult.workflow_id,
       task_id: validatedResult.task_id,
       agent_id: this.agentId,
-      stage: stage
+      stage: stage,
+      trace_id: this.currentTraceContext?.trace_id,
+      span_id: this.currentTraceContext?.span_id
     });
 
     try {
@@ -368,6 +401,14 @@ export abstract class BaseAgent implements AgentLifecycle {
         workflow_stage: stage,
         agent_id: this.agentId,
         version: VERSION
+      });
+
+      // 🔍 AGENT TRACE: Publishing result
+      this.logger.info('🔍 [AGENT-TRACE] Publishing result', {
+        workflow_id: validatedResult.workflow_id,
+        stage: stage,
+        status: agentStatus,
+        channel: resultChannel
       });
     } catch (error) {
       this.logger.error('[PHASE-3] Failed to publish result via IMessageBus', {

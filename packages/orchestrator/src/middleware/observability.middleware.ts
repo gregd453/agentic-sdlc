@@ -6,6 +6,7 @@ import {
   generateTraceId,
   logger
 } from '../utils/logger';
+import { generateSpanId } from '@agentic-sdlc/shared-utils'; // Phase 4: Import span ID generator
 import { metrics } from '../utils/metrics';
 
 /**
@@ -30,6 +31,7 @@ export function registerObservabilityMiddleware(fastify: FastifyInstance): void 
     // Extract or generate request/trace IDs
     const requestId = (request.headers['x-request-id'] as string) || generateRequestId();
     const traceId = (request.headers['x-trace-id'] as string) || generateTraceId();
+    const spanId = generateSpanId(); // Phase 4: Generate span ID for this HTTP request
     const correlationId = (request.headers['x-correlation-id'] as string);
     const userId = (request.headers['x-user-id'] as string);
     const sessionId = (request.headers['x-session-id'] as string);
@@ -43,6 +45,9 @@ export function registerObservabilityMiddleware(fastify: FastifyInstance): void 
       sessionId,
       startTime: Date.now()
     });
+
+    // Phase 4: Add span_id to context (augment after creation)
+    (context as any).spanId = spanId;
 
     // Store context for the request using WeakMap
     requestContextMap.set(request, context);

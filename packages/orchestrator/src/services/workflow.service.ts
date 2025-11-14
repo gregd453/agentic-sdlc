@@ -8,6 +8,7 @@ import { WorkflowStateMachineService } from '../state-machine/workflow-state-mac
 // Phase 3: AgentDispatcherService removed - tasks now dispatched via messageBus
 import { DecisionGateService } from './decision-gate.service';
 import { logger, generateTraceId } from '../utils/logger';
+import { generateTraceId as generateTraceIdUtil, generateSpanId, createChildContext } from '@agentic-sdlc/shared-utils';
 import { metrics } from '../utils/metrics';
 import { NotFoundError } from '../utils/errors';
 import { IMessageBus } from '../hexagonal/ports/message-bus.port';
@@ -256,12 +257,16 @@ export class WorkflowService {
 
   async createWorkflow(request: CreateWorkflowRequest): Promise<WorkflowResponse> {
     const startTime = Date.now();
-    const traceId = generateTraceId();
+
+    // Phase 3: Use trace_id from request (HTTP header) or generate new one
+    const traceId = request.trace_id || generateTraceIdUtil();
+    const spanId = generateSpanId(); // Generate span for workflow creation
 
     logger.info('Creating workflow - Full request details', {
       type: request.type,
       name: request.name,
       trace_id: traceId,
+      span_id: spanId,
       request_keys: Object.keys(request),
       full_request: JSON.stringify(request)
     });
@@ -270,7 +275,9 @@ export class WorkflowService {
       // Create workflow in database
       const workflow = await this.repository.create({
         ...request,
-        created_by: 'system' // In production, get from auth context
+        created_by: 'system', // In production, get from auth context
+        trace_id: traceId, // Phase 3: Store trace_id
+        current_span_id: spanId // Phase 3: Store current span
       });
 
       // Create state machine for workflow
@@ -296,6 +303,14 @@ export class WorkflowService {
         trace_id: traceId
       });
 
+      // 🔍 WORKFLOW TRACE: Workflow created
+      logger.info('🔍 [WORKFLOW-TRACE] Workflow created', {
+        workflow_id: workflow.id,
+        current_stage: 'initialization',
+        status: workflow.status,
+        type: workflow.type
+      });
+
       // Create initial task for the first stage
       await this.createTaskForStage(workflow.id, 'initialization', {
         name: workflow.name,
@@ -312,12 +327,18 @@ export class WorkflowService {
 
       return {
         workflow_id: workflow.id,
+        name: workflow.name,
+        description: workflow.description,
+        type: workflow.type,
         status: workflow.status,
         current_stage: workflow.current_stage,
+        priority: workflow.priority,
         progress_percentage: workflow.progress,
+        trace_id: workflow.trace_id,
         estimated_duration_ms: this.estimateDuration(workflow.type),
         created_at: workflow.created_at.toISOString(),
-        updated_at: workflow.updated_at.toISOString()
+        updated_at: workflow.updated_at.toISOString(),
+        completed_at: workflow.completed_at?.toISOString() || null
       };
     } catch (error) {
       logger.error('Failed to create workflow', {
@@ -339,11 +360,17 @@ export class WorkflowService {
 
     return {
       workflow_id: workflow.id,
+      name: workflow.name,
+      description: workflow.description,
+      type: workflow.type,
       status: workflow.status,
       current_stage: workflow.current_stage,
+      priority: workflow.priority,
       progress_percentage: workflow.progress,
+      trace_id: workflow.trace_id,
       created_at: workflow.created_at.toISOString(),
-      updated_at: workflow.updated_at.toISOString()
+      updated_at: workflow.updated_at.toISOString(),
+      completed_at: workflow.completed_at?.toISOString() || null
     };
   }
 
@@ -356,11 +383,17 @@ export class WorkflowService {
 
     return workflows.map(workflow => ({
       workflow_id: workflow.id,
+      name: workflow.name,
+      description: workflow.description,
+      type: workflow.type,
       status: workflow.status,
       current_stage: workflow.current_stage,
+      priority: workflow.priority,
       progress_percentage: workflow.progress,
+      trace_id: workflow.trace_id,
       created_at: workflow.created_at.toISOString(),
-      updated_at: workflow.updated_at.toISOString()
+      updated_at: workflow.updated_at.toISOString(),
+      completed_at: workflow.completed_at?.toISOString() || null
     }));
   }
 
@@ -430,6 +463,18 @@ export class WorkflowService {
       workflow
     );
 
+    // [DEBUG] Verify envelope structure before any operations
+    logger.info('[DEBUG] Built envelope - pre-publish verification', {
+      task_id: taskId,
+      envelope_keys: Object.keys(envelope).join(','),
+      has_payload: !!envelope.payload,
+      payload_type: typeof envelope.payload,
+      payload_keys: envelope.payload ? Object.keys(envelope.payload).join(',') : 'none',
+      has_workflow_context: !!envelope.workflow_context,
+      workflow_context_keys: envelope.workflow_context ? Object.keys(envelope.workflow_context).join(',') : 'none',
+      envelope_sample: JSON.stringify(envelope).substring(0, 300)
+    });
+
     // Create task in database
     await this.repository.createTask({
       task_id: taskId,
@@ -440,7 +485,11 @@ export class WorkflowService {
       payload: envelope as any, // Store envelope in database
       retry_count: 0,
       max_retries: 3,
-      timeout_ms: 300000
+      timeout_ms: 300000,
+      // Phase 3: Store trace context in database (extract from envelope)
+      trace_id: envelope.trace_id,
+      span_id: envelope.span_id,
+      parent_span_id: envelope.parent_span_id
     } as any);
 
     logger.info('[SESSION #36] Agent envelope created', {
@@ -484,6 +533,15 @@ export class WorkflowService {
           channel: taskChannel,
           stream_mirrored: true
         });
+
+        // 🔍 WORKFLOW TRACE: Task created and published
+        logger.info('🔍 [WORKFLOW-TRACE] Task created and published', {
+          workflow_id: workflowId,
+          task_id: taskId,
+          stage,
+          agent_type: agentType,
+          channel: taskChannel
+        });
       } catch (error) {
         logger.error('[TASK_DISPATCH] Failed to publish task to message bus', {
           error: error instanceof Error ? error.message : String(error),
@@ -518,12 +576,13 @@ export class WorkflowService {
   }
 
   private async handleAgentResult(result: any): Promise<void> {
-    // Extract AgentResultSchema-compliant payload
-    const agentResult = result.payload;
+    // The result IS the AgentResultSchema-compliant object (no payload wrapper)
+    // redis-bus adapter already unwrapped the envelope and extracted the message
+    const agentResult = result;
 
     // ✓ CRITICAL: Validate against AgentResultSchema to ensure compliance
     try {
-      const { AgentResultSchema } = require('@agentic-sdlc/shared-types/src/core/schemas');
+      const { AgentResultSchema } = await import('@agentic-sdlc/shared-types');
       AgentResultSchema.parse(agentResult);
     } catch (validationError) {
       logger.error('AgentResultSchema validation failed in orchestrator - SCHEMA COMPLIANCE BREACH', {
@@ -542,6 +601,14 @@ export class WorkflowService {
       success: agentResult.success,
       status: agentResult.status,
       stage_from_message: result.stage
+    });
+
+    // 🔍 WORKFLOW TRACE: Agent result received
+    logger.info('🔍 [WORKFLOW-TRACE] Agent result received', {
+      workflow_id: agentResult.workflow_id,
+      stage: result.stage,
+      status: agentResult.status,
+      success: agentResult.success
     });
 
     // Determine the stage from result.stage (the workflow stage, not the action)
@@ -729,6 +796,13 @@ export class WorkflowService {
       // Update workflow state machine
       const stateMachine = this.stateMachineService.getStateMachine(workflow_id);
       if (stateMachine) {
+        // 🔍 WORKFLOW TRACE: Sending STAGE_COMPLETE to state machine
+        logger.info('🔍 [WORKFLOW-TRACE] Sending STAGE_COMPLETE to state machine', {
+          workflow_id,
+          stage: completedStage,
+          event_type: 'STAGE_COMPLETE'
+        });
+
         stateMachine.send({
           type: 'STAGE_COMPLETE',
           stage: completedStage,
@@ -915,6 +989,7 @@ export class WorkflowService {
   /**
    * SESSION #36: Build agent envelope for a stage
    * Replaces TaskAssignment with typed envelope format
+   * Phase 3: Enhanced to propagate trace context from workflow
    */
   private buildAgentEnvelope(
     taskId: string,
@@ -926,10 +1001,21 @@ export class WorkflowService {
     workflow: any
   ): any {
     const now = new Date().toISOString();
-    // SESSION #47: Use task_id as trace_id instead of custom trace format
-    // The envelope schema expects trace_id to be a valid UUID or undefined
-    const { randomUUID } = require('crypto');
-    const traceId = randomUUID();
+
+    // Phase 3: Propagate trace_id from workflow and create child span context
+    const traceId = workflow.trace_id || generateTraceIdUtil();
+    const parentSpanId = workflow.current_span_id;
+    const taskSpanId = generateSpanId(); // New span for this task
+
+    logger.info('🔍 [WORKFLOW-TRACE] Building agent envelope with trace context', {
+      workflow_id: workflowId,
+      task_id: taskId,
+      trace_id: traceId,
+      parent_span_id: parentSpanId,
+      span_id: taskSpanId,
+      stage,
+      agent_type: agentType
+    });
 
     // Common envelope metadata
     const envelopeBase = {
@@ -941,7 +1027,9 @@ export class WorkflowService {
       max_retries: 3,
       timeout_ms: 300000,
       created_at: now,
-      trace_id: traceId,
+      trace_id: traceId, // Phase 3: Inherited from workflow
+      span_id: taskSpanId, // Phase 3: New span for this task
+      parent_span_id: parentSpanId, // Phase 3: Link to workflow span
       envelope_version: '1.0.0' as const,
       workflow_context: {
         workflow_type: workflow.type,

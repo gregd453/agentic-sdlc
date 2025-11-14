@@ -1,0 +1,54 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - heading "Agentic SDLC Dashboard" [level=1] [ref=e8]
+      - navigation [ref=e9]:
+        - link "Dashboard" [ref=e10] [cursor=pointer]:
+          - /url: /
+        - link "Workflows" [ref=e11] [cursor=pointer]:
+          - /url: /workflows
+        - link "Traces" [ref=e12] [cursor=pointer]:
+          - /url: /traces
+        - link "Agents" [ref=e13] [cursor=pointer]:
+          - /url: /agents
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - heading "Dashboard Overview" [level=2] [ref=e16]
+      - generic [ref=e17]:
+        - generic [ref=e20]:
+          - img [ref=e23]
+          - generic [ref=e26]:
+            - term [ref=e27]: Total Workflows
+            - definition [ref=e28]: "137"
+        - generic [ref=e31]:
+          - img [ref=e34]
+          - generic [ref=e37]:
+            - term [ref=e38]: Running
+            - definition [ref=e39]: "0"
+        - generic [ref=e42]:
+          - img [ref=e45]
+          - generic [ref=e48]:
+            - term [ref=e49]: Completed
+            - definition [ref=e50]: "0"
+        - generic [ref=e53]:
+          - img [ref=e56]
+          - generic [ref=e59]:
+            - term [ref=e60]: Failed
+            - definition [ref=e61]: "0"
+      - generic [ref=e62]:
+        - heading "Active Workflows" [level=3] [ref=e64]
+        - table [ref=e66]:
+          - rowgroup [ref=e67]:
+            - row "Name Status Stage Created Actions" [ref=e68]:
+              - cell "Name" [ref=e69]
+              - cell "Status" [ref=e70]
+              - cell "Stage" [ref=e71]
+              - cell "Created" [ref=e72]
+              - cell "Actions" [ref=e73]
+          - rowgroup [ref=e74]:
+            - row "No active workflows" [ref=e75]:
+              - cell "No active workflows" [ref=e76]
+```

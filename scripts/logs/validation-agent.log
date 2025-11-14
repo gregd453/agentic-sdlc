@@ -5,28 +5,37 @@
 📦 @agentic-sdlc/shared-types loaded (Phase 5)
 🔖 Version: 1.0.0
 [PHASE-3] Initializing OrchestratorContainer for validation agent...
-{"ts":"2025-11-13T16:43:43.883Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
-{"ts":"2025-11-13T16:43:43.884Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
-{"ts":"2025-11-13T16:43:43.898Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
-{"ts":"2025-11-13T16:43:43.898Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
-{"ts":"2025-11-13T16:43:43.898Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
-{"ts":"2025-11-13T16:43:43.899Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
-{"ts":"2025-11-13T16:43:43.899Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
-{"ts":"2025-11-13T16:43:43.899Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
-{"ts":"2025-11-13T16:43:43.899Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
-{"ts":"2025-11-13T16:43:43.899Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
-{"ts":"2025-11-13T16:43:43.899Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
-{"ts":"2025-11-13T16:43:43.899Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
-{"ts":"2025-11-13T16:43:43.903Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+{"ts":"2025-11-13T21:46:56.271Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+{"ts":"2025-11-13T21:46:56.271Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-13T21:46:56.286Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T21:46:56.286Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T21:46:56.286Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-13T21:46:56.287Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T21:46:56.287Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T21:46:56.287Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-13T21:46:56.287Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-13T21:46:56.287Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-13T21:46:56.287Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-13T21:46:56.287Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+{"ts":"2025-11-13T21:46:56.291Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
 [PHASE-3] OrchestratorContainer initialized successfully
-{"ts":"2025-11-13T16:43:43.916Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
-{"ts":"2025-11-13T16:43:43.916Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763052223916"}
-{"ts":"2025-11-13T16:43:43.917Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+{"ts":"2025-11-13T21:46:56.296Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+{"ts":"2025-11-13T21:46:56.296Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763070416296"}
+{"ts":"2025-11-13T21:46:56.296Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
 ✅ Validation agent started successfully
 📡 Listening for validation tasks...
-[2025-11-13 16:43:43] [32mINFO[39m (validation-60599733/55328): [36m[PHASE-3] Initializing agent with message bus[39m
-[2025-11-13 16:43:43] [32mINFO[39m (validation-60599733/55328): [36m[PHASE-3] Subscribing to message bus for tasks[39m
-[2025-11-13 16:43:43] [32mINFO[39m (validation-60599733/55328): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
-[2025-11-13 16:43:43] [32mINFO[39m (validation-60599733/55328): [36mRegistered with orchestrator[39m
-[2025-11-13 16:43:43] [32mINFO[39m (validation-60599733/55328): [36m[PHASE-3] Agent initialized successfully with message bus[39m
-[2025-11-13 16:43:43] [33mWARN[39m (validation-60599733/55328): [36mFailed to load policy, using defaults[39m
+[2025-11-13 21:46:56] [32mINFO[39m (validation-f90ccff9/16740): [36m[PHASE-3] Initializing agent with message bus[39m
+[2025-11-13 21:46:56] [32mINFO[39m (validation-f90ccff9/16740): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+[2025-11-13 21:46:56] [32mINFO[39m (validation-f90ccff9/16740): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+[2025-11-13 21:46:56] [32mINFO[39m (validation-f90ccff9/16740): [36mRegistered with orchestrator[39m
+[2025-11-13 21:46:56] [32mINFO[39m (validation-f90ccff9/16740): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+[2025-11-13 21:46:56] [33mWARN[39m (validation-f90ccff9/16740): [36mFailed to load policy, using defaults[39m
+
+Shutting down validation agent...
+{"ts":"2025-11-13T21:48:37.251Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+{"ts":"2025-11-13T21:48:37.252Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T21:48:37.252Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+{"ts":"2025-11-13T21:48:37.252Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+[2025-11-13 21:48:37] [32mINFO[39m (validation-f90ccff9/16740): [36mCleaning up agent[39m
+[2025-11-13 21:48:37] [32mINFO[39m (validation-f90ccff9/16740): [36mDeregistered from orchestrator[39m
+[2025-11-13 21:48:37] [32mINFO[39m (validation-f90ccff9/16740): [36mAgent cleanup completed[39m

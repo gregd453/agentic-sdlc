@@ -14,7 +14,15 @@
     "orchestrator:dev": "pnpm --filter @agentic-sdlc/orchestrator dev",
     "orchestrator:build": "pnpm --filter @agentic-sdlc/orchestrator build",
     "db:setup": "pnpm --filter @agentic-sdlc/orchestrator db:setup",
-    "db:migrate": "pnpm --filter @agentic-sdlc/orchestrator db:migrate"
+    "db:migrate": "pnpm --filter @agentic-sdlc/orchestrator db:migrate",
+    "pm2:start": "bash scripts/pm2-preflight.sh && pm2 start pm2/ecosystem.dev.config.js",
+    "pm2:stop": "pm2 stop pm2/ecosystem.dev.config.js",
+    "pm2:delete": "pm2 delete pm2/ecosystem.dev.config.js",
+    "pm2:restart": "pm2 restart pm2/ecosystem.dev.config.js",
+    "pm2:reload": "pm2 reload pm2/ecosystem.dev.config.js",
+    "pm2:logs": "pm2 logs",
+    "pm2:monit": "pm2 monit",
+    "pm2:status": "pm2 status"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
@@ -22,6 +30,7 @@
     "@typescript-eslint/parser": "^6.13.0",
     "eslint": "^8.54.0",
     "ioredis-mock": "^8.13.1",
+    "pm2": "^5.3.0",
     "prettier": "^3.1.0",
     "turbo": "^1.10.16",
     "typescript": "^5.3.0",

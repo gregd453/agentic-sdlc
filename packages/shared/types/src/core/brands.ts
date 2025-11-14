@@ -31,14 +31,17 @@ export const isTaskId = (id: unknown): id is TaskId => {
 };
 
 // ID generation helpers
+// Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+import { randomUUID } from 'crypto';
+
 export const generateWorkflowId = (): WorkflowId => {
-  return toWorkflowId(`wf_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  return toWorkflowId(`wf_${randomUUID()}`);
 };
 
 export const generateTaskId = (): TaskId => {
-  return toTaskId(`task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  return toTaskId(`task_${randomUUID()}`);
 };
 
 export const generateAgentId = (type: string): AgentId => {
-  return toAgentId(`${type}_agent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  return toAgentId(`${type}_agent_${randomUUID()}`);
 };

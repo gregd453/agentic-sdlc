@@ -22,6 +22,11 @@ model Workflow {
   progress         Int              @default(0)
   version          Int              @default(1)
   stage_outputs    Json?            @default("{}")
+
+  // Distributed tracing fields
+  trace_id         String?          @db.Text
+  current_span_id  String?          @db.Text
+
   created_at       DateTime         @default(now())
   updated_at       DateTime         @updatedAt
   completed_at     DateTime?
@@ -33,6 +38,7 @@ model Workflow {
 
   @@index([status])
   @@index([created_at])
+  @@index([trace_id])
 }
 
 model WorkflowStage {
@@ -59,6 +65,12 @@ model AgentTask {
   priority        Priority
   payload         Json
   result          Json?
+
+  // Distributed tracing fields
+  trace_id        String?         @db.Text
+  span_id         String?         @db.Text
+  parent_span_id  String?         @db.Text
+
   assigned_at     DateTime        @default(now())
   started_at      DateTime?
   completed_at    DateTime?
@@ -71,6 +83,7 @@ model AgentTask {
   @@index([workflow_id])
   @@index([status])
   @@index([agent_type])
+  @@index([trace_id])
 }
 
 model WorkflowEvent {

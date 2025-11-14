@@ -1,0 +1,1271 @@
+2025-11-13 17:32:19 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:19 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:23 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:23 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:27 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:27 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:31 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:31 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:35 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:35 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:39 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:39 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:44 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:44 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:48 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:48 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:52 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:52 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:32:56 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:32:56 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:57:54 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 17:57:54 -05:00: 🔖 Version: 1.0.0
+2025-11-13 17:57:55 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.111Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.112Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.126Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.127Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.127Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.127Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.127Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.127Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.127Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.128Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.128Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.128Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.131Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 17:57:55 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.138Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.138Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763074675138"}
+2025-11-13 17:57:55 -05:00: {"ts":"2025-11-13T22:57:55.138Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 17:57:55 -05:00: ✅ Validation agent started successfully
+2025-11-13 17:57:55 -05:00: 📡 Listening for validation tasks...
+2025-11-13 17:57:55 -05:00: [2025-11-13 22:57:55] [32mINFO[39m (validation-8675ea72/73553): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 17:57:55 -05:00: [2025-11-13 22:57:55] [32mINFO[39m (validation-8675ea72/73553): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 17:57:55 -05:00: [2025-11-13 22:57:55] [32mINFO[39m (validation-8675ea72/73553): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 17:57:55 -05:00: [2025-11-13 22:57:55] [32mINFO[39m (validation-8675ea72/73553): [36mRegistered with orchestrator[39m
+2025-11-13 17:57:55 -05:00: [2025-11-13 22:57:55] [32mINFO[39m (validation-8675ea72/73553): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 17:57:55 -05:00: [2025-11-13 22:57:55] [32mINFO[39m (validation-8675ea72/73553): [36mPolicy configuration loaded[39m
+2025-11-13 18:06:05 -05:00: {"ts":"2025-11-13T23:06:05.934Z","scope":"redis-suite","msg":"base-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:06:05 -05:00: {"ts":"2025-11-13T23:06:05.934Z","scope":"redis-suite","msg":"pub-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:06:05 -05:00: {"ts":"2025-11-13T23:06:05.934Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer error","level":"ERROR","error":"Socket closed unexpectedly","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 18:06:05 -05:00: {"ts":"2025-11-13T23:06:05.934Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:06:05 -05:00: {"ts":"2025-11-13T23:06:05.936Z","scope":"redis-suite","msg":"base-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:06:05 -05:00: {"ts":"2025-11-13T23:06:05.936Z","scope":"redis-suite","msg":"pub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:06:05 -05:00: {"ts":"2025-11-13T23:06:05.936Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:06:05 -05:00: {"ts":"2025-11-13T23:06:05.936Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:06:13 -05:00: {"ts":"2025-11-13T23:06:13.024Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:06:13 -05:00: {"ts":"2025-11-13T23:06:13.024Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:06:14 -05:00: 
+2025-11-13 18:06:14 -05:00: Shutting down validation agent...
+2025-11-13 18:06:14 -05:00: {"ts":"2025-11-13T23:06:14.895Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 18:06:14 -05:00: {"ts":"2025-11-13T23:06:14.896Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 18:06:14 -05:00: {"ts":"2025-11-13T23:06:14.896Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 18:06:14 -05:00: {"ts":"2025-11-13T23:06:14.896Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 18:06:15 -05:00: [2025-11-13 23:06:14] [32mINFO[39m (validation-8675ea72/73553): [36mCleaning up agent[39m
+2025-11-13 18:06:15 -05:00: [2025-11-13 23:06:14] [32mINFO[39m (validation-8675ea72/73553): [36mDeregistered from orchestrator[39m
+2025-11-13 18:06:15 -05:00: [2025-11-13 23:06:14] [32mINFO[39m (validation-8675ea72/73553): [36mAgent cleanup completed[39m
+2025-11-13 18:06:16 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 18:06:16 -05:00: 🔖 Version: 1.0.0
+2025-11-13 18:06:16 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.274Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.274Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.288Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.289Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.289Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.289Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.289Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.289Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.289Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.290Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.290Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.290Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.292Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 18:06:16 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.298Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.299Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763075176298"}
+2025-11-13 18:06:16 -05:00: {"ts":"2025-11-13T23:06:16.299Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 18:06:16 -05:00: ✅ Validation agent started successfully
+2025-11-13 18:06:16 -05:00: 📡 Listening for validation tasks...
+2025-11-13 18:06:16 -05:00: [2025-11-13 23:06:16] [32mINFO[39m (validation-b2ca1ba5/93533): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 18:06:16 -05:00: [2025-11-13 23:06:16] [32mINFO[39m (validation-b2ca1ba5/93533): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 18:06:16 -05:00: [2025-11-13 23:06:16] [32mINFO[39m (validation-b2ca1ba5/93533): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 18:06:16 -05:00: [2025-11-13 23:06:16] [32mINFO[39m (validation-b2ca1ba5/93533): [36mRegistered with orchestrator[39m
+2025-11-13 18:06:16 -05:00: [2025-11-13 23:06:16] [32mINFO[39m (validation-b2ca1ba5/93533): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 18:06:16 -05:00: [2025-11-13 23:06:16] [32mINFO[39m (validation-b2ca1ba5/93533): [36mPolicy configuration loaded[39m
+2025-11-13 18:12:35 -05:00: {"ts":"2025-11-13T23:12:35.394Z","scope":"redis-suite","msg":"base-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:12:35 -05:00: {"ts":"2025-11-13T23:12:35.395Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:12:35 -05:00: {"ts":"2025-11-13T23:12:35.395Z","scope":"redis-suite","msg":"pub-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:12:35 -05:00: {"ts":"2025-11-13T23:12:35.395Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer error","level":"ERROR","error":"Socket closed unexpectedly","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 18:12:35 -05:00: {"ts":"2025-11-13T23:12:35.396Z","scope":"redis-suite","msg":"base-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:12:35 -05:00: {"ts":"2025-11-13T23:12:35.396Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:12:35 -05:00: {"ts":"2025-11-13T23:12:35.396Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:12:35 -05:00: {"ts":"2025-11-13T23:12:35.397Z","scope":"redis-suite","msg":"pub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:12:44 -05:00: 
+2025-11-13 18:12:44 -05:00: Shutting down validation agent...
+2025-11-13 18:12:44 -05:00: {"ts":"2025-11-13T23:12:44.326Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 18:12:44 -05:00: {"ts":"2025-11-13T23:12:44.326Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 18:12:44 -05:00: {"ts":"2025-11-13T23:12:44.326Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 18:12:44 -05:00: {"ts":"2025-11-13T23:12:44.326Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 18:12:44 -05:00: [2025-11-13 23:12:44] [32mINFO[39m (validation-b2ca1ba5/93533): [36mCleaning up agent[39m
+2025-11-13 18:12:44 -05:00: [2025-11-13 23:12:44] [32mINFO[39m (validation-b2ca1ba5/93533): [36mDeregistered from orchestrator[39m
+2025-11-13 18:12:44 -05:00: [2025-11-13 23:12:44] [32mINFO[39m (validation-b2ca1ba5/93533): [36mAgent cleanup completed[39m
+2025-11-13 18:12:47 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 18:12:47 -05:00: 🔖 Version: 1.0.0
+2025-11-13 18:12:47 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.077Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.078Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.092Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.092Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.093Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.093Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.093Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.093Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.093Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.093Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.093Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.093Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.096Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 18:12:47 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.102Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.102Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763075567102"}
+2025-11-13 18:12:47 -05:00: {"ts":"2025-11-13T23:12:47.102Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 18:12:47 -05:00: ✅ Validation agent started successfully
+2025-11-13 18:12:47 -05:00: 📡 Listening for validation tasks...
+2025-11-13 18:12:47 -05:00: [2025-11-13 23:12:47] [32mINFO[39m (validation-686b617e/11301): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 18:12:47 -05:00: [2025-11-13 23:12:47] [32mINFO[39m (validation-686b617e/11301): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 18:12:47 -05:00: [2025-11-13 23:12:47] [32mINFO[39m (validation-686b617e/11301): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 18:12:47 -05:00: [2025-11-13 23:12:47] [32mINFO[39m (validation-686b617e/11301): [36mRegistered with orchestrator[39m
+2025-11-13 18:12:47 -05:00: [2025-11-13 23:12:47] [32mINFO[39m (validation-686b617e/11301): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 18:12:47 -05:00: [2025-11-13 23:12:47] [32mINFO[39m (validation-686b617e/11301): [36mPolicy configuration loaded[39m
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.609Z","scope":"redis-suite","msg":"base-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.610Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.610Z","scope":"redis-suite","msg":"pub-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.610Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer error","level":"ERROR","error":"Socket closed unexpectedly","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.612Z","scope":"redis-suite","msg":"base-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.612Z","scope":"redis-suite","msg":"pub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.612Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.612Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:14:45 -05:00: {"ts":"2025-11-13T23:14:45.823Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:14:46 -05:00: {"ts":"2025-11-13T23:14:46.003Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:14:46 -05:00: {"ts":"2025-11-13T23:14:46.269Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:14:46 -05:00: {"ts":"2025-11-13T23:14:46.797Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:14:47 -05:00: {"ts":"2025-11-13T23:14:47.720Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:14:54 -05:00: 
+2025-11-13 18:14:54 -05:00: Shutting down validation agent...
+2025-11-13 18:14:54 -05:00: {"ts":"2025-11-13T23:14:54.594Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 18:14:54 -05:00: {"ts":"2025-11-13T23:14:54.595Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 18:14:54 -05:00: {"ts":"2025-11-13T23:14:54.595Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 18:14:54 -05:00: {"ts":"2025-11-13T23:14:54.595Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 18:14:55 -05:00: [2025-11-13 23:14:54] [32mINFO[39m (validation-686b617e/11301): [36mCleaning up agent[39m
+2025-11-13 18:14:55 -05:00: [2025-11-13 23:14:54] [32mINFO[39m (validation-686b617e/11301): [36mDeregistered from orchestrator[39m
+2025-11-13 18:14:55 -05:00: [2025-11-13 23:14:54] [32mINFO[39m (validation-686b617e/11301): [36mAgent cleanup completed[39m
+2025-11-13 18:14:56 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 18:14:56 -05:00: 🔖 Version: 1.0.0
+2025-11-13 18:14:56 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.645Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.645Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.658Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.658Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.658Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.659Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.659Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.659Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.659Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.659Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.659Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.660Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.662Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 18:14:56 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.668Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.669Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763075696668"}
+2025-11-13 18:14:56 -05:00: {"ts":"2025-11-13T23:14:56.669Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 18:14:56 -05:00: ✅ Validation agent started successfully
+2025-11-13 18:14:56 -05:00: 📡 Listening for validation tasks...
+2025-11-13 18:14:56 -05:00: [2025-11-13 23:14:56] [32mINFO[39m (validation-f93d031d/20124): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 18:14:56 -05:00: [2025-11-13 23:14:56] [32mINFO[39m (validation-f93d031d/20124): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 18:14:56 -05:00: [2025-11-13 23:14:56] [32mINFO[39m (validation-f93d031d/20124): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 18:14:56 -05:00: [2025-11-13 23:14:56] [32mINFO[39m (validation-f93d031d/20124): [36mRegistered with orchestrator[39m
+2025-11-13 18:14:56 -05:00: [2025-11-13 23:14:56] [32mINFO[39m (validation-f93d031d/20124): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 18:14:56 -05:00: [2025-11-13 23:14:56] [32mINFO[39m (validation-f93d031d/20124): [36mPolicy configuration loaded[39m
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.124Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.125Z","scope":"redis-suite","msg":"pub-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.125Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer error","level":"ERROR","error":"Socket closed unexpectedly","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.125Z","scope":"redis-suite","msg":"base-client error","level":"ERROR","error":"Error: Socket closed unexpectedly"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.126Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.126Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.127Z","scope":"redis-suite","msg":"pub-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.127Z","scope":"redis-suite","msg":"base-client error","level":"ERROR","error":"Error: read ECONNRESET"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.339Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.600Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:29 -05:00: {"ts":"2025-11-13T23:35:29.821Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:30 -05:00: {"ts":"2025-11-13T23:35:30.302Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:31 -05:00: {"ts":"2025-11-13T23:35:31.255Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:32 -05:00: {"ts":"2025-11-13T23:35:32.958Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:34 -05:00: {"ts":"2025-11-13T23:35:34.978Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:36 -05:00: {"ts":"2025-11-13T23:35:36.986Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:39 -05:00: {"ts":"2025-11-13T23:35:39.145Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:41 -05:00: {"ts":"2025-11-13T23:35:41.277Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:43 -05:00: {"ts":"2025-11-13T23:35:43.310Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:45 -05:00: {"ts":"2025-11-13T23:35:45.487Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:47 -05:00: {"ts":"2025-11-13T23:35:47.569Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:49 -05:00: {"ts":"2025-11-13T23:35:49.591Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:51 -05:00: {"ts":"2025-11-13T23:35:51.773Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:53 -05:00: {"ts":"2025-11-13T23:35:53.840Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:56 -05:00: {"ts":"2025-11-13T23:35:56.025Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:35:58 -05:00: {"ts":"2025-11-13T23:35:58.062Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:00 -05:00: {"ts":"2025-11-13T23:36:00.132Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:02 -05:00: {"ts":"2025-11-13T23:36:02.246Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:04 -05:00: {"ts":"2025-11-13T23:36:04.412Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:06 -05:00: {"ts":"2025-11-13T23:36:06.614Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:08 -05:00: {"ts":"2025-11-13T23:36:08.775Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:10 -05:00: {"ts":"2025-11-13T23:36:10.802Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:12 -05:00: {"ts":"2025-11-13T23:36:12.950Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:14 -05:00: {"ts":"2025-11-13T23:36:14.989Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:17 -05:00: {"ts":"2025-11-13T23:36:17.159Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:19 -05:00: {"ts":"2025-11-13T23:36:19.170Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:21 -05:00: {"ts":"2025-11-13T23:36:21.346Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:23 -05:00: {"ts":"2025-11-13T23:36:23.375Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:25 -05:00: {"ts":"2025-11-13T23:36:25.532Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:27 -05:00: {"ts":"2025-11-13T23:36:27.574Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:29 -05:00: {"ts":"2025-11-13T23:36:29.687Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:31 -05:00: {"ts":"2025-11-13T23:36:31.700Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:33 -05:00: {"ts":"2025-11-13T23:36:33.849Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:36 -05:00: {"ts":"2025-11-13T23:36:36.028Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:38 -05:00: {"ts":"2025-11-13T23:36:38.127Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:40 -05:00: {"ts":"2025-11-13T23:36:40.279Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:42 -05:00: {"ts":"2025-11-13T23:36:42.350Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:44 -05:00: {"ts":"2025-11-13T23:36:44.503Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:46 -05:00: {"ts":"2025-11-13T23:36:46.663Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:48 -05:00: {"ts":"2025-11-13T23:36:48.726Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:50 -05:00: {"ts":"2025-11-13T23:36:50.862Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:52 -05:00: {"ts":"2025-11-13T23:36:52.933Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:55 -05:00: {"ts":"2025-11-13T23:36:55.039Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:57 -05:00: {"ts":"2025-11-13T23:36:57.206Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:36:59 -05:00: {"ts":"2025-11-13T23:36:59.242Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:01 -05:00: {"ts":"2025-11-13T23:37:01.377Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:03 -05:00: {"ts":"2025-11-13T23:37:03.434Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:05 -05:00: {"ts":"2025-11-13T23:37:05.457Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:07 -05:00: {"ts":"2025-11-13T23:37:07.620Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:09 -05:00: {"ts":"2025-11-13T23:37:09.732Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:11 -05:00: {"ts":"2025-11-13T23:37:11.738Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:13 -05:00: {"ts":"2025-11-13T23:37:13.847Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:15 -05:00: {"ts":"2025-11-13T23:37:15.949Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:18 -05:00: {"ts":"2025-11-13T23:37:18.079Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:20 -05:00: {"ts":"2025-11-13T23:37:20.208Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:22 -05:00: {"ts":"2025-11-13T23:37:22.290Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:24 -05:00: {"ts":"2025-11-13T23:37:24.437Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:26 -05:00: {"ts":"2025-11-13T23:37:26.446Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:28 -05:00: {"ts":"2025-11-13T23:37:28.565Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:30 -05:00: {"ts":"2025-11-13T23:37:30.707Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:32 -05:00: {"ts":"2025-11-13T23:37:32.837Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:34 -05:00: {"ts":"2025-11-13T23:37:34.869Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:36 -05:00: {"ts":"2025-11-13T23:37:36.951Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:39 -05:00: {"ts":"2025-11-13T23:37:39.149Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:41 -05:00: {"ts":"2025-11-13T23:37:41.212Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:43 -05:00: {"ts":"2025-11-13T23:37:43.347Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:45 -05:00: {"ts":"2025-11-13T23:37:45.397Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:47 -05:00: {"ts":"2025-11-13T23:37:47.461Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:49 -05:00: {"ts":"2025-11-13T23:37:49.510Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:51 -05:00: {"ts":"2025-11-13T23:37:51.704Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:53 -05:00: {"ts":"2025-11-13T23:37:53.731Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:55 -05:00: {"ts":"2025-11-13T23:37:55.743Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:57 -05:00: {"ts":"2025-11-13T23:37:57.830Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:37:59 -05:00: {"ts":"2025-11-13T23:37:59.891Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:01 -05:00: {"ts":"2025-11-13T23:38:01.967Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:04 -05:00: {"ts":"2025-11-13T23:38:04.056Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:06 -05:00: {"ts":"2025-11-13T23:38:06.138Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:08 -05:00: {"ts":"2025-11-13T23:38:08.249Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:10 -05:00: {"ts":"2025-11-13T23:38:10.404Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:12 -05:00: {"ts":"2025-11-13T23:38:12.429Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:14 -05:00: {"ts":"2025-11-13T23:38:14.508Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:16 -05:00: {"ts":"2025-11-13T23:38:16.660Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:18 -05:00: {"ts":"2025-11-13T23:38:18.855Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:21 -05:00: {"ts":"2025-11-13T23:38:21.034Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:23 -05:00: {"ts":"2025-11-13T23:38:23.170Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:25 -05:00: {"ts":"2025-11-13T23:38:25.196Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:27 -05:00: {"ts":"2025-11-13T23:38:27.305Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:29 -05:00: {"ts":"2025-11-13T23:38:29.347Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:31 -05:00: {"ts":"2025-11-13T23:38:31.406Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:33 -05:00: {"ts":"2025-11-13T23:38:33.480Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:35 -05:00: {"ts":"2025-11-13T23:38:35.544Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:37 -05:00: {"ts":"2025-11-13T23:38:37.556Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:39 -05:00: {"ts":"2025-11-13T23:38:39.741Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:41 -05:00: {"ts":"2025-11-13T23:38:41.832Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:43 -05:00: {"ts":"2025-11-13T23:38:43.922Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:45 -05:00: {"ts":"2025-11-13T23:38:45.943Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:47 -05:00: {"ts":"2025-11-13T23:38:47.978Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:50 -05:00: {"ts":"2025-11-13T23:38:50.041Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:52 -05:00: {"ts":"2025-11-13T23:38:52.129Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:54 -05:00: {"ts":"2025-11-13T23:38:54.297Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:56 -05:00: {"ts":"2025-11-13T23:38:56.480Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:38:58 -05:00: {"ts":"2025-11-13T23:38:58.674Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:00 -05:00: {"ts":"2025-11-13T23:39:00.766Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:02 -05:00: {"ts":"2025-11-13T23:39:02.941Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:05 -05:00: {"ts":"2025-11-13T23:39:05.022Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:07 -05:00: {"ts":"2025-11-13T23:39:07.193Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:09 -05:00: {"ts":"2025-11-13T23:39:09.389Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:11 -05:00: {"ts":"2025-11-13T23:39:11.566Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:13 -05:00: {"ts":"2025-11-13T23:39:13.647Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:15 -05:00: {"ts":"2025-11-13T23:39:15.777Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:17 -05:00: {"ts":"2025-11-13T23:39:17.880Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:19 -05:00: {"ts":"2025-11-13T23:39:19.891Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:22 -05:00: {"ts":"2025-11-13T23:39:22.065Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:24 -05:00: {"ts":"2025-11-13T23:39:24.229Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:26 -05:00: {"ts":"2025-11-13T23:39:26.308Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:28 -05:00: {"ts":"2025-11-13T23:39:28.466Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:30 -05:00: {"ts":"2025-11-13T23:39:30.492Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:32 -05:00: {"ts":"2025-11-13T23:39:32.519Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:34 -05:00: {"ts":"2025-11-13T23:39:34.694Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:36 -05:00: {"ts":"2025-11-13T23:39:36.737Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:38 -05:00: {"ts":"2025-11-13T23:39:38.850Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:41 -05:00: {"ts":"2025-11-13T23:39:41.007Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:43 -05:00: {"ts":"2025-11-13T23:39:43.209Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:45 -05:00: {"ts":"2025-11-13T23:39:45.364Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:47 -05:00: {"ts":"2025-11-13T23:39:47.498Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:49 -05:00: {"ts":"2025-11-13T23:39:49.624Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:51 -05:00: {"ts":"2025-11-13T23:39:51.786Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:53 -05:00: {"ts":"2025-11-13T23:39:53.939Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:55 -05:00: {"ts":"2025-11-13T23:39:55.961Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:39:58 -05:00: {"ts":"2025-11-13T23:39:58.122Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:00 -05:00: {"ts":"2025-11-13T23:40:00.297Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:02 -05:00: {"ts":"2025-11-13T23:40:02.432Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:04 -05:00: {"ts":"2025-11-13T23:40:04.520Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:06 -05:00: {"ts":"2025-11-13T23:40:06.573Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:08 -05:00: {"ts":"2025-11-13T23:40:08.602Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:10 -05:00: {"ts":"2025-11-13T23:40:10.773Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:12 -05:00: {"ts":"2025-11-13T23:40:12.895Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:14 -05:00: {"ts":"2025-11-13T23:40:14.961Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:16 -05:00: {"ts":"2025-11-13T23:40:16.981Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:19 -05:00: {"ts":"2025-11-13T23:40:19.030Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:21 -05:00: {"ts":"2025-11-13T23:40:21.048Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:23 -05:00: {"ts":"2025-11-13T23:40:23.181Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:25 -05:00: {"ts":"2025-11-13T23:40:25.239Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:27 -05:00: {"ts":"2025-11-13T23:40:27.293Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:29 -05:00: {"ts":"2025-11-13T23:40:29.492Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:31 -05:00: {"ts":"2025-11-13T23:40:31.628Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:33 -05:00: {"ts":"2025-11-13T23:40:33.814Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:35 -05:00: {"ts":"2025-11-13T23:40:35.834Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:38 -05:00: {"ts":"2025-11-13T23:40:38.032Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:40 -05:00: {"ts":"2025-11-13T23:40:40.164Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:42 -05:00: {"ts":"2025-11-13T23:40:42.308Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:44 -05:00: {"ts":"2025-11-13T23:40:44.330Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:46 -05:00: {"ts":"2025-11-13T23:40:46.382Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:48 -05:00: {"ts":"2025-11-13T23:40:48.568Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-13 18:40:57 -05:00: 
+2025-11-13 18:40:57 -05:00: Shutting down validation agent...
+2025-11-13 18:40:57 -05:00: {"ts":"2025-11-13T23:40:57.411Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 18:40:57 -05:00: {"ts":"2025-11-13T23:40:57.412Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 18:40:57 -05:00: {"ts":"2025-11-13T23:40:57.412Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 18:40:57 -05:00: {"ts":"2025-11-13T23:40:57.412Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 18:40:58 -05:00: [2025-11-13 23:40:57] [32mINFO[39m (validation-f93d031d/20124): [36mCleaning up agent[39m
+2025-11-13 18:40:58 -05:00: [2025-11-13 23:40:57] [32mINFO[39m (validation-f93d031d/20124): [36mDeregistered from orchestrator[39m
+2025-11-13 18:40:58 -05:00: [2025-11-13 23:40:57] [32mINFO[39m (validation-f93d031d/20124): [36mAgent cleanup completed[39m
+2025-11-13 18:41:00 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 18:41:00 -05:00: 🔖 Version: 1.0.0
+2025-11-13 18:41:00 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.752Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.752Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.769Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.769Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.769Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.770Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.770Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.770Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.770Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.770Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.770Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.771Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.774Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 18:41:00 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.782Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.783Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763077260782"}
+2025-11-13 18:41:00 -05:00: {"ts":"2025-11-13T23:41:00.783Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 18:41:00 -05:00: ✅ Validation agent started successfully
+2025-11-13 18:41:00 -05:00: 📡 Listening for validation tasks...
+2025-11-13 18:41:00 -05:00: [2025-11-13 23:41:00] [32mINFO[39m (validation-e3a74c3e/54314): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 18:41:00 -05:00: [2025-11-13 23:41:00] [32mINFO[39m (validation-e3a74c3e/54314): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 18:41:00 -05:00: [2025-11-13 23:41:00] [32mINFO[39m (validation-e3a74c3e/54314): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 18:41:00 -05:00: [2025-11-13 23:41:00] [32mINFO[39m (validation-e3a74c3e/54314): [36mRegistered with orchestrator[39m
+2025-11-13 18:41:00 -05:00: [2025-11-13 23:41:00] [32mINFO[39m (validation-e3a74c3e/54314): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 18:41:00 -05:00: [2025-11-13 23:41:00] [32mINFO[39m (validation-e3a74c3e/54314): [36mPolicy configuration loaded[39m
+2025-11-13 18:44:02 -05:00: 
+2025-11-13 18:44:02 -05:00: Shutting down validation agent...
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.003Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.004Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.004Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.004Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e3a74c3e/54314): [36mCleaning up agent[39m
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e3a74c3e/54314): [36mDeregistered from orchestrator[39m
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e3a74c3e/54314): [36mAgent cleanup completed[39m
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.207Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.207Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.207Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 18:44:02 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 18:44:02 -05:00: 🔖 Version: 1.0.0
+2025-11-13 18:44:02 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.619Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.619Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.632Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.632Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.632Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.633Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.633Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.633Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.633Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.633Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.633Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.634Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.636Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 18:44:02 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.642Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.643Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763077442642"}
+2025-11-13 18:44:02 -05:00: {"ts":"2025-11-13T23:44:02.643Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 18:44:02 -05:00: ✅ Validation agent started successfully
+2025-11-13 18:44:02 -05:00: 📡 Listening for validation tasks...
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e49d89d5/65227): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e49d89d5/65227): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e49d89d5/65227): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e49d89d5/65227): [36mRegistered with orchestrator[39m
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e49d89d5/65227): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 18:44:02 -05:00: [2025-11-13 23:44:02] [32mINFO[39m (validation-e49d89d5/65227): [36mPolicy configuration loaded[39m
+2025-11-13 18:59:50 -05:00: 
+2025-11-13 18:59:50 -05:00: Shutting down validation agent...
+2025-11-13 18:59:50 -05:00: {"ts":"2025-11-13T23:59:50.570Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 18:59:50 -05:00: {"ts":"2025-11-13T23:59:50.571Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 18:59:50 -05:00: {"ts":"2025-11-13T23:59:50.571Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 18:59:50 -05:00: {"ts":"2025-11-13T23:59:50.571Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 18:59:50 -05:00: [2025-11-13 23:59:50] [32mINFO[39m (validation-e49d89d5/65227): [36mCleaning up agent[39m
+2025-11-13 18:59:50 -05:00: [2025-11-13 23:59:50] [32mINFO[39m (validation-e49d89d5/65227): [36mDeregistered from orchestrator[39m
+2025-11-13 18:59:50 -05:00: [2025-11-13 23:59:50] [32mINFO[39m (validation-e49d89d5/65227): [36mAgent cleanup completed[39m
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.144Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.144Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.144Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 18:59:55 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 18:59:55 -05:00: 🔖 Version: 1.0.0
+2025-11-13 18:59:55 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.942Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.943Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.959Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.959Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.959Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.959Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.960Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.960Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.960Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.960Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.960Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.960Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.962Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 18:59:55 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.968Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.969Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763078395968"}
+2025-11-13 18:59:55 -05:00: {"ts":"2025-11-13T23:59:55.969Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 18:59:55 -05:00: ✅ Validation agent started successfully
+2025-11-13 18:59:55 -05:00: 📡 Listening for validation tasks...
+2025-11-13 18:59:55 -05:00: [2025-11-13 23:59:55] [32mINFO[39m (validation-89f76245/81380): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 18:59:55 -05:00: [2025-11-13 23:59:55] [32mINFO[39m (validation-89f76245/81380): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 18:59:55 -05:00: [2025-11-13 23:59:55] [32mINFO[39m (validation-89f76245/81380): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 18:59:55 -05:00: [2025-11-13 23:59:55] [32mINFO[39m (validation-89f76245/81380): [36mRegistered with orchestrator[39m
+2025-11-13 18:59:55 -05:00: [2025-11-13 23:59:55] [32mINFO[39m (validation-89f76245/81380): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 18:59:55 -05:00: [2025-11-13 23:59:55] [32mINFO[39m (validation-89f76245/81380): [36mPolicy configuration loaded[39m
+2025-11-13 19:03:18 -05:00: 
+2025-11-13 19:03:18 -05:00: Shutting down validation agent...
+2025-11-13 19:03:18 -05:00: {"ts":"2025-11-14T00:03:18.004Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 19:03:18 -05:00: {"ts":"2025-11-14T00:03:18.005Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 19:03:18 -05:00: {"ts":"2025-11-14T00:03:18.005Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 19:03:18 -05:00: {"ts":"2025-11-14T00:03:18.005Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 19:03:18 -05:00: [2025-11-14 00:03:18] [32mINFO[39m (validation-89f76245/81380): [36mCleaning up agent[39m
+2025-11-13 19:03:18 -05:00: [2025-11-14 00:03:18] [32mINFO[39m (validation-89f76245/81380): [36mDeregistered from orchestrator[39m
+2025-11-13 19:03:18 -05:00: [2025-11-14 00:03:18] [32mINFO[39m (validation-89f76245/81380): [36mAgent cleanup completed[39m
+2025-11-13 19:03:22 -05:00: {"ts":"2025-11-14T00:03:22.088Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 19:03:22 -05:00: {"ts":"2025-11-14T00:03:22.088Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 19:03:22 -05:00: {"ts":"2025-11-14T00:03:22.089Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 19:03:35 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 19:03:35 -05:00: 🔖 Version: 1.0.0
+2025-11-13 19:03:35 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.599Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.600Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.614Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.614Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.615Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.615Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.615Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.615Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.615Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.615Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.615Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.615Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.618Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 19:03:35 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.625Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.626Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763078615625"}
+2025-11-13 19:03:35 -05:00: {"ts":"2025-11-14T00:03:35.626Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 19:03:35 -05:00: ✅ Validation agent started successfully
+2025-11-13 19:03:35 -05:00: 📡 Listening for validation tasks...
+2025-11-13 19:03:35 -05:00: [2025-11-14 00:03:35] [32mINFO[39m (validation-b8254092/88181): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 19:03:35 -05:00: [2025-11-14 00:03:35] [32mINFO[39m (validation-b8254092/88181): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 19:03:35 -05:00: [2025-11-14 00:03:35] [32mINFO[39m (validation-b8254092/88181): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 19:03:35 -05:00: [2025-11-14 00:03:35] [32mINFO[39m (validation-b8254092/88181): [36mRegistered with orchestrator[39m
+2025-11-13 19:03:35 -05:00: [2025-11-14 00:03:35] [32mINFO[39m (validation-b8254092/88181): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 19:03:35 -05:00: [2025-11-14 00:03:35] [32mINFO[39m (validation-b8254092/88181): [36mPolicy configuration loaded[39m
+2025-11-13 19:06:43 -05:00: 
+2025-11-13 19:06:43 -05:00: Shutting down validation agent...
+2025-11-13 19:06:43 -05:00: {"ts":"2025-11-14T00:06:43.006Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 19:06:43 -05:00: {"ts":"2025-11-14T00:06:43.007Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 19:06:43 -05:00: {"ts":"2025-11-14T00:06:43.007Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 19:06:43 -05:00: {"ts":"2025-11-14T00:06:43.007Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 19:06:43 -05:00: [2025-11-14 00:06:43] [32mINFO[39m (validation-b8254092/88181): [36mCleaning up agent[39m
+2025-11-13 19:06:43 -05:00: [2025-11-14 00:06:43] [32mINFO[39m (validation-b8254092/88181): [36mDeregistered from orchestrator[39m
+2025-11-13 19:06:43 -05:00: [2025-11-14 00:06:43] [32mINFO[39m (validation-b8254092/88181): [36mAgent cleanup completed[39m
+2025-11-13 19:06:47 -05:00: {"ts":"2025-11-14T00:06:47.133Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 19:06:47 -05:00: {"ts":"2025-11-14T00:06:47.133Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 19:06:47 -05:00: {"ts":"2025-11-14T00:06:47.133Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 19:06:48 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 19:06:48 -05:00: 🔖 Version: 1.0.0
+2025-11-13 19:06:48 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.326Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.326Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.339Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.339Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.339Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.339Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.340Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.340Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.340Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.340Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.340Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.340Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.342Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 19:06:48 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.347Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.348Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763078808347"}
+2025-11-13 19:06:48 -05:00: {"ts":"2025-11-14T00:06:48.348Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 19:06:48 -05:00: ✅ Validation agent started successfully
+2025-11-13 19:06:48 -05:00: 📡 Listening for validation tasks...
+2025-11-13 19:06:48 -05:00: [2025-11-14 00:06:48] [32mINFO[39m (validation-e21d29c8/91506): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 19:06:48 -05:00: [2025-11-14 00:06:48] [32mINFO[39m (validation-e21d29c8/91506): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 19:06:48 -05:00: [2025-11-14 00:06:48] [32mINFO[39m (validation-e21d29c8/91506): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 19:06:48 -05:00: [2025-11-14 00:06:48] [32mINFO[39m (validation-e21d29c8/91506): [36mRegistered with orchestrator[39m
+2025-11-13 19:06:48 -05:00: [2025-11-14 00:06:48] [32mINFO[39m (validation-e21d29c8/91506): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 19:06:48 -05:00: [2025-11-14 00:06:48] [32mINFO[39m (validation-e21d29c8/91506): [36mPolicy configuration loaded[39m
+2025-11-13 19:08:19 -05:00: 
+2025-11-13 19:08:19 -05:00: Shutting down validation agent...
+2025-11-13 19:08:19 -05:00: {"ts":"2025-11-14T00:08:19.464Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 19:08:19 -05:00: {"ts":"2025-11-14T00:08:19.464Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 19:08:19 -05:00: {"ts":"2025-11-14T00:08:19.464Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 19:08:19 -05:00: {"ts":"2025-11-14T00:08:19.464Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 19:08:19 -05:00: [2025-11-14 00:08:19] [32mINFO[39m (validation-e21d29c8/91506): [36mCleaning up agent[39m
+2025-11-13 19:08:19 -05:00: [2025-11-14 00:08:19] [32mINFO[39m (validation-e21d29c8/91506): [36mDeregistered from orchestrator[39m
+2025-11-13 19:08:19 -05:00: [2025-11-14 00:08:19] [32mINFO[39m (validation-e21d29c8/91506): [36mAgent cleanup completed[39m
+2025-11-13 19:08:24 -05:00: {"ts":"2025-11-14T00:08:24.022Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 19:08:24 -05:00: {"ts":"2025-11-14T00:08:24.023Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 19:08:24 -05:00: {"ts":"2025-11-14T00:08:24.023Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 19:16:58 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 19:16:58 -05:00: 🔖 Version: 1.0.0
+2025-11-13 19:16:58 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.615Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.615Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.629Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.629Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.629Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.629Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.629Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.630Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.630Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.630Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.630Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.630Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.632Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 19:16:58 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.638Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.639Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763079418638"}
+2025-11-13 19:16:58 -05:00: {"ts":"2025-11-14T00:16:58.639Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 19:16:58 -05:00: ✅ Validation agent started successfully
+2025-11-13 19:16:58 -05:00: 📡 Listening for validation tasks...
+2025-11-13 19:16:58 -05:00: [2025-11-14 00:16:58] [32mINFO[39m (validation-3991707d/95753): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 19:16:58 -05:00: [2025-11-14 00:16:58] [32mINFO[39m (validation-3991707d/95753): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 19:16:58 -05:00: [2025-11-14 00:16:58] [32mINFO[39m (validation-3991707d/95753): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 19:16:58 -05:00: [2025-11-14 00:16:58] [32mINFO[39m (validation-3991707d/95753): [36mRegistered with orchestrator[39m
+2025-11-13 19:16:58 -05:00: [2025-11-14 00:16:58] [32mINFO[39m (validation-3991707d/95753): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 19:16:58 -05:00: [2025-11-14 00:16:58] [32mINFO[39m (validation-3991707d/95753): [36mPolicy configuration loaded[39m
+2025-11-13 19:25:07 -05:00: 
+2025-11-13 19:25:07 -05:00: Shutting down validation agent...
+2025-11-13 19:25:07 -05:00: {"ts":"2025-11-14T00:25:07.297Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 19:25:07 -05:00: {"ts":"2025-11-14T00:25:07.298Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 19:25:07 -05:00: {"ts":"2025-11-14T00:25:07.298Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 19:25:07 -05:00: {"ts":"2025-11-14T00:25:07.298Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 19:25:08 -05:00: [2025-11-14 00:25:07] [32mINFO[39m (validation-3991707d/95753): [36mCleaning up agent[39m
+2025-11-13 19:25:08 -05:00: [2025-11-14 00:25:07] [32mINFO[39m (validation-3991707d/95753): [36mDeregistered from orchestrator[39m
+2025-11-13 19:25:08 -05:00: [2025-11-14 00:25:07] [32mINFO[39m (validation-3991707d/95753): [36mAgent cleanup completed[39m
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.244Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.245Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.245Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 19:25:12 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 19:25:12 -05:00: 🔖 Version: 1.0.0
+2025-11-13 19:25:12 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.640Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.640Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.654Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.655Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.659Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 19:25:12 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.665Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.666Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763079912665"}
+2025-11-13 19:25:12 -05:00: {"ts":"2025-11-14T00:25:12.666Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 19:25:12 -05:00: ✅ Validation agent started successfully
+2025-11-13 19:25:12 -05:00: 📡 Listening for validation tasks...
+2025-11-13 19:25:12 -05:00: [2025-11-14 00:25:12] [32mINFO[39m (validation-249275dc/2495): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 19:25:12 -05:00: [2025-11-14 00:25:12] [32mINFO[39m (validation-249275dc/2495): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 19:25:12 -05:00: [2025-11-14 00:25:12] [32mINFO[39m (validation-249275dc/2495): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 19:25:12 -05:00: [2025-11-14 00:25:12] [32mINFO[39m (validation-249275dc/2495): [36mRegistered with orchestrator[39m
+2025-11-13 19:25:12 -05:00: [2025-11-14 00:25:12] [32mINFO[39m (validation-249275dc/2495): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 19:25:12 -05:00: [2025-11-14 00:25:12] [32mINFO[39m (validation-249275dc/2495): [36mPolicy configuration loaded[39m
+2025-11-13 20:30:54 -05:00: 
+2025-11-13 20:30:54 -05:00: Shutting down validation agent...
+2025-11-13 20:30:54 -05:00: {"ts":"2025-11-14T01:30:54.995Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 20:30:54 -05:00: {"ts":"2025-11-14T01:30:54.995Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 20:30:54 -05:00: {"ts":"2025-11-14T01:30:54.995Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 20:30:54 -05:00: {"ts":"2025-11-14T01:30:54.995Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 20:30:55 -05:00: [2025-11-14 01:30:54] [32mINFO[39m (validation-249275dc/2495): [36mCleaning up agent[39m
+2025-11-13 20:30:55 -05:00: [2025-11-14 01:30:54] [32mINFO[39m (validation-249275dc/2495): [36mDeregistered from orchestrator[39m
+2025-11-13 20:30:55 -05:00: [2025-11-14 01:30:54] [32mINFO[39m (validation-249275dc/2495): [36mAgent cleanup completed[39m
+2025-11-13 20:30:59 -05:00: {"ts":"2025-11-14T01:30:59.571Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 20:30:59 -05:00: {"ts":"2025-11-14T01:30:59.571Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 20:30:59 -05:00: {"ts":"2025-11-14T01:30:59.572Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 20:31:14 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 20:31:14 -05:00: 🔖 Version: 1.0.0
+2025-11-13 20:31:14 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.782Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.783Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.797Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.797Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.797Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.798Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.798Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.798Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.798Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.798Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.798Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.798Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.802Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 20:31:14 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.809Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.810Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763083874809"}
+2025-11-13 20:31:14 -05:00: {"ts":"2025-11-14T01:31:14.810Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 20:31:14 -05:00: ✅ Validation agent started successfully
+2025-11-13 20:31:14 -05:00: 📡 Listening for validation tasks...
+2025-11-13 20:31:14 -05:00: [2025-11-14 01:31:14] [32mINFO[39m (validation-924213d6/69181): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 20:31:14 -05:00: [2025-11-14 01:31:14] [32mINFO[39m (validation-924213d6/69181): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 20:31:14 -05:00: [2025-11-14 01:31:14] [32mINFO[39m (validation-924213d6/69181): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 20:31:14 -05:00: [2025-11-14 01:31:14] [32mINFO[39m (validation-924213d6/69181): [36mRegistered with orchestrator[39m
+2025-11-13 20:31:14 -05:00: [2025-11-14 01:31:14] [32mINFO[39m (validation-924213d6/69181): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 20:31:14 -05:00: [2025-11-14 01:31:14] [32mINFO[39m (validation-924213d6/69181): [36mPolicy configuration loaded[39m
+2025-11-13 22:20:21 -05:00: 
+2025-11-13 22:20:21 -05:00: Shutting down validation agent...
+2025-11-13 22:20:21 -05:00: {"ts":"2025-11-14T03:20:21.426Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 22:20:21 -05:00: {"ts":"2025-11-14T03:20:21.427Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 22:20:21 -05:00: {"ts":"2025-11-14T03:20:21.427Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 22:20:21 -05:00: {"ts":"2025-11-14T03:20:21.427Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 22:20:22 -05:00: [2025-11-14 03:20:21] [32mINFO[39m (validation-924213d6/69181): [36mCleaning up agent[39m
+2025-11-13 22:20:22 -05:00: [2025-11-14 03:20:21] [32mINFO[39m (validation-924213d6/69181): [36mDeregistered from orchestrator[39m
+2025-11-13 22:20:22 -05:00: [2025-11-14 03:20:21] [32mINFO[39m (validation-924213d6/69181): [36mAgent cleanup completed[39m
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.230Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.230Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.230Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 22:20:26 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 22:20:26 -05:00: 🔖 Version: 1.0.0
+2025-11-13 22:20:26 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.799Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.799Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.814Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.814Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.814Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.815Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.815Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.815Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.815Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.815Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.815Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.815Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.817Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 22:20:26 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.825Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.826Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763090426825"}
+2025-11-13 22:20:26 -05:00: {"ts":"2025-11-14T03:20:26.826Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 22:20:26 -05:00: ✅ Validation agent started successfully
+2025-11-13 22:20:26 -05:00: 📡 Listening for validation tasks...
+2025-11-13 22:20:26 -05:00: [2025-11-14 03:20:26] [32mINFO[39m (validation-b1e78dd6/11693): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 22:20:26 -05:00: [2025-11-14 03:20:26] [32mINFO[39m (validation-b1e78dd6/11693): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 22:20:26 -05:00: [2025-11-14 03:20:26] [32mINFO[39m (validation-b1e78dd6/11693): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 22:20:26 -05:00: [2025-11-14 03:20:26] [32mINFO[39m (validation-b1e78dd6/11693): [36mRegistered with orchestrator[39m
+2025-11-13 22:20:26 -05:00: [2025-11-14 03:20:26] [32mINFO[39m (validation-b1e78dd6/11693): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 22:20:26 -05:00: [2025-11-14 03:20:26] [32mINFO[39m (validation-b1e78dd6/11693): [36mPolicy configuration loaded[39m
+2025-11-13 22:23:31 -05:00: 
+2025-11-13 22:23:31 -05:00: Shutting down validation agent...
+2025-11-13 22:23:31 -05:00: {"ts":"2025-11-14T03:23:31.692Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 22:23:31 -05:00: {"ts":"2025-11-14T03:23:31.693Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 22:23:31 -05:00: {"ts":"2025-11-14T03:23:31.693Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 22:23:31 -05:00: {"ts":"2025-11-14T03:23:31.693Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 22:23:32 -05:00: [2025-11-14 03:23:31] [32mINFO[39m (validation-b1e78dd6/11693): [36mCleaning up agent[39m
+2025-11-13 22:23:32 -05:00: [2025-11-14 03:23:31] [32mINFO[39m (validation-b1e78dd6/11693): [36mDeregistered from orchestrator[39m
+2025-11-13 22:23:32 -05:00: [2025-11-14 03:23:31] [32mINFO[39m (validation-b1e78dd6/11693): [36mAgent cleanup completed[39m
+2025-11-13 22:23:33 -05:00: {"ts":"2025-11-14T03:23:33.904Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 22:23:33 -05:00: {"ts":"2025-11-14T03:23:33.904Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 22:23:33 -05:00: {"ts":"2025-11-14T03:23:33.904Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 22:23:34 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 22:23:34 -05:00: 🔖 Version: 1.0.0
+2025-11-13 22:23:34 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.465Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.465Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.478Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.479Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.479Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.479Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.480Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.480Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.480Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.480Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.480Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.480Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.483Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":2,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 22:23:34 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.490Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.490Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763090614490"}
+2025-11-13 22:23:34 -05:00: {"ts":"2025-11-14T03:23:34.490Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 22:23:34 -05:00: ✅ Validation agent started successfully
+2025-11-13 22:23:34 -05:00: 📡 Listening for validation tasks...
+2025-11-13 22:23:34 -05:00: [2025-11-14 03:23:34] [32mINFO[39m (validation-161452c4/16900): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 22:23:34 -05:00: [2025-11-14 03:23:34] [32mINFO[39m (validation-161452c4/16900): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 22:23:34 -05:00: [2025-11-14 03:23:34] [32mINFO[39m (validation-161452c4/16900): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 22:23:34 -05:00: [2025-11-14 03:23:34] [32mINFO[39m (validation-161452c4/16900): [36mRegistered with orchestrator[39m
+2025-11-13 22:23:34 -05:00: [2025-11-14 03:23:34] [32mINFO[39m (validation-161452c4/16900): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 22:23:34 -05:00: [2025-11-14 03:23:34] [32mINFO[39m (validation-161452c4/16900): [36mPolicy configuration loaded[39m
+2025-11-13 22:48:17 -05:00: 
+2025-11-13 22:48:17 -05:00: Shutting down validation agent...
+2025-11-13 22:48:17 -05:00: {"ts":"2025-11-14T03:48:17.608Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 22:48:17 -05:00: {"ts":"2025-11-14T03:48:17.609Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 22:48:17 -05:00: {"ts":"2025-11-14T03:48:17.609Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 22:48:17 -05:00: {"ts":"2025-11-14T03:48:17.609Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 22:48:17 -05:00: [2025-11-14 03:48:17] [32mINFO[39m (validation-161452c4/16900): [36mCleaning up agent[39m
+2025-11-13 22:48:17 -05:00: [2025-11-14 03:48:17] [32mINFO[39m (validation-161452c4/16900): [36mDeregistered from orchestrator[39m
+2025-11-13 22:48:17 -05:00: [2025-11-14 03:48:17] [32mINFO[39m (validation-161452c4/16900): [36mAgent cleanup completed[39m
+2025-11-13 22:48:21 -05:00: {"ts":"2025-11-14T03:48:21.011Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 22:48:21 -05:00: {"ts":"2025-11-14T03:48:21.011Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 22:48:21 -05:00: {"ts":"2025-11-14T03:48:21.011Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 22:49:17 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 22:49:17 -05:00: 🔖 Version: 1.0.0
+2025-11-13 22:49:17 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.600Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.600Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.614Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.615Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.615Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.615Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.615Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.615Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.615Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.615Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.615Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.616Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.618Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 22:49:17 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.624Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.624Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763092157624"}
+2025-11-13 22:49:17 -05:00: {"ts":"2025-11-14T03:49:17.624Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 22:49:17 -05:00: ✅ Validation agent started successfully
+2025-11-13 22:49:17 -05:00: 📡 Listening for validation tasks...
+2025-11-13 22:49:17 -05:00: [2025-11-14 03:49:17] [32mINFO[39m (validation-dd8a74fc/51336): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 22:49:17 -05:00: [2025-11-14 03:49:17] [32mINFO[39m (validation-dd8a74fc/51336): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 22:49:17 -05:00: [2025-11-14 03:49:17] [32mINFO[39m (validation-dd8a74fc/51336): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 22:49:17 -05:00: [2025-11-14 03:49:17] [32mINFO[39m (validation-dd8a74fc/51336): [36mRegistered with orchestrator[39m
+2025-11-13 22:49:17 -05:00: [2025-11-14 03:49:17] [32mINFO[39m (validation-dd8a74fc/51336): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 22:49:17 -05:00: [2025-11-14 03:49:17] [32mINFO[39m (validation-dd8a74fc/51336): [36mPolicy configuration loaded[39m
+2025-11-13 22:50:28 -05:00: 
+2025-11-13 22:50:28 -05:00: Shutting down validation agent...
+2025-11-13 22:50:28 -05:00: {"ts":"2025-11-14T03:50:28.470Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 22:50:28 -05:00: {"ts":"2025-11-14T03:50:28.470Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 22:50:28 -05:00: {"ts":"2025-11-14T03:50:28.470Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 22:50:28 -05:00: {"ts":"2025-11-14T03:50:28.470Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 22:50:28 -05:00: [2025-11-14 03:50:28] [32mINFO[39m (validation-dd8a74fc/51336): [36mCleaning up agent[39m
+2025-11-13 22:50:28 -05:00: [2025-11-14 03:50:28] [32mINFO[39m (validation-dd8a74fc/51336): [36mDeregistered from orchestrator[39m
+2025-11-13 22:50:28 -05:00: [2025-11-14 03:50:28] [32mINFO[39m (validation-dd8a74fc/51336): [36mAgent cleanup completed[39m
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.336Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.336Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.336Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 22:50:33 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 22:50:33 -05:00: 🔖 Version: 1.0.0
+2025-11-13 22:50:33 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.827Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.827Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.841Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.842Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.842Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.842Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.842Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.842Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.842Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.842Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.842Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.843Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.845Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 22:50:33 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.852Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.853Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763092233852"}
+2025-11-13 22:50:33 -05:00: {"ts":"2025-11-14T03:50:33.853Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 22:50:33 -05:00: ✅ Validation agent started successfully
+2025-11-13 22:50:33 -05:00: 📡 Listening for validation tasks...
+2025-11-13 22:50:33 -05:00: [2025-11-14 03:50:33] [32mINFO[39m (validation-292cee19/55703): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 22:50:33 -05:00: [2025-11-14 03:50:33] [32mINFO[39m (validation-292cee19/55703): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 22:50:33 -05:00: [2025-11-14 03:50:33] [32mINFO[39m (validation-292cee19/55703): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 22:50:33 -05:00: [2025-11-14 03:50:33] [32mINFO[39m (validation-292cee19/55703): [36mRegistered with orchestrator[39m
+2025-11-13 22:50:33 -05:00: [2025-11-14 03:50:33] [32mINFO[39m (validation-292cee19/55703): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 22:50:33 -05:00: [2025-11-14 03:50:33] [32mINFO[39m (validation-292cee19/55703): [36mPolicy configuration loaded[39m
+2025-11-13 22:52:43 -05:00: 
+2025-11-13 22:52:43 -05:00: Shutting down validation agent...
+2025-11-13 22:52:43 -05:00: {"ts":"2025-11-14T03:52:43.988Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-13 22:52:43 -05:00: {"ts":"2025-11-14T03:52:43.988Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-13 22:52:43 -05:00: {"ts":"2025-11-14T03:52:43.988Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-13 22:52:43 -05:00: {"ts":"2025-11-14T03:52:43.988Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-13 22:52:44 -05:00: [2025-11-14 03:52:43] [32mINFO[39m (validation-292cee19/55703): [36mCleaning up agent[39m
+2025-11-13 22:52:44 -05:00: [2025-11-14 03:52:43] [32mINFO[39m (validation-292cee19/55703): [36mDeregistered from orchestrator[39m
+2025-11-13 22:52:44 -05:00: [2025-11-14 03:52:43] [32mINFO[39m (validation-292cee19/55703): [36mAgent cleanup completed[39m
+2025-11-13 22:52:44 -05:00: {"ts":"2025-11-14T03:52:44.989Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-13 22:52:44 -05:00: {"ts":"2025-11-14T03:52:44.989Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-13 22:52:44 -05:00: {"ts":"2025-11-14T03:52:44.989Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-13 22:52:45 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-13 22:52:45 -05:00: 🔖 Version: 1.0.0
+2025-11-13 22:52:45 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.420Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.421Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.434Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.434Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.434Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.435Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.435Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.435Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.435Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.435Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.435Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.436Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.438Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-13 22:52:45 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.444Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.445Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763092365444"}
+2025-11-13 22:52:45 -05:00: {"ts":"2025-11-14T03:52:45.445Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-13 22:52:45 -05:00: ✅ Validation agent started successfully
+2025-11-13 22:52:45 -05:00: 📡 Listening for validation tasks...
+2025-11-13 22:52:45 -05:00: [2025-11-14 03:52:45] [32mINFO[39m (validation-fd7bb034/64291): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-13 22:52:45 -05:00: [2025-11-14 03:52:45] [32mINFO[39m (validation-fd7bb034/64291): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-13 22:52:45 -05:00: [2025-11-14 03:52:45] [32mINFO[39m (validation-fd7bb034/64291): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-13 22:52:45 -05:00: [2025-11-14 03:52:45] [32mINFO[39m (validation-fd7bb034/64291): [36mRegistered with orchestrator[39m
+2025-11-13 22:52:45 -05:00: [2025-11-14 03:52:45] [32mINFO[39m (validation-fd7bb034/64291): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-13 22:52:45 -05:00: [2025-11-14 03:52:45] [32mINFO[39m (validation-fd7bb034/64291): [36mPolicy configuration loaded[39m
+2025-11-14 00:02:14 -05:00: 
+2025-11-14 00:02:14 -05:00: Shutting down validation agent...
+2025-11-14 00:02:14 -05:00: {"ts":"2025-11-14T05:02:14.941Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 00:02:14 -05:00: {"ts":"2025-11-14T05:02:14.942Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 00:02:14 -05:00: {"ts":"2025-11-14T05:02:14.942Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 00:02:14 -05:00: {"ts":"2025-11-14T05:02:14.942Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 00:02:15 -05:00: [2025-11-14 05:02:14] [32mINFO[39m (validation-fd7bb034/64291): [36mCleaning up agent[39m
+2025-11-14 00:02:15 -05:00: [2025-11-14 05:02:14] [32mINFO[39m (validation-fd7bb034/64291): [36mDeregistered from orchestrator[39m
+2025-11-14 00:02:15 -05:00: [2025-11-14 05:02:14] [32mINFO[39m (validation-fd7bb034/64291): [36mAgent cleanup completed[39m
+2025-11-14 00:02:19 -05:00: {"ts":"2025-11-14T05:02:19.759Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 00:02:19 -05:00: {"ts":"2025-11-14T05:02:19.759Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 00:02:19 -05:00: {"ts":"2025-11-14T05:02:19.759Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 00:02:20 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 00:02:20 -05:00: 🔖 Version: 1.0.0
+2025-11-14 00:02:20 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.357Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.357Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.372Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.372Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.372Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.373Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.373Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.373Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.373Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.373Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.373Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.373Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.377Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 00:02:20 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.384Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.385Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763096540384"}
+2025-11-14 00:02:20 -05:00: {"ts":"2025-11-14T05:02:20.385Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 00:02:20 -05:00: ✅ Validation agent started successfully
+2025-11-14 00:02:20 -05:00: 📡 Listening for validation tasks...
+2025-11-14 00:02:20 -05:00: [2025-11-14 05:02:20] [32mINFO[39m (validation-f0a701e5/50529): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 00:02:20 -05:00: [2025-11-14 05:02:20] [32mINFO[39m (validation-f0a701e5/50529): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 00:02:20 -05:00: [2025-11-14 05:02:20] [32mINFO[39m (validation-f0a701e5/50529): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 00:02:20 -05:00: [2025-11-14 05:02:20] [32mINFO[39m (validation-f0a701e5/50529): [36mRegistered with orchestrator[39m
+2025-11-14 00:02:20 -05:00: [2025-11-14 05:02:20] [32mINFO[39m (validation-f0a701e5/50529): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 00:02:20 -05:00: [2025-11-14 05:02:20] [32mINFO[39m (validation-f0a701e5/50529): [36mPolicy configuration loaded[39m
+2025-11-14 00:28:46 -05:00: 
+2025-11-14 00:28:46 -05:00: Shutting down validation agent...
+2025-11-14 00:28:46 -05:00: {"ts":"2025-11-14T05:28:46.551Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 00:28:46 -05:00: {"ts":"2025-11-14T05:28:46.552Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 00:28:46 -05:00: {"ts":"2025-11-14T05:28:46.552Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 00:28:46 -05:00: {"ts":"2025-11-14T05:28:46.552Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 00:28:47 -05:00: [2025-11-14 05:28:46] [32mINFO[39m (validation-f0a701e5/50529): [36mCleaning up agent[39m
+2025-11-14 00:28:47 -05:00: [2025-11-14 05:28:46] [32mINFO[39m (validation-f0a701e5/50529): [36mDeregistered from orchestrator[39m
+2025-11-14 00:28:47 -05:00: [2025-11-14 05:28:46] [32mINFO[39m (validation-f0a701e5/50529): [36mAgent cleanup completed[39m
+2025-11-14 00:28:51 -05:00: {"ts":"2025-11-14T05:28:51.403Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 00:28:51 -05:00: {"ts":"2025-11-14T05:28:51.404Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 00:28:51 -05:00: {"ts":"2025-11-14T05:28:51.404Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 00:29:19 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 00:29:19 -05:00: 🔖 Version: 1.0.0
+2025-11-14 00:29:19 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.384Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.384Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.398Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.398Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.398Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.399Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.399Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.399Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.399Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.399Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.399Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.399Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.401Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 00:29:19 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.408Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.408Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763098159408"}
+2025-11-14 00:29:19 -05:00: {"ts":"2025-11-14T05:29:19.408Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 00:29:19 -05:00: ✅ Validation agent started successfully
+2025-11-14 00:29:19 -05:00: 📡 Listening for validation tasks...
+2025-11-14 00:29:19 -05:00: [2025-11-14 05:29:19] [32mINFO[39m (validation-a5ae79c1/83098): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 00:29:19 -05:00: [2025-11-14 05:29:19] [32mINFO[39m (validation-a5ae79c1/83098): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 00:29:19 -05:00: [2025-11-14 05:29:19] [32mINFO[39m (validation-a5ae79c1/83098): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 00:29:19 -05:00: [2025-11-14 05:29:19] [32mINFO[39m (validation-a5ae79c1/83098): [36mRegistered with orchestrator[39m
+2025-11-14 00:29:19 -05:00: [2025-11-14 05:29:19] [32mINFO[39m (validation-a5ae79c1/83098): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 00:29:19 -05:00: [2025-11-14 05:29:19] [32mINFO[39m (validation-a5ae79c1/83098): [36mPolicy configuration loaded[39m
+2025-11-14 01:03:23 -05:00: 
+2025-11-14 01:03:23 -05:00: Shutting down validation agent...
+2025-11-14 01:03:23 -05:00: {"ts":"2025-11-14T06:03:23.366Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 01:03:23 -05:00: {"ts":"2025-11-14T06:03:23.367Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 01:03:23 -05:00: {"ts":"2025-11-14T06:03:23.367Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 01:03:23 -05:00: {"ts":"2025-11-14T06:03:23.367Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 01:03:23 -05:00: [2025-11-14 06:03:23] [32mINFO[39m (validation-a5ae79c1/83098): [36mCleaning up agent[39m
+2025-11-14 01:03:23 -05:00: [2025-11-14 06:03:23] [32mINFO[39m (validation-a5ae79c1/83098): [36mDeregistered from orchestrator[39m
+2025-11-14 01:03:23 -05:00: [2025-11-14 06:03:23] [32mINFO[39m (validation-a5ae79c1/83098): [36mAgent cleanup completed[39m
+2025-11-14 01:03:27 -05:00: {"ts":"2025-11-14T06:03:27.624Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 01:03:27 -05:00: {"ts":"2025-11-14T06:03:27.624Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 01:03:27 -05:00: {"ts":"2025-11-14T06:03:27.624Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 01:04:22 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 01:04:22 -05:00: 🔖 Version: 1.0.0
+2025-11-14 01:04:23 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.005Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.005Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.019Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.020Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.020Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.020Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.021Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.021Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.021Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.021Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.021Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.021Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.024Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 01:04:23 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.032Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.032Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763100263032"}
+2025-11-14 01:04:23 -05:00: {"ts":"2025-11-14T06:04:23.032Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 01:04:23 -05:00: ✅ Validation agent started successfully
+2025-11-14 01:04:23 -05:00: 📡 Listening for validation tasks...
+2025-11-14 01:04:23 -05:00: [2025-11-14 06:04:23] [32mINFO[39m (validation-23ac32d8/56117): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 01:04:23 -05:00: [2025-11-14 06:04:23] [32mINFO[39m (validation-23ac32d8/56117): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 01:04:23 -05:00: [2025-11-14 06:04:23] [32mINFO[39m (validation-23ac32d8/56117): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 01:04:23 -05:00: [2025-11-14 06:04:23] [32mINFO[39m (validation-23ac32d8/56117): [36mRegistered with orchestrator[39m
+2025-11-14 01:04:23 -05:00: [2025-11-14 06:04:23] [32mINFO[39m (validation-23ac32d8/56117): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 01:04:23 -05:00: [2025-11-14 06:04:23] [32mINFO[39m (validation-23ac32d8/56117): [36mPolicy configuration loaded[39m
+2025-11-14 01:11:12 -05:00: 
+2025-11-14 01:11:12 -05:00: Shutting down validation agent...
+2025-11-14 01:11:12 -05:00: {"ts":"2025-11-14T06:11:12.677Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 01:11:12 -05:00: {"ts":"2025-11-14T06:11:12.678Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 01:11:12 -05:00: {"ts":"2025-11-14T06:11:12.678Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 01:11:12 -05:00: {"ts":"2025-11-14T06:11:12.678Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 01:11:13 -05:00: [2025-11-14 06:11:12] [32mINFO[39m (validation-23ac32d8/56117): [36mCleaning up agent[39m
+2025-11-14 01:11:13 -05:00: [2025-11-14 06:11:12] [32mINFO[39m (validation-23ac32d8/56117): [36mDeregistered from orchestrator[39m
+2025-11-14 01:11:13 -05:00: [2025-11-14 06:11:12] [32mINFO[39m (validation-23ac32d8/56117): [36mAgent cleanup completed[39m
+2025-11-14 01:11:17 -05:00: {"ts":"2025-11-14T06:11:17.597Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 01:11:17 -05:00: {"ts":"2025-11-14T06:11:17.597Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 01:11:17 -05:00: {"ts":"2025-11-14T06:11:17.597Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 01:11:17 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 01:11:17 -05:00: 🔖 Version: 1.0.0
+2025-11-14 01:11:18 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.021Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.021Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.035Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.035Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.035Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.036Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.036Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.036Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.036Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.036Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.036Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.036Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.039Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 01:11:18 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.046Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.047Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763100678046"}
+2025-11-14 01:11:18 -05:00: {"ts":"2025-11-14T06:11:18.047Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 01:11:18 -05:00: ✅ Validation agent started successfully
+2025-11-14 01:11:18 -05:00: 📡 Listening for validation tasks...
+2025-11-14 01:11:18 -05:00: [2025-11-14 06:11:18] [32mINFO[39m (validation-177ebc0a/78094): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 01:11:18 -05:00: [2025-11-14 06:11:18] [32mINFO[39m (validation-177ebc0a/78094): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 01:11:18 -05:00: [2025-11-14 06:11:18] [32mINFO[39m (validation-177ebc0a/78094): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 01:11:18 -05:00: [2025-11-14 06:11:18] [32mINFO[39m (validation-177ebc0a/78094): [36mRegistered with orchestrator[39m
+2025-11-14 01:11:18 -05:00: [2025-11-14 06:11:18] [32mINFO[39m (validation-177ebc0a/78094): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 01:11:18 -05:00: [2025-11-14 06:11:18] [32mINFO[39m (validation-177ebc0a/78094): [36mPolicy configuration loaded[39m
+2025-11-14 01:14:00 -05:00: 
+2025-11-14 01:14:00 -05:00: Shutting down validation agent...
+2025-11-14 01:14:00 -05:00: {"ts":"2025-11-14T06:14:00.253Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 01:14:00 -05:00: {"ts":"2025-11-14T06:14:00.253Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 01:14:00 -05:00: {"ts":"2025-11-14T06:14:00.253Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 01:14:00 -05:00: {"ts":"2025-11-14T06:14:00.253Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 01:14:00 -05:00: [2025-11-14 06:14:00] [32mINFO[39m (validation-177ebc0a/78094): [36mCleaning up agent[39m
+2025-11-14 01:14:00 -05:00: [2025-11-14 06:14:00] [32mINFO[39m (validation-177ebc0a/78094): [36mDeregistered from orchestrator[39m
+2025-11-14 01:14:00 -05:00: [2025-11-14 06:14:00] [32mINFO[39m (validation-177ebc0a/78094): [36mAgent cleanup completed[39m
+2025-11-14 01:14:12 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 01:14:12 -05:00: 🔖 Version: 1.0.0
+2025-11-14 01:14:13 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.007Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.007Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.021Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.022Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.022Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.022Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.022Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.022Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.022Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.023Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.023Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.023Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.025Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 01:14:13 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.032Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.033Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763100853032"}
+2025-11-14 01:14:13 -05:00: {"ts":"2025-11-14T06:14:13.033Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 01:14:13 -05:00: ✅ Validation agent started successfully
+2025-11-14 01:14:13 -05:00: 📡 Listening for validation tasks...
+2025-11-14 01:14:13 -05:00: [2025-11-14 06:14:13] [32mINFO[39m (validation-a1579127/96816): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 01:14:13 -05:00: [2025-11-14 06:14:13] [32mINFO[39m (validation-a1579127/96816): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 01:14:13 -05:00: [2025-11-14 06:14:13] [32mINFO[39m (validation-a1579127/96816): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 01:14:13 -05:00: [2025-11-14 06:14:13] [32mINFO[39m (validation-a1579127/96816): [36mRegistered with orchestrator[39m
+2025-11-14 01:14:13 -05:00: [2025-11-14 06:14:13] [32mINFO[39m (validation-a1579127/96816): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 01:14:13 -05:00: [2025-11-14 06:14:13] [32mINFO[39m (validation-a1579127/96816): [36mPolicy configuration loaded[39m
+2025-11-14 01:18:30 -05:00: 
+2025-11-14 01:18:30 -05:00: Shutting down validation agent...
+2025-11-14 01:18:30 -05:00: {"ts":"2025-11-14T06:18:30.409Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 01:18:30 -05:00: {"ts":"2025-11-14T06:18:30.410Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 01:18:30 -05:00: {"ts":"2025-11-14T06:18:30.410Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 01:18:30 -05:00: {"ts":"2025-11-14T06:18:30.410Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 01:18:31 -05:00: [2025-11-14 06:18:30] [32mINFO[39m (validation-a1579127/96816): [36mCleaning up agent[39m
+2025-11-14 01:18:31 -05:00: [2025-11-14 06:18:30] [32mINFO[39m (validation-a1579127/96816): [36mDeregistered from orchestrator[39m
+2025-11-14 01:18:31 -05:00: [2025-11-14 06:18:30] [32mINFO[39m (validation-a1579127/96816): [36mAgent cleanup completed[39m
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.341Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.341Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.342Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 01:18:35 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 01:18:35 -05:00: 🔖 Version: 1.0.0
+2025-11-14 01:18:35 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.785Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.786Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.800Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.801Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.801Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.801Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.801Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.801Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.801Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.802Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.802Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.802Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.804Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 01:18:35 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.810Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.811Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763101115810"}
+2025-11-14 01:18:35 -05:00: {"ts":"2025-11-14T06:18:35.811Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 01:18:35 -05:00: ✅ Validation agent started successfully
+2025-11-14 01:18:35 -05:00: 📡 Listening for validation tasks...
+2025-11-14 01:18:35 -05:00: [2025-11-14 06:18:35] [32mINFO[39m (validation-dcc80f45/3335): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 01:18:35 -05:00: [2025-11-14 06:18:35] [32mINFO[39m (validation-dcc80f45/3335): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 01:18:35 -05:00: [2025-11-14 06:18:35] [32mINFO[39m (validation-dcc80f45/3335): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 01:18:35 -05:00: [2025-11-14 06:18:35] [32mINFO[39m (validation-dcc80f45/3335): [36mRegistered with orchestrator[39m
+2025-11-14 01:18:35 -05:00: [2025-11-14 06:18:35] [32mINFO[39m (validation-dcc80f45/3335): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 01:18:35 -05:00: [2025-11-14 06:18:35] [32mINFO[39m (validation-dcc80f45/3335): [36mPolicy configuration loaded[39m
+2025-11-14 01:25:41 -05:00: 
+2025-11-14 01:25:41 -05:00: Shutting down validation agent...
+2025-11-14 01:25:41 -05:00: {"ts":"2025-11-14T06:25:41.742Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 01:25:41 -05:00: {"ts":"2025-11-14T06:25:41.742Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 01:25:41 -05:00: {"ts":"2025-11-14T06:25:41.742Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 01:25:41 -05:00: {"ts":"2025-11-14T06:25:41.742Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 01:25:42 -05:00: [2025-11-14 06:25:41] [32mINFO[39m (validation-dcc80f45/3335): [36mCleaning up agent[39m
+2025-11-14 01:25:42 -05:00: [2025-11-14 06:25:41] [32mINFO[39m (validation-dcc80f45/3335): [36mDeregistered from orchestrator[39m
+2025-11-14 01:25:42 -05:00: [2025-11-14 06:25:41] [32mINFO[39m (validation-dcc80f45/3335): [36mAgent cleanup completed[39m
+2025-11-14 01:25:46 -05:00: {"ts":"2025-11-14T06:25:46.711Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 01:25:46 -05:00: {"ts":"2025-11-14T06:25:46.712Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 01:25:46 -05:00: {"ts":"2025-11-14T06:25:46.712Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 01:25:47 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 01:25:47 -05:00: 🔖 Version: 1.0.0
+2025-11-14 01:25:47 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.159Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.160Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.174Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.174Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.175Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.175Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.175Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.175Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.175Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.175Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.175Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.175Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.178Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 01:25:47 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.184Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.185Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763101547184"}
+2025-11-14 01:25:47 -05:00: {"ts":"2025-11-14T06:25:47.185Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 01:25:47 -05:00: ✅ Validation agent started successfully
+2025-11-14 01:25:47 -05:00: 📡 Listening for validation tasks...
+2025-11-14 01:25:47 -05:00: [2025-11-14 06:25:47] [32mINFO[39m (validation-46fdf3cf/33083): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 01:25:47 -05:00: [2025-11-14 06:25:47] [32mINFO[39m (validation-46fdf3cf/33083): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 01:25:47 -05:00: [2025-11-14 06:25:47] [32mINFO[39m (validation-46fdf3cf/33083): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 01:25:47 -05:00: [2025-11-14 06:25:47] [32mINFO[39m (validation-46fdf3cf/33083): [36mRegistered with orchestrator[39m
+2025-11-14 01:25:47 -05:00: [2025-11-14 06:25:47] [32mINFO[39m (validation-46fdf3cf/33083): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 01:25:47 -05:00: [2025-11-14 06:25:47] [32mINFO[39m (validation-46fdf3cf/33083): [36mPolicy configuration loaded[39m
+2025-11-14 01:56:57 -05:00: 
+2025-11-14 01:56:57 -05:00: Shutting down validation agent...
+2025-11-14 01:56:57 -05:00: {"ts":"2025-11-14T06:56:57.770Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 01:56:57 -05:00: {"ts":"2025-11-14T06:56:57.771Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 01:56:57 -05:00: {"ts":"2025-11-14T06:56:57.771Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 01:56:57 -05:00: {"ts":"2025-11-14T06:56:57.771Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 01:56:58 -05:00: [2025-11-14 06:56:57] [32mINFO[39m (validation-46fdf3cf/33083): [36mCleaning up agent[39m
+2025-11-14 01:56:58 -05:00: [2025-11-14 06:56:57] [32mINFO[39m (validation-46fdf3cf/33083): [36mDeregistered from orchestrator[39m
+2025-11-14 01:56:58 -05:00: [2025-11-14 06:56:57] [32mINFO[39m (validation-46fdf3cf/33083): [36mAgent cleanup completed[39m
+2025-11-14 01:57:00 -05:00: {"ts":"2025-11-14T06:57:00.557Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 01:57:00 -05:00: {"ts":"2025-11-14T06:57:00.557Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 01:57:00 -05:00: {"ts":"2025-11-14T06:57:00.557Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 01:57:01 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 01:57:01 -05:00: 🔖 Version: 1.0.0
+2025-11-14 01:57:01 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.531Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.531Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.546Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.546Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.546Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.547Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.547Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.547Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.547Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.547Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.547Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.547Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.549Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 01:57:01 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.555Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.556Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763103421555"}
+2025-11-14 01:57:01 -05:00: {"ts":"2025-11-14T06:57:01.556Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 01:57:01 -05:00: ✅ Validation agent started successfully
+2025-11-14 01:57:01 -05:00: 📡 Listening for validation tasks...
+2025-11-14 01:57:01 -05:00: [2025-11-14 06:57:01] [32mINFO[39m (validation-ce4918c1/70089): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 01:57:01 -05:00: [2025-11-14 06:57:01] [32mINFO[39m (validation-ce4918c1/70089): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 01:57:01 -05:00: [2025-11-14 06:57:01] [32mINFO[39m (validation-ce4918c1/70089): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 01:57:01 -05:00: [2025-11-14 06:57:01] [32mINFO[39m (validation-ce4918c1/70089): [36mRegistered with orchestrator[39m
+2025-11-14 01:57:01 -05:00: [2025-11-14 06:57:01] [32mINFO[39m (validation-ce4918c1/70089): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 01:57:01 -05:00: [2025-11-14 06:57:01] [32mINFO[39m (validation-ce4918c1/70089): [36mPolicy configuration loaded[39m
+2025-11-14 02:00:02 -05:00: {"ts":"2025-11-14T07:00:02.694Z","scope":"redis-bus","msg":"[PHASE-3] Consumer group does not exist, will retry","level":"WARN","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 02:00:07 -05:00: {"ts":"2025-11-14T07:00:07.696Z","scope":"redis-bus","msg":"[PHASE-3] Consumer group does not exist, will retry","level":"WARN","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 02:00:12 -05:00: {"ts":"2025-11-14T07:00:12.697Z","scope":"redis-bus","msg":"[PHASE-3] Consumer group does not exist, will retry","level":"WARN","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 02:00:15 -05:00: 
+2025-11-14 02:00:15 -05:00: Shutting down validation agent...
+2025-11-14 02:00:15 -05:00: {"ts":"2025-11-14T07:00:15.781Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 02:00:15 -05:00: {"ts":"2025-11-14T07:00:15.782Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 02:00:15 -05:00: {"ts":"2025-11-14T07:00:15.782Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 02:00:15 -05:00: {"ts":"2025-11-14T07:00:15.782Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 02:00:15 -05:00: {"ts":"2025-11-14T07:00:15.783Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 02:00:15 -05:00: {"ts":"2025-11-14T07:00:15.783Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 02:00:15 -05:00: [2025-11-14 07:00:15] [32mINFO[39m (validation-ce4918c1/70089): [36mCleaning up agent[39m
+2025-11-14 02:00:15 -05:00: [2025-11-14 07:00:15] [32mINFO[39m (validation-ce4918c1/70089): [36mDeregistered from orchestrator[39m
+2025-11-14 02:00:15 -05:00: [2025-11-14 07:00:15] [32mINFO[39m (validation-ce4918c1/70089): [36mAgent cleanup completed[39m
+2025-11-14 02:00:16 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 02:00:16 -05:00: 🔖 Version: 1.0.0
+2025-11-14 02:00:16 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.235Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.235Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.250Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.250Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.250Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.251Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.251Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.251Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.251Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.251Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.251Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.251Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.254Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 02:00:16 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.261Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.261Z","scope":"redis-bus","msg":"[PHASE-3] Created consumer group for stream","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.261Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763103616261"}
+2025-11-14 02:00:16 -05:00: {"ts":"2025-11-14T07:00:16.261Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 02:00:16 -05:00: ✅ Validation agent started successfully
+2025-11-14 02:00:16 -05:00: 📡 Listening for validation tasks...
+2025-11-14 02:00:16 -05:00: [2025-11-14 07:00:16] [32mINFO[39m (validation-3bad34d8/89585): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 02:00:16 -05:00: [2025-11-14 07:00:16] [32mINFO[39m (validation-3bad34d8/89585): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 02:00:16 -05:00: [2025-11-14 07:00:16] [32mINFO[39m (validation-3bad34d8/89585): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 02:00:16 -05:00: [2025-11-14 07:00:16] [32mINFO[39m (validation-3bad34d8/89585): [36mRegistered with orchestrator[39m
+2025-11-14 02:00:16 -05:00: [2025-11-14 07:00:16] [32mINFO[39m (validation-3bad34d8/89585): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 02:00:16 -05:00: [2025-11-14 07:00:16] [32mINFO[39m (validation-3bad34d8/89585): [36mPolicy configuration loaded[39m
+2025-11-14 02:00:26 -05:00: 
+2025-11-14 02:00:26 -05:00: Shutting down validation agent...
+2025-11-14 02:00:26 -05:00: {"ts":"2025-11-14T07:00:26.425Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-14 02:00:26 -05:00: {"ts":"2025-11-14T07:00:26.426Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-14 02:00:26 -05:00: {"ts":"2025-11-14T07:00:26.426Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-14 02:00:26 -05:00: {"ts":"2025-11-14T07:00:26.426Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-14 02:00:27 -05:00: [2025-11-14 07:00:26] [32mINFO[39m (validation-3bad34d8/89585): [36mCleaning up agent[39m
+2025-11-14 02:00:27 -05:00: [2025-11-14 07:00:26] [32mINFO[39m (validation-3bad34d8/89585): [36mDeregistered from orchestrator[39m
+2025-11-14 02:00:27 -05:00: [2025-11-14 07:00:26] [32mINFO[39m (validation-3bad34d8/89585): [36mAgent cleanup completed[39m
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.394Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.394Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.394Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 02:00:31 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 02:00:31 -05:00: 🔖 Version: 1.0.0
+2025-11-14 02:00:31 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.745Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.745Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.758Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.758Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.758Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.758Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.759Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.759Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.759Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.759Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.759Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.759Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.761Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":0,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 02:00:31 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.768Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.768Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763103631768"}
+2025-11-14 02:00:31 -05:00: {"ts":"2025-11-14T07:00:31.768Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-14 02:00:31 -05:00: ✅ Validation agent started successfully
+2025-11-14 02:00:31 -05:00: 📡 Listening for validation tasks...
+2025-11-14 02:00:31 -05:00: [2025-11-14 07:00:31] [32mINFO[39m (validation-a17903fe/90238): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 02:00:31 -05:00: [2025-11-14 07:00:31] [32mINFO[39m (validation-a17903fe/90238): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 02:00:31 -05:00: [2025-11-14 07:00:31] [32mINFO[39m (validation-a17903fe/90238): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 02:00:31 -05:00: [2025-11-14 07:00:31] [32mINFO[39m (validation-a17903fe/90238): [36mRegistered with orchestrator[39m
+2025-11-14 02:00:31 -05:00: [2025-11-14 07:00:31] [32mINFO[39m (validation-a17903fe/90238): [36m[PHASE-3] Agent initialized successfully with message bus[39m
+2025-11-14 02:00:31 -05:00: [2025-11-14 07:00:31] [32mINFO[39m (validation-a17903fe/90238): [36mPolicy configuration loaded[39m

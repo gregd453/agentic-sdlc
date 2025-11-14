@@ -6,7 +6,7 @@ import { logger } from '../utils/logger';
 export class WorkflowRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async create(data: CreateWorkflowRequest & { created_by: string }): Promise<Workflow> {
+  async create(data: CreateWorkflowRequest & { created_by: string; trace_id?: string; current_span_id?: string }): Promise<Workflow> {
     return await this.prisma.$transaction(async (tx) => {
       // Create workflow
       const workflow = await tx.workflow.create({
@@ -18,7 +18,9 @@ export class WorkflowRepository {
           priority: data.priority || 'medium',
           status: 'initiated',
           current_stage: 'initialization',
-          created_by: data.created_by
+          created_by: data.created_by,
+          trace_id: data.trace_id, // Phase 3: Store trace_id
+          current_span_id: data.current_span_id // Phase 3: Store current_span_id
         }
       });
 
@@ -285,5 +287,78 @@ export class WorkflowRepository {
     });
 
     logger.info('Workflow deleted', { workflow_id: id });
+  }
+
+  // Dashboard API methods
+  async getWorkflowTasks(workflowId: string): Promise<AgentTask[]> {
+    return await this.prisma.agentTask.findMany({
+      where: { workflow_id: workflowId },
+      orderBy: { assigned_at: 'desc' }
+    });
+  }
+
+  async getWorkflowEvents(workflowId: string) {
+    return await this.prisma.workflowEvent.findMany({
+      where: { workflow_id: workflowId },
+      orderBy: { timestamp: 'desc' }
+    });
+  }
+
+  async getWorkflowTimeline(workflowId: string) {
+    const [events, tasks, stages] = await Promise.all([
+      this.prisma.workflowEvent.findMany({
+        where: { workflow_id: workflowId },
+        orderBy: { timestamp: 'asc' }
+      }),
+      this.prisma.agentTask.findMany({
+        where: { workflow_id: workflowId },
+        orderBy: { assigned_at: 'asc' }
+      }),
+      this.prisma.workflowStage.findMany({
+        where: { workflow_id: workflowId },
+        orderBy: { name: 'asc' }
+      })
+    ]);
+
+    return { events, tasks, stages };
+  }
+
+  async getTaskById(taskId: string) {
+    return await this.prisma.agentTask.findUnique({
+      where: { task_id: taskId },
+      include: {
+        workflow: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            status: true,
+            current_stage: true
+          }
+        }
+      }
+    });
+  }
+
+  async listTasks(filters: {
+    workflow_id?: string;
+    agent_type?: string;
+    status?: string;
+    limit?: number;
+    offset?: number;
+  }) {
+    const { workflow_id, agent_type, status, limit = 50, offset = 0 } = filters;
+
+    const where: any = {};
+    if (workflow_id) where.workflow_id = workflow_id;
+    if (agent_type) where.agent_type = agent_type;
+    if (status) where.status = status;
+
+    return await this.prisma.agentTask.findMany({
+      where,
+      orderBy: { assigned_at: 'desc' },
+      take: Math.min(limit, 100),
+      skip: offset
+    });
   }
 }

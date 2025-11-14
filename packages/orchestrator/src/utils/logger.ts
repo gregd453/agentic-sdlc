@@ -1,6 +1,7 @@
 import pino from 'pino';
 import { randomUUID } from 'crypto';
 import { AsyncLocalStorage } from 'async_hooks';
+import { generateTraceId as generateTraceIdUtil } from '@agentic-sdlc/shared-utils';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const logLevel = process.env.LOG_LEVEL || 'info';
@@ -51,6 +52,7 @@ export const logger = pino({
       return {
         request_id: context.requestId,
         trace_id: context.traceId,
+        span_id: (context as any).spanId, // Phase 4: Include span_id in logs
         correlation_id: context.correlationId,
         user_id: context.userId,
         session_id: context.sessionId
@@ -68,11 +70,10 @@ export function createLogger(context: Record<string, unknown>) {
 }
 
 /**
- * Generate a unique trace ID
+ * Generate a unique trace ID (UUID v4 format)
+ * Re-exported from @agentic-sdlc/shared-utils for backward compatibility
  */
-export function generateTraceId(): string {
-  return `trace-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}
+export const generateTraceId = generateTraceIdUtil;
 
 /**
  * Generate a unique request ID

@@ -1,1009 +1,638 @@
-# Implementation Plan: Strategic Architecture Migration
+# EPCC Implementation Plan: React Monitoring Dashboard
 
-**Date:** 2025-11-13 (Session #57)
-**Status:** Planning Complete - Ready for Implementation
-**Objective:** Replace hybrid callback-based architecture with unified event-driven hexagonal architecture
-**Timeline:** 8 hours (6 hours implementation + 2 hours validation)
-**Priority:** CRITICAL (P0) - Blocks all workflow execution
+**Status:** Ready to Implement
+**Created:** 2025-11-13
+**Updated:** 2025-11-13 (Session #61 - Comprehensive Analysis)
+**Estimated Duration:** 15-20 hours (broken into 5 phases)
+**Priority:** HIGH
+**Owner:** Development Team
 
 ---
 
-## Executive Summary
+## Overview
 
-### What We're Building
+### Objective
 
-A **complete migration** from the current hybrid architecture (callback-based AgentDispatcherService + partial message bus) to a **fully symmetric, event-driven hexagonal architecture** where all components communicate exclusively via IMessageBus.
+Build a production-ready React monitoring dashboard for the Agentic SDLC system that provides:
+- Real-time visibility into workflow execution
+- Distributed tracing visualization
+- Agent performance metrics
+- Interactive data filtering and search
+- Responsive UI with TailwindCSS
+
+### Current Status
+
+**✅ COMPLETED:**
+- Package structure created (`packages/dashboard/`)
+- Dependencies installed (React, Vite, TailwindCSS, Recharts, React Query)
+- Basic routing configured (App.tsx with 6 routes)
+- Common components scaffolded (StatusBadge, LoadingSpinner, ErrorDisplay, ProgressBar)
+- E2E test suite created (11 tests, 4 failing due to missing content)
+- Build configuration (Vite, TypeScript, Playwright)
+- Some API route files exist (stats.routes.ts, task.routes.ts, trace.routes.ts) but NOT WIRED UP
+
+**❌ MISSING:**
+- **CRITICAL:** Backend API routes NOT registered in server.ts (routes exist but not accessible)
+- Backend service implementations (stats.service.ts, trace.service.ts, task.service.ts may be incomplete)
+- Frontend page implementations (Dashboard, WorkflowsPage, WorkflowPage mostly empty)
+- Data visualization components (charts, trace trees, timelines)
+- API client integration (client.ts has stubs, needs implementation)
+- Real-time data polling
+
+**🔍 E2E TEST RESULTS:**
+```
+4 failed tests (missing UI elements):
+  ✗ Dashboard Overview page - no heading, no metrics, no tables
+  ✗ Active Workflows table - no content
+  ✗ Navigation tests - no page headings
+  ✗ Workflows table columns - no table structure
+
+7 passed tests (routing, navigation links, 404 handling):
+  ✓ All routes render (routing works)
+  ✓ Navigation links clickable
+  ✓ 404 page displays
+  ✓ Header visible on all pages
+  ✓ Active nav link highlighted
+  ✓ Page navigation functional
+  ✓ Filter controls present
+
+Missing API endpoints causing proxy errors:
+  - GET /api/v1/stats/overview (ECONNREFUSED - routes NOT registered!)
+  - GET /api/v1/workflows (ECONNREFUSED)
+  - GET /api/v1/workflows?status=running (ECONNREFUSED)
+  - GET /api/v1/workflows?type=feature (ECONNREFUSED)
+```
+
+**ROOT CAUSE:** API route files exist in `packages/orchestrator/src/api/routes/` but are NOT imported and registered in `server.ts`. This is the #1 blocker.
 
 ### Why It's Needed
 
-**Current State:**
-- ❌ Workflows timeout at first stage (0% E2E completion rate)
-- ❌ Handler lifecycle issues (handlers lost after first stage)
-- ❌ Asymmetric architecture (agents receive via bus, send via Redis)
-- ❌ AgentDispatcherService creates callback hell
-- ❌ No persistence or replay capability
+**Business Value:**
+- Operators can monitor workflow health and progress in real-time
+- Developers can debug failures with distributed trace correlation
+- Product teams can track agent performance and SLA metrics
+- Reduces MTTR (Mean Time To Resolution) for workflow issues
 
-**Target State:**
-- ✅ Workflows complete all 6 stages successfully
-- ✅ 100% E2E test pass rate
-- ✅ Symmetric architecture (IMessageBus on both sides)
-- ✅ Single persistent subscription (no handler lifecycle)
-- ✅ Type-safe, testable, production-ready
+**Technical Value:**
+- Validates distributed tracing implementation (Session #60 work)
+- Provides observability into hexagonal architecture
+- Enables data-driven optimization of agent performance
+- Demonstrates production-readiness of the system
 
 ### Success Criteria
 
-- [ ] All 5+ pipeline tests complete successfully (`./scripts/run-pipeline-test.sh --all`)
-- [ ] Workflows progress through all 6 stages (initialization → deployment)
-- [ ] Progress percentage updates correctly (0% → 100%)
-- [ ] Workflow status transitions to "completed"
-- [ ] All stage outputs stored in database
-- [ ] No handler lifecycle errors in logs
-- [ ] AgentDispatcherService completely removed
-- [ ] All builds pass: `turbo run build`
-- [ ] All type checks pass: `turbo run typecheck`
-- [ ] All lints pass: `turbo run lint`
-- [ ] All unit tests pass: `pnpm test`
-- [ ] Zero TypeScript errors
-- [ ] Zero ESLint warnings
+- [ ] **Criterion 1:** All 11 E2E tests pass (100% test coverage)
+- [ ] **Criterion 2:** Dashboard loads with real data from orchestrator API (< 500ms initial load)
+- [ ] **Criterion 3:** Trace visualization shows complete workflow → task → agent hierarchy
+- [ ] **Criterion 4:** Real-time updates refresh every 5 seconds (configurable polling)
+- [ ] **Criterion 5:** All charts render correctly with mock and real data
+- [ ] **Criterion 6:** Mobile-responsive layout works on 768px+ screens
+- [ ] **Criterion 7:** Zero TypeScript errors in frontend and backend code
+- [ ] **Criterion 8:** API response times < 200ms for list endpoints, < 100ms for stats
 
 ### Non-Goals (What We're NOT Doing)
 
-- ✗ Not adding new features or agents
-- ✗ Not changing database schema
-- ✗ Not modifying state machine transitions
-- ✗ Not optimizing performance (separate effort)
-- ✗ Not adding new hexagonal components (already exist)
-- ✗ Not changing API contracts or endpoints
+- **Not implementing WebSocket support** (will use polling for now, WebSockets in later phase)
+- **Not adding user authentication** (out of scope, assume internal tool)
+- **Not building workflow creation UI** (read-only dashboard, use API/CLI for creation)
+- **Not implementing custom alerting** (just visualization, alerting is separate)
+- **Not optimizing for mobile < 768px** (desktop/tablet only)
+- **Not adding export to PDF/Excel** (CSV only for now)
 
 ---
 
 ## Technical Approach
 
-### High-Level Architecture Change
+### High-Level Architecture
 
 ```
-BEFORE (Hybrid - BROKEN):
-┌──────────────┐                     ┌──────────────┐
-│ Orchestrator │                     │    Agent     │
-├──────────────┤                     ├──────────────┤
-│ Task Dispatch│ ─────Redis─────→   │Task Reception│
-│   (direct)   │                     │  (IMessageBus)│
-│              │                     │              │
-│Result Handler│ ←────Redis─────    │Result Report │
-│  (callback)  │                     │   (direct)   │
-└──────────────┘                     └──────────────┘
-      ↑
-  AgentDispatcherService
-  (callback hell)
-
-AFTER (Symmetric - WORKING):
-┌──────────────┐                     ┌──────────────┐
-│ Orchestrator │                     │    Agent     │
-├──────────────┤                     ├──────────────┤
-│ Task Dispatch│ ──IMessageBus──→   │Task Reception│
-│ (IMessageBus)│                     │ (IMessageBus)│
-│              │                     │              │
-│Result Handler│ ←─IMessageBus──    │Result Report │
-│(IMessageBus) │                     │ (IMessageBus)│
-└──────────────┘                     └──────────────┘
-      ↑
-  OrchestratorContainer
-  (DI, clean)
+┌──────────────────────────────────────────────────────────────┐
+│                    React Dashboard (Port 3001)                │
+│  ┌─────────────┬─────────────┬─────────────┬──────────────┐  │
+│  │  Dashboard  │  Workflows  │   Traces    │    Agents    │  │
+│  │    Page     │    Page     │    Page     │     Page     │  │
+│  └──────┬──────┴──────┬──────┴──────┬──────┴──────┬───────┘  │
+│         │             │             │             │          │
+│         └─────────────┴─────────────┴─────────────┘          │
+│                       │                                      │
+│               React Query (Client)                           │
+│                       │                                      │
+│              Vite Dev Server (Proxy)                         │
+└───────────────────────┼──────────────────────────────────────┘
+                        │ HTTP (proxied)
+                        ▼
+┌──────────────────────────────────────────────────────────────┐
+│              Orchestrator (Port 3000)                         │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │              Fastify HTTP API Layer                     │ │
+│  ├─────────────┬────────────┬────────────┬────────────────┤ │
+│  │  Workflow   │   Stats    │   Trace    │     Task       │ │
+│  │   Routes    │   Routes   │   Routes   │    Routes      │ │
+│  │  (EXISTS)   │  (EXISTS)  │  (EXISTS)  │   (EXISTS)     │ │
+│  │    ⚠️       │     ⚠️     │     ⚠️     │      ⚠️        │ │
+│  │ NOT WIRED!  │ NOT WIRED! │ NOT WIRED! │  NOT WIRED!    │ │
+│  └──────┬──────┴─────┬──────┴─────┬──────┴──────┬─────────┘ │
+│         │            │            │             │           │
+│  ┌──────▼──────┬─────▼──────┬─────▼──────┬──────▼─────────┐ │
+│  │  Workflow   │   Stats    │   Trace    │     Task       │ │
+│  │   Service   │  Service   │  Service   │   Service      │ │
+│  │  (EXISTS)   │  (VERIFY)  │  (VERIFY)  │   (CREATE)     │ │
+│  └──────┬──────┴─────┬──────┴─────┬──────┴──────┬─────────┘ │
+│         │            │            │             │           │
+│  ┌──────▼──────┬─────▼──────┬─────▼──────┬──────▼─────────┐ │
+│  │  Workflow   │   Stats    │   Trace    │     Task       │ │
+│  │ Repository  │ Repository │ Repository │  Repository    │ │
+│  │  (EXISTS)   │  (VERIFY)  │  (VERIFY)  │   (CREATE)     │ │
+│  └──────┬──────┴─────┬──────┴─────┬──────┴──────┬─────────┘ │
+│         │            │            │             │           │
+└─────────┼────────────┼────────────┼─────────────┼───────────┘
+          │            │            │             │
+          └────────────┴────────────┴─────────────┘
+                        │
+                ┌───────▼────────┐
+                │  PostgreSQL    │
+                │   (Prisma)     │
+                │   ✅ READY     │
+                └────────────────┘
 ```
+
+### Hexagonal Architecture Layers
+
+| Layer | Components | Responsibility | Status |
+|-------|-----------|----------------|--------|
+| **HTTP Adapter** | `*.routes.ts` | Request validation, response formatting | FILES EXIST, NOT REGISTERED |
+| **Service Layer** | `*.service.ts` | Business logic, data aggregation | NEEDS VERIFICATION |
+| **Repository Layer** | `*.repository.ts` | Database queries, data access | NEEDS VERIFICATION |
+| **Core Domain** | Prisma schema | Data models and constraints | ✅ COMPLETE (Session #60) |
 
 ### Design Decisions
 
 | Decision | Option Chosen | Rationale |
 |----------|--------------|-----------|
-| **Message Bus** | IMessageBus (RedisBus adapter) | Already implemented, symmetric, durable with streams |
-| **Task Dispatch** | IMessageBus.publish() | Replaces AgentDispatcherService, event-driven |
-| **Result Handling** | Single persistent subscription | No per-workflow handlers, no lifecycle issues |
-| **Cleanup Strategy** | Delete AgentDispatcherService entirely | No longer needed, reduces complexity |
-| **Container Wiring** | OrchestratorContainer in server.ts | DI pattern, clean initialization |
-| **Validation Strategy** | Checkpoint after each phase | Catch issues early, easy rollback |
+| **State Management** | React Query | Built-in caching, polling, error handling; no Redux needed |
+| **Routing** | React Router v6 | Standard choice, nested routes support |
+| **Styling** | TailwindCSS | Rapid prototyping, consistent design system |
+| **Charts** | Recharts | Declarative API, good TypeScript support, customizable |
+| **HTTP Client** | Fetch API | Native, no extra dependencies |
+| **Polling Strategy** | React Query `refetchInterval` | Built-in, configurable, automatic cleanup |
+| **Backend API** | Fastify | Already in use, fast, good plugin system |
+| **Database Queries** | Prisma ORM | Already in use, type-safe, migration support |
 
-### Data Flow (After Migration)
+### Data Flow
 
 ```
-1. User creates workflow via HTTP POST
+1. User navigates to /dashboard
    ↓
-2. WorkflowService.createWorkflow()
-   → Creates workflow in DB
-   → Initializes state machine
-   → Creates task envelope
+2. React Router renders Dashboard component
    ↓
-3. WorkflowService publishes task
-   → await messageBus.publish('agent:scaffold:tasks', taskEnvelope)
+3. Component calls useStats() hook
    ↓
-4. Scaffold Agent receives task (via IMessageBus.subscribe)
+4. React Query checks cache → if stale, fetch
    ↓
-5. Scaffold Agent executes task
-   → Validates input
-   → Calls Claude API (with circuit breaker)
-   → Generates scaffolding
+5. API client: GET /api/v1/stats/overview
    ↓
-6. Scaffold Agent publishes result
-   → await messageBus.publish('orchestrator:results', resultEnvelope)
+6. Vite proxy forwards to http://localhost:3000
    ↓
-7. WorkflowService receives result (via persistent subscription)
-   → Loads workflow from DB
-   → Stores stage output
-   → Publishes STAGE_COMPLETE event to EventBus
+7. ⚠️ CURRENT ISSUE: Route not registered → ECONNREFUSED
    ↓
-8. State machine receives event and transitions
-   → scaffolding → validation
-   → Updates DB: current_stage, progress
+8. ✅ AFTER FIX: Orchestrator stats.routes.ts receives request
    ↓
-9. WorkflowService creates next task
-   → await messageBus.publish('agent:validation:tasks', taskEnvelope)
+9. stats.service.ts aggregates data from repositories
    ↓
-10. [Repeat 4-9 for all stages]
-    ↓
-11. Final stage completes
-    → State machine: deployment → completed
-    → Workflow status = "completed", progress = 100%
+10. stats.repository.ts queries PostgreSQL via Prisma
+   ↓
+11. Response flows back through layers
+   ↓
+12. React Query caches result, triggers re-render
+   ↓
+13. Dashboard displays metrics and charts
+   ↓
+14. After 5s, React Query auto-refetches (polling)
 ```
 
 ---
 
-## Phase Breakdown
+## Task Breakdown
 
-### Phase 1: Fix Agent Result Publishing ⏱️ 1.5 hours
+### Phase 1: Backend API Routes (CRITICAL - 4-5 hours)
 
-**Objective:** Agents publish results via IMessageBus instead of direct Redis
+**🚨 PRIORITY 1: This must be completed first to unblock frontend development**
 
-**Package:** `@agentic-sdlc/base-agent`
-
-**Files to Modify:**
-- `packages/agents/base-agent/src/base-agent.ts` (lines 271-428)
-
-**Changes:**
-
-1. **Remove direct Redis publishing in `reportResult()` method:**
-   ```typescript
-   // REMOVE lines 359-402 (direct Redis publish + stream mirroring)
-   // DELETE:
-   // await this.redisPublisher.publish(resultChannel, messageJson);
-   // await this.redisPublisher.xadd(...);
-   ```
-
-2. **Add IMessageBus.publish() call:**
-   ```typescript
-   // ADD after line 340 (after AgentResultSchema validation):
-   await this.messageBus.publish(
-     REDIS_CHANNELS.ORCHESTRATOR_RESULTS,
-     agentResult,  // Already validated against AgentResultSchema
-     {
-       key: validatedResult.workflow_id,
-       mirrorToStream: `stream:${REDIS_CHANNELS.ORCHESTRATOR_RESULTS}`
-     }
-   );
-   ```
-
-3. **Update logging:**
-   ```typescript
-   // REPLACE lines 430-437 with:
-   this.logger.info('[PHASE-3] Result published via IMessageBus', {
-     task_id: validatedResult.task_id,
-     workflow_id: validatedResult.workflow_id,
-     status: agentStatus,
-     success: success,
-     workflow_stage: stage,
-     agent_id: this.agentId,
-     version: VERSION
-   });
-   ```
-
-4. **Remove redisPublisher and redisSubscriber fields (cleanup):**
-   ```typescript
-   // NOTE: Keep redisPublisher/redisSubscriber for now
-   // They're still used for agent registration (lines 560-572)
-   // Will be migrated to IKVStore in future iteration
-   ```
-
-**Validation Steps:**
-
-```bash
-# 1. Type check
-cd packages/agents/base-agent
-pnpm run typecheck
-# Expected: 0 errors
-
-# 2. Lint
-pnpm run lint
-# Expected: 0 warnings
-
-# 3. Build
-turbo run build --filter=@agentic-sdlc/base-agent
-# Expected: Success
-
-# 4. Build dependent packages
-turbo run build --filter=@agentic-sdlc/scaffold-agent
-turbo run build --filter=@agentic-sdlc/validation-agent
-turbo run build --filter=@agentic-sdlc/e2e-agent
-# Expected: All succeed
-
-# 5. Unit tests
-pnpm test packages/agents/base-agent
-# Expected: All tests pass
-```
-
-**Acceptance Criteria:**
-- [ ] No direct Redis publish calls in `reportResult()`
-- [ ] Results published via `IMessageBus.publish()`
-- [ ] Stream mirroring configured via options
-- [ ] All type checks pass
-- [ ] All lints pass
-- [ ] All builds succeed
-- [ ] All unit tests pass
-
-**Estimated Time:** 1.5 hours (1h code + 0.5h validation)
-
----
-
-### Phase 2: Remove AgentDispatcherService ⏱️ 1 hour
-
-**Objective:** Delete old callback-based dispatcher, remove all references
-
+#### 1.1: Verify & Register Stats Service (1.5 hours)
 **Package:** `@agentic-sdlc/orchestrator`
+**Files:**
+- `packages/orchestrator/src/repositories/stats.repository.ts` (EXISTS - VERIFY)
+- `packages/orchestrator/src/services/stats.service.ts` (EXISTS - VERIFY)
+- `packages/orchestrator/src/api/routes/stats.routes.ts` (EXISTS - VERIFY)
+- `packages/orchestrator/src/server.ts` (MODIFY - ADD REGISTRATION)
 
-**Files to Delete:**
-- `packages/orchestrator/src/services/agent-dispatcher.service.ts` (381 lines)
-- `packages/orchestrator/tests/services/agent-dispatcher.service.test.ts`
+**Investigation Tasks:**
+- [ ] Read `stats.repository.ts` - Does it implement all required queries?
+  - `getOverviewStats()` - Total, running, completed, failed workflow counts
+  - `getWorkflowTimeSeries(hours: number)` - Workflows created per hour
+  - `getAgentPerformance()` - Success rate, avg duration by agent type
+- [ ] Read `stats.service.ts` - Does it orchestrate repository calls correctly?
+- [ ] Read `stats.routes.ts` - Does it expose all needed endpoints?
+  - `GET /api/v1/stats/overview` → DashboardStats
+  - `GET /api/v1/stats/timeseries?hours=24` → TimeSeriesData[]
+  - `GET /api/v1/stats/agents` → AgentStats[]
 
-**Files to Modify:**
-- `packages/orchestrator/src/services/workflow.service.ts`
+**Implementation Tasks:**
+- [ ] **CRITICAL:** Add to `server.ts`:
+  ```typescript
+  import { statsRoutes } from './api/routes/stats.routes';
 
-**Changes:**
+  // In server setup
+  await server.register(statsRoutes, {
+    prefix: '/api/v1',
+    statsService: container.statsService // or equivalent
+  });
+  ```
+- [ ] Fix any missing service/repository implementations
+- [ ] Test with `curl http://localhost:3000/api/v1/stats/overview`
+- [ ] Verify response schema matches frontend types
 
-1. **Remove AgentDispatcherService import:**
-   ```typescript
-   // DELETE line 9 (if exists):
-   // import { AgentDispatcherService } from './agent-dispatcher.service';
-   ```
+**Dependencies:** None (FIRST TASK)
+**Estimate:** 1.5 hours
+**Priority:** 🔥 CRITICAL - E2E tests depend on this
 
-2. **Remove agentDispatcher field and references:**
-   ```typescript
-   // In WorkflowService class:
-   // DELETE any agentDispatcher fields
-   // DELETE any handler registration code (agentDispatcher.onResult...)
-   // DELETE any handler cleanup code (agentDispatcher.offResult...)
-   ```
-
-3. **Update WorkflowService constructor:**
-   ```typescript
-   // Line 22-29: Make messageBus REQUIRED (not optional)
-   constructor(
-     private repository: WorkflowRepository,
-     private eventBus: EventBus,
-     private stateMachineService: WorkflowStateMachineService,
-     redisUrl: string = process.env.REDIS_URL || 'redis://127.0.0.1:6379',
-     messageBus: IMessageBus  // REMOVE '?' - now REQUIRED
-   ) {
-     // Validate messageBus is provided
-     if (!messageBus) {
-       throw new Error('[PHASE-3] WorkflowService requires IMessageBus - cannot initialize without it');
-     }
-     this.messageBus = messageBus;
-     // ... rest of constructor
-   }
-   ```
-
-4. **Clean up workflow creation:**
-   ```typescript
-   // In createWorkflow() method:
-   // REMOVE all agentDispatcher.onResult() calls
-   // REMOVE all handler registration logic
-   ```
-
-5. **Update cleanup method:**
-   ```typescript
-   // In cleanup() method (line 132-149):
-   // DELETE lines 141-142:
-   // // Phase 3: Agent dispatcher removed - no longer needed
-   ```
-
-**Validation Steps:**
-
-```bash
-# 1. Delete files
-rm packages/orchestrator/src/services/agent-dispatcher.service.ts
-rm packages/orchestrator/tests/services/agent-dispatcher.service.test.ts
-
-# 2. Verify no references remain
-grep -r "AgentDispatcherService" packages/orchestrator/src/
-# Expected: No results
-
-grep -r "agentDispatcher" packages/orchestrator/src/
-# Expected: No results (or only in comments)
-
-# 3. Type check
-cd packages/orchestrator
-pnpm run typecheck
-# Expected: 0 errors
-
-# 4. Lint
-pnpm run lint
-# Expected: 0 warnings
-
-# 5. Build
-turbo run build --filter=@agentic-sdlc/orchestrator
-# Expected: Success
-
-# 6. Unit tests
-pnpm test packages/orchestrator
-# Expected: All tests pass (some may be skipped if they tested AgentDispatcherService)
-```
-
-**Acceptance Criteria:**
-- [ ] `agent-dispatcher.service.ts` deleted
-- [ ] No references to AgentDispatcherService remain
-- [ ] No references to agentDispatcher remain
-- [ ] messageBus is required parameter (not optional)
-- [ ] All type checks pass
-- [ ] All lints pass
-- [ ] All builds succeed
-- [ ] All relevant unit tests pass
-
-**Estimated Time:** 1 hour (0.5h code + 0.5h validation)
-
----
-
-### Phase 3: Wire OrchestratorContainer into server.ts ⏱️ 1.5 hours
-
-**Objective:** Orchestrator uses hexagonal architecture for dependency injection
-
+#### 1.2: Verify & Register Trace Service (1.5 hours)
 **Package:** `@agentic-sdlc/orchestrator`
+**Files:**
+- `packages/orchestrator/src/repositories/trace.repository.ts` (EXISTS - VERIFY)
+- `packages/orchestrator/src/services/trace.service.ts` (EXISTS - VERIFY)
+- `packages/orchestrator/src/api/routes/trace.routes.ts` (EXISTS - VERIFY)
+- `packages/orchestrator/src/server.ts` (MODIFY - ADD REGISTRATION)
 
-**Files to Modify:**
+**Investigation Tasks:**
+- [ ] Verify `trace.repository.ts` implements:
+  - `getTraceById(trace_id: string)` - Get trace metadata
+  - `getSpansByTraceId(trace_id: string)` - Get all spans in hierarchy
+  - `getWorkflowsByTraceId(trace_id: string)` - Get workflows with trace
+  - `getTasksByTraceId(trace_id: string)` - Get tasks with trace
+- [ ] Verify `trace.service.ts` builds span tree hierarchy
+- [ ] Verify `trace.routes.ts` exposes:
+  - `GET /api/v1/traces/:traceId` → TraceMetadata
+  - `GET /api/v1/traces/:traceId/spans` → TraceSpan[] (hierarchical)
+  - `GET /api/v1/traces/:traceId/workflows` → Workflow[]
+  - `GET /api/v1/traces/:traceId/tasks` → Task[]
+
+**Implementation Tasks:**
+- [ ] **Register routes in `server.ts`** (same pattern as stats)
+- [ ] Test with real trace_id from database
+- [ ] Verify span hierarchy is correct (parent → child relationships)
+
+**Dependencies:** None
+**Estimate:** 1.5 hours
+**Priority:** HIGH
+
+#### 1.3: Create/Verify Task Service & Register Routes (1.5 hours)
+**Package:** `@agentic-sdlc/orchestrator`
+**Files:**
+- `packages/orchestrator/src/repositories/task.repository.ts` (CREATE if missing)
+- `packages/orchestrator/src/services/task.service.ts` (CREATE if missing)
+- `packages/orchestrator/src/api/routes/task.routes.ts` (EXISTS - VERIFY)
+- `packages/orchestrator/src/server.ts` (MODIFY - ADD REGISTRATION)
+
+**Investigation Tasks:**
+- [ ] Check if `task.repository.ts` exists - if not, create it:
+  - `listTasks(filters: TaskFilters)` - Paginated task list
+  - `getTaskById(task_id: string)` - Single task details
+  - `getTasksByWorkflowId(workflow_id: string)` - All tasks for workflow
+- [ ] Check if `task.service.ts` exists - if not, create it:
+  - Wraps repository calls
+  - Validates input
+  - Formats output
+- [ ] Verify `task.routes.ts` exposes:
+  - `GET /api/v1/tasks?workflow_id=...&status=...&agent_type=...` → Task[]
+  - `GET /api/v1/tasks/:taskId` → Task
+
+**Implementation Tasks:**
+- [ ] **Register routes in `server.ts`**
+- [ ] Test task queries with filters
+
+**Dependencies:** None
+**Estimate:** 1.5 hours
+**Priority:** MEDIUM
+
+#### 1.4: Extend Workflow Routes (30 min)
+**Package:** `@agentic-sdlc/orchestrator`
+**Files:**
+- `packages/orchestrator/src/api/routes/workflow.routes.ts` (EXTEND EXISTING)
+
+**Investigation Tasks:**
+- [ ] Check if workflow routes are already registered (they should be)
+- [ ] Verify existing endpoints work:
+  - `GET /api/v1/workflows` (exists, test filtering)
+  - `GET /api/v1/workflows/:id` (exists, test response)
+
+**Implementation Tasks:**
+- [ ] Add missing endpoints (if needed):
+  - `GET /api/v1/workflows/:id/tasks` → Task[] (delegate to task service)
+  - `GET /api/v1/workflows/:id/timeline` → WorkflowEvent[]
+- [ ] Test with curl
+
+**Dependencies:** Task 1.3 (task service)
+**Estimate:** 30 min
+**Priority:** MEDIUM
+
+#### 1.5: Verify All Routes Registered (30 min)
+**Package:** `@agentic-sdlc/orchestrator`
+**Files:**
 - `packages/orchestrator/src/server.ts`
 
-**Changes:**
+**Tasks:**
+- [ ] Read `server.ts` - document current route registrations
+- [ ] Create checklist of all routes that need registration:
+  - [ ] workflow.routes.ts (should exist)
+  - [ ] stats.routes.ts (ADD)
+  - [ ] trace.routes.ts (ADD)
+  - [ ] task.routes.ts (ADD)
+- [ ] Verify all routes appear in logs: `pnpm pm2:logs orchestrator | grep "Route registered"`
+- [ ] Test all endpoints with `curl` or create test script
+- [ ] Document API in README or API.md file
 
-1. **Add OrchestratorContainer import:**
-   ```typescript
-   // ADD at top of file:
-   import { OrchestratorContainer } from './hexagonal/bootstrap';
-   ```
+**Dependencies:** Tasks 1.1, 1.2, 1.3
+**Estimate:** 30 min
+**Priority:** HIGH
 
-2. **Initialize container before creating services:**
-   ```typescript
-   // BEFORE creating WorkflowService, add:
-
-   // Phase 3: Initialize hexagonal container
-   logger.info('[PHASE-3] Initializing OrchestratorContainer');
-   const container = new OrchestratorContainer({
-     redisUrl: process.env.REDIS_URL || 'redis://localhost:6380',
-     redisNamespace: 'agentic-sdlc',
-     redisDefaultTtl: 3600, // 1 hour
-     coordinators: {} // No coordinators needed for workflow orchestration
-   });
-
-   await container.initialize();
-   logger.info('[PHASE-3] OrchestratorContainer initialized successfully');
-
-   // Extract dependencies
-   const messageBus = container.getBus();
-   const kvStore = container.getKV();
-
-   logger.info('[PHASE-3] Extracted dependencies from container', {
-     messageBusAvailable: !!messageBus,
-     kvStoreAvailable: !!kvStore
-   });
-   ```
-
-3. **Update WorkflowService initialization:**
-   ```typescript
-   // REPLACE WorkflowService creation with:
-   const workflowService = new WorkflowService(
-     workflowRepository,
-     eventBus,
-     stateMachineService,
-     process.env.REDIS_URL || 'redis://localhost:6380',
-     messageBus  // Pass messageBus from container
-   );
-
-   logger.info('[PHASE-3] WorkflowService created with messageBus');
-   ```
-
-4. **Add graceful shutdown:**
-   ```typescript
-   // ADD shutdown hook:
-   fastify.addHook('onClose', async () => {
-     logger.info('[PHASE-3] Shutting down OrchestratorContainer');
-     await container.shutdown();
-     logger.info('[PHASE-3] Container shutdown complete');
-   });
-   ```
-
-5. **Add health check endpoint (optional):**
-   ```typescript
-   // ADD route:
-   fastify.get('/health/hexagonal', async (request, reply) => {
-     const health = await container.health();
-     return {
-       timestamp: new Date().toISOString(),
-       hexagonal: health
-     };
-   });
-   ```
-
-**Validation Steps:**
-
-```bash
-# 1. Type check
-cd packages/orchestrator
-pnpm run typecheck
-# Expected: 0 errors
-
-# 2. Lint
-pnpm run lint
-# Expected: 0 warnings
-
-# 3. Build
-turbo run build --filter=@agentic-sdlc/orchestrator
-# Expected: Success
-
-# 4. Start orchestrator locally
-cd packages/orchestrator
-pnpm start
-# Expected: Server starts, logs show:
-# - "[PHASE-3] Initializing OrchestratorContainer"
-# - "[PHASE-3] OrchestratorContainer initialized successfully"
-# - "[PHASE-3] WorkflowService created with messageBus"
-
-# 5. Check health endpoint
-curl http://localhost:3000/health/hexagonal
-# Expected: { "ok": true, "bus": { "ok": true }, "kv": true }
-
-# 6. Stop server (Ctrl+C)
-# Expected: Logs show graceful shutdown
-
-# 7. Integration tests (if any)
-pnpm test packages/orchestrator/tests/integration
-# Expected: All pass
-```
-
-**Acceptance Criteria:**
-- [ ] OrchestratorContainer created and initialized
-- [ ] messageBus extracted from container
-- [ ] WorkflowService receives messageBus
-- [ ] Graceful shutdown implemented
-- [ ] Health check endpoint works
-- [ ] All type checks pass
-- [ ] All lints pass
-- [ ] All builds succeed
-- [ ] Server starts without errors
-- [ ] Logs confirm Phase 3 initialization
-
-**Estimated Time:** 1.5 hours (1h code + 0.5h validation)
+**Phase 1 Summary:**
+- **Total Time:** 4-5 hours
+- **Files:** ~10 files (verify 6, modify 1-2, create 0-2)
+- **Critical Path:** Must complete before frontend can work
+- **Success Metric:** All API endpoints return 200 OK with valid data
 
 ---
 
-### Phase 4: Update Task Dispatch to Use Message Bus ⏱️ 1 hour
+### Phase 2: Frontend API Client & Hooks (2-3 hours)
 
-**Objective:** Orchestrator dispatches tasks via IMessageBus instead of AgentDispatcherService
+#### 2.1: Implement API Client (1.5 hours)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/api/client.ts` (EXTEND EXISTING)
 
-**Package:** `@agentic-sdlc/orchestrator`
+**Tasks:**
+- [ ] Implement all API client functions:
+  - `fetchStats()` → DashboardStats
+  - `fetchTimeSeries(hours: number)` → TimeSeriesData[]
+  - `fetchAgentStats()` → AgentStats[]
+  - `fetchWorkflows(filters?: WorkflowFilters)` → Workflow[]
+  - `fetchWorkflow(id: string)` → Workflow
+  - `fetchWorkflowTasks(id: string)` → Task[]
+  - `fetchTrace(traceId: string)` → TraceMetadata
+  - `fetchTraceSpans(traceId: string)` → TraceSpan[]
+  - `fetchTasks(filters?: TaskFilters)` → Task[]
+- [ ] Add error handling (throw on non-200)
+- [ ] Add TypeScript return types
+- [ ] Test with real API (once Phase 1 complete)
 
-**Files to Modify:**
-- `packages/orchestrator/src/services/workflow.service.ts`
+**Dependencies:** Phase 1 (API endpoints)
+**Estimate:** 1.5 hours
+**Priority:** HIGH
 
-**Changes:**
+#### 2.2: Create React Query Hooks (1 hour)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/hooks/useStats.ts` (EXTEND EXISTING)
+- `packages/dashboard/src/hooks/useWorkflows.ts` (EXTEND EXISTING)
+- `packages/dashboard/src/hooks/useWorkflow.ts` (CREATE NEW)
+- `packages/dashboard/src/hooks/useTasks.ts` (CREATE NEW)
+- `packages/dashboard/src/hooks/useTrace.ts` (CREATE NEW)
 
-1. **Find task dispatch code:**
-   ```typescript
-   // Search for:
-   // agentDispatcher.dispatchTask(...)
-   // Or direct task creation/publishing
-   ```
+**Tasks:**
+- [ ] Implement `useStats(refetchInterval?: number)` hook
+- [ ] Implement `useWorkflows(filters, options)` hook
+- [ ] Implement `useWorkflow(id: string)` hook
+- [ ] Implement `useTasks(filters, options)` hook
+- [ ] Implement `useTrace(traceId: string)` hook
+- [ ] Configure default polling intervals (5s for dashboard, 10s for lists)
+- [ ] Add error states and retry logic
 
-2. **Replace with IMessageBus.publish():**
-   ```typescript
-   // EXAMPLE (adapt to actual code):
+**Dependencies:** Task 2.1 (API client)
+**Estimate:** 1 hour
+**Priority:** HIGH
 
-   private async dispatchTaskToAgent(
-     agentType: string,
-     workflowId: string,
-     taskData: any
-   ): Promise<void> {
-     const taskEnvelope = {
-       task_id: randomUUID(),
-       workflow_id: workflowId,
-       agent_type: agentType,
-       payload: taskData,
-       workflow_context: {
-         current_stage: taskData.stage,
-         workflow_name: taskData.name
-       },
-       created_at: new Date().toISOString(),
-       trace_id: generateTraceId()
-     };
+#### 2.3: Verify TypeScript Types (30 min)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/types/index.ts` (VERIFY/EXTEND)
 
-     const taskChannel = REDIS_CHANNELS.AGENT_TASKS(agentType);
+**Tasks:**
+- [ ] Ensure types match Prisma schema from orchestrator
+- [ ] Add any missing interfaces (Workflow, Task, TraceSpan, DashboardStats, etc.)
+- [ ] Verify all enums are defined
+- [ ] Run `pnpm typecheck` - ensure 0 errors
 
-     logger.info('[PHASE-3] Dispatching task via IMessageBus', {
-       workflow_id: workflowId,
-       task_id: taskEnvelope.task_id,
-       agent_type: agentType,
-       channel: taskChannel
-     });
+**Dependencies:** None
+**Estimate:** 30 min
+**Priority:** MEDIUM
 
-     await this.messageBus!.publish(taskChannel, taskEnvelope, {
-       key: workflowId,
-       mirrorToStream: `stream:${taskChannel}`
-     });
-
-     logger.info('[PHASE-3] Task dispatched successfully', {
-       workflow_id: workflowId,
-       task_id: taskEnvelope.task_id
-     });
-   }
-   ```
-
-3. **Update createWorkflow to use new dispatch:**
-   ```typescript
-   // In createWorkflow() method:
-   // REPLACE agentDispatcher.dispatchTask(...) with:
-   await this.dispatchTaskToAgent(
-     firstStageAgentType,
-     workflow.workflow_id,
-     taskData
-   );
-   ```
-
-4. **Update stage transition handlers:**
-   ```typescript
-   // In handleTaskCompletion() or wherever next stage is triggered:
-   // REPLACE agentDispatcher.dispatchTask(...) with:
-   await this.dispatchTaskToAgent(...);
-   ```
-
-**Validation Steps:**
-
-```bash
-# 1. Type check
-cd packages/orchestrator
-pnpm run typecheck
-# Expected: 0 errors
-
-# 2. Lint
-pnpm run lint
-# Expected: 0 warnings
-
-# 3. Build
-turbo run build --filter=@agentic-sdlc/orchestrator
-# Expected: Success
-
-# 4. Unit tests
-pnpm test packages/orchestrator
-# Expected: All tests pass
-
-# 5. Check for remaining dispatcher references
-grep -r "dispatchTask" packages/orchestrator/src/
-# Expected: Only in new dispatchTaskToAgent method
-
-grep -r "agentDispatcher" packages/orchestrator/src/
-# Expected: No results
-```
-
-**Acceptance Criteria:**
-- [ ] No AgentDispatcherService.dispatchTask() calls remain
-- [ ] All task dispatch uses IMessageBus.publish()
-- [ ] Task envelopes include all required fields
-- [ ] Stream mirroring configured
-- [ ] Logging includes Phase 3 markers
-- [ ] All type checks pass
-- [ ] All lints pass
-- [ ] All builds succeed
-- [ ] All unit tests pass
-
-**Estimated Time:** 1 hour (0.5h code + 0.5h validation)
+**Phase 2 Summary:**
+- **Total Time:** 2-3 hours
+- **Files:** ~8 files (extend 3, create 5)
+- **Dependencies:** Phase 1
+- **Success Metric:** All hooks return typed data without errors
 
 ---
 
-### Phase 5: Verify Message Bus Subscription ⏱️ 1 hour
+### Phase 3: Core Pages Implementation (4-5 hours)
 
-**Objective:** Ensure WorkflowService subscribes to agent results correctly
+#### 3.1: Dashboard Page Implementation (1.5 hours)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/pages/Dashboard.tsx` (IMPLEMENT)
 
-**Package:** `@agentic-sdlc/orchestrator`
+**Tasks:**
+- [ ] Build Dashboard page layout:
+  - Heading: "Dashboard Overview"
+  - 4 metric cards (Total, Running, Completed, Failed)
+  - Time series chart (workflows over time) - use placeholder for now
+  - Active workflows table (status=running)
+- [ ] Use `useStats()` hook for metrics
+- [ ] Use `useWorkflows({ status: 'running' })` for active workflows
+- [ ] Add auto-refresh (5s polling)
+- [ ] Show loading states (LoadingSpinner)
+- [ ] Show error states (ErrorDisplay)
+- [ ] **Fix E2E tests:**
+  - "Dashboard Overview" heading visible ✅
+  - Metric cards visible ✅
+  - Active workflows table visible ✅
 
-**Files to Modify:**
-- `packages/orchestrator/src/services/workflow.service.ts`
+**Dependencies:** Phase 2 (hooks)
+**Estimate:** 1.5 hours
+**Priority:** 🔥 HIGH (fixes 3 E2E tests)
 
-**Changes:**
+#### 3.2: Workflows Page Implementation (1.5 hours)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/pages/WorkflowsPage.tsx` (IMPLEMENT)
+- `packages/dashboard/src/components/Workflows/WorkflowTable.tsx` (CREATE NEW)
 
-1. **Verify setupMessageBusSubscription exists:**
-   ```typescript
-   // In constructor (line 22-55):
-   // VERIFY this code exists (around line 49-54):
-   if (messageBus) {
-     this.setupMessageBusSubscription().catch(err => {
-       logger.error('[PHASE-2] Failed to initialize message bus subscription', { error: err });
-     });
-   }
-   ```
+**Tasks:**
+- [ ] Build Workflows page:
+  - Heading: "Workflows"
+  - Filter controls (status, type dropdowns)
+  - Workflows table with columns:
+    - Name, Type, Status, Stage, Progress, Trace ID, Created, Actions
+  - Pagination controls (if needed)
+- [ ] Use `useWorkflows(filters)` hook
+- [ ] Implement filter state management (useState)
+- [ ] Make table rows clickable (navigate to `/workflows/:id`)
+- [ ] Add StatusBadge component for status column
+- [ ] Add ProgressBar component for progress column
+- [ ] **Fix E2E test:**
+  - Table columns visible (Name, Type, Status, Stage, etc.) ✅
 
-2. **Enhance setupMessageBusSubscription with logging:**
-   ```typescript
-   // Update method (line 89-127) to add more diagnostics:
-   private async setupMessageBusSubscription(): Promise<void> {
-     if (!this.messageBus) {
-       logger.warn('[PHASE-2] setupMessageBusSubscription called but messageBus not available');
-       return;
-     }
+**Dependencies:** Phase 2 (hooks)
+**Estimate:** 1.5 hours
+**Priority:** HIGH (fixes 1 E2E test)
 
-     logger.info('[PHASE-2] Setting up message bus subscription for agent results');
+#### 3.3: Workflow Detail Page Implementation (1-1.5 hours)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/pages/WorkflowPage.tsx` (IMPLEMENT)
+- `packages/dashboard/src/components/Workflows/WorkflowTimeline.tsx` (CREATE NEW)
 
-     try {
-       const { REDIS_CHANNELS } = await import('@agentic-sdlc/shared-types');
-       const topic = REDIS_CHANNELS.ORCHESTRATOR_RESULTS;
+**Tasks:**
+- [ ] Build Workflow detail page:
+  - Heading with workflow name
+  - Status badge and progress bar
+  - Metadata section (ID, Type, Trace ID, timestamps)
+  - Tasks table (all tasks for workflow)
+  - Event timeline (stage transitions) - simplified for MVP
+- [ ] Use `useWorkflow(id)` hook from URL params
+- [ ] Use `useTasks({ workflow_id: id })` hook
+- [ ] Make trace_id clickable (link to `/traces/:traceId`)
+- [ ] Handle 404 if workflow not found
 
-       logger.info('[PHASE-2] Subscribing to topic', { topic });
+**Dependencies:** Phase 2 (hooks)
+**Estimate:** 1-1.5 hours
+**Priority:** MEDIUM
 
-       // Subscribe to agent results topic with centralized handler
-       await this.messageBus.subscribe(topic, async (message: any) => {
-         logger.info('[PHASE-2] Received agent result from message bus', {
-           message_id: message.id,
-           workflow_id: message.workflow_id,
-           agent_id: message.agent_id,
-           type: message.type,
-           has_payload: !!message.payload
-         });
-
-         // Handle the agent result using existing handler
-         await this.handleAgentResult(message);
-       });
-
-       logger.info('[PHASE-2] Message bus subscription established successfully', {
-         topic,
-         subscriptionActive: true
-       });
-     } catch (error) {
-       logger.error('[PHASE-2] Failed to set up message bus subscription', {
-         error: error instanceof Error ? error.message : String(error),
-         stack: error instanceof Error ? error.stack : undefined
-       });
-       throw error;
-     }
-   }
-   ```
-
-3. **Verify handleAgentResult processes messages:**
-   ```typescript
-   // Ensure handleAgentResult method exists and processes results
-   // Should load workflow, store output, publish STAGE_COMPLETE event
-   ```
-
-4. **Add subscription health check:**
-   ```typescript
-   // ADD method:
-   async getSubscriptionHealth(): Promise<boolean> {
-     return !!this.messageBus;
-   }
-   ```
-
-**Validation Steps:**
-
-```bash
-# 1. Type check
-cd packages/orchestrator
-pnpm run typecheck
-# Expected: 0 errors
-
-# 2. Lint
-pnpm run lint
-# Expected: 0 warnings
-
-# 3. Build
-turbo run build --filter=@agentic-sdlc/orchestrator
-# Expected: Success
-
-# 4. Start orchestrator
-./scripts/env/start-dev.sh
-# Expected: Logs show:
-# - "[PHASE-2] Setting up message bus subscription for agent results"
-# - "[PHASE-2] Subscribing to topic: orchestrator:results"
-# - "[PHASE-2] Message bus subscription established successfully"
-
-# 5. Check Redis subscription
-docker exec -it agentic-redis-1 redis-cli
-> PUBSUB CHANNELS
-# Expected: orchestrator:results listed
-
-# 6. Stop environment
-./scripts/env/stop-dev.sh
-```
-
-**Acceptance Criteria:**
-- [ ] setupMessageBusSubscription called in constructor
-- [ ] Subscription to 'orchestrator:results' topic
-- [ ] handleAgentResult processes messages correctly
-- [ ] Enhanced logging for diagnostics
-- [ ] All type checks pass
-- [ ] All lints pass
-- [ ] All builds succeed
-- [ ] Logs confirm subscription established
-- [ ] Redis shows active subscription
-
-**Estimated Time:** 1 hour (0.5h code + 0.5h validation)
+**Phase 3 Summary:**
+- **Total Time:** 4-5 hours
+- **Files:** ~5 files (implement 3 pages, create 2 components)
+- **Dependencies:** Phase 2
+- **Success Metric:** 10/11 E2E tests pass (missing only Agents page test)
 
 ---
 
-### Phase 6: E2E Testing & Validation ⏱️ 2 hours
+### Phase 4: Trace Visualization (2-3 hours)
 
-**Objective:** All workflow tests pass, system works end-to-end
+#### 4.1: Span Tree Component (1.5 hours)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/components/Traces/SpanTree.tsx` (CREATE NEW)
+- `packages/dashboard/src/components/Traces/SpanNode.tsx` (CREATE NEW)
 
-**Changes:** No code changes - pure validation
+**Tasks:**
+- [ ] Create hierarchical span tree component:
+  - Recursive TreeNode rendering
+  - Expand/collapse functionality (useState)
+  - Indent by depth (20px per level using margin/padding)
+  - Show span_id, entity_type, duration, status
+- [ ] Build tree from flat span list using parent_span_id linking
+- [ ] Color-code by status (use StatusBadge colors)
+- [ ] Show duration in ms
+- [ ] Handle orphaned spans gracefully
 
-**Validation Steps:**
+**Dependencies:** Phase 2 (useTrace hook)
+**Estimate:** 1.5 hours
+**Priority:** MEDIUM
 
-```bash
-# === BUILD VALIDATION ===
+#### 4.2: Traces Page Implementation (1 hour)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/pages/TracesPage.tsx` (IMPLEMENT)
 
-# 1. Clean build all packages
-turbo run clean
-turbo run build
-# Expected: All 12 packages build successfully
+**Tasks:**
+- [ ] Build Traces page:
+  - Trace search input (by trace_id) - get from URL params
+  - Trace metadata display
+  - Span tree visualization (use SpanTree component)
+  - Related workflows table
+  - Related tasks table
+- [ ] Use `useTrace(traceId)` hook from URL params
+- [ ] Handle empty state (no trace_id in URL)
+- [ ] Handle not found state (404)
 
-# 2. Type check all packages
-turbo run typecheck
-# Expected: 0 errors across all packages
+**Dependencies:** Task 4.1 (SpanTree component)
+**Estimate:** 1 hour
+**Priority:** MEDIUM
 
-# 3. Lint all packages
-turbo run lint
-# Expected: 0 warnings across all packages
-
-# 4. Unit tests
-pnpm test
-# Expected: All unit tests pass (may have some skipped)
-
-# === E2E VALIDATION ===
-
-# 5. Start development environment
-./scripts/env/start-dev.sh
-# Expected:
-# - Orchestrator starts on port 3000
-# - All 5 agents start successfully
-# - Redis connected on port 6380
-# - Postgres connected on port 5432
-# - All health checks pass
-
-# 6. Verify agent subscriptions
-docker exec -it agentic-redis-1 redis-cli
-> PUBSUB CHANNELS
-# Expected channels:
-# - agent:scaffold:tasks
-# - agent:validation:tasks
-# - agent:e2e:tasks
-# - agent:integration:tasks
-# - agent:deployment:tasks
-# - orchestrator:results
-
-# 7. Check agent registry
-> HGETALL agents:registry
-# Expected: 5 agents registered
-
-# 8. Run single workflow test
-./scripts/run-pipeline-test.sh "Hello World API"
-# Expected:
-# ✅ Workflow created
-# ✅ initialization stage completes
-# ✅ scaffolding stage completes
-# ✅ validation stage completes
-# ✅ e2e stage completes
-# ✅ integration stage completes
-# ✅ deployment stage completes
-# ✅ Workflow status: completed
-# ✅ Progress: 100%
-
-# 9. Run all pipeline tests
-./scripts/run-pipeline-test.sh --all
-# Expected: All 5+ tests complete successfully
-
-# 10. Check workflow in database
-docker exec -it agentic-postgres-1 psql -U postgres -d agentic_sdlc
-> SELECT workflow_id, name, current_stage, progress, status FROM workflows ORDER BY created_at DESC LIMIT 5;
-# Expected: All workflows show status='completed', progress=100
-
-# 11. Check orchestrator logs
-docker logs agentic-orchestrator-1 --tail 100 | grep "PHASE-3"
-# Expected: Phase 3 markers present, no errors
-
-# 12. Check agent logs
-docker logs agentic-scaffold-agent-1 --tail 50 | grep "PHASE-3"
-docker logs agentic-validation-agent-1 --tail 50 | grep "PHASE-3"
-docker logs agentic-e2e-agent-1 --tail 50 | grep "PHASE-3"
-# Expected: Phase 3 markers present, results published via IMessageBus
-
-# === REGRESSION VALIDATION ===
-
-# 13. Create workflow via API
-curl -X POST http://localhost:3000/api/v1/workflows \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "app",
-    "name": "Test App",
-    "description": "Regression test",
-    "requirements": "Build a simple REST API"
-  }'
-# Expected: 201 Created, workflow_id returned
-
-# 14. Poll workflow status
-WORKFLOW_ID="<from previous response>"
-curl http://localhost:3000/api/v1/workflows/$WORKFLOW_ID
-# Expected: Status progresses through stages, eventually reaches "completed"
-
-# 15. List workflows
-curl http://localhost:3000/api/v1/workflows
-# Expected: List includes all test workflows, all completed
-
-# === PERFORMANCE VALIDATION ===
-
-# 16. Check Redis memory usage
-docker exec -it agentic-redis-1 redis-cli INFO memory | grep used_memory_human
-# Expected: Reasonable memory usage (< 100MB)
-
-# 17. Check stream lengths
-docker exec -it agentic-redis-1 redis-cli
-> XLEN stream:orchestrator:results
-> XLEN stream:agent:scaffold:tasks
-# Expected: Messages present but not excessive
-
-# 18. Check for memory leaks
-docker stats --no-stream
-# Expected: All containers stable memory usage
-
-# === CLEANUP VALIDATION ===
-
-# 19. Graceful shutdown
-./scripts/env/stop-dev.sh
-# Expected: All containers stop cleanly, no errors
-
-# 20. Verify no orphaned processes
-ps aux | grep node
-# Expected: No lingering node processes
-
-# === FINAL CHECKS ===
-
-# 21. Code quality
-grep -r "AgentDispatcherService" packages/
-# Expected: No results
-
-grep -r "agentDispatcher" packages/ | grep -v "// OLD:"
-# Expected: No results (except comments)
-
-grep -r "TODO.*Phase 3" packages/
-# Expected: List any remaining TODOs
-
-# 22. Documentation
-ls -la *.md
-# Expected:
-# - EPCC_EXPLORE.md ✅
-# - EPCC_PLAN.md ✅
-# - README.md updated
-# - CLAUDE.md updated
-```
-
-**Acceptance Criteria:**
-
-**Build:**
-- [ ] All packages build successfully
-- [ ] Zero TypeScript errors
-- [ ] Zero ESLint warnings
-- [ ] All unit tests pass
-
-**E2E:**
-- [ ] All 5+ pipeline tests pass
-- [ ] Workflows complete all 6 stages
-- [ ] Progress updates correctly (0% → 100%)
-- [ ] Status transitions to "completed"
-- [ ] All stage outputs stored
-
-**Architecture:**
-- [ ] No AgentDispatcherService references
-- [ ] All communication via IMessageBus
-- [ ] Symmetric architecture achieved
-- [ ] Health checks pass
-
-**Logging:**
-- [ ] Phase 3 markers in all logs
-- [ ] No handler lifecycle errors
-- [ ] No "handler not found" errors
-- [ ] Clean graceful shutdown
-
-**Performance:**
-- [ ] Memory usage stable
-- [ ] No memory leaks
-- [ ] Reasonable stream lengths
-- [ ] All containers healthy
-
-**Documentation:**
-- [ ] EPCC_EXPLORE.md complete
-- [ ] EPCC_PLAN.md complete
-- [ ] README.md updated
-- [ ] CLAUDE.md updated
-
-**Estimated Time:** 2 hours (pure validation)
+**Phase 4 Summary:**
+- **Total Time:** 2-3 hours
+- **Files:** ~3 files (1 page, 2 components)
+- **Dependencies:** Phase 2
+- **Success Metric:** Trace page displays span hierarchy correctly
 
 ---
 
-## Complete Task List with Dependencies
+### Phase 5: Charts & Polish (3-4 hours)
 
-### Task Dependency Graph
+#### 5.1: Time Series Chart (1 hour)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/components/Charts/TimeSeriesChart.tsx` (CREATE NEW)
 
-```
-Phase 1 (Agent Fix)
-    ↓
-Phase 2 (Remove Dispatcher) ← depends on Phase 1
-    ↓
-Phase 3 (Wire Container) ← depends on Phase 2
-    ↓
-Phase 4 (Task Dispatch) ← depends on Phase 3
-    ↓
-Phase 5 (Verify Subscription) ← depends on Phase 4
-    ↓
-Phase 6 (E2E Testing) ← depends on Phase 5
-```
+**Tasks:**
+- [ ] Create Recharts LineChart component
+- [ ] Props: `data: TimeSeriesData[], height?: number`
+- [ ] X-axis: timestamp (formatted as "HH:mm" using date-fns)
+- [ ] Y-axis: workflow count
+- [ ] Tooltip with formatted date
+- [ ] Responsive container
+- [ ] Color: Blue gradient
+- [ ] Add to Dashboard page
 
-### Detailed Task Breakdown
+**Dependencies:** None (isolated component)
+**Estimate:** 1 hour
+**Priority:** MEDIUM
 
-| ID | Task | Package | Files | Estimate | Dependencies | Priority |
-|----|------|---------|-------|----------|--------------|----------|
-| **1.1** | Update BaseAgent.reportResult() to use IMessageBus | base-agent | base-agent.ts | 1h | None | P0 |
-| **1.2** | Remove direct Redis publishing code | base-agent | base-agent.ts | 15m | 1.1 | P0 |
-| **1.3** | Update logging with Phase 3 markers | base-agent | base-agent.ts | 15m | 1.2 | P1 |
-| **1.4** | Type check + lint + build base-agent | base-agent | - | 15m | 1.3 | P0 |
-| **1.5** | Build all agent packages | all agents | - | 15m | 1.4 | P0 |
-| | | | | | | |
-| **2.1** | Delete agent-dispatcher.service.ts | orchestrator | agent-dispatcher.service.ts | 5m | 1.5 | P0 |
-| **2.2** | Delete agent-dispatcher tests | orchestrator | agent-dispatcher.service.test.ts | 5m | 2.1 | P0 |
-| **2.3** | Remove dispatcher imports from WorkflowService | orchestrator | workflow.service.ts | 10m | 2.2 | P0 |
-| **2.4** | Make messageBus required in constructor | orchestrator | workflow.service.ts | 10m | 2.3 | P0 |
-| **2.5** | Remove handler registration code | orchestrator | workflow.service.ts | 20m | 2.4 | P0 |
-| **2.6** | Update cleanup method | orchestrator | workflow.service.ts | 10m | 2.5 | P0 |
-| **2.7** | Verify no dispatcher references remain | orchestrator | - | 10m | 2.6 | P0 |
-| **2.8** | Type check + lint + build orchestrator | orchestrator | - | 15m | 2.7 | P0 |
-| | | | | | | |
-| **3.1** | Import OrchestratorContainer in server.ts | orchestrator | server.ts | 5m | 2.8 | P0 |
-| **3.2** | Initialize container before services | orchestrator | server.ts | 20m | 3.1 | P0 |
-| **3.3** | Extract messageBus from container | orchestrator | server.ts | 10m | 3.2 | P0 |
-| **3.4** | Pass messageBus to WorkflowService | orchestrator | server.ts | 10m | 3.3 | P0 |
-| **3.5** | Add graceful shutdown hook | orchestrator | server.ts | 15m | 3.4 | P1 |
-| **3.6** | Add health check endpoint | orchestrator | server.ts | 15m | 3.5 | P2 |
-| **3.7** | Type check + lint + build orchestrator | orchestrator | - | 15m | 3.6 | P0 |
-| **3.8** | Start server and verify initialization | orchestrator | - | 10m | 3.7 | P0 |
-| | | | | | | |
-| **4.1** | Create dispatchTaskToAgent method | orchestrator | workflow.service.ts | 30m | 3.8 | P0 |
-| **4.2** | Update createWorkflow to use new dispatch | orchestrator | workflow.service.ts | 15m | 4.1 | P0 |
-| **4.3** | Update stage transition handlers | orchestrator | workflow.service.ts | 15m | 4.2 | P0 |
-| **4.4** | Remove old dispatch code | orchestrator | workflow.service.ts | 10m | 4.3 | P0 |
-| **4.5** | Type check + lint + build orchestrator | orchestrator | - | 15m | 4.4 | P0 |
-| | | | | | | |
-| **5.1** | Verify setupMessageBusSubscription exists | orchestrator | workflow.service.ts | 10m | 4.5 | P0 |
-| **5.2** | Enhance subscription logging | orchestrator | workflow.service.ts | 20m | 5.1 | P1 |
-| **5.3** | Verify handleAgentResult processes messages | orchestrator | workflow.service.ts | 15m | 5.2 | P0 |
-| **5.4** | Add subscription health check | orchestrator | workflow.service.ts | 15m | 5.3 | P2 |
-| **5.5** | Type check + lint + build orchestrator | orchestrator | - | 15m | 5.4 | P0 |
-| **5.6** | Start environment and verify subscription | orchestrator | - | 15m | 5.5 | P0 |
-| | | | | | | |
-| **6.1** | Clean build all packages | all | - | 20m | 5.6 | P0 |
-| **6.2** | Run all type checks | all | - | 10m | 6.1 | P0 |
-| **6.3** | Run all lints | all | - | 10m | 6.2 | P0 |
-| **6.4** | Run all unit tests | all | - | 15m | 6.3 | P0 |
-| **6.5** | Start development environment | all | - | 10m | 6.4 | P0 |
-| **6.6** | Verify agent subscriptions in Redis | all | - | 5m | 6.5 | P0 |
-| **6.7** | Run single workflow test | all | - | 10m | 6.6 | P0 |
-| **6.8** | Run all pipeline tests | all | - | 20m | 6.7 | P0 |
-| **6.9** | Check workflows in database | all | - | 5m | 6.8 | P0 |
-| **6.10** | Verify logs (orchestrator + agents) | all | - | 10m | 6.9 | P0 |
-| **6.11** | Regression testing via API | all | - | 15m | 6.10 | P1 |
-| **6.12** | Performance validation | all | - | 10m | 6.11 | P1 |
-| **6.13** | Graceful shutdown test | all | - | 5m | 6.12 | P1 |
-| **6.14** | Final cleanup validation | all | - | 10m | 6.13 | P0 |
-| **6.15** | Update documentation | all | *.md | 15m | 6.14 | P1 |
+#### 5.2: Agent Performance Page (1.5 hours)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- `packages/dashboard/src/pages/AgentsPage.tsx` (IMPLEMENT)
+- `packages/dashboard/src/components/Charts/AgentPerformanceChart.tsx` (CREATE NEW)
 
-**Total Estimated Time:** 8 hours
+**Tasks:**
+- [ ] Create Recharts BarChart component (stacked: success vs failed)
+- [ ] Build Agents page:
+  - Heading: "Agent Performance"
+  - Agent stats cards (one per agent type)
+  - Success rate chart (use AgentPerformanceChart)
+  - Response time metrics table (p50, p95, p99)
+  - Retry analysis chart (optional, time permitting)
+- [ ] Use `useStats()` hook for agent data
+- [ ] Add auto-refresh (10s polling)
+
+**Dependencies:** Phase 2 (hooks)
+**Estimate:** 1.5 hours
+**Priority:** LOW (not tested by E2E)
+
+#### 5.3: Styling & UX Polish (1 hour)
+**Package:** `@agentic-sdlc/dashboard`
+**Files:**
+- All component files
+
+**Tasks:**
+- [ ] Apply consistent spacing (Tailwind spacing scale: p-4, mb-6, etc.)
+- [ ] Add hover states to interactive elements (hover:bg-gray-50)
+- [ ] Ensure color contrast meets WCAG AA
+- [ ] Test layout on 768px, 1024px, 1440px widths
+- [ ] Polish tables (zebra striping, borders, rounded corners)
+- [ ] Add empty states ("No workflows found" messages)
+- [ ] Improve loading states (consider skeletons)
+
+**Dependencies:** All previous frontend tasks
+**Estimate:** 1 hour
+**Priority:** MEDIUM
+
+**Phase 5 Summary:**
+- **Total Time:** 3-4 hours
+- **Files:** ~5 files (2 pages, 2 charts, various styling)
+- **Dependencies:** Phase 2-4
+- **Success Metric:** All pages polished and professional-looking
 
 ---
 
@@ -1011,585 +640,245 @@ Phase 6 (E2E Testing) ← depends on Phase 5
 
 ### Risk Matrix
 
-| Risk | Probability | Impact | Mitigation Strategy | Contingency Plan |
-|------|------------|--------|-------------------|------------------|
-| **Build breaks after Phase 1** | Low | High | - Validate types/build after each file change<br>- Test with single agent first | - Rollback Phase 1 changes<br>- Fix type errors incrementally |
-| **WorkflowService fails without messageBus** | Low | Critical | - Make messageBus required<br>- Add validation in constructor<br>- Fail fast if not provided | - Add fallback to direct Redis (temporary)<br>- Revert to optional messageBus |
-| **Workflows still timeout** | Medium | Critical | - Verify subscription active<br>- Check Redis logs<br>- Add diagnostic logging | - Check handleAgentResult logic<br>- Verify state machine transitions<br>- Test with minimal workflow |
-| **Message bus performance issues** | Low | Medium | - Bus already tested at scale<br>- Stream mirroring is optional<br>- Monitor Redis metrics | - Disable stream mirroring temporarily<br>- Increase Redis resources<br>- Add backpressure handling |
-| **State transitions fail** | Low | High | - State machine already working<br>- Only changing trigger mechanism<br>- Extensive E2E testing | - Check event payload format<br>- Verify STAGE_COMPLETE events published<br>- Add state machine logging |
-| **Agents don't receive tasks** | Medium | High | - Verify agent subscriptions in Redis<br>- Check channel names match constants<br>- Add subscription logging | - Restart agents<br>- Check Redis connection<br>- Verify channel name format |
-| **Results lost in transit** | Low | Medium | - Stream mirroring provides durability<br>- Consumer groups prevent message loss<br>- Redis persistence enabled | - Check stream backlog<br>- Manually replay from stream<br>- Add result persistence |
-| **Type errors after removing dispatcher** | Medium | Medium | - Type check after each change<br>- Use strict TypeScript<br>- IDE will catch most issues | - Fix type errors incrementally<br>- Add type assertions if needed<br>- Update type definitions |
-| **Tests fail after migration** | Medium | Medium | - Most tests mock dependencies<br>- Integration tests may need updates<br>- E2E tests validate end-to-end | - Update test mocks<br>- Fix integration test setup<br>- Skip failing tests temporarily |
-| **Documentation out of sync** | High | Low | - Update docs in Phase 6<br>- Reference EPCC_EXPLORE.md<br>- Update CLAUDE.md | - Add TODO markers<br>- Create separate doc update task |
-
-### Rollback Procedures
-
-**Phase 1 Rollback:**
-```bash
-git checkout packages/agents/base-agent/src/base-agent.ts
-turbo run build --filter=@agentic-sdlc/base-agent
-```
-
-**Phase 2 Rollback:**
-```bash
-git checkout packages/orchestrator/src/services/
-turbo run build --filter=@agentic-sdlc/orchestrator
-```
-
-**Phase 3 Rollback:**
-```bash
-git checkout packages/orchestrator/src/server.ts
-turbo run build --filter=@agentic-sdlc/orchestrator
-./scripts/env/stop-dev.sh
-./scripts/env/start-dev.sh
-```
-
-**Complete Rollback:**
-```bash
-git reset --hard HEAD
-turbo run clean
-turbo run build
-./scripts/env/stop-dev.sh
-./scripts/env/start-dev.sh
-```
+| Risk | Probability | Impact | Mitigation Strategy |
+|------|------------|--------|-------------------|
+| **API routes not registered** | HIGH (current issue) | CRITICAL | **Phase 1 Task 1.5** - Verify all routes in server.ts immediately; test with curl |
+| **Service implementations incomplete** | Medium | High | **Phase 1 Tasks 1.1-1.3** - Thorough verification step before coding; create missing implementations |
+| **Database queries too slow** | Low | High | Add indexes on trace_id, workflow_id, status columns; use EXPLAIN ANALYZE; implement pagination |
+| **E2E tests flaky** | Medium | Medium | Add explicit waits for API calls; use Playwright's auto-waiting; increase timeouts |
+| **Charts rendering incorrectly** | Low | Medium | Test with various data sizes (empty, 1 item, 100 items); validate Recharts props with TypeScript |
+| **Polling causing performance issues** | Low | Medium | Make polling intervals configurable; add tab visibility detection to pause when hidden |
+| **TypeScript type mismatches** | Low | Low | Share types between frontend and backend; use Zod schemas for validation |
+| **Build size too large** | Low | Low | Code-split routes with React.lazy; tree-shake unused Recharts components |
+| **Missing trace_id in old workflows** | High | Low | Handle null gracefully; show "N/A" in UI |
 
 ---
 
 ## Testing Strategy
 
-### Unit Testing (Vitest)
+### E2E Tests (Playwright) - PRIMARY VALIDATION
+**EXISTING TESTS (must pass):**
+- [ ] Dashboard page loads with heading ✅
+- [ ] Dashboard displays metric cards ✅
+- [ ] Dashboard displays active workflows table ✅
+- [ ] Workflows page loads ✅
+- [ ] Workflows page filters by status ✅
+- [ ] Workflows page filters by type ✅
+- [ ] Workflows page displays correct columns ✅
+- [ ] Navigation between pages works ✅
+- [ ] Active nav link highlighted ✅
+- [ ] 404 page displays for invalid routes ✅
+- [ ] Header displays on all pages ✅
 
-**Target Coverage:** 90%
+**Run:** `pnpm test:e2e` (from packages/dashboard/)
+**Success Criteria:** 11/11 tests pass
 
-**Test Locations:**
-- `packages/agents/base-agent/tests/base-agent.test.ts`
-- `packages/orchestrator/tests/services/workflow.service.test.ts`
-- `packages/orchestrator/src/hexagonal/__tests__/*.test.ts`
-
-**Key Test Cases:**
-
-1. **BaseAgent Tests:**
-   ```typescript
-   describe('BaseAgent.reportResult', () => {
-     it('should publish result via IMessageBus', async () => {
-       const mockBus = { publish: jest.fn() };
-       const agent = new TestAgent(capabilities, mockBus);
-
-       await agent.reportResult(mockResult, 'scaffolding');
-
-       expect(mockBus.publish).toHaveBeenCalledWith(
-         'orchestrator:results',
-         expect.objectContaining({
-           workflow_id: mockResult.workflow_id,
-           task_id: mockResult.task_id
-         }),
-         expect.objectContaining({
-           key: mockResult.workflow_id,
-           mirrorToStream: 'stream:orchestrator:results'
-         })
-       );
-     });
-   });
-   ```
-
-2. **WorkflowService Tests:**
-   ```typescript
-   describe('WorkflowService', () => {
-     it('should require messageBus in constructor', () => {
-       expect(() => {
-         new WorkflowService(mockRepo, mockEventBus, mockStateMachine, redisUrl, undefined);
-       }).toThrow('requires IMessageBus');
-     });
-
-     it('should subscribe to orchestrator:results on init', async () => {
-       const mockBus = { subscribe: jest.fn(), publish: jest.fn() };
-       const service = new WorkflowService(mockRepo, mockEventBus, mockStateMachine, redisUrl, mockBus);
-
-       await waitFor(() => {
-         expect(mockBus.subscribe).toHaveBeenCalledWith(
-           'orchestrator:results',
-           expect.any(Function)
-         );
-       });
-     });
-
-     it('should dispatch task via IMessageBus', async () => {
-       const mockBus = { subscribe: jest.fn(), publish: jest.fn() };
-       const service = new WorkflowService(mockRepo, mockEventBus, mockStateMachine, redisUrl, mockBus);
-
-       await service.createWorkflow(mockRequest);
-
-       expect(mockBus.publish).toHaveBeenCalledWith(
-         'agent:scaffold:tasks',
-         expect.objectContaining({
-           workflow_id: expect.any(String),
-           agent_type: 'scaffold'
-         }),
-         expect.any(Object)
-       );
-     });
-   });
-   ```
-
-3. **OrchestratorContainer Tests:**
-   ```typescript
-   describe('OrchestratorContainer', () => {
-     it('should initialize successfully', async () => {
-       const container = new OrchestratorContainer(mockConfig);
-       await container.initialize();
-
-       const bus = container.getBus();
-       const kv = container.getKV();
-
-       expect(bus).toBeDefined();
-       expect(kv).toBeDefined();
-     });
-
-     it('should perform health check', async () => {
-       const container = new OrchestratorContainer(mockConfig);
-       await container.initialize();
-
-       const health = await container.health();
-
-       expect(health.ok).toBe(true);
-       expect(health.bus.ok).toBe(true);
-       expect(health.kv).toBe(true);
-     });
-   });
-   ```
-
-**Run Commands:**
-```bash
-# All unit tests
-pnpm test
-
-# Specific package
-pnpm test packages/agents/base-agent
-pnpm test packages/orchestrator
-
-# With coverage
-pnpm test --coverage
-
-# Watch mode
-pnpm test --watch
-```
-
-### Integration Testing (Vitest)
-
-**Target Coverage:** 80%
-
-**Test Locations:**
-- `packages/orchestrator/tests/integration/*.test.ts`
-- `packages/orchestrator/src/hexagonal/__tests__/integration.test.ts`
-
-**Key Test Cases:**
-
-1. **Message Bus Integration:**
-   ```typescript
-   describe('Message Bus Integration', () => {
-     let container: OrchestratorContainer;
-
-     beforeAll(async () => {
-       container = new OrchestratorContainer({ redisUrl: TEST_REDIS_URL });
-       await container.initialize();
-     });
-
-     afterAll(async () => {
-       await container.shutdown();
-     });
-
-     it('should publish and receive messages', async () => {
-       const bus = container.getBus();
-       const received: any[] = [];
-
-       await bus.subscribe('test:topic', async (msg) => {
-         received.push(msg);
-       });
-
-       await bus.publish('test:topic', { data: 'test' });
-
-       await waitFor(() => expect(received).toHaveLength(1));
-       expect(received[0]).toEqual({ data: 'test' });
-     });
-   });
-   ```
-
-2. **Workflow Orchestration Integration:**
-   ```typescript
-   describe('Workflow Orchestration Integration', () => {
-     it('should create workflow and dispatch first task', async () => {
-       const container = await createTestContainer();
-       const service = createWorkflowServiceWithContainer(container);
-
-       const workflow = await service.createWorkflow({
-         type: 'app',
-         name: 'Test App',
-         requirements: 'Test requirements'
-       });
-
-       // Verify task was published
-       const tasks = await getPublishedTasks(container);
-       expect(tasks).toHaveLength(1);
-       expect(tasks[0].agent_type).toBe('scaffold');
-       expect(tasks[0].workflow_id).toBe(workflow.workflow_id);
-     });
-   });
-   ```
-
-**Run Commands:**
-```bash
-# Integration tests
-pnpm test packages/orchestrator/tests/integration
-
-# With real Redis
-REDIS_URL=redis://localhost:6380 pnpm test
-```
-
-### E2E Testing
-
-**Target Coverage:** Critical paths
-
-**Test Locations:**
-- `packages/orchestrator/tests/e2e/*.test.ts`
-- `scripts/run-pipeline-test.sh`
-
-**Test Cases:**
-
-1. **Single Stage Workflow:**
-   ```bash
-   ./scripts/run-pipeline-test.sh "Single Stage Test"
-   # Verifies: initialization stage completes
-   ```
-
-2. **Two Stage Workflow:**
-   ```bash
-   ./scripts/run-pipeline-test.sh "Two Stage Test"
-   # Verifies: initialization → scaffolding
-   ```
-
-3. **Full Pipeline:**
-   ```bash
-   ./scripts/run-pipeline-test.sh "Hello World API"
-   # Verifies: All 6 stages complete
-   ```
-
-4. **Multiple Concurrent Workflows:**
-   ```bash
-   for i in {1..5}; do
-     ./scripts/run-pipeline-test.sh "Concurrent Test $i" &
-   done
-   wait
-   # Verifies: Concurrent workflow handling
-   ```
-
-5. **Error Recovery:**
-   ```bash
-   ./scripts/run-pipeline-test.sh "Error Recovery Test"
-   # Verifies: Retry logic, circuit breaker, error handling
-   ```
-
-**Run Commands:**
-```bash
-# Start environment
-./scripts/env/start-dev.sh
-
-# Single test
-./scripts/run-pipeline-test.sh "Test Name"
-
-# All tests
-./scripts/run-pipeline-test.sh --all
-
-# List available tests
-./scripts/run-pipeline-test.sh --list
-
-# Stop environment
-./scripts/env/stop-dev.sh
-```
+### Manual Testing (During Development)
+- [ ] Start orchestrator: `./scripts/env/start-dev.sh`
+- [ ] Start dashboard: `cd packages/dashboard && pnpm dev`
+- [ ] Test all API endpoints with curl
+- [ ] Test all pages load without errors
+- [ ] Test filters and navigation
+- [ ] Test with real workflow data
 
 ### Build Validation
+- [ ] TypeScript compilation: `pnpm typecheck` (dashboard + orchestrator)
+- [ ] Frontend build: `cd packages/dashboard && pnpm build`
+- [ ] Backend build: `cd packages/orchestrator && pnpm build`
+- [ ] All packages build: `turbo run build` (from root)
 
-**Checkpoints:**
-- After Phase 1: Build base-agent and all agent packages
-- After Phase 2: Build orchestrator
-- After Phase 3: Build orchestrator and start server
-- After Phase 4: Build orchestrator
-- After Phase 5: Build orchestrator
-- After Phase 6: Clean build all packages
+### Performance Tests (Manual)
+- [ ] Dashboard page loads in < 500ms (empty cache)
+- [ ] API responses < 200ms for stats endpoints
+- [ ] Charts render smoothly (no jank)
+- [ ] Polling doesn't block UI interaction
 
-**Commands:**
-```bash
-# Type check
-turbo run typecheck
-# Expected: 0 errors
+---
 
-# Lint
-turbo run lint
-# Expected: 0 warnings
+## Timeline & Milestones
 
-# Build
-turbo run build
-# Expected: All packages succeed
+### Recommended Implementation Order
 
-# Clean build
-turbo run clean && turbo run build
-# Expected: All packages succeed
-```
+**Day 1 (4-5 hours): Backend API Foundation**
+- Phase 1: Tasks 1.1-1.5 (Verify & Register All Routes)
+- **Milestone:** All API endpoints accessible and returning data
+- **Validation:** `curl http://localhost:3000/api/v1/stats/overview` returns JSON
 
-### Security Testing
+**Day 2 (3-4 hours): Frontend Data Layer**
+- Phase 2: Tasks 2.1-2.3 (API Client & Hooks)
+- **Milestone:** React Query successfully fetching data
+- **Validation:** React Query DevTools shows successful queries
 
-**Test Areas:**
-1. **Message Validation:**
-   - Schema validation enforced
-   - Invalid messages rejected
-   - Type safety maintained
+**Day 3 (4-5 hours): Core Pages**
+- Phase 3: Tasks 3.1-3.3 (Dashboard, Workflows, Workflow Detail)
+- **Milestone:** 10/11 E2E tests pass
+- **Validation:** `pnpm test:e2e` shows improvements
 
-2. **Input Sanitization:**
-   - User input validated
-   - SQL injection prevented
-   - XSS prevention
+**Day 4 (2-3 hours): Trace Visualization**
+- Phase 4: Tasks 4.1-4.2 (SpanTree, Traces Page)
+- **Milestone:** Trace page displays hierarchy
+- **Validation:** Manual test with real trace_id
 
-3. **Dependency Audit:**
-   ```bash
-   pnpm audit
-   # Expected: No critical vulnerabilities
-   ```
+**Day 5 (3-4 hours): Charts & Polish**
+- Phase 5: Tasks 5.1-5.3 (Charts, Agents, Styling)
+- **Milestone:** All 11 E2E tests pass, production-ready UI
+- **Validation:** Full E2E suite passes, manual QA complete
 
-4. **Secret Management:**
-   - No secrets in code
-   - Environment variables used
-   - .env files not committed
+**Total Estimated Time:** 15-20 hours over 5 days
 
 ---
 
 ## Success Metrics
 
-### Quantitative Metrics
+### Technical Metrics
+- **Code Quality:**
+  - 0 TypeScript errors ✅
+  - All 11 E2E tests pass ✅
+  - All API endpoints return 200 OK ✅
+- **Performance:**
+  - Initial load < 500ms ✅
+  - API response < 200ms (p95) ✅
+  - Chart render < 100ms ✅
+- **Test Coverage:**
+  - 11/11 E2E tests pass ✅
+  - All API endpoints manually tested ✅
 
-| Metric | Before | Target | Measurement |
-|--------|--------|--------|-------------|
-| **E2E Test Pass Rate** | 0% | 100% | `./scripts/run-pipeline-test.sh --all` |
-| **Workflow Completion Rate** | 0% | 100% | Database query: completed/total |
-| **Handler Lifecycle Errors** | Many | 0 | `grep "handler not found" logs/` |
-| **TypeScript Errors** | ? | 0 | `turbo run typecheck` |
-| **ESLint Warnings** | ? | 0 | `turbo run lint` |
-| **Unit Test Coverage** | ? | >90% | `pnpm test --coverage` |
-| **Build Time** | Baseline | Similar | `time turbo run build` |
-| **Lines of Code** | Baseline | -200 | `cloc packages/` |
-| **Cyclomatic Complexity** | ? | Lower | Code analysis |
-
-### Qualitative Metrics
-
-- [ ] **Code Quality:** Architecture is symmetric and clean
-- [ ] **Maintainability:** Hexagonal pattern followed consistently
-- [ ] **Testability:** All components easily mockable
-- [ ] **Observability:** Comprehensive logging with correlation IDs
-- [ ] **Documentation:** CLAUDE.md and README.md updated
-- [ ] **Developer Experience:** Easy to understand and extend
-- [ ] **Production Readiness:** No known blockers for production
-
-### Business Metrics
-
-- [ ] **Workflow Throughput:** System can handle multiple concurrent workflows
-- [ ] **Mean Time to Complete:** Workflows complete in expected time
-- [ ] **Error Rate:** < 1% of workflows fail due to system errors
-- [ ] **Recovery Time:** Failed workflows can be retried successfully
+### User Experience Metrics
+- **Usability:**
+  - Dashboard loads without errors ✅
+  - Filters work as expected ✅
+  - Navigation is intuitive ✅
+- **Observability:**
+  - Can find any workflow by ID ✅
+  - Can correlate workflow to trace ✅
+  - Can see agent performance ✅
+- **Reliability:**
+  - Handles API errors gracefully ✅
+  - Shows loading states ✅
+  - Auto-recovers from failures ✅
 
 ---
 
-## Rollout Plan
+## Dependencies
 
-### Phase 1: Development (Current)
-- **Timeline:** 1 day (8 hours)
-- **Environment:** Local development
-- **Scope:** Complete migration, all tests passing
-- **Validation:** E2E tests, manual testing
+### External Dependencies (Already Installed ✅)
+- React 18.2.0
+- React Router DOM 6.20.0
+- TanStack React Query 5.12.0
+- Recharts 2.10.0
+- TailwindCSS 3.3.6
+- date-fns 2.30.0
+- Vite 5.0.8
+- Playwright 1.44.0
 
-### Phase 2: Staging (Future)
-- **Timeline:** 2 days
-- **Environment:** Staging environment
-- **Scope:** Deploy migrated code, run load tests
-- **Validation:** Performance testing, stress testing
-
-### Phase 3: Production (Future)
-- **Timeline:** 1 day
-- **Environment:** Production
-- **Scope:** Blue-green deployment
-- **Validation:** Canary release, gradual rollout
-
-**Rollback Procedure:**
-```bash
-# If issues detected in production:
-1. Switch traffic back to old deployment
-2. Investigate issues in staging
-3. Fix and re-deploy
+### Internal Dependencies (Package Build Order)
 ```
+1. @agentic-sdlc/shared-types (exists, no changes needed)
+   ↓
+2. @agentic-sdlc/shared-utils (exists, no changes needed)
+   ↓
+3. @agentic-sdlc/orchestrator (MODIFY - verify & register API routes)
+   ↓
+4. @agentic-sdlc/dashboard (IMPLEMENT - frontend components)
+```
+
+### Infrastructure Dependencies
+- PostgreSQL database (running, with trace fields from Session #60) ✅
+- Redis (running, for message bus) ✅
+- Orchestrator service (running on port 3000) ✅
+
+### Data Dependencies
+- Workflow records in database (create test workflows if empty)
+- Task records with trace_id populated
+- At least 1 completed workflow for testing
 
 ---
 
-## Documentation Updates
+## Key Files Summary
 
-### Files to Update
+### Backend Files (Orchestrator)
+| File | Action | Status | Priority |
+|------|--------|--------|----------|
+| `src/repositories/stats.repository.ts` | VERIFY/EXTEND | EXISTS | 🔥 CRITICAL |
+| `src/services/stats.service.ts` | VERIFY/EXTEND | EXISTS | 🔥 CRITICAL |
+| `src/api/routes/stats.routes.ts` | VERIFY | EXISTS | 🔥 CRITICAL |
+| `src/repositories/trace.repository.ts` | VERIFY/EXTEND | EXISTS | HIGH |
+| `src/services/trace.service.ts` | VERIFY/EXTEND | EXISTS | HIGH |
+| `src/api/routes/trace.routes.ts` | VERIFY | EXISTS | HIGH |
+| `src/repositories/task.repository.ts` | CREATE/VERIFY | UNKNOWN | MEDIUM |
+| `src/services/task.service.ts` | CREATE/VERIFY | UNKNOWN | MEDIUM |
+| `src/api/routes/task.routes.ts` | VERIFY | EXISTS | MEDIUM |
+| `src/api/routes/workflow.routes.ts` | EXTEND | EXISTS | MEDIUM |
+| `src/server.ts` | **MODIFY** | EXISTS | 🔥 **CRITICAL** |
 
-1. **CLAUDE.md:**
-   - Update "Current Status" section
-   - Mark Phase 3 as 100% complete
-   - Update "Next Steps"
-   - Add migration completion date
-
-2. **README.md:**
-   - Update architecture diagram
-   - Update "How It Works" section
-   - Remove references to AgentDispatcherService
-   - Add message bus architecture explanation
-
-3. **packages/orchestrator/README.md:**
-   - Document OrchestratorContainer usage
-   - Update server.ts initialization example
-   - Add hexagonal architecture overview
-
-4. **packages/agents/base-agent/README.md:**
-   - Document IMessageBus requirement
-   - Update result publishing example
-   - Add migration notes
-
-5. **Create MIGRATION_COMPLETE.md:**
-   - Document what changed
-   - Document what was removed
-   - Document new patterns to follow
-   - Document troubleshooting guide
-
----
-
-## Appendix
-
-### A. File Change Summary
-
-| File | Change Type | Lines Changed | Priority |
-|------|-------------|---------------|----------|
-| `packages/agents/base-agent/src/base-agent.ts` | Modify | ~50 | P0 |
-| `packages/orchestrator/src/server.ts` | Modify | ~30 | P0 |
-| `packages/orchestrator/src/services/workflow.service.ts` | Modify | ~80 | P0 |
-| `packages/orchestrator/src/services/agent-dispatcher.service.ts` | Delete | -381 | P0 |
-| `packages/orchestrator/tests/services/agent-dispatcher.service.test.ts` | Delete | ~-100 | P1 |
-| `CLAUDE.md` | Modify | ~20 | P1 |
-| `README.md` | Modify | ~50 | P1 |
-| `MIGRATION_COMPLETE.md` | Create | +100 | P2 |
-
-**Total Net Impact:** ~-300 lines (net reduction!)
-
-### B. Command Reference
-
-```bash
-# === BUILD ===
-turbo run clean                          # Clean all packages
-turbo run build                          # Build all packages
-turbo run build --filter=<package>       # Build specific package
-turbo run typecheck                      # Type check all
-turbo run lint                           # Lint all
-
-# === TEST ===
-pnpm test                                # Run all unit tests
-pnpm test --coverage                     # With coverage
-pnpm test packages/<package>             # Specific package
-./scripts/run-pipeline-test.sh <name>   # E2E test
-./scripts/run-pipeline-test.sh --all    # All E2E tests
-
-# === ENVIRONMENT ===
-./scripts/env/start-dev.sh               # Start all services
-./scripts/env/stop-dev.sh                # Stop all services
-./scripts/env/check-health.sh            # Health checks
-
-# === REDIS ===
-docker exec -it agentic-redis-1 redis-cli
-> PUBSUB CHANNELS                        # List active channels
-> HGETALL agents:registry                # List registered agents
-> XLEN stream:orchestrator:results       # Check stream length
-
-# === LOGS ===
-docker logs agentic-orchestrator-1       # Orchestrator logs
-docker logs agentic-scaffold-agent-1     # Scaffold agent logs
-docker logs -f agentic-orchestrator-1    # Follow logs
-```
-
-### C. Troubleshooting Guide
-
-**Issue:** Workflows timeout at first stage
-
-**Diagnosis:**
-```bash
-# Check if agents are subscribed
-docker exec -it agentic-redis-1 redis-cli PUBSUB CHANNELS
-# Should see: agent:scaffold:tasks, agent:validation:tasks, etc.
-
-# Check if orchestrator subscribed to results
-# Should see: orchestrator:results
-
-# Check orchestrator logs
-docker logs agentic-orchestrator-1 | grep "PHASE-2"
-# Should see: "Message bus subscription established successfully"
-
-# Check agent logs
-docker logs agentic-scaffold-agent-1 | grep "PHASE-3"
-# Should see: "Agent subscribed to message bus for tasks"
-```
-
-**Solution:**
-- Restart agents if not subscribed
-- Check Redis connection
-- Verify channel name constants match
-
-**Issue:** Build fails with TypeScript errors
-
-**Diagnosis:**
-```bash
-turbo run typecheck
-# Identify which package has errors
-
-cd packages/<package>
-pnpm run typecheck
-# See detailed error messages
-```
-
-**Solution:**
-- Fix type errors incrementally
-- Add type assertions if needed
-- Update type definitions
-
-**Issue:** Tests fail after migration
-
-**Diagnosis:**
-```bash
-pnpm test 2>&1 | grep "FAIL"
-# Identify failing tests
-
-pnpm test <specific-test-file>
-# Run specific test for details
-```
-
-**Solution:**
-- Update test mocks
-- Fix integration test setup
-- Update expectations
-
-### D. Glossary
-
-- **IMessageBus:** Interface for pub/sub messaging abstraction
-- **RedisBus:** Redis implementation of IMessageBus
-- **OrchestratorContainer:** DI container for hexagonal dependencies
-- **AgentDispatcherService:** OLD callback-based dispatcher (being removed)
-- **Envelope:** Message wrapper with metadata (correlation ID, etc.)
-- **Stream Mirroring:** Publishing messages to both pub/sub and streams
-- **Consumer Group:** Redis Streams feature for load balancing
-- **Hexagonal Architecture:** Pattern separating business logic from infrastructure
-- **Port:** Interface defining a capability
-- **Adapter:** Implementation of a port
+### Frontend Files (Dashboard)
+| File | Action | Status | Priority |
+|------|--------|--------|----------|
+| `src/api/client.ts` | IMPLEMENT | STUB | HIGH |
+| `src/hooks/useStats.ts` | IMPLEMENT | STUB | HIGH |
+| `src/hooks/useWorkflows.ts` | EXTEND | STUB | HIGH |
+| `src/hooks/useWorkflow.ts` | CREATE | MISSING | HIGH |
+| `src/hooks/useTasks.ts` | CREATE | MISSING | MEDIUM |
+| `src/hooks/useTrace.ts` | CREATE | MISSING | MEDIUM |
+| `src/pages/Dashboard.tsx` | IMPLEMENT | STUB | 🔥 HIGH |
+| `src/pages/WorkflowsPage.tsx` | IMPLEMENT | STUB | HIGH |
+| `src/pages/WorkflowPage.tsx` | IMPLEMENT | STUB | MEDIUM |
+| `src/pages/TracesPage.tsx` | IMPLEMENT | STUB | MEDIUM |
+| `src/pages/AgentsPage.tsx` | IMPLEMENT | STUB | LOW |
+| `src/components/Charts/TimeSeriesChart.tsx` | CREATE | MISSING | MEDIUM |
+| `src/components/Charts/AgentPerformanceChart.tsx` | CREATE | MISSING | LOW |
+| `src/components/Traces/SpanTree.tsx` | CREATE | MISSING | MEDIUM |
 
 ---
 
-**Status:** Planning Complete ✅
-**Next Phase:** Code
-**Ready to Implement:** Yes
-**Estimated Duration:** 8 hours
-**Confidence Level:** High (95%)
+## References
+
+### Design Documents
+- [DASHBOARD_IMPLEMENTATION_PLAN.md](./DASHBOARD_IMPLEMENTATION_PLAN.md) - Original specification
+- [agentic-sdlc-tracing.md](./agentic-sdlc-tracing.md) - Distributed tracing design
+- [DATABASE_QUERY_GUIDE.md](./DATABASE_QUERY_GUIDE.md) - SQL query examples
+- [TRACE_IMPLEMENTATION_REVIEW.md](./TRACE_IMPLEMENTATION_REVIEW.md) - Tracing compliance review
+- [CLAUDE.md](./CLAUDE.md) - Project overview and session history
+
+### Codebase References
+- Orchestrator API: `packages/orchestrator/src/api/routes/`
+- Workflow Service: `packages/orchestrator/src/services/workflow.service.ts`
+- Prisma Schema: `packages/orchestrator/prisma/schema.prisma`
+- Dashboard App: `packages/dashboard/src/App.tsx`
+
+---
+
+## Checklist for CODE Phase
+
+Before proceeding to `/epcc-code`, ensure:
+
+- [x] All objectives are clearly defined ✅
+- [x] All tasks are broken down into < 4 hour chunks ✅
+- [x] All dependencies are identified ✅
+- [x] All risks are assessed and mitigated ✅
+- [x] Test strategy is comprehensive ✅
+- [x] Success criteria are measurable ✅
+- [x] Timeline is realistic ✅
+- [ ] All stakeholders agree on scope ⏳ (awaiting user confirmation)
+
+---
+
+**Plan Status:** ✅ READY TO IMPLEMENT
+**Next Step:** Await user approval, then proceed to `/epcc-code`
+**Estimated Completion:** 15-20 hours (5 days @ 3-4 hours/day)
+
+---
+
+## 🚨 CRITICAL FIRST STEP
+
+**Before ANY frontend work, MUST complete:**
+
+1. **Phase 1, Task 1.1:** Verify stats routes exist and register in server.ts
+2. **Phase 1, Task 1.5:** Test `curl http://localhost:3000/api/v1/stats/overview`
+3. **Verify response:** Should return JSON, not ECONNREFUSED
+
+**This single change will fix 4/11 failing E2E tests immediately.**
+
+---
+
+**Ready for CODE phase?** ⏳ Awaiting user approval to begin implementation.

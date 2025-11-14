@@ -74,17 +74,24 @@ export const CreateWorkflowSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().optional(),
   requirements: z.string().optional(),
-  priority: z.enum(['low', 'medium', 'high', 'critical'])
+  priority: z.enum(['low', 'medium', 'high', 'critical']),
+  trace_id: z.string().uuid().optional() // Phase 3: Accept trace_id from HTTP request
 });
 
 export const WorkflowResponseSchema = z.object({
   workflow_id: z.string().uuid(),
+  name: z.string(),
+  description: z.string().nullable().optional(),
+  type: z.enum(['app', 'feature', 'bugfix']),
   status: z.string(),
   current_stage: z.string(),
+  priority: z.enum(['low', 'medium', 'high', 'critical']),
   progress_percentage: z.number(),
+  trace_id: z.string().uuid().nullable().optional(),
   estimated_duration_ms: z.number().optional(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
+  completed_at: z.string().datetime().nullable().optional()
 });
 
 // Type exports

@@ -733,20 +733,25 @@ export class WorkflowStateMachineService {
       // Subscribe to agent results for autonomous STAGE_COMPLETE events
       await this.messageBus.subscribe(REDIS_CHANNELS.ORCHESTRATOR_RESULTS, async (message: any) => {
         try {
+          // The message IS the AgentResultSchema-compliant object (no payload wrapper)
+          // redis-bus adapter already unwrapped the envelope and extracted the message
+          const agentResult = message;
+
           logger.info('[PHASE-4] State machine received agent result', {
-            workflow_id: message.workflow_id,
-            agent_id: message.agent_id,
-            message_id: message.id
+            workflow_id: agentResult.workflow_id,
+            agent_id: agentResult.agent_id,
+            task_id: agentResult.task_id
           });
 
-          // Extract payload
-          const agentResult = message.payload;
-          if (!agentResult) {
-            logger.warn('[PHASE-4] No payload in agent result message', { message_id: message.id });
+          const workflowId = agentResult.workflow_id;
+
+          if (!workflowId) {
+            logger.warn('[PHASE-4] No workflow_id in agent result', {
+              agent_id: agentResult.agent_id,
+              has_workflow_id: !!agentResult.workflow_id
+            });
             return;
           }
-
-          const workflowId = agentResult.workflow_id;
           const stateMachine = this.getStateMachine(workflowId);
 
           if (!stateMachine) {
