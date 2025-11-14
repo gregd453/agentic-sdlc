@@ -130,23 +130,55 @@ export abstract class BaseAgent implements AgentLifecycle {
       taskChannel,
       async (message: any) => {
         try {
+          // 🔍 Step 1: Log raw message receipt
+          this.logger.debug('🔍 [MSG-UNWRAP] Raw message received from message bus', {
+            message_type: typeof message,
+            is_string: typeof message === 'string',
+            is_object: typeof message === 'object',
+            is_null: message === null,
+            channel: taskChannel,
+            agent_type: this.capabilities.type
+          });
+
           // Message may be string or object depending on adapter
           const envelope = typeof message === 'string'
             ? JSON.parse(message)
             : message;
 
+          // 🔍 Step 2: Log parsed envelope structure
+          this.logger.debug('🔍 [MSG-UNWRAP] Envelope parsed', {
+            workflow_id: envelope.workflow_id,
+            task_id: envelope.task_id,
+            agent_type: envelope.agent_type,
+            has_trace: !!envelope.trace,
+            has_metadata: !!envelope.metadata,
+            has_workflow_context: !!envelope.workflow_context,
+            has_payload: !!envelope.payload,
+            envelope_keys: Object.keys(envelope).join(',')
+          });
+
           this.logger.info('[PHASE-3] Agent received task from message bus', {
             workflow_id: envelope.workflow_id,
             task_id: envelope.task_id,
             agent_type: envelope.agent_type,
-            channel: taskChannel
+            channel: taskChannel,
+            trace_id: envelope.trace?.trace_id,
+            span_id: envelope.trace?.span_id
           });
 
           // 🔍 AGENT TRACE: Task received
           this.logger.info('🔍 [AGENT-TRACE] Task received', {
             workflow_id: envelope.workflow_id,
             task_id: envelope.task_id,
-            stage: envelope.workflow_context?.current_stage
+            stage: envelope.workflow_context?.current_stage,
+            trace_id: envelope.trace?.trace_id
+          });
+
+          // 🔍 Step 3: Log AgentMessage wrapping
+          this.logger.debug('🔍 [MSG-UNWRAP] Wrapping envelope in AgentMessage format', {
+            envelope_stored_in: 'payload.context',
+            inner_payload_keys: Object.keys(envelope.payload || {}).join(','),
+            workflow_stage: envelope.workflow_context?.current_stage
           });
 
           // Convert envelope to AgentMessage format expected by receiveTask
@@ -165,12 +197,25 @@ export abstract class BaseAgent implements AgentLifecycle {
             }
           };
 
+          // 🔍 Step 4: Log final message structure before receiveTask
+          this.logger.debug('🔍 [MSG-UNWRAP] AgentMessage ready for receiveTask', {
+            message_id: agentMessage.id,
+            workflow_id: agentMessage.workflow_id,
+            payload_has_context: !!agentMessage.payload.context,
+            payload_keys: Object.keys(agentMessage.payload).join(',')
+          });
+
           await this.receiveTask(agentMessage);
         } catch (error) {
           this.logger.error('[PHASE-3] Failed to process task from message bus', {
             error: error instanceof Error ? error.message : String(error),
             stack: error instanceof Error ? error.stack : undefined,
-            message: typeof message === 'object' ? JSON.stringify(message) : message
+            message_type: typeof message,
+            message_sample: typeof message === 'object'
+              ? JSON.stringify(message).substring(0, 500)
+              : String(message).substring(0, 500),
+            agent_type: this.capabilities.type,
+            channel: taskChannel
           });
           this.errorsCount++;
         }
@@ -300,32 +345,77 @@ export abstract class BaseAgent implements AgentLifecycle {
   validateTask(task: unknown): AgentEnvelope {
     try {
       const envelope = AgentEnvelopeSchema.parse(task);
-      this.logger.info('✅ [SESSION #65] Task validated against AgentEnvelopeSchema v2.0.0', {
+      this.logger.info('✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0', {
         message_id: envelope.message_id,
         task_id: envelope.task_id,
         workflow_id: envelope.workflow_id,
         agent_type: envelope.agent_type,
         envelope_version: envelope.metadata.envelope_version,
         trace_id: envelope.trace.trace_id,
-        span_id: envelope.trace.span_id
+        span_id: envelope.trace.span_id,
+        parent_span_id: envelope.trace.parent_span_id
       });
       return envelope;
     } catch (error) {
-      // Enhanced debug logging for E2E testing
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      const taskKeys = typeof task === 'object' && task !== null ? Object.keys(task as any).join(',') : 'N/A';
-      const taskSample = typeof task === 'object' ? JSON.stringify(task).substring(0, 500) : String(task);
+      // Extract detailed Zod validation errors if available
+      const zodErrors = (error as any)?.errors || [];
+      const firstError = zodErrors[0] || {};
 
-      console.error('=== AgentEnvelope Validation Failed ===');
-      console.error('Error:', errorMsg);
-      console.error('Task keys:', taskKeys);
-      console.error('Task sample:', taskSample);
-      console.error('=====================================');
+      // Structured error context
+      const taskKeys = typeof task === 'object' && task !== null ? Object.keys(task as any) : [];
+      const taskSample = typeof task === 'object' ? JSON.stringify(task).substring(0, 1000) : String(task);
+      const taskType = typeof task;
+      const isNull = task === null;
+      const isUndefined = task === undefined;
 
-      this.logger.error('❌ [SESSION #65] Task validation failed - NOT AgentEnvelope v2.0.0', {
-        validation_error: errorMsg,
-        task_structure: taskKeys
+      // Extract trace context if present for error correlation
+      const possibleTrace = (task as any)?.trace;
+      const possibleWorkflowId = (task as any)?.workflow_id;
+      const possibleTaskId = (task as any)?.task_id;
+
+      this.logger.error('❌ [VALIDATION] Task validation failed - NOT AgentEnvelope v2.0.0', {
+        agent_type: this.capabilities.type,
+        validation_error: error instanceof Error ? error.message : String(error),
+        zod_error_count: zodErrors.length,
+        first_zod_error: {
+          path: firstError.path?.join('.') || 'unknown',
+          code: firstError.code || 'unknown',
+          expected: firstError.expected || 'unknown',
+          received: firstError.received || 'unknown',
+          message: firstError.message || 'unknown'
+        },
+        task_metadata: {
+          type: taskType,
+          is_null: isNull,
+          is_undefined: isUndefined,
+          keys_found: taskKeys.join(',') || 'none',
+          key_count: taskKeys.length
+        },
+        // Include trace context if available for error correlation
+        trace_context: possibleTrace ? {
+          trace_id: possibleTrace.trace_id,
+          span_id: possibleTrace.span_id,
+          parent_span_id: possibleTrace.parent_span_id
+        } : 'not_found',
+        workflow_id: possibleWorkflowId || 'not_found',
+        task_id: possibleTaskId || 'not_found',
+        task_sample: taskSample
       });
+
+      // Log all Zod errors for debugging
+      if (zodErrors.length > 0) {
+        this.logger.debug('🔍 [VALIDATION] All Zod validation errors', {
+          error_count: zodErrors.length,
+          errors: zodErrors.map((e: any) => ({
+            path: e.path?.join('.'),
+            code: e.code,
+            expected: e.expected,
+            received: e.received,
+            message: e.message
+          }))
+        });
+      }
+
       throw new ValidationError(
         'Invalid task assignment - must conform to AgentEnvelope v2.0.0',
         error instanceof Error ? [error.message] : ['Unknown validation error']
@@ -384,13 +474,66 @@ export abstract class BaseAgent implements AgentLifecycle {
     // This is the critical validation boundary - ensures all emitted results are schema-compliant
     try {
       AgentResultSchema.parse(agentResult);
-    } catch (validationError) {
-      this.logger.error('AgentResultSchema validation failed - SCHEMA COMPLIANCE BREACH', {
+      this.logger.debug('✅ [RESULT-VALIDATION] Result validated against AgentResultSchema', {
         task_id: validatedResult.task_id,
+        workflow_id: validatedResult.workflow_id,
         agent_id: this.agentId,
-        validation_error: (validationError as any).message,
-        attempted_result: JSON.stringify(agentResult).substring(0, 500)
+        status: validatedResult.status,
+        has_errors: validatedResult.errors && validatedResult.errors.length > 0,
+        trace_id: this.currentTraceContext?.trace_id
       });
+    } catch (validationError) {
+      // Extract detailed Zod validation errors
+      const zodErrors = (validationError as any)?.errors || [];
+      const firstError = zodErrors[0] || {};
+
+      this.logger.error('❌ [RESULT-VALIDATION] AgentResultSchema validation failed - SCHEMA COMPLIANCE BREACH', {
+        task_id: validatedResult.task_id,
+        workflow_id: validatedResult.workflow_id,
+        agent_id: this.agentId,
+        agent_type: this.capabilities.type,
+        validation_error: (validationError as any).message,
+        zod_error_count: zodErrors.length,
+        first_zod_error: {
+          path: firstError.path?.join('.') || 'unknown',
+          code: firstError.code || 'unknown',
+          expected: firstError.expected || 'unknown',
+          received: firstError.received || 'unknown',
+          message: firstError.message || 'unknown'
+        },
+        result_structure: {
+          has_message_id: !!agentResult.message_id,
+          has_task_id: !!agentResult.task_id,
+          has_workflow_id: !!agentResult.workflow_id,
+          has_agent_id: !!agentResult.agent_id,
+          has_status: !!agentResult.status,
+          has_result: !!agentResult.result,
+          has_metadata: !!agentResult.metadata,
+          has_trace_id: !!agentResult.trace_id,
+          result_keys: Object.keys(agentResult).join(',')
+        },
+        trace_context: {
+          trace_id: this.currentTraceContext?.trace_id || 'unknown',
+          span_id: this.currentTraceContext?.span_id || 'unknown',
+          parent_span_id: this.currentTraceContext?.parent_span_id || 'unknown'
+        },
+        attempted_result_sample: JSON.stringify(agentResult).substring(0, 1000)
+      });
+
+      // Log all Zod errors for debugging
+      if (zodErrors.length > 0) {
+        this.logger.debug('🔍 [RESULT-VALIDATION] All Zod validation errors', {
+          error_count: zodErrors.length,
+          errors: zodErrors.map((e: any) => ({
+            path: e.path?.join('.'),
+            code: e.code,
+            expected: e.expected,
+            received: e.received,
+            message: e.message
+          }))
+        });
+      }
+
       throw new Error(`Agent result does not comply with AgentResultSchema: ${(validationError as any).message}`);
     }
 

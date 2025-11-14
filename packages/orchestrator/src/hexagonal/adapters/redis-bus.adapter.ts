@@ -142,9 +142,21 @@ export function makeRedisBus(
                     try {
                       const messageData = message.message as any;
 
+                      // 🔍 Step 1: Log raw stream message
+                      log.debug('[STREAM-CONSUME] Raw message from Redis stream', {
+                        streamKey,
+                        messageId: message.id,
+                        messageType: typeof messageData,
+                        hasPayload: !!messageData.payload,
+                        hasMsg: !!messageData.msg,
+                        hasMessage: !!messageData.message,
+                        topLevelKeys: Object.keys(messageData || {}).join(',')
+                      });
+
                       // SESSION #65 FIX: Parse stream message envelope structure
                       // Stream messages have {topic, payload} where payload may be string or pre-parsed object
                       let parsedMessage: any;
+                      let unwrapPath: string = 'unknown';
 
                       if (messageData.payload) {
                         // Handle both string and pre-parsed payload
@@ -154,43 +166,87 @@ export function makeRedisBus(
 
                         // Unwrap {key, msg} envelope structure to get actual AgentEnvelope
                         parsedMessage = payloadData.msg || payloadData;
+                        unwrapPath = payloadData.msg ? 'messageData.payload.msg' : 'messageData.payload';
+
+                        log.debug('[STREAM-CONSUME] Unwrapped via payload path', {
+                          unwrapPath,
+                          payloadWasString: typeof messageData.payload === 'string',
+                          hasMsg: !!payloadData.msg,
+                          payloadKeys: Object.keys(payloadData).join(',')
+                        });
                       } else if (messageData.msg) {
                         // Direct msg property (already unwrapped by caller)
                         parsedMessage = messageData.msg;
+                        unwrapPath = 'messageData.msg';
                       } else if (typeof messageData.message === 'string') {
                         parsedMessage = JSON.parse(messageData.message);
+                        unwrapPath = 'messageData.message (parsed)';
                       } else if (typeof messageData === 'string') {
                         parsedMessage = JSON.parse(messageData);
+                        unwrapPath = 'messageData (parsed)';
                       } else {
                         // Fallback: assume messageData is already the unwrapped message
                         parsedMessage = messageData;
+                        unwrapPath = 'messageData (direct)';
                       }
+
+                      // 🔍 Step 2: Log unwrapped message structure
+                      const workflowId = parsedMessage.workflow_id || messageData.workflow_id;
+                      const taskId = parsedMessage.task_id || messageData.task_id;
+                      const traceId = parsedMessage.trace?.trace_id || parsedMessage.trace_id;
 
                       log.info('[PHASE-3] Processing message from stream', {
                         streamKey,
                         messageId: message.id,
-                        messageType: typeof messageData,
-                        hasMessageProperty: messageData.message !== undefined,
-                        workflow_id: messageData.workflow_id
+                        unwrapPath,
+                        workflow_id: workflowId,
+                        task_id: taskId,
+                        trace_id: traceId,
+                        messageKeys: Object.keys(parsedMessage).join(',')
                       });
 
-                      // Invoke all handlers
+                      // 🔍 Step 3: Log handler invocation
                       const handlers = subscriptions.get(topic);
                       if (handlers) {
+                        log.debug('[STREAM-CONSUME] Invoking handlers', {
+                          handlerCount: handlers.size,
+                          topic,
+                          workflow_id: workflowId,
+                          task_id: taskId
+                        });
+
                         await Promise.all(
                           Array.from(handlers).map(h =>
-                            h(parsedMessage).catch(e =>
-                              log.error('[PHASE-3] Stream handler error', { error: String(e) })
-                            )
+                            h(parsedMessage).catch(e => {
+                              log.error('[PHASE-3] Stream handler error', {
+                                error: String(e),
+                                stack: e instanceof Error ? e.stack : undefined,
+                                workflow_id: workflowId,
+                                task_id: taskId,
+                                trace_id: traceId
+                              });
+                            })
                           )
                         );
+                      } else {
+                        log.warn('[STREAM-CONSUME] No handlers found for topic', {
+                          topic,
+                          availableTopics: Array.from(subscriptions.keys()).join(',')
+                        });
                       }
 
                       // Acknowledge message
                       await pub.xAck(streamKey, consumerGroup, message.id);
+                      log.debug('[STREAM-CONSUME] Message acknowledged', {
+                        messageId: message.id,
+                        streamKey
+                      });
                     } catch (msgError) {
                       log.error('[PHASE-3] Failed to process stream message', {
-                        error: msgError instanceof Error ? msgError.message : String(msgError)
+                        error: msgError instanceof Error ? msgError.message : String(msgError),
+                        stack: msgError instanceof Error ? msgError.stack : undefined,
+                        messageId: message.id,
+                        streamKey
                       });
                     }
                   }
