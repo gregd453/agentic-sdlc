@@ -1345,3 +1345,30 @@
 2025-11-14 08:46:44 -05:00: {"ts":"2025-11-14T13:46:44.347Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:e2e:tasks"}
 2025-11-14 08:46:44 -05:00: {"ts":"2025-11-14T13:46:44.347Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
 2025-11-14 08:46:44 -05:00: {"ts":"2025-11-14T13:46:44.347Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-14 12:52:31 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 12:52:31 -05:00: 🔖 Version: 1.0.0
+2025-11-14 12:52:31 -05:00: [PHASE-3] Initializing OrchestratorContainer for e2e agent...
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.869Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-e2e"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.869Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.887Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.888Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.888Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.890Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.890Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.890Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.890Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.890Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-e2e"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.893Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 12:52:31 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.899Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:e2e:tasks"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.900Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:e2e:tasks","consumerGroup":"agent-e2e-group","consumerName":"consumer-1763142751899"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.900Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:e2e:tasks","count":1}
+2025-11-14 12:52:31 -05:00: ✅ E2E test agent started successfully
+2025-11-14 12:52:31 -05:00: 📡 Listening for E2E test tasks...
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (e2e-138942a3/8047): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (e2e-138942a3/8047): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (e2e-138942a3/8047): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (e2e-138942a3/8047): [36mRegistered with orchestrator[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (e2e-138942a3/8047): [36m[PHASE-3] Agent initialized successfully with message bus[39m

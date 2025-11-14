@@ -1947,3 +1947,37 @@
 2025-11-14 08:46:34 -05:00: [2025-11-14 13:46:34] [32mINFO[39m (scaffold-3b18d039/22693): [36mCleaning up agent[39m
 2025-11-14 08:46:34 -05:00: [2025-11-14 13:46:34] [32mINFO[39m (scaffold-3b18d039/22693): [36mDeregistered from orchestrator[39m
 2025-11-14 08:46:34 -05:00: [2025-11-14 13:46:34] [32mINFO[39m (scaffold-3b18d039/22693): [36mAgent cleanup completed[39m
+2025-11-14 12:52:31 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-14 12:52:31 -05:00: 🔖 Version: 1.0.0
+2025-11-14 12:52:31 -05:00: 🚀 Starting Scaffold Agent...
+2025-11-14 12:52:31 -05:00: [PHASE-3] Initializing OrchestratorContainer for scaffold agent...
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.868Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-scaffold"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.868Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.887Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.887Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.887Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.889Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-scaffold"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.892Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-14 12:52:31 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.900Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:scaffold:tasks"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.900Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:scaffold:tasks","consumerGroup":"agent-scaffold-group","consumerName":"consumer-1763142751900"}
+2025-11-14 12:52:31 -05:00: {"ts":"2025-11-14T17:52:31.901Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:scaffold:tasks","count":1}
+2025-11-14 12:52:31 -05:00: ✅ Scaffold Agent running and listening for tasks
+2025-11-14 12:52:31 -05:00: 📡 Connected to Redis: redis://localhost:6380
+2025-11-14 12:52:31 -05:00: 🔑 Using Anthropic API key: sk-ant-api03-DMugxEc...
+2025-11-14 12:52:31 -05:00: 
+2025-11-14 12:52:31 -05:00: Agent is ready to receive tasks on channel: agent:scaffold:tasks
+2025-11-14 12:52:31 -05:00: Press Ctrl+C to stop
+2025-11-14 12:52:31 -05:00: 
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (scaffold-737ca98c/8009): [36mScaffold agent schemas registered[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (scaffold-737ca98c/8009): [36m[PHASE-3] Initializing agent with message bus[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (scaffold-737ca98c/8009): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (scaffold-737ca98c/8009): [36m[PHASE-3] Agent subscribed to message bus for tasks[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (scaffold-737ca98c/8009): [36mRegistered with orchestrator[39m
+2025-11-14 12:52:31 -05:00: [2025-11-14 17:52:31] [32mINFO[39m (scaffold-737ca98c/8009): [36m[PHASE-3] Agent initialized successfully with message bus[39m
