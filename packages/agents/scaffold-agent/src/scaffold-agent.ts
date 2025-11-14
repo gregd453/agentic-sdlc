@@ -1,5 +1,5 @@
 import { BaseAgent } from '@agentic-sdlc/base-agent';
-import { TaskAssignment, TaskResult } from '@agentic-sdlc/base-agent';
+import { AgentEnvelope, TaskResult } from '@agentic-sdlc/base-agent';
 import {
   ScaffoldTask,
   AGENT_TYPES
@@ -55,9 +55,9 @@ export class ScaffoldAgent extends BaseAgent {
     this.logger.info('Scaffold agent schemas registered');
   }
 
-  async execute(task: TaskAssignment): Promise<TaskResult> {
+  async execute(task: AgentEnvelope): Promise<TaskResult> {
     const startTime = Date.now();
-    const traceId = this.generateTraceId();
+    const traceId = task.trace.trace_id;
 
     this.logger.info('Executing scaffold task', {
       task_id: task.task_id,
@@ -66,13 +66,13 @@ export class ScaffoldAgent extends BaseAgent {
     });
 
     try {
-      // SESSION #64: Extract scaffold data directly from task.payload
+      // SESSION #65: Extract scaffold data directly from task.payload (AgentEnvelope v2.0.0)
       const payload = task.payload as any;
       const scaffoldTask: ScaffoldTask = {
         task_id: task.task_id as any,
         workflow_id: task.workflow_id as any,
         agent_type: AGENT_TYPES.SCAFFOLD as any,
-        action: (task.action || 'generate_structure') as any,
+        action: (payload.action || 'generate_structure') as any,
         status: 'pending',
         priority: task.priority === 'critical' ? 90 :
                   task.priority === 'high' ? 70 :
@@ -161,7 +161,7 @@ export class ScaffoldAgent extends BaseAgent {
         }],
         metadata: {
           completed_at: new Date().toISOString(),
-          trace_id: task.metadata.trace_id
+          trace_id: task.trace.trace_id
         }
       };
 
@@ -201,7 +201,7 @@ export class ScaffoldAgent extends BaseAgent {
         }],
         metadata: {
           completed_at: new Date().toISOString(),
-          trace_id: task.metadata.trace_id
+          trace_id: task.trace.trace_id
         }
       };
 

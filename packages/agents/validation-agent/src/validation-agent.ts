@@ -1,4 +1,4 @@
-import { BaseAgent, TaskAssignment, TaskResult, AgentError } from '@agentic-sdlc/base-agent';
+import { BaseAgent, AgentEnvelope, TaskResult, AgentError } from '@agentic-sdlc/base-agent';
 import {
   isValidationEnvelope,
   validateEnvelope
@@ -61,14 +61,13 @@ export class ValidationAgent extends BaseAgent {
 
   /**
    * Execute validation task
-   * SESSION #36: Updated to use AgentEnvelope instead of adapter
-   * SESSION #47: Enhanced debugging for envelope extraction
+   * SESSION #65: Updated to use AgentEnvelope v2.0.0
    */
-  async execute(task: TaskAssignment): Promise<TaskResult> {
+  async execute(task: AgentEnvelope): Promise<TaskResult> {
     const startTime = Date.now();
-    const traceId = this.generateTraceId();
+    const traceId = task.trace.trace_id;
 
-    this.logger.info('[SESSION #36] Executing validation task', {
+    this.logger.info('[SESSION #65] Executing validation task', {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
       trace_id: traceId
@@ -240,30 +239,61 @@ export class ValidationAgent extends BaseAgent {
         quality_gates: qualityGates
       };
 
-      // Collect errors if any
-      const errors: string[] = [];
+      // SESSION #65: Collect errors in proper format (TaskResult schema)
+      const errorList: Array<{code: string; message: string; recoverable: boolean; details?: Record<string, unknown>}> = [];
       if (report.overall_status === 'failed') {
         if (report.quality_gates.blocking_failures.length > 0) {
-          errors.push(...report.quality_gates.blocking_failures);
+          report.quality_gates.blocking_failures.forEach(failure => {
+            errorList.push({
+              code: 'QUALITY_GATE_FAILURE',
+              message: failure,
+              recoverable: false
+            });
+          });
         }
 
         validationChecks
           .filter(c => c.status === 'failed' && c.errors)
-          .forEach(c => errors.push(...(c.errors || [])));
+          .forEach(c => {
+            (c.errors || []).forEach(error => {
+              errorList.push({
+                code: 'VALIDATION_ERROR',
+                message: error,
+                recoverable: true
+              });
+            });
+          });
       }
 
-      return {
+      // SESSION #65: Return TaskResult conforming to canonical schema
+      const result: TaskResult = {
+        message_id: task.message_id,
         task_id: task.task_id,
         workflow_id: task.workflow_id,
+        agent_id: this.agentId,
         status: taskStatus,
-        output,
-        errors: errors.length > 0 ? errors : undefined,
-        metrics: {
-          duration_ms: Date.now() - startTime,
-          api_calls: 0 // No Claude API calls in validation
+        result: {
+          data: output,
+          metrics: {
+            duration_ms: Date.now() - startTime,
+            resource_usage: {
+              api_calls: 0 // No Claude API calls in validation
+            }
+          }
         },
-        next_stage: taskStatus === 'success' ? 'integration' : undefined
+        errors: errorList.length > 0 ? errorList : undefined,
+        next_actions: taskStatus === 'success' ? [{
+          action: 'test',
+          agent_type: 'e2e_test',
+          priority: 'high'
+        }] : undefined,
+        metadata: {
+          completed_at: new Date().toISOString(),
+          trace_id: task.trace.trace_id
+        }
       };
+
+      return result;
     } catch (error) {
       // SESSION #32: Enhanced error logging with detailed diagnostics
       const errorDetails = {

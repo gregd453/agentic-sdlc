@@ -11,11 +11,11 @@ import { extractTraceContext, type TraceContext } from '@agentic-sdlc/shared-uti
 import {
   AgentLifecycle,
   AgentCapabilities,
-  TaskAssignment,
+  AgentEnvelope,
   TaskResult,
   AgentMessage,
   HealthStatus,
-  TaskAssignmentSchema,
+  AgentEnvelopeSchema,
   TaskResultSchema,
   AgentError,
   ValidationError
@@ -297,18 +297,32 @@ export abstract class BaseAgent implements AgentLifecycle {
     }
   }
 
-  validateTask(task: unknown): TaskAssignment {
+  validateTask(task: unknown): AgentEnvelope {
     try {
-      return TaskAssignmentSchema.parse(task);
+      const envelope = AgentEnvelopeSchema.parse(task);
+      this.logger.info('✅ [SESSION #65] Task validated against AgentEnvelopeSchema v2.0.0', {
+        message_id: envelope.message_id,
+        task_id: envelope.task_id,
+        workflow_id: envelope.workflow_id,
+        agent_type: envelope.agent_type,
+        envelope_version: envelope.metadata.envelope_version,
+        trace_id: envelope.trace.trace_id,
+        span_id: envelope.trace.span_id
+      });
+      return envelope;
     } catch (error) {
+      this.logger.error('❌ [SESSION #65] Task validation failed - NOT AgentEnvelope v2.0.0', {
+        validation_error: error instanceof Error ? error.message : String(error),
+        task_structure: typeof task === 'object' ? Object.keys(task as any).join(',') : typeof task
+      });
       throw new ValidationError(
-        'Invalid task assignment',
+        'Invalid task assignment - must conform to AgentEnvelope v2.0.0',
         error instanceof Error ? [error.message] : ['Unknown validation error']
       );
     }
   }
 
-  abstract execute(task: TaskAssignment): Promise<TaskResult>;
+  abstract execute(task: AgentEnvelope): Promise<TaskResult>;
 
   async reportResult(result: TaskResult, workflowStage?: string): Promise<void> {
     // Validate result against local schema first

@@ -1,4 +1,4 @@
-import { BaseAgent, TaskAssignment, TaskResult } from '@agentic-sdlc/base-agent';
+import { BaseAgent, AgentEnvelope, TaskResult } from '@agentic-sdlc/base-agent';
 import path from 'path';
 import {
   E2ETaskContext,
@@ -45,7 +45,7 @@ export class E2EAgent extends BaseAgent {
   /**
    * Execute E2E test task
    */
-  async execute(task: TaskAssignment): Promise<TaskResult> {
+  async execute(task: AgentEnvelope): Promise<TaskResult> {
     const startTime = Date.now();
     const traceId = this.generateTraceId();
 
@@ -175,53 +175,85 @@ export class E2EAgent extends BaseAgent {
         ? 'deployment'
         : 'validation';
 
+      // SESSION #65: Return TaskResult conforming to canonical schema
       return {
+        message_id: task.message_id,
         task_id: task.task_id,
         workflow_id: task.workflow_id,
+        agent_id: this.agentId,
         status: report.overall_status === 'failed' ? 'failure' : 'success',
-        output: {
-          report: formattedReport,
-          scenarios_generated: scenariosGenerated,
-          test_files_created: testFiles.size,
-          page_objects_created: pageObjectFiles.size,
-          artifacts: {
-            test_files: testArtifacts.map(a => a.path),
-            page_objects: pageObjectArtifacts.map(a => a.path),
-            screenshots: playwrightArtifacts?.screenshots.map(a => a.path) || [],
-            videos: playwrightArtifacts?.videos.map(a => a.path) || [],
-            html_report: playwrightArtifacts?.reports[0]?.path
+        result: {
+          data: {
+            report: formattedReport,
+            scenarios_generated: scenariosGenerated,
+            test_files_created: testFiles.size,
+            page_objects_created: pageObjectFiles.size,
+            artifacts: {
+              test_files: testArtifacts.map(a => a.path),
+              page_objects: pageObjectArtifacts.map(a => a.path),
+              screenshots: playwrightArtifacts?.screenshots.map(a => a.path) || [],
+              videos: playwrightArtifacts?.videos.map(a => a.path) || [],
+              html_report: playwrightArtifacts?.reports[0]?.path
+            }
+          },
+          metrics: {
+            duration_ms: Date.now() - startTime,
+            resource_usage: {
+              api_calls: 1  // Claude API call for test generation
+            }
           }
         },
-        metrics: {
-          duration_ms: Date.now() - startTime,
-          api_calls: 1  // Claude API call for test generation
-        },
-        next_stage: nextStage
+        next_actions: nextStage ? [{
+          action: 'deploy',
+          agent_type: nextStage as any,
+          priority: 'high'
+        }] : undefined,
+        metadata: {
+          completed_at: new Date().toISOString(),
+          trace_id: task.trace.trace_id
+        }
       };
     } catch (error) {
       this.logger.error('E2E test task failed', { error, task_id: task.task_id });
 
+      // SESSION #65: Return TaskResult conforming to canonical schema
       return {
+        message_id: task.message_id,
         task_id: task.task_id,
         workflow_id: task.workflow_id,
+        agent_id: this.agentId,
         status: 'failure',
-        output: {
-          error: `E2E test failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        result: {
+          data: {
+            error: `E2E test failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          },
+          metrics: {
+            duration_ms: Date.now() - startTime
+          }
         },
-        errors: [error instanceof Error ? error.message : 'Unknown error']
+        errors: [{
+          code: 'E2E_TEST_FAILURE',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          recoverable: true
+        }],
+        metadata: {
+          completed_at: new Date().toISOString(),
+          trace_id: task.trace.trace_id
+        }
       };
     }
   }
 
   /**
    * Parse and validate task context
+   * SESSION #65: Updated for AgentEnvelope v2.0.0 (payload instead of context)
    */
-  private parseTaskContext(task: TaskAssignment): E2ETaskContext {
+  private parseTaskContext(task: AgentEnvelope): E2ETaskContext {
     try {
-      const context = E2ETaskContextSchema.parse(task.context);
+      const context = E2ETaskContextSchema.parse(task.payload);
       return context;
     } catch (error) {
-      this.logger.error('Invalid task context', { error, context: task.context });
+      this.logger.error('Invalid task context', { error, payload: task.payload });
       throw new Error(`Invalid task context: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

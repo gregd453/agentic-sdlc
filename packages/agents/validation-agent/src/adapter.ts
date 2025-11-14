@@ -1,13 +1,10 @@
 /**
- * Adapter: Maps base TaskAssignment envelope to ValidationTask
+ * Adapter: Maps base AgentEnvelope to ValidationTask
  *
- * SESSION #34 HOTFIX: The orchestrator currently sends base-agent TaskAssignment
- * format, but validation agent expects shared-types ValidationTask format.
- *
- * This adapter bridges the gap without changing orchestrator mid-session.
+ * SESSION #65: Updated to use AgentEnvelope v2.0.0
  */
 
-import { TaskAssignment } from '@agentic-sdlc/base-agent';
+import { AgentEnvelope } from '@agentic-sdlc/base-agent';
 
 export interface AdapterResult {
   success: boolean;
@@ -16,17 +13,18 @@ export interface AdapterResult {
 }
 
 /**
- * Adapts TaskAssignment envelope to ValidationTask
+ * Adapts AgentEnvelope to ValidationTask
+ * SESSION #65: Updated for AgentEnvelope v2.0.0
  */
-export function adaptToValidationTask(input: TaskAssignment): AdapterResult {
+export function adaptToValidationTask(input: AgentEnvelope): AdapterResult {
   try {
-    // Extract context fields that should be in ValidationTask payload
-    const ctx = input.context || {};
+    // SESSION #65: Extract from payload
+    const payload = input.payload as any;
 
-    // Extract required fields from context
-    const file_paths = ctx['file_paths'] as string[] | undefined;
-    const working_directory = ctx['working_directory'] as string | undefined;
-    const validation_types = (ctx['validation_types'] as string[] | undefined) || [
+    // Extract required fields from payload
+    const file_paths = payload.file_paths as string[] | undefined;
+    const working_directory = payload.working_directory as string | undefined;
+    const validation_types = (payload.validation_types as string[] | undefined) || [
       'typescript',
       'eslint',
       'security',
@@ -37,18 +35,18 @@ export function adaptToValidationTask(input: TaskAssignment): AdapterResult {
     if (!file_paths || file_paths.length === 0) {
       return {
         success: false,
-        error: 'Missing required field: context.file_paths (must be non-empty array)'
+        error: 'Missing required field: payload.file_paths (must be non-empty array)'
       };
     }
 
     if (!working_directory) {
       return {
         success: false,
-        error: 'Missing required field: context.working_directory'
+        error: 'Missing required field: payload.working_directory'
       };
     }
 
-    // Build ValidationTask (cast as any for hotfix - bypasses strict typing)
+    // Build ValidationTask
     const validationTask = {
       task_id: input.task_id,
       workflow_id: input.workflow_id,
@@ -58,7 +56,7 @@ export function adaptToValidationTask(input: TaskAssignment): AdapterResult {
         file_paths,
         working_directory,
         validation_types,
-        thresholds: ctx['thresholds']
+        thresholds: payload.thresholds
       }
     } as any;
 
@@ -77,13 +75,14 @@ export function adaptToValidationTask(input: TaskAssignment): AdapterResult {
 
 /**
  * Validates that the input type matches expected agent type
+ * SESSION #65: Updated for AgentEnvelope v2.0.0
  */
-export function validateAgentType(input: TaskAssignment, logger: any): boolean {
-  if (input.type !== 'validation') {
+export function validateAgentType(input: AgentEnvelope, logger: any): boolean {
+  if (input.agent_type !== 'validation') {
     logger.warn({
       task_id: input.task_id,
       expected_type: 'validation',
-      actual_type: input.type
+      actual_type: input.agent_type
     }, 'Non-validation task routed to validation agent');
     return false;
   }

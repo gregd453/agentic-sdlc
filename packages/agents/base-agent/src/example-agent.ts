@@ -1,12 +1,12 @@
 import type { IMessageBus } from '@agentic-sdlc/orchestrator';
 import { BaseAgent } from './base-agent';
-import { TaskAssignment, TaskResult } from './types';
+import { AgentEnvelope, TaskResult } from './types';
 
 /**
  * Example agent implementation showing how to extend BaseAgent
  * This agent analyzes requirements and generates a structured response
  *
- * Phase 3: Updated to require messageBus parameter
+ * SESSION #65: Updated to use AgentEnvelope v2.0.0
  */
 export class ExampleAgent extends BaseAgent {
   constructor(messageBus: IMessageBus) {
@@ -20,10 +20,10 @@ export class ExampleAgent extends BaseAgent {
     );
   }
 
-  async execute(task: TaskAssignment): Promise<TaskResult> {
+  async execute(task: AgentEnvelope): Promise<TaskResult> {
     const startTime = Date.now();
 
-    // SESSION #64: Extract task data from payload
+    // SESSION #65: Extract task data from payload (AgentEnvelope v2.0.0)
     const taskData = task.payload as any;
 
     this.logger.info('Executing example task', {
@@ -67,7 +67,7 @@ Format your response as JSON.`;
         duration_ms: duration
       });
 
-      // SESSION #64: Return result using canonical schema structure
+      // SESSION #65: Return result using canonical schema structure
       return {
         message_id: task.message_id,
         task_id: task.task_id,
@@ -90,7 +90,7 @@ Format your response as JSON.`;
         },
         metadata: {
           completed_at: new Date().toISOString(),
-          trace_id: task.metadata.trace_id
+          trace_id: task.trace.trace_id
         }
       };
 
@@ -119,7 +119,7 @@ Format your response as JSON.`;
         }],
         metadata: {
           completed_at: new Date().toISOString(),
-          trace_id: task.metadata.trace_id
+          trace_id: task.trace.trace_id
         }
       };
     }

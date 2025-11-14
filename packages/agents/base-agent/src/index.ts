@@ -6,7 +6,7 @@ export { ExampleAgent } from './example-agent';
 export {
   // Core types
   type AgentMessage,
-  type TaskAssignment,
+  type AgentEnvelope,
   type TaskResult,
   type AgentCapabilities,
   type HealthStatus,
@@ -15,7 +15,8 @@ export {
 
   // Schemas for validation
   AgentMessageSchema,
-  TaskAssignmentSchema,
+  AgentEnvelopeSchema,
+  validateAgentEnvelope,
   TaskResultSchema,
 
   // Error types

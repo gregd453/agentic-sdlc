@@ -1,16 +1,17 @@
 import { z } from 'zod';
 
-// SESSION #64: Import canonical schemas from shared-types
-// These are the ONLY valid schemas for task assignments and results
+// SESSION #65: Import canonical schemas from shared-types
+// AgentEnvelope v2.0.0 is THE ONLY valid schema for task assignments
 import {
-  TaskAssignmentSchema,
-  TaskAssignment,
+  AgentEnvelopeSchema,
+  AgentEnvelope,
+  validateAgentEnvelope,
   TaskResultSchema,
   TaskResult
 } from '@agentic-sdlc/shared-types';
 
-// Re-export for backward compatibility during migration
-export { TaskAssignmentSchema, TaskAssignment, TaskResultSchema, TaskResult };
+// Re-export for use in agents
+export { AgentEnvelopeSchema, AgentEnvelope, validateAgentEnvelope, TaskResultSchema, TaskResult };
 
 // Agent message types for communication
 export const AgentMessageSchema = z.object({
@@ -51,11 +52,12 @@ export type Result<T, E = Error> =
   | { success: false; error: E };
 
 // Agent lifecycle interface
+// SESSION #65: Updated to use AgentEnvelope v2.0.0
 export interface AgentLifecycle {
   initialize(): Promise<void>;
   receiveTask(message: AgentMessage): Promise<void>;
-  validateTask(task: unknown): TaskAssignment;
-  execute(task: TaskAssignment): Promise<TaskResult>;
+  validateTask(task: unknown): AgentEnvelope;
+  execute(task: AgentEnvelope): Promise<TaskResult>;
   reportResult(result: TaskResult): Promise<void>;
   cleanup(): Promise<void>;
   healthCheck(): Promise<HealthStatus>;
