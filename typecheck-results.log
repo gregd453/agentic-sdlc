@@ -1,0 +1,119 @@
+
+> agentic-sdlc@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc
+> turbo run typecheck
+
+• Packages in scope: @agentic-sdlc/base-agent, @agentic-sdlc/contracts, @agentic-sdlc/dashboard, @agentic-sdlc/deployment-agent, @agentic-sdlc/e2e-agent, @agentic-sdlc/integration-agent, @agentic-sdlc/ops, @agentic-sdlc/orchestrator, @agentic-sdlc/scaffold-agent, @agentic-sdlc/shared-types, @agentic-sdlc/shared-utils, @agentic-sdlc/test-utils, @agentic-sdlc/validation-agent
+• Running typecheck in 13 packages
+• Remote caching disabled
+@agentic-sdlc/shared-types:build: cache miss, executing 4aef2608d81b25f5
+@agentic-sdlc/shared-utils:typecheck: cache hit, replaying logs 47897102f467a7a8
+@agentic-sdlc/shared-utils:typecheck: 
+@agentic-sdlc/shared-utils:typecheck: > @agentic-sdlc/shared-utils@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/utils
+@agentic-sdlc/shared-utils:typecheck: > tsc --noEmit
+@agentic-sdlc/shared-utils:typecheck: 
+@agentic-sdlc/shared-types:typecheck: cache miss, executing b6ff0c7f0cdcc6d9
+@agentic-sdlc/dashboard:typecheck: cache hit, replaying logs 4bf133c9bc58bd89
+@agentic-sdlc/dashboard:typecheck: 
+@agentic-sdlc/dashboard:typecheck: > @agentic-sdlc/dashboard@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/dashboard
+@agentic-sdlc/dashboard:typecheck: > tsc --noEmit
+@agentic-sdlc/dashboard:typecheck: 
+@agentic-sdlc/ops:typecheck: cache hit, replaying logs 0de8565ae5c54719
+@agentic-sdlc/ops:typecheck: 
+@agentic-sdlc/ops:typecheck: > @agentic-sdlc/ops@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/ops/agentic
+@agentic-sdlc/ops:typecheck: > tsc --noEmit
+@agentic-sdlc/ops:typecheck: 
+@agentic-sdlc/shared-utils:build: cache hit, replaying logs 5ca9a672db0388f6
+@agentic-sdlc/shared-utils:build: 
+@agentic-sdlc/shared-utils:build: > @agentic-sdlc/shared-utils@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/utils
+@agentic-sdlc/shared-utils:build: > tsc
+@agentic-sdlc/shared-utils:build: 
+@agentic-sdlc/shared-types:typecheck: 
+@agentic-sdlc/shared-types:typecheck: > @agentic-sdlc/shared-types@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types
+@agentic-sdlc/shared-types:typecheck: > tsc --noEmit
+@agentic-sdlc/shared-types:typecheck: 
+@agentic-sdlc/shared-types:build: 
+@agentic-sdlc/shared-types:build: > @agentic-sdlc/shared-types@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/types
+@agentic-sdlc/shared-types:build: > tsc
+@agentic-sdlc/shared-types:build: 
+@agentic-sdlc/test-utils:build: cache miss, executing a500cfce83de53cf
+@agentic-sdlc/test-utils:typecheck: cache miss, executing 271f568fe08d4da1
+@agentic-sdlc/contracts:build: cache miss, executing 1728fd71a00ca369
+@agentic-sdlc/contracts:typecheck: cache miss, executing 2e2148201d782bfd
+@agentic-sdlc/test-utils:build: 
+@agentic-sdlc/test-utils:build: > @agentic-sdlc/test-utils@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/test-utils
+@agentic-sdlc/test-utils:build: > tsc
+@agentic-sdlc/test-utils:build: 
+@agentic-sdlc/contracts:typecheck: 
+@agentic-sdlc/contracts:typecheck: > @agentic-sdlc/contracts@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/contracts
+@agentic-sdlc/contracts:typecheck: > tsc --noEmit
+@agentic-sdlc/contracts:typecheck: 
+@agentic-sdlc/contracts:build: 
+@agentic-sdlc/contracts:build: > @agentic-sdlc/contracts@1.0.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/contracts
+@agentic-sdlc/contracts:build: > tsc
+@agentic-sdlc/contracts:build: 
+@agentic-sdlc/test-utils:typecheck: 
+@agentic-sdlc/test-utils:typecheck: > @agentic-sdlc/test-utils@1.0.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/shared/test-utils
+@agentic-sdlc/test-utils:typecheck: > tsc --noEmit
+@agentic-sdlc/test-utils:typecheck: 
+@agentic-sdlc/orchestrator:build: cache miss, executing 96531d38f25eaa4d
+@agentic-sdlc/orchestrator:typecheck: cache miss, executing d7482df79d9af952
+@agentic-sdlc/orchestrator:build: 
+@agentic-sdlc/orchestrator:build: > @agentic-sdlc/orchestrator@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+@agentic-sdlc/orchestrator:build: > tsc
+@agentic-sdlc/orchestrator:build: 
+@agentic-sdlc/orchestrator:typecheck: 
+@agentic-sdlc/orchestrator:typecheck: > @agentic-sdlc/orchestrator@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+@agentic-sdlc/orchestrator:typecheck: > tsc --noEmit
+@agentic-sdlc/orchestrator:typecheck: 
+@agentic-sdlc/base-agent:typecheck: cache miss, executing 1ab94182f5f8628a
+@agentic-sdlc/base-agent:build: cache miss, executing a34e27dc692edf77
+@agentic-sdlc/base-agent:build: 
+@agentic-sdlc/base-agent:build: > @agentic-sdlc/base-agent@0.1.0 build /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:build: > tsc
+@agentic-sdlc/base-agent:build: 
+@agentic-sdlc/base-agent:typecheck: 
+@agentic-sdlc/base-agent:typecheck: > @agentic-sdlc/base-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/base-agent:typecheck: 
+@agentic-sdlc/e2e-agent:typecheck: cache miss, executing dffd207add4ca92a
+@agentic-sdlc/integration-agent:typecheck: cache miss, executing d0cfdba5eee7995d
+@agentic-sdlc/scaffold-agent:typecheck: cache miss, executing f03f8c81d13b36a4
+@agentic-sdlc/deployment-agent:typecheck: cache miss, executing 5a32a2a8c2863cc2
+@agentic-sdlc/validation-agent:typecheck: cache miss, executing 6635482d60bf4a2d
+@agentic-sdlc/scaffold-agent:typecheck: 
+@agentic-sdlc/scaffold-agent:typecheck: > @agentic-sdlc/scaffold-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent
+@agentic-sdlc/scaffold-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/scaffold-agent:typecheck: 
+@agentic-sdlc/e2e-agent:typecheck: 
+@agentic-sdlc/e2e-agent:typecheck: > @agentic-sdlc/e2e-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/e2e-agent
+@agentic-sdlc/e2e-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/e2e-agent:typecheck: 
+@agentic-sdlc/integration-agent:typecheck: 
+@agentic-sdlc/integration-agent:typecheck: > @agentic-sdlc/integration-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/integration-agent
+@agentic-sdlc/integration-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/integration-agent:typecheck: 
+@agentic-sdlc/validation-agent:typecheck: 
+@agentic-sdlc/validation-agent:typecheck: > @agentic-sdlc/validation-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent
+@agentic-sdlc/validation-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/validation-agent:typecheck: 
+@agentic-sdlc/deployment-agent:typecheck: 
+@agentic-sdlc/deployment-agent:typecheck: > @agentic-sdlc/deployment-agent@0.1.0 typecheck /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/deployment-agent
+@agentic-sdlc/deployment-agent:typecheck: > tsc --noEmit
+@agentic-sdlc/deployment-agent:typecheck: 
+@agentic-sdlc/validation-agent:typecheck: src/adapter.ts(24,23): error TS2339: Property 'context' does not exist on type '{ workflow_id: string; metadata: { created_at: string; created_by: string; trace_id: string; parent_task_id?: string | undefined; }; task_id: string; agent_type: "validation" | "scaffold" | ... 5 more ... | "recovery"; ... 4 more ...; action?: string | undefined; }'.
+@agentic-sdlc/validation-agent:typecheck: src/adapter.ts(82,13): error TS2339: Property 'type' does not exist on type '{ workflow_id: string; metadata: { created_at: string; created_by: string; trace_id: string; parent_task_id?: string | undefined; }; task_id: string; agent_type: "validation" | "scaffold" | ... 5 more ... | "recovery"; ... 4 more ...; action?: string | undefined; }'.
+@agentic-sdlc/validation-agent:typecheck: src/adapter.ts(86,26): error TS2339: Property 'type' does not exist on type '{ workflow_id: string; metadata: { created_at: string; created_by: string; trace_id: string; parent_task_id?: string | undefined; }; task_id: string; agent_type: "validation" | "scaffold" | ... 5 more ... | "recovery"; ... 4 more ...; action?: string | undefined; }'.
+@agentic-sdlc/validation-agent:typecheck: src/validation-agent.ts(260,9): error TS2322: Type 'string[] | undefined' is not assignable to type '{ code: string; message: string; recoverable: boolean; details?: Record<string, unknown> | undefined; }[] | undefined'.
+@agentic-sdlc/validation-agent:typecheck:   Type 'string[]' is not assignable to type '{ code: string; message: string; recoverable: boolean; details?: Record<string, unknown> | undefined; }[]'.
+@agentic-sdlc/validation-agent:typecheck:     Type 'string' is not assignable to type '{ code: string; message: string; recoverable: boolean; details?: Record<string, unknown> | undefined; }'.
+@agentic-sdlc/validation-agent:typecheck:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/validation-agent:typecheck: ERROR: command finished with error: command (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent) /Users/Greg/.nvm/versions/node/v22.18.0/bin/pnpm run typecheck exited (2)
+@agentic-sdlc/validation-agent#typecheck: command (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent) /Users/Greg/.nvm/versions/node/v22.18.0/bin/pnpm run typecheck exited (2)
+
+ Tasks:    15 successful, 19 total
+Cached:    4 cached, 19 total
+  Time:    5.922s 
+Failed:    @agentic-sdlc/validation-agent#typecheck
+
+ ERROR  run failed: command  exited (2)
+ ELIFECYCLE  Command failed with exit code 2.

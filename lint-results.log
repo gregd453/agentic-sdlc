@@ -1,0 +1,169 @@
+
+> agentic-sdlc@0.1.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc
+> turbo run lint
+
+• Packages in scope: @agentic-sdlc/base-agent, @agentic-sdlc/contracts, @agentic-sdlc/dashboard, @agentic-sdlc/deployment-agent, @agentic-sdlc/e2e-agent, @agentic-sdlc/integration-agent, @agentic-sdlc/ops, @agentic-sdlc/orchestrator, @agentic-sdlc/scaffold-agent, @agentic-sdlc/shared-types, @agentic-sdlc/shared-utils, @agentic-sdlc/test-utils, @agentic-sdlc/validation-agent
+• Running lint in 13 packages
+• Remote caching disabled
+@agentic-sdlc/scaffold-agent:lint: cache miss, executing d443cd7c8bbd3339
+@agentic-sdlc/integration-agent:lint: cache miss, executing a0674d766f8c5362
+@agentic-sdlc/e2e-agent:lint: cache miss, executing 426105b83c0c7a84
+@agentic-sdlc/orchestrator:lint: cache miss, executing 424ce871047af4b5
+@agentic-sdlc/base-agent:lint: cache miss, executing 96a2a78b3787f70c
+@agentic-sdlc/ops:lint: cache miss, executing d577c2b557965fed
+@agentic-sdlc/validation-agent:lint: cache miss, executing 926abe7c5d97b711
+@agentic-sdlc/deployment-agent:lint: cache miss, executing cd6aa1606ed03b0e
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/integration-agent:lint: > @agentic-sdlc/integration-agent@0.1.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/integration-agent
+@agentic-sdlc/integration-agent:lint: > eslint src --ext .ts
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/scaffold-agent:lint: > @agentic-sdlc/scaffold-agent@0.1.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent
+@agentic-sdlc/scaffold-agent:lint: > eslint src --ext .ts
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/orchestrator:lint: > @agentic-sdlc/orchestrator@0.1.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator
+@agentic-sdlc/orchestrator:lint: > eslint src --ext .ts
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/ops:lint: > @agentic-sdlc/ops@1.0.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc/ops/agentic
+@agentic-sdlc/ops:lint: > eslint . --ext .ts
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/e2e-agent:lint: > @agentic-sdlc/e2e-agent@0.1.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/e2e-agent
+@agentic-sdlc/e2e-agent:lint: > eslint src --ext .ts
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/validation-agent:lint: > @agentic-sdlc/validation-agent@0.1.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent
+@agentic-sdlc/validation-agent:lint: > eslint src --ext .ts
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/base-agent:lint: > @agentic-sdlc/base-agent@0.1.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent
+@agentic-sdlc/base-agent:lint: > eslint src --ext .ts
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/deployment-agent:lint: > @agentic-sdlc/deployment-agent@0.1.0 lint /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/deployment-agent
+@agentic-sdlc/deployment-agent:lint: > eslint src --ext .ts
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/base-agent:lint: Oops! Something went wrong! :(
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/base-agent:lint: ESLint: 8.57.1
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/base-agent:lint: ESLint couldn't find a configuration file. To set up a configuration file for this project, please run:
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/base-agent:lint:     npm init @eslint/config
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/base-agent:lint: ESLint looked for configuration files in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src and its ancestors. If it found none, it then looked in your home directory.
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/base-agent:lint: If you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat
+@agentic-sdlc/base-agent:lint: 
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/integration-agent:lint: Oops! Something went wrong! :(
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/integration-agent:lint: ESLint: 8.57.1
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/integration-agent:lint: ESLint couldn't find a configuration file. To set up a configuration file for this project, please run:
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/integration-agent:lint:     npm init @eslint/config
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/integration-agent:lint: ESLint looked for configuration files in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/integration-agent/src/__tests__ and its ancestors. If it found none, it then looked in your home directory.
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/integration-agent:lint: If you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat
+@agentic-sdlc/integration-agent:lint: 
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/e2e-agent:lint: Oops! Something went wrong! :(
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/e2e-agent:lint: ESLint: 8.57.1
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/e2e-agent:lint: ESLint couldn't find a configuration file. To set up a configuration file for this project, please run:
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/e2e-agent:lint:     npm init @eslint/config
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/e2e-agent:lint: ESLint looked for configuration files in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/e2e-agent/src/__tests__ and its ancestors. If it found none, it then looked in your home directory.
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/e2e-agent:lint: If you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat
+@agentic-sdlc/e2e-agent:lint: 
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/validation-agent:lint: Oops! Something went wrong! :(
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/validation-agent:lint: ESLint: 8.57.1
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/validation-agent:lint: ESLint couldn't find a configuration file. To set up a configuration file for this project, please run:
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/validation-agent:lint:     npm init @eslint/config
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/validation-agent:lint: ESLint looked for configuration files in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/__tests__/utils and its ancestors. If it found none, it then looked in your home directory.
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/validation-agent:lint: If you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat
+@agentic-sdlc/validation-agent:lint: 
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/orchestrator:lint: Oops! Something went wrong! :(
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/orchestrator:lint: ESLint: 8.57.1
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/orchestrator:lint: ESLint couldn't find a configuration file. To set up a configuration file for this project, please run:
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/orchestrator:lint:     npm init @eslint/config
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/orchestrator:lint: ESLint looked for configuration files in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/__tests__/integrations and its ancestors. If it found none, it then looked in your home directory.
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/orchestrator:lint: If you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat
+@agentic-sdlc/orchestrator:lint: 
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/scaffold-agent:lint: Oops! Something went wrong! :(
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/scaffold-agent:lint: ESLint: 8.57.1
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/scaffold-agent:lint: ESLint couldn't find a configuration file. To set up a configuration file for this project, please run:
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/scaffold-agent:lint:     npm init @eslint/config
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/scaffold-agent:lint: ESLint looked for configuration files in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/src and its ancestors. If it found none, it then looked in your home directory.
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/scaffold-agent:lint: If you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat
+@agentic-sdlc/scaffold-agent:lint: 
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/deployment-agent:lint: Oops! Something went wrong! :(
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/deployment-agent:lint: ESLint: 8.57.1
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/deployment-agent:lint: ESLint couldn't find a configuration file. To set up a configuration file for this project, please run:
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/deployment-agent:lint:     npm init @eslint/config
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/deployment-agent:lint: ESLint looked for configuration files in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/deployment-agent/src/__tests__ and its ancestors. If it found none, it then looked in your home directory.
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/deployment-agent:lint: If you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat
+@agentic-sdlc/deployment-agent:lint: 
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/ops:lint: Oops! Something went wrong! :(
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/ops:lint: ESLint: 8.57.1
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/ops:lint: ESLint couldn't find a configuration file. To set up a configuration file for this project, please run:
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/ops:lint:     npm init @eslint/config
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/ops:lint: ESLint looked for configuration files in /Users/Greg/Projects/apps/zyp/agent-sdlc/ops/agentic/cli and its ancestors. If it found none, it then looked in your home directory.
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/ops:lint: If you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat
+@agentic-sdlc/ops:lint: 
+@agentic-sdlc/integration-agent:lint:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/scaffold-agent:lint:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/deployment-agent:lint:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/base-agent:lint:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/ops:lint:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/e2e-agent:lint:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/validation-agent:lint:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/orchestrator:lint:  ELIFECYCLE  Command failed with exit code 2.
+@agentic-sdlc/base-agent:lint: ERROR: command finished with error: command (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent) /Users/Greg/.nvm/versions/node/v22.18.0/bin/pnpm run lint exited (2)
+@agentic-sdlc/base-agent#lint: command (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent) /Users/Greg/.nvm/versions/node/v22.18.0/bin/pnpm run lint exited (2)
+
+ Tasks:    0 successful, 8 total
+Cached:    0 cached, 8 total
+  Time:    497ms 
+Failed:    @agentic-sdlc/base-agent#lint
+
+ ERROR  run failed: command  exited (2)
+ ELIFECYCLE  Command failed with exit code 2.
