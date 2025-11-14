@@ -875,3 +875,4 @@ docker logs agentic-scaffold-agent-1 2>&1 | grep "PHASE-3"
 # After fixing Line 140:
 ./scripts/run-pipeline-test.sh "Hello World API"
 ```
+- Proactively add debug statements when triaging difficult flows and complex transactions.

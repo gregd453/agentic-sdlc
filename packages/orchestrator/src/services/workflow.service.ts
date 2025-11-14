@@ -104,6 +104,17 @@ export class WorkflowService {
 
       // Subscribe to agent results topic with centralized handler
       await this.messageBus.subscribe(topic, async (message: any) => {
+        console.log('[DEBUG-ORCH-1] 🔵 Message received in subscription handler', {
+          has_message: !!message,
+          message_keys: message ? Object.keys(message).join(',') : 'null',
+          workflow_id: message?.workflow_id,
+          task_id: message?.task_id,
+          agent_id: message?.agent_id,
+          agent_type: message?.agent_type,
+          success: message?.success,
+          status: message?.status
+        });
+
         logger.info('[PHASE-2] Received agent result from message bus', {
           message_id: message.id,
           workflow_id: message.workflow_id,
@@ -111,8 +122,10 @@ export class WorkflowService {
           type: message.type
         });
 
+        console.log('[DEBUG-ORCH-2] 🔵 About to call handleAgentResult');
         // Handle the agent result using existing handler
         await this.handleAgentResult(message);
+        console.log('[DEBUG-ORCH-3] 🔵 handleAgentResult completed');
       });
 
       logger.info('[PHASE-2] Message bus subscription established successfully', {
@@ -543,6 +556,12 @@ export class WorkflowService {
           channel: taskChannel
         });
       } catch (error) {
+        console.log('[DEBUG-DISPATCH] ❌ CRITICAL: Task dispatch failed', {
+          error: error instanceof Error ? error.message : String(error),
+          task_id: taskId,
+          workflow_id: workflowId,
+          channel: taskChannel
+        });
         logger.error('[TASK_DISPATCH] Failed to publish task to message bus', {
           error: error instanceof Error ? error.message : String(error),
           stack: error instanceof Error ? error.stack : undefined,
@@ -576,15 +595,29 @@ export class WorkflowService {
   }
 
   private async handleAgentResult(result: any): Promise<void> {
+    console.log('[DEBUG-ORCH-4] 🟢 handleAgentResult ENTRY', {
+      has_result: !!result,
+      result_keys: result ? Object.keys(result).join(',') : 'null',
+      workflow_id: result?.workflow_id,
+      task_id: result?.task_id,
+      success: result?.success
+    });
+
     // The result IS the AgentResultSchema-compliant object (no payload wrapper)
     // redis-bus adapter already unwrapped the envelope and extracted the message
     const agentResult = result;
 
+    console.log('[DEBUG-ORCH-5] 🟢 About to validate against AgentResultSchema');
     // ✓ CRITICAL: Validate against AgentResultSchema to ensure compliance
     try {
       const { AgentResultSchema } = await import('@agentic-sdlc/shared-types');
       AgentResultSchema.parse(agentResult);
+      console.log('[DEBUG-ORCH-6] ✅ AgentResultSchema validation PASSED');
     } catch (validationError) {
+      console.log('[DEBUG-ORCH-6] ❌ AgentResultSchema validation FAILED', {
+        error: (validationError as any).message,
+        result_keys: Object.keys(agentResult || {}).join(',')
+      });
       logger.error('AgentResultSchema validation failed in orchestrator - SCHEMA COMPLIANCE BREACH', {
         workflow_id: result.workflow_id,
         agent_id: result.agent_id,
@@ -614,7 +647,15 @@ export class WorkflowService {
     // Determine the stage from result.stage (the workflow stage, not the action)
     const completedStage = result.stage;
 
+    console.log('[DEBUG-ORCH-7] 🟢 Checking success status', {
+      success: agentResult.success,
+      status: agentResult.status,
+      completedStage,
+      has_stage: !!completedStage
+    });
+
     if (agentResult.success) {
+      console.log('[DEBUG-ORCH-8] ✅ Task SUCCESS branch - will call handleTaskCompletion');
       logger.info('Task completed successfully - transitioning workflow', {
         workflow_id: agentResult.workflow_id,
         task_id: agentResult.task_id,
@@ -634,7 +675,9 @@ export class WorkflowService {
         timestamp: agentResult.timestamp
       };
 
+      console.log('[DEBUG-ORCH-9] 🟢 About to store stage output');
       await this.storeStageOutput(agentResult.workflow_id, completedStage, stageOutput);
+      console.log('[DEBUG-ORCH-10] 🟢 Stage output stored, calling handleTaskCompletion');
 
       await this.handleTaskCompletion({
         payload: {
@@ -643,7 +686,9 @@ export class WorkflowService {
           stage: completedStage
         }
       });
+      console.log('[DEBUG-ORCH-11] ✅ handleTaskCompletion completed');
     } else {
+      console.log('[DEBUG-ORCH-8] ❌ Task FAILURE branch - will call handleTaskFailure');
       // SESSION #32: Store stage output even on failure for audit trail
       const failureOutput = {
         agent_id: agentResult.agent_id,

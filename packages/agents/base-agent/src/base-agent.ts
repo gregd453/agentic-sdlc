@@ -450,30 +450,64 @@ export abstract class BaseAgent implements AgentLifecycle {
       success = true;
     }
 
-    // SESSION #64: Build result using canonical TaskResult schema
-    // New schema structure: result.data (not output), result.metrics, errors[{code, message, recoverable}]
+    // SESSION #64: Build result using canonical AgentResultSchema
+    // Required fields: task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version
+    // Optional fields: artifacts, error (singular), warnings
     const agentResult = {
-      message_id: validatedResult.message_id,
       task_id: validatedResult.task_id,
       workflow_id: validatedResult.workflow_id,
       agent_id: this.agentId,
-      status: validatedResult.status,
-      result: validatedResult.result, // Already in correct format
-      errors: validatedResult.errors, // Already in correct format: [{code, message, recoverable}]
-      next_actions: validatedResult.next_actions,
-      metadata: validatedResult.metadata,
-      // Phase 3: Include trace context for distributed tracing (already in metadata)
-      trace_id: this.currentTraceContext?.trace_id,
-      span_id: this.currentTraceContext?.span_id,
-      parent_span_id: this.currentTraceContext?.parent_span_id,
+      agent_type: this.capabilities.type, // REQUIRED: Agent type enum value
+      success: success, // REQUIRED: Boolean computed from status
+      status: agentStatus, // REQUIRED: Use mapped status ('failed' not 'failure')
+      action: `execute_${this.capabilities.type}`, // REQUIRED: Action description
+      result: validatedResult.result, // REQUIRED: Task output data
+      metrics: validatedResult.result?.metrics || { // REQUIRED: Execution metrics
+        duration_ms: 0
+      },
+      // Optional: Convert errors array to singular error object
+      error: validatedResult.errors && validatedResult.errors.length > 0 ? {
+        code: validatedResult.errors[0].code,
+        message: validatedResult.errors[0].message,
+        retryable: validatedResult.errors[0].recoverable || false
+      } : undefined,
       timestamp: new Date().toISOString(),
       version: VERSION
     };
 
+    // 🔍 DEBUG POINT 1: Log agentResult structure BEFORE validation
+    console.log('[DEBUG-RESULT] Built agentResult object (BEFORE validation)', {
+      keys: Object.keys(agentResult).join(','),
+      task_id: agentResult.task_id,
+      workflow_id: agentResult.workflow_id,
+      agent_id: agentResult.agent_id,
+      agent_type: agentResult.agent_type,
+      success: agentResult.success,
+      status: agentResult.status,
+      action: agentResult.action,
+      has_result: !!agentResult.result,
+      result_keys: agentResult.result ? Object.keys(agentResult.result).join(',') : 'none',
+      has_metrics: !!agentResult.metrics,
+      has_error: !!agentResult.error,
+      timestamp: agentResult.timestamp,
+      version: agentResult.version,
+      full_object_sample: JSON.stringify(agentResult).substring(0, 500)
+    });
+
     // Validate against AgentResultSchema before publishing
     // This is the critical validation boundary - ensures all emitted results are schema-compliant
+
+    // 🔍 DEBUG POINT 2: Log what AgentResultSchema EXPECTS
+    console.log('[DEBUG-RESULT] AgentResultSchema REQUIRED fields:', {
+      required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+      optional_fields: 'artifacts, error, warnings',
+      what_we_have: Object.keys(agentResult).join(','),
+      missing_required: ['agent_type', 'success', 'action', 'metrics'].filter(f => !(f in agentResult)).join(',') || 'none'
+    });
+
     try {
       AgentResultSchema.parse(agentResult);
+      console.log('[DEBUG-RESULT] ✅ Validation PASSED');
       this.logger.debug('✅ [RESULT-VALIDATION] Result validated against AgentResultSchema', {
         task_id: validatedResult.task_id,
         workflow_id: validatedResult.workflow_id,
@@ -483,6 +517,11 @@ export abstract class BaseAgent implements AgentLifecycle {
         trace_id: this.currentTraceContext?.trace_id
       });
     } catch (validationError) {
+      console.log('[DEBUG-RESULT] ❌ Validation FAILED - Zod error details:', {
+        error_message: (validationError as any).message,
+        error_count: (validationError as any)?.errors?.length || 0,
+        all_errors: (validationError as any)?.errors || []
+      });
       // Extract detailed Zod validation errors
       const zodErrors = (validationError as any)?.errors || [];
       const firstError = zodErrors[0] || {};
@@ -502,14 +541,16 @@ export abstract class BaseAgent implements AgentLifecycle {
           message: firstError.message || 'unknown'
         },
         result_structure: {
-          has_message_id: !!agentResult.message_id,
           has_task_id: !!agentResult.task_id,
           has_workflow_id: !!agentResult.workflow_id,
           has_agent_id: !!agentResult.agent_id,
+          has_agent_type: !!agentResult.agent_type,
+          has_success: agentResult.success !== undefined,
           has_status: !!agentResult.status,
+          has_action: !!agentResult.action,
           has_result: !!agentResult.result,
-          has_metadata: !!agentResult.metadata,
-          has_trace_id: !!agentResult.trace_id,
+          has_metrics: !!agentResult.metrics,
+          has_error: !!agentResult.error,
           result_keys: Object.keys(agentResult).join(',')
         },
         trace_context: {
@@ -552,9 +593,15 @@ export abstract class BaseAgent implements AgentLifecycle {
 
     try {
       // Publish via message bus - adapter handles pub/sub, stream mirroring, and DLQ
+      // Wrap the AgentResult with stage metadata for orchestrator routing
+      const resultWithMetadata = {
+        ...agentResult,
+        stage  // Add stage field for orchestrator to determine which stage completed
+      };
+
       await this.messageBus.publish(
         resultChannel,
-        agentResult,  // Already validated against AgentResultSchema
+        resultWithMetadata,  // AgentResult + stage metadata
         {
           key: validatedResult.workflow_id,
           mirrorToStream: `stream:${resultChannel}`
