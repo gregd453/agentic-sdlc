@@ -1,15 +1,24 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 32.0 | **Last Updated:** 2025-11-14 (Session #63) | **Status:** 🔍 **INVESTIGATING CONCURRENCY** - Strategic Refactor Planned
+**Version:** 33.0 | **Last Updated:** 2025-11-14 (Session #64) | **Status:** 🔬 **EPCC PROCESS VALIDATION** - Ready for Structured Implementation
 
 **📚 DEBUGGING HELP:** See [AGENTIC_SDLC_RUNBOOK.md](./AGENTIC_SDLC_RUNBOOK.md) for troubleshooting workflows, agents, and message bus issues.
-**🏗️ ARCHITECTURE:** See [STRATEGIC-BUS-REFACTOR.md](./STRATEGIC-BUS-REFACTOR.md) for message bus redesign blueprint.
+**🏗️ SCHEMA ANALYSIS:** See [SCHEMA_USAGE_DEEP_DIVE.md](./SCHEMA_USAGE_DEEP_DIVE.md) for complete schema architecture analysis.
+**📋 IMPLEMENTATION PLAN:** See [AGENTENVELOPE_IMPLEMENTATION_PLAN.md](./AGENTENVELOPE_IMPLEMENTATION_PLAN.md) for corrected schema unification plan.
 
 ---
 
-## 🎉 LATEST UPDATE (Session #63)
+## 🎉 LATEST UPDATE (Session #64)
 
-**🔍 CONCURRENCY INVESTIGATION + STRATEGIC ARCHITECTURE**
+**🔬 EPCC PROCESS FAILURE ANALYSIS + CORRECTED PLAN**
+
+### Session Summary
+
+**Goal:** Fix "Invalid task assignment" errors via Nuclear Cleanup (schema unification)
+**Approach Attempted:** EPCC_PLAN.md (remove duplicate TaskAssignmentSchema)
+**Result:** ❌ Plan based on false assumption - created 3rd duplicate instead of fixing root cause
+**Discovery:** Orchestrator never uses TaskAssignmentSchema - uses buildAgentEnvelope() instead
+**Outcome:** EPCC process failure analysis completed, corrected plan created
 
 ### What Was Accomplished:
 
@@ -347,7 +356,26 @@ await this.repository.createTask({
 
 ## 🎯 NEXT SESSION PRIORITIES
 
-### 1. Fix Stream Consumer Handler Invocation (CRITICAL PRIORITY)
+### 1. Test Improved EPCC Process (CRITICAL PRIORITY - Session #65)
+**Goal:** Validate EPCC process improvements work in practice
+**Approach:** Run full EPCC flow with AGENTENVELOPE_IMPLEMENTATION_PLAN.md
+**Estimated Time:** 6-7 hours (execution + validation)
+
+**Steps:**
+1. Start new session with clean context
+2. Run `/design` with AGENTENVELOPE_IMPLEMENTATION_PLAN.md as input
+3. Apply improved EPCC process with validation gates
+4. Execute implementation with checkpoints
+5. Validate: zero duplicates, all workflows work, process improvements effective
+
+**Success Criteria:**
+- ✅ All assumptions verified before implementation
+- ✅ Validation gates catch issues early
+- ✅ Single canonical schema (AgentEnvelope)
+- ✅ All agents working end-to-end
+- ✅ EPCC process validated as effective
+
+### 2. Fix Stream Consumer Handler Invocation (HIGH PRIORITY - After #1)
 **Status:** Workflows stuck at 0%, agents not consuming messages
 **Estimated Time:** 2-3 hours
 
