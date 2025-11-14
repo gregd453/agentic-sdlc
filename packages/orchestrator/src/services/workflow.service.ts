@@ -486,10 +486,10 @@ export class WorkflowService {
       retry_count: 0,
       max_retries: 3,
       timeout_ms: 300000,
-      // Phase 3: Store trace context in database (extract from envelope)
-      trace_id: envelope.trace_id,
-      span_id: envelope.span_id,
-      parent_span_id: envelope.parent_span_id
+      // Session #65: Extract trace context from nested structure (AgentEnvelope v2.0.0)
+      trace_id: envelope.trace.trace_id,
+      span_id: envelope.trace.span_id,
+      parent_span_id: envelope.trace.parent_span_id
     } as any);
 
     logger.info('[SESSION #36] Agent envelope created', {
@@ -497,7 +497,7 @@ export class WorkflowService {
       workflow_id: workflowId,
       stage,
       agent_type: agentType,
-      envelope_version: envelope.envelope_version,
+      envelope_version: envelope.metadata.envelope_version,
       has_workflow_context: !!envelope.workflow_context
     });
 
@@ -508,7 +508,7 @@ export class WorkflowService {
       workflow_id: workflowId,
       payload: envelope,
       timestamp: new Date().toISOString(),
-      trace_id: envelope.trace_id
+      trace_id: envelope.trace.trace_id  // Session #65: Use nested trace structure
     });
 
     // Phase 3: Dispatch envelope to agent via message bus

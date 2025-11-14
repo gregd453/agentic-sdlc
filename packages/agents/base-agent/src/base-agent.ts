@@ -311,9 +311,20 @@ export abstract class BaseAgent implements AgentLifecycle {
       });
       return envelope;
     } catch (error) {
+      // Enhanced debug logging for E2E testing
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const taskKeys = typeof task === 'object' && task !== null ? Object.keys(task as any).join(',') : 'N/A';
+      const taskSample = typeof task === 'object' ? JSON.stringify(task).substring(0, 500) : String(task);
+
+      console.error('=== AgentEnvelope Validation Failed ===');
+      console.error('Error:', errorMsg);
+      console.error('Task keys:', taskKeys);
+      console.error('Task sample:', taskSample);
+      console.error('=====================================');
+
       this.logger.error('❌ [SESSION #65] Task validation failed - NOT AgentEnvelope v2.0.0', {
-        validation_error: error instanceof Error ? error.message : String(error),
-        task_structure: typeof task === 'object' ? Object.keys(task as any).join(',') : typeof task
+        validation_error: errorMsg,
+        task_structure: taskKeys
       });
       throw new ValidationError(
         'Invalid task assignment - must conform to AgentEnvelope v2.0.0',

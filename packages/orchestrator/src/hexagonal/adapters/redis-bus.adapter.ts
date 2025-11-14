@@ -142,21 +142,28 @@ export function makeRedisBus(
                     try {
                       const messageData = message.message as any;
 
-                      // Fix: Parse stream message envelope structure
+                      // SESSION #65 FIX: Parse stream message envelope structure
+                      // Stream messages have {topic, payload} where payload may be string or pre-parsed object
                       let parsedMessage: any;
 
-                      // Stream messages have format: {topic, payload: '{"key":"...","msg":{...}}'}
-                      if (messageData.payload && typeof messageData.payload === 'string') {
-                        const envelope = JSON.parse(messageData.payload);
-                        // Extract the actual message from the envelope
-                        parsedMessage = envelope.msg || envelope;
+                      if (messageData.payload) {
+                        // Handle both string and pre-parsed payload
+                        const payloadData = typeof messageData.payload === 'string'
+                          ? JSON.parse(messageData.payload)
+                          : messageData.payload;
+
+                        // Unwrap {key, msg} envelope structure to get actual AgentEnvelope
+                        parsedMessage = payloadData.msg || payloadData;
+                      } else if (messageData.msg) {
+                        // Direct msg property (already unwrapped by caller)
+                        parsedMessage = messageData.msg;
                       } else if (typeof messageData.message === 'string') {
                         parsedMessage = JSON.parse(messageData.message);
                       } else if (typeof messageData === 'string') {
                         parsedMessage = JSON.parse(messageData);
                       } else {
-                        // Already an object, try to unwrap envelope
-                        parsedMessage = messageData.msg || messageData.message || messageData;
+                        // Fallback: assume messageData is already the unwrapped message
+                        parsedMessage = messageData;
                       }
 
                       log.info('[PHASE-3] Processing message from stream', {

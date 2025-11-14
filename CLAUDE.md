@@ -8,6 +8,39 @@
 
 ---
 
+## 🏗️ Architecture Rules (READ THIS FIRST)
+
+### DO's ✅
+1. DO: Use AgentEnvelopeSchema from @agentic-sdlc/shared-types for ALL task validation
+2. DO: Import shared components via workspace:* dependencies in package.json
+3. DO: Access trace fields via nested structure (envelope.trace.trace_id, NOT envelope.trace_id)
+4. DO: Let redis-bus.adapter.ts handle ALL message wrapping/unwrapping (lines 75, 156)
+5. DO: Use buildAgentEnvelope() in orchestrator as THE canonical envelope producer
+6. DO: Validate tasks with AgentEnvelopeSchema.parse() in BaseAgent.validateTask()
+7. DO: Import from package index (@agentic-sdlc/shared-types, NOT /src/ paths)
+8. DO: Use OrchestratorContainer for dependency injection in ALL services
+9. DO: Access nested envelope fields via metadata{}, constraints{}, workflow_context{}
+10. DO: Trust PNPM workspace symlinks - shared code changes propagate automatically
+
+### DON'Ts ❌
+1. DON'T: Create duplicate schemas or validators in individual agent packages
+2. DON'T: Import from /src/ paths directly (use package index exports only)
+3. DON'T: Add custom message unwrapping logic in agents (redis-bus does this)
+4. DON'T: Access flat envelope fields (trace_id, created_at) - use nested paths
+5. DON'T: Expect message.payload wrapper in handlers (redis-bus unwraps to message)
+6. DON'T: Create agent-specific message bus adapters (use shared redis-bus.adapter)
+7. DON'T: Bypass buildAgentEnvelope() to create task envelopes manually
+8. DON'T: Use TaskAssignmentSchema or old v1.0.0 schemas (AgentEnvelope v2.0.0 only)
+9. DON'T: Create local copies of shared utilities (tracing, logger, types)
+10. DON'T: Validate against anything except AgentEnvelopeSchema in agent code
+
+**Critical Files (Never Duplicate):**
+- `packages/shared/types/src/messages/agent-envelope.ts` - Canonical schema
+- `packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts` - Message bus
+- `packages/agents/base-agent/src/base-agent.ts` - Task validation
+
+---
+
 ## 🎉 LATEST UPDATE (Session #65)
 
 **✅ NUCLEAR CLEANUP COMPLETE - AgentEnvelope v2.0.0 Unified**
