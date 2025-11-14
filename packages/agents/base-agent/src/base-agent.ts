@@ -210,8 +210,8 @@ export abstract class BaseAgent implements AgentLifecycle {
     });
 
     try {
-      // Validate task
-      const task = this.validateTask(message.payload);
+      // Validate task - the full envelope is stored in message.payload.context (set by subscription handler)
+      const task = this.validateTask((message.payload as any).context);
 
       // Extract workflow stage from envelope format
       // The envelope is now stored in message.payload.context (set by the subscription handler)
