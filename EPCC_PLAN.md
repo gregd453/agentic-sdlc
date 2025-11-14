@@ -1,884 +1,1320 @@
-# EPCC Implementation Plan: React Monitoring Dashboard
+# Implementation Plan: Nuclear Cleanup - Option A
 
-**Status:** Ready to Implement
-**Created:** 2025-11-13
-**Updated:** 2025-11-13 (Session #61 - Comprehensive Analysis)
-**Estimated Duration:** 15-20 hours (broken into 5 phases)
-**Priority:** HIGH
-**Owner:** Development Team
+**Phase:** PLAN
+**Feature:** Remove all backward compatibility code and unify schema architecture
+**Approach:** Nuclear Cleanup (simultaneous updates across all agents)
+**Estimated Duration:** 6-8 hours
+**Priority:** CRITICAL (blocking all workflows)
+**Session:** #64
+**Created:** 2025-11-14
 
 ---
 
-## Overview
+## Executive Summary
 
-### Objective
-
-Build a production-ready React monitoring dashboard for the Agentic SDLC system that provides:
-- Real-time visibility into workflow execution
-- Distributed tracing visualization
-- Agent performance metrics
-- Interactive data filtering and search
-- Responsive UI with TailwindCSS
-
-### Current Status
-
-**✅ COMPLETED:**
-- Package structure created (`packages/dashboard/`)
-- Dependencies installed (React, Vite, TailwindCSS, Recharts, React Query)
-- Basic routing configured (App.tsx with 6 routes)
-- Common components scaffolded (StatusBadge, LoadingSpinner, ErrorDisplay, ProgressBar)
-- E2E test suite created (11 tests, 4 failing due to missing content)
-- Build configuration (Vite, TypeScript, Playwright)
-- Some API route files exist (stats.routes.ts, task.routes.ts, trace.routes.ts) but NOT WIRED UP
-
-**❌ MISSING:**
-- **CRITICAL:** Backend API routes NOT registered in server.ts (routes exist but not accessible)
-- Backend service implementations (stats.service.ts, trace.service.ts, task.service.ts may be incomplete)
-- Frontend page implementations (Dashboard, WorkflowsPage, WorkflowPage mostly empty)
-- Data visualization components (charts, trace trees, timelines)
-- API client integration (client.ts has stubs, needs implementation)
-- Real-time data polling
-
-**🔍 E2E TEST RESULTS:**
-```
-4 failed tests (missing UI elements):
-  ✗ Dashboard Overview page - no heading, no metrics, no tables
-  ✗ Active Workflows table - no content
-  ✗ Navigation tests - no page headings
-  ✗ Workflows table columns - no table structure
-
-7 passed tests (routing, navigation links, 404 handling):
-  ✓ All routes render (routing works)
-  ✓ Navigation links clickable
-  ✓ 404 page displays
-  ✓ Header visible on all pages
-  ✓ Active nav link highlighted
-  ✓ Page navigation functional
-  ✓ Filter controls present
-
-Missing API endpoints causing proxy errors:
-  - GET /api/v1/stats/overview (ECONNREFUSED - routes NOT registered!)
-  - GET /api/v1/workflows (ECONNREFUSED)
-  - GET /api/v1/workflows?status=running (ECONNREFUSED)
-  - GET /api/v1/workflows?type=feature (ECONNREFUSED)
-```
-
-**ROOT CAUSE:** API route files exist in `packages/orchestrator/src/api/routes/` but are NOT imported and registered in `server.ts`. This is the #1 blocker.
+### What We're Building
+A unified, forward-looking agent architecture that:
+- Uses a single canonical `ExecutionEnvelope` schema across all components
+- Eliminates duplicate `TaskAssignmentSchema` definitions causing "Invalid task assignment" errors
+- Removes ~250 lines of backward compatibility code accumulated across Sessions #36, #37, #47, #60-63
+- Establishes clear architectural boundaries between orchestrator (message producer) and agents (message consumers)
 
 ### Why It's Needed
+**Critical Blocker:** Workflows are stuck at 0% due to schema validation failures. The orchestrator sends:
+```typescript
+{
+  agent_type: "scaffold",
+  payload: { name: "...", description: "...", requirements: [...] }
+}
+```
 
-**Business Value:**
-- Operators can monitor workflow health and progress in real-time
-- Developers can debug failures with distributed trace correlation
-- Product teams can track agent performance and SLA metrics
-- Reduces MTTR (Mean Time To Resolution) for workflow issues
+But agents expect:
+```typescript
+{
+  type: "scaffold",
+  name: "...",
+  description: "...",
+  requirements: "..." // string, not array
+}
+```
 
-**Technical Value:**
-- Validates distributed tracing implementation (Session #60 work)
-- Provides observability into hexagonal architecture
-- Enables data-driven optimization of agent performance
-- Demonstrates production-readiness of the system
+This mismatch causes immediate validation failure before any agent can execute tasks.
+
+**Secondary Benefits:**
+- Cleaner codebase (removes 250+ lines of legacy code)
+- Consistent message handling across all agents
+- Easier future maintenance
+- Clear architectural patterns
 
 ### Success Criteria
-
-- [ ] **Criterion 1:** All 11 E2E tests pass (100% test coverage)
-- [ ] **Criterion 2:** Dashboard loads with real data from orchestrator API (< 500ms initial load)
-- [ ] **Criterion 3:** Trace visualization shows complete workflow → task → agent hierarchy
-- [ ] **Criterion 4:** Real-time updates refresh every 5 seconds (configurable polling)
-- [ ] **Criterion 5:** All charts render correctly with mock and real data
-- [ ] **Criterion 6:** Mobile-responsive layout works on 768px+ screens
-- [ ] **Criterion 7:** Zero TypeScript errors in frontend and backend code
-- [ ] **Criterion 8:** API response times < 200ms for list endpoints, < 100ms for stats
+- [ ] All workflows execute without "Invalid task assignment" errors
+- [ ] All 5 agents (scaffold, validation, e2e, integration, deployment) process tasks successfully
+- [ ] Zero TypeScript compilation errors
+- [ ] All unit tests pass
+- [ ] E2E pipeline test completes successfully
+- [ ] No backward compatibility code remains (SESSION markers, deprecated types, etc.)
+- [ ] Clean build output: `turbo run build` succeeds
+- [ ] PM2 processes all show "online" status with zero restarts
 
 ### Non-Goals (What We're NOT Doing)
-
-- **Not implementing WebSocket support** (will use polling for now, WebSockets in later phase)
-- **Not adding user authentication** (out of scope, assume internal tool)
-- **Not building workflow creation UI** (read-only dashboard, use API/CLI for creation)
-- **Not implementing custom alerting** (just visualization, alerting is separate)
-- **Not optimizing for mobile < 768px** (desktop/tablet only)
-- **Not adding export to PDF/Excel** (CSV only for now)
+- Not implementing strategic BaseAgent refactor (that's a separate 15-20 hour effort documented in EPCC_EXPLORE.md)
+- Not adding new features (idempotency, prompt auditing, etc.)
+- Not refactoring agent business logic
+- Not changing message bus architecture (Redis pub/sub + streams)
+- Not modifying database schema
+- Not updating distributed tracing implementation
 
 ---
 
 ## Technical Approach
 
-### High-Level Architecture
+### High-Level Strategy
+
+**Nuclear Cleanup** = Delete conflicting code and rebuild all agents simultaneously
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                    React Dashboard (Port 3001)                │
-│  ┌─────────────┬─────────────┬─────────────┬──────────────┐  │
-│  │  Dashboard  │  Workflows  │   Traces    │    Agents    │  │
-│  │    Page     │    Page     │    Page     │     Page     │  │
-│  └──────┬──────┴──────┬──────┴──────┬──────┴──────┬───────┘  │
-│         │             │             │             │          │
-│         └─────────────┴─────────────┴─────────────┘          │
-│                       │                                      │
-│               React Query (Client)                           │
-│                       │                                      │
-│              Vite Dev Server (Proxy)                         │
-└───────────────────────┼──────────────────────────────────────┘
-                        │ HTTP (proxied)
-                        ▼
-┌──────────────────────────────────────────────────────────────┐
-│              Orchestrator (Port 3000)                         │
-│  ┌─────────────────────────────────────────────────────────┐ │
-│  │              Fastify HTTP API Layer                     │ │
-│  ├─────────────┬────────────┬────────────┬────────────────┤ │
-│  │  Workflow   │   Stats    │   Trace    │     Task       │ │
-│  │   Routes    │   Routes   │   Routes   │    Routes      │ │
-│  │  (EXISTS)   │  (EXISTS)  │  (EXISTS)  │   (EXISTS)     │ │
-│  │    ⚠️       │     ⚠️     │     ⚠️     │      ⚠️        │ │
-│  │ NOT WIRED!  │ NOT WIRED! │ NOT WIRED! │  NOT WIRED!    │ │
-│  └──────┬──────┴─────┬──────┴─────┬──────┴──────┬─────────┘ │
-│         │            │            │             │           │
-│  ┌──────▼──────┬─────▼──────┬─────▼──────┬──────▼─────────┐ │
-│  │  Workflow   │   Stats    │   Trace    │     Task       │ │
-│  │   Service   │  Service   │  Service   │   Service      │ │
-│  │  (EXISTS)   │  (VERIFY)  │  (VERIFY)  │   (CREATE)     │ │
-│  └──────┬──────┴─────┬──────┴─────┬──────┴──────┬─────────┘ │
-│         │            │            │             │           │
-│  ┌──────▼──────┬─────▼──────┬─────▼──────┬──────▼─────────┐ │
-│  │  Workflow   │   Stats    │   Trace    │     Task       │ │
-│  │ Repository  │ Repository │ Repository │  Repository    │ │
-│  │  (EXISTS)   │  (VERIFY)  │  (VERIFY)  │   (CREATE)     │ │
-│  └──────┬──────┴─────┬──────┴─────┬──────┴──────┬─────────┘ │
-│         │            │            │             │           │
-└─────────┼────────────┼────────────┼─────────────┼───────────┘
-          │            │            │             │
-          └────────────┴────────────┴─────────────┘
-                        │
-                ┌───────▼────────┐
-                │  PostgreSQL    │
-                │   (Prisma)     │
-                │   ✅ READY     │
-                └────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    BEFORE (Broken)                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Orchestrator                Base Agent                    │
+│  ┌─────────────┐            ┌──────────────┐              │
+│  │TaskAssignment│            │TaskAssignment│              │
+│  │Schema        │            │Schema        │              │
+│  │              │            │              │              │
+│  │ agent_type ✓ │            │ type ✗       │              │
+│  │ payload {}   │            │ name ✗       │              │
+│  │ metadata     │            │ requirements │              │
+│  └──────┬───────┘            └──────┬───────┘              │
+│         │                           │                      │
+│         │    Message Flow           │                      │
+│         │  {agent_type, payload}    │                      │
+│         └──────────X─────────────►  │                      │
+│                MISMATCH!        Validation Fails           │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                    AFTER (Fixed)                            │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Orchestrator                All Agents                    │
+│  ┌─────────────┐            ┌──────────────┐              │
+│  │Execution    │            │Use Orchestrator│             │
+│  │Envelope     │            │Schema         │             │
+│  │(Canonical)  │            │(Import Only)  │             │
+│  │             │            │               │             │
+│  │ message_id  │            │ Parse payload │             │
+│  │ task_id     │            │ Extract domain│             │
+│  │ workflow_id │            │ data          │             │
+│  │ agent_type  │            │               │             │
+│  │ payload {}  │            │               │             │
+│  │ constraints │            │               │             │
+│  │ metadata    │            │               │             │
+│  └──────┬──────┘            └──────┬────────┘             │
+│         │                          │                      │
+│         │   Message Flow           │                      │
+│         │  ExecutionEnvelope       │                      │
+│         └──────────────────────────►                      │
+│                SUCCESS!        ✓ Validates                │
+│                                ✓ Parses payload           │
+│                                ✓ Executes task            │
+│                                                            │
+└─────────────────────────────────────────────────────────────┘
 ```
-
-### Hexagonal Architecture Layers
-
-| Layer | Components | Responsibility | Status |
-|-------|-----------|----------------|--------|
-| **HTTP Adapter** | `*.routes.ts` | Request validation, response formatting | FILES EXIST, NOT REGISTERED |
-| **Service Layer** | `*.service.ts` | Business logic, data aggregation | NEEDS VERIFICATION |
-| **Repository Layer** | `*.repository.ts` | Database queries, data access | NEEDS VERIFICATION |
-| **Core Domain** | Prisma schema | Data models and constraints | ✅ COMPLETE (Session #60) |
 
 ### Design Decisions
 
 | Decision | Option Chosen | Rationale |
-|----------|--------------|-----------|
-| **State Management** | React Query | Built-in caching, polling, error handling; no Redux needed |
-| **Routing** | React Router v6 | Standard choice, nested routes support |
-| **Styling** | TailwindCSS | Rapid prototyping, consistent design system |
-| **Charts** | Recharts | Declarative API, good TypeScript support, customizable |
-| **HTTP Client** | Fetch API | Native, no extra dependencies |
-| **Polling Strategy** | React Query `refetchInterval` | Built-in, configurable, automatic cleanup |
-| **Backend API** | Fastify | Already in use, fast, good plugin system |
-| **Database Queries** | Prisma ORM | Already in use, type-safe, migration support |
+|----------|---------------|-----------|
+| **Cleanup Approach** | Nuclear (simultaneous) | Faster (6-8h vs 9-13h), cleaner result, no half-migrated state |
+| **Schema Authority** | Orchestrator owns canonical schema | Orchestrator is producer, agents are consumers |
+| **Agent Schema Handling** | Delete base-agent schema entirely | Eliminate source of conflict, force import from orchestrator |
+| **Message Parsing** | Extract from `payload` field | Aligns with ExecutionEnvelope pattern from Session #60 |
+| **Backward Compatibility** | Zero (full removal) | User explicitly requested: "remove backward compatibility requirement and remove old code" |
+| **Testing Strategy** | Unit tests + E2E validation | Fast feedback loop, validates real workflow execution |
+| **Rollback Plan** | Git branch with clear commits | Can revert individual changes if needed |
+
+### Affected Components
+
+**Packages:**
+1. `@agentic-sdlc/orchestrator` - Schema owner
+2. `@agentic-sdlc/shared-types` - May need type exports
+3. `@agentic-sdlc/agents/base-agent` - Remove duplicate schema
+4. `@agentic-sdlc/agents/scaffold-agent` - Update parsing
+5. `@agentic-sdlc/agents/validation-agent` - Update parsing
+6. `@agentic-sdlc/agents/e2e-agent` - Update parsing
+7. `@agentic-sdlc/agents/integration-agent` - Update parsing + remove execute wrapper
+8. `@agentic-sdlc/agents/deployment-agent` - Update parsing + remove execute wrapper
+
+**Files to Modify:**
+1. `packages/agents/base-agent/src/types.ts` - Delete TaskAssignmentSchema (lines 19-31)
+2. `packages/agents/base-agent/src/base-agent.ts` - Import from orchestrator, update validateTask
+3. `packages/agents/scaffold-agent/src/scaffold-agent.ts` - Simplify envelope parsing
+4. `packages/agents/validation-agent/src/validation-agent.ts` - Remove debug logs, simplify parsing
+5. `packages/agents/e2e-agent/src/e2e-agent.ts` - Update parsing
+6. `packages/agents/integration-agent/src/integration-agent.ts` - Remove execute wrapper, update parsing
+7. `packages/agents/integration-agent/src/types.ts` - Delete deprecated file
+8. `packages/agents/deployment-agent/src/deployment-agent.ts` - Remove execute wrapper, update parsing
+9. `packages/agents/deployment-agent/src/types.ts` - Delete deprecated file
+
+**Files to Delete:**
+- `packages/agents/integration-agent/src/types.ts` - Deprecated re-exports
+- `packages/agents/deployment-agent/src/types.ts` - Deprecated re-exports
 
 ### Data Flow
 
+**Current (Broken):**
 ```
-1. User navigates to /dashboard
-   ↓
-2. React Router renders Dashboard component
-   ↓
-3. Component calls useStats() hook
-   ↓
-4. React Query checks cache → if stale, fetch
-   ↓
-5. API client: GET /api/v1/stats/overview
-   ↓
-6. Vite proxy forwards to http://localhost:3000
-   ↓
-7. ⚠️ CURRENT ISSUE: Route not registered → ECONNREFUSED
-   ↓
-8. ✅ AFTER FIX: Orchestrator stats.routes.ts receives request
-   ↓
-9. stats.service.ts aggregates data from repositories
-   ↓
-10. stats.repository.ts queries PostgreSQL via Prisma
-   ↓
-11. Response flows back through layers
-   ↓
-12. React Query caches result, triggers re-render
-   ↓
-13. Dashboard displays metrics and charts
-   ↓
-14. After 5s, React Query auto-refetches (polling)
+1. User creates workflow → Orchestrator
+2. Orchestrator creates task with ExecutionEnvelope:
+   {
+     message_id: "uuid",
+     task_id: "uuid",
+     workflow_id: "uuid",
+     agent_type: "scaffold",
+     payload: { name, description, requirements[] },
+     constraints: { timeout_ms, max_retries, required_confidence },
+     metadata: { created_at, created_by, trace_id }
+   }
+3. Orchestrator publishes to Redis stream
+4. Agent receives message
+5. BaseAgent.validateTask() parses with wrong schema:
+   TaskAssignmentSchema.parse(task) → expects {type, name, description, requirements: string}
+6. ❌ VALIDATION FAILS → "Invalid task assignment"
+7. Agent never executes
+8. Workflow stuck at 0%
+```
+
+**Fixed (After Cleanup):**
+```
+1. User creates workflow → Orchestrator
+2. Orchestrator creates task with ExecutionEnvelope (same as before)
+3. Orchestrator publishes to Redis stream
+4. Agent receives message
+5. BaseAgent.validateTask() parses with correct schema:
+   ExecutionEnvelopeSchema.parse(task) → expects {message_id, task_id, agent_type, payload{}}
+6. ✅ VALIDATION SUCCEEDS
+7. Agent extracts domain data from envelope.payload:
+   const scaffoldData = envelope.payload as ScaffoldPayload
+8. Agent executes business logic
+9. Agent publishes result
+10. Orchestrator receives result
+11. Workflow advances to next stage
 ```
 
 ---
 
 ## Task Breakdown
 
-### Phase 1: Backend API Routes (CRITICAL - 4-5 hours)
+### Phase 1: Preparation (1 hour)
 
-**🚨 PRIORITY 1: This must be completed first to unblock frontend development**
+**1.1 Create Feature Branch**
+- **Package:** N/A (git operation)
+- **Estimate:** 5 minutes
+- **Dependencies:** None
+- **Priority:** Critical
+- **Tasks:**
+  - Create branch: `git checkout -b fix/nuclear-cleanup-option-a`
+  - Ensure working directory is clean
+  - Note current commit SHA for rollback
 
-#### 1.1: Verify & Register Stats Service (1.5 hours)
-**Package:** `@agentic-sdlc/orchestrator`
-**Files:**
-- `packages/orchestrator/src/repositories/stats.repository.ts` (EXISTS - VERIFY)
-- `packages/orchestrator/src/services/stats.service.ts` (EXISTS - VERIFY)
-- `packages/orchestrator/src/api/routes/stats.routes.ts` (EXISTS - VERIFY)
-- `packages/orchestrator/src/server.ts` (MODIFY - ADD REGISTRATION)
+**1.2 Backup Current State**
+- **Package:** N/A (filesystem operation)
+- **Estimate:** 5 minutes
+- **Dependencies:** 1.1
+- **Priority:** Critical
+- **Tasks:**
+  - Export current database state: `./scripts/backup-db.sh` (if exists)
+  - Document current PM2 status: `pnpm pm2:status > pre-cleanup-status.txt`
+  - Take snapshot of logs: `pnpm pm2:logs --lines 100 > pre-cleanup-logs.txt`
 
-**Investigation Tasks:**
-- [ ] Read `stats.repository.ts` - Does it implement all required queries?
-  - `getOverviewStats()` - Total, running, completed, failed workflow counts
-  - `getWorkflowTimeSeries(hours: number)` - Workflows created per hour
-  - `getAgentPerformance()` - Success rate, avg duration by agent type
-- [ ] Read `stats.service.ts` - Does it orchestrate repository calls correctly?
-- [ ] Read `stats.routes.ts` - Does it expose all needed endpoints?
-  - `GET /api/v1/stats/overview` → DashboardStats
-  - `GET /api/v1/stats/timeseries?hours=24` → TimeSeriesData[]
-  - `GET /api/v1/stats/agents` → AgentStats[]
+**1.3 Run Pre-Cleanup Validation**
+- **Package:** All packages
+- **Estimate:** 10 minutes
+- **Dependencies:** 1.2
+- **Priority:** High
+- **Tasks:**
+  - Build all packages: `turbo run build`
+  - Run type checks: `turbo run typecheck`
+  - Capture baseline test results: `turbo run test > pre-cleanup-test-results.txt`
+  - Document failures (we expect "Invalid task assignment" errors)
 
-**Implementation Tasks:**
-- [ ] **CRITICAL:** Add to `server.ts`:
-  ```typescript
-  import { statsRoutes } from './api/routes/stats.routes';
+**1.4 Stop Running Services**
+- **Package:** N/A (PM2 operation)
+- **Estimate:** 2 minutes
+- **Dependencies:** 1.3
+- **Priority:** High
+- **Tasks:**
+  - Stop all PM2 processes: `pnpm pm2:stop`
+  - Verify all stopped: `pnpm pm2:status`
+  - Clear Redis streams: `redis-cli FLUSHALL` (optional, for clean test)
 
-  // In server setup
-  await server.register(statsRoutes, {
-    prefix: '/api/v1',
-    statsService: container.statsService // or equivalent
-  });
-  ```
-- [ ] Fix any missing service/repository implementations
-- [ ] Test with `curl http://localhost:3000/api/v1/stats/overview`
-- [ ] Verify response schema matches frontend types
+**1.5 Review Canonical Schema**
+- **Package:** `@agentic-sdlc/orchestrator`
+- **Estimate:** 15 minutes
+- **Dependencies:** None
+- **Priority:** Medium
+- **Tasks:**
+  - Read `packages/orchestrator/src/types/index.ts` lines 4-32
+  - Document ExecutionEnvelope structure
+  - Identify required imports for agents
+  - Plan export strategy from `@agentic-sdlc/shared-types`
 
-**Dependencies:** None (FIRST TASK)
-**Estimate:** 1.5 hours
-**Priority:** 🔥 CRITICAL - E2E tests depend on this
+**1.6 Create Rollback Script**
+- **Package:** N/A (tooling)
+- **Estimate:** 15 minutes
+- **Dependencies:** 1.1, 1.5
+- **Priority:** Medium
+- **Tasks:**
+  - Create `scripts/rollback-cleanup.sh`
+  - Document manual rollback steps
+  - Test rollback procedure on test branch
 
-#### 1.2: Verify & Register Trace Service (1.5 hours)
-**Package:** `@agentic-sdlc/orchestrator`
-**Files:**
-- `packages/orchestrator/src/repositories/trace.repository.ts` (EXISTS - VERIFY)
-- `packages/orchestrator/src/services/trace.service.ts` (EXISTS - VERIFY)
-- `packages/orchestrator/src/api/routes/trace.routes.ts` (EXISTS - VERIFY)
-- `packages/orchestrator/src/server.ts` (MODIFY - ADD REGISTRATION)
+### Phase 2: Schema Unification (2 hours)
 
-**Investigation Tasks:**
-- [ ] Verify `trace.repository.ts` implements:
-  - `getTraceById(trace_id: string)` - Get trace metadata
-  - `getSpansByTraceId(trace_id: string)` - Get all spans in hierarchy
-  - `getWorkflowsByTraceId(trace_id: string)` - Get workflows with trace
-  - `getTasksByTraceId(trace_id: string)` - Get tasks with trace
-- [ ] Verify `trace.service.ts` builds span tree hierarchy
-- [ ] Verify `trace.routes.ts` exposes:
-  - `GET /api/v1/traces/:traceId` → TraceMetadata
-  - `GET /api/v1/traces/:traceId/spans` → TraceSpan[] (hierarchical)
-  - `GET /api/v1/traces/:traceId/workflows` → Workflow[]
-  - `GET /api/v1/traces/:traceId/tasks` → Task[]
+**2.1 Export Canonical Schema to Shared Package**
+- **Package:** `@agentic-sdlc/shared-types`
+- **Estimate:** 30 minutes
+- **Dependencies:** 1.5
+- **Priority:** Critical
+- **Tasks:**
+  - Add `packages/orchestrator/src/types/index.ts` exports to `packages/shared/types/src/index.ts`
+  - Export `ExecutionEnvelopeSchema`, `TaskAssignmentSchema`, `ExecutionEnvelope`, `TaskAssignment`
+  - Ensure types are re-exported from package root
+  - Update `package.json` exports if needed
+  - Build shared-types: `cd packages/shared/types && pnpm build`
 
-**Implementation Tasks:**
-- [ ] **Register routes in `server.ts`** (same pattern as stats)
-- [ ] Test with real trace_id from database
-- [ ] Verify span hierarchy is correct (parent → child relationships)
+**2.2 Delete Base Agent Duplicate Schema**
+- **Package:** `@agentic-sdlc/agents/base-agent`
+- **Estimate:** 15 minutes
+- **Dependencies:** 2.1
+- **Priority:** Critical
+- **Tasks:**
+  - Delete lines 19-31 in `packages/agents/base-agent/src/types.ts`
+  - Remove TaskAssignmentSchema definition
+  - Remove TaskAssignment type export
+  - Add import from `@agentic-sdlc/shared-types`
+  - Update package.json dependencies to include `@agentic-sdlc/shared-types`
 
-**Dependencies:** None
-**Estimate:** 1.5 hours
-**Priority:** HIGH
+**2.3 Update BaseAgent Validation Method**
+- **Package:** `@agentic-sdlc/agents/base-agent`
+- **Estimate:** 30 minutes
+- **Dependencies:** 2.2
+- **Priority:** Critical
+- **Tasks:**
+  - Update `base-agent.ts` line 287 validateTask method
+  - Import ExecutionEnvelopeSchema from shared-types
+  - Change validation to use ExecutionEnvelopeSchema.parse()
+  - Update return type to ExecutionEnvelope
+  - Add JSDoc comments explaining envelope structure
+  - Handle parsing errors with clear messages
 
-#### 1.3: Create/Verify Task Service & Register Routes (1.5 hours)
-**Package:** `@agentic-sdlc/orchestrator`
-**Files:**
-- `packages/orchestrator/src/repositories/task.repository.ts` (CREATE if missing)
-- `packages/orchestrator/src/services/task.service.ts` (CREATE if missing)
-- `packages/orchestrator/src/api/routes/task.routes.ts` (EXISTS - VERIFY)
-- `packages/orchestrator/src/server.ts` (MODIFY - ADD REGISTRATION)
+**2.4 Update BaseAgent Task Handling**
+- **Package:** `@agentic-sdlc/agents/base-agent`
+- **Estimate:** 45 minutes
+- **Dependencies:** 2.3
+- **Priority:** Critical
+- **Tasks:**
+  - Update all references to TaskAssignment type → ExecutionEnvelope
+  - Update task processing methods to extract from envelope.payload
+  - Ensure trace_id, span_id propagation still works
+  - Remove manual envelope unwrapping code (lines with SESSION #37 comments)
+  - Add type-safe payload extraction helper methods
+  - Update error messages to reference envelope fields
 
-**Investigation Tasks:**
-- [ ] Check if `task.repository.ts` exists - if not, create it:
-  - `listTasks(filters: TaskFilters)` - Paginated task list
-  - `getTaskById(task_id: string)` - Single task details
-  - `getTasksByWorkflowId(workflow_id: string)` - All tasks for workflow
-- [ ] Check if `task.service.ts` exists - if not, create it:
-  - Wraps repository calls
-  - Validates input
-  - Formats output
-- [ ] Verify `task.routes.ts` exposes:
-  - `GET /api/v1/tasks?workflow_id=...&status=...&agent_type=...` → Task[]
-  - `GET /api/v1/tasks/:taskId` → Task
+### Phase 3: Agent-Specific Updates (2.5 hours)
 
-**Implementation Tasks:**
-- [ ] **Register routes in `server.ts`**
-- [ ] Test task queries with filters
+**3.1 Update Scaffold Agent**
+- **Package:** `@agentic-sdlc/agents/scaffold-agent`
+- **Estimate:** 30 minutes
+- **Dependencies:** 2.4
+- **Priority:** Critical
+- **Tasks:**
+  - Remove manual envelope parsing in scaffold-agent.ts (lines 70-100)
+  - Use ExecutionEnvelope type from shared-types
+  - Extract ScaffoldPayload from envelope.payload
+  - Remove SESSION #37 comment markers
+  - Simplify executeTask method
+  - Update type annotations
 
-**Dependencies:** None
-**Estimate:** 1.5 hours
-**Priority:** MEDIUM
+**3.2 Update Validation Agent**
+- **Package:** `@agentic-sdlc/agents/validation-agent`
+- **Estimate:** 30 minutes
+- **Dependencies:** 2.4
+- **Priority:** Critical
+- **Tasks:**
+  - Remove SESSION #47 debug console.log statements
+  - Update envelope parsing to use ExecutionEnvelope type
+  - Extract ValidationPayload from envelope.payload
+  - Remove backward compatibility fallbacks
+  - Simplify executeTask method
+  - Update type annotations
 
-#### 1.4: Extend Workflow Routes (30 min)
-**Package:** `@agentic-sdlc/orchestrator`
-**Files:**
-- `packages/orchestrator/src/api/routes/workflow.routes.ts` (EXTEND EXISTING)
+**3.3 Update E2E Agent**
+- **Package:** `@agentic-sdlc/agents/e2e-agent`
+- **Estimate:** 30 minutes
+- **Dependencies:** 2.4
+- **Priority:** Critical
+- **Tasks:**
+  - Update envelope parsing to use ExecutionEnvelope type
+  - Extract E2EPayload from envelope.payload
+  - Remove backward compatibility fallbacks
+  - Simplify executeTask method
+  - Update type annotations
 
-**Investigation Tasks:**
-- [ ] Check if workflow routes are already registered (they should be)
-- [ ] Verify existing endpoints work:
-  - `GET /api/v1/workflows` (exists, test filtering)
-  - `GET /api/v1/workflows/:id` (exists, test response)
+**3.4 Update Integration Agent**
+- **Package:** `@agentic-sdlc/agents/integration-agent`
+- **Estimate:** 45 minutes
+- **Dependencies:** 2.4
+- **Priority:** Critical
+- **Tasks:**
+  - Delete `packages/agents/integration-agent/src/types.ts` (deprecated re-exports)
+  - Remove execute wrapper pattern (if present)
+  - Update envelope parsing to use ExecutionEnvelope type
+  - Extract IntegrationPayload from envelope.payload
+  - Remove backward compatibility fallbacks
+  - Update imports to remove local types.ts references
+  - Update type annotations
 
-**Implementation Tasks:**
-- [ ] Add missing endpoints (if needed):
-  - `GET /api/v1/workflows/:id/tasks` → Task[] (delegate to task service)
-  - `GET /api/v1/workflows/:id/timeline` → WorkflowEvent[]
-- [ ] Test with curl
+**3.5 Update Deployment Agent**
+- **Package:** `@agentic-sdlc/agents/deployment-agent`
+- **Estimate:** 45 minutes
+- **Dependencies:** 2.4
+- **Priority:** Critical
+- **Tasks:**
+  - Delete `packages/agents/deployment-agent/src/types.ts` (deprecated re-exports)
+  - Remove execute wrapper pattern (if present)
+  - Update envelope parsing to use ExecutionEnvelope type
+  - Extract DeploymentPayload from envelope.payload
+  - Remove backward compatibility fallbacks
+  - Update imports to remove local types.ts references
+  - Update type annotations
 
-**Dependencies:** Task 1.3 (task service)
-**Estimate:** 30 min
-**Priority:** MEDIUM
+### Phase 4: Cleanup Legacy Code (1 hour)
 
-#### 1.5: Verify All Routes Registered (30 min)
-**Package:** `@agentic-sdlc/orchestrator`
-**Files:**
-- `packages/orchestrator/src/server.ts`
+**4.1 Remove Session Markers and Debug Logs**
+- **Package:** All agent packages
+- **Estimate:** 30 minutes
+- **Dependencies:** 3.1-3.5
+- **Priority:** Medium
+- **Tasks:**
+  - Search for `SESSION #36` markers → remove
+  - Search for `SESSION #37` markers → remove
+  - Search for `SESSION #47` markers → remove
+  - Search for `PHASE-3` markers → remove
+  - Remove debug console.log statements
+  - Remove commented-out code with session references
 
-**Tasks:**
-- [ ] Read `server.ts` - document current route registrations
-- [ ] Create checklist of all routes that need registration:
-  - [ ] workflow.routes.ts (should exist)
-  - [ ] stats.routes.ts (ADD)
-  - [ ] trace.routes.ts (ADD)
-  - [ ] task.routes.ts (ADD)
-- [ ] Verify all routes appear in logs: `pnpm pm2:logs orchestrator | grep "Route registered"`
-- [ ] Test all endpoints with `curl` or create test script
-- [ ] Document API in README or API.md file
+**4.2 Remove Context Field Compatibility Wrappers**
+- **Package:** All agent packages
+- **Estimate:** 20 minutes
+- **Dependencies:** 4.1
+- **Priority:** Low
+- **Tasks:**
+  - Search for context field fallbacks: `task.context || envelope.context`
+  - Remove dual-path parsing for context
+  - Standardize on envelope.metadata or envelope.payload.context
 
-**Dependencies:** Tasks 1.1, 1.2, 1.3
-**Estimate:** 30 min
-**Priority:** HIGH
+**4.3 Update Documentation**
+- **Package:** N/A (docs)
+- **Estimate:** 10 minutes
+- **Dependencies:** 4.2
+- **Priority:** Medium
+- **Tasks:**
+  - Update CLAUDE.md Session #64 notes
+  - Document schema unification approach
+  - Add notes about ExecutionEnvelope as canonical schema
+  - Update developer guide (if exists)
 
-**Phase 1 Summary:**
-- **Total Time:** 4-5 hours
-- **Files:** ~10 files (verify 6, modify 1-2, create 0-2)
-- **Critical Path:** Must complete before frontend can work
-- **Success Metric:** All API endpoints return 200 OK with valid data
+### Phase 5: Build and Test (1.5 hours)
 
----
+**5.1 Build All Packages**
+- **Package:** All packages
+- **Estimate:** 10 minutes
+- **Dependencies:** Phase 4 complete
+- **Priority:** Critical
+- **Tasks:**
+  - Run: `turbo run build`
+  - Verify zero TypeScript errors
+  - Check build output for warnings
+  - Document any build issues
 
-### Phase 2: Frontend API Client & Hooks (2-3 hours)
+**5.2 Run Unit Tests**
+- **Package:** All packages
+- **Estimate:** 20 minutes
+- **Dependencies:** 5.1
+- **Priority:** Critical
+- **Tasks:**
+  - Run: `turbo run test`
+  - Fix failing tests related to schema changes
+  - Update test fixtures to use ExecutionEnvelope
+  - Verify all agent unit tests pass
+  - Update mocks and stubs
 
-#### 2.1: Implement API Client (1.5 hours)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/api/client.ts` (EXTEND EXISTING)
+**5.3 Run Type Checks**
+- **Package:** All packages
+- **Estimate:** 5 minutes
+- **Dependencies:** 5.1
+- **Priority:** High
+- **Tasks:**
+  - Run: `turbo run typecheck`
+  - Verify zero type errors
+  - Fix any type mismatches
+  - Check for unused imports
 
-**Tasks:**
-- [ ] Implement all API client functions:
-  - `fetchStats()` → DashboardStats
-  - `fetchTimeSeries(hours: number)` → TimeSeriesData[]
-  - `fetchAgentStats()` → AgentStats[]
-  - `fetchWorkflows(filters?: WorkflowFilters)` → Workflow[]
-  - `fetchWorkflow(id: string)` → Workflow
-  - `fetchWorkflowTasks(id: string)` → Task[]
-  - `fetchTrace(traceId: string)` → TraceMetadata
-  - `fetchTraceSpans(traceId: string)` → TraceSpan[]
-  - `fetchTasks(filters?: TaskFilters)` → Task[]
-- [ ] Add error handling (throw on non-200)
-- [ ] Add TypeScript return types
-- [ ] Test with real API (once Phase 1 complete)
+**5.4 Start Services and Health Check**
+- **Package:** N/A (PM2 operations)
+- **Estimate:** 10 minutes
+- **Dependencies:** 5.1-5.3
+- **Priority:** Critical
+- **Tasks:**
+  - Rebuild packages with fresh build: `turbo run build --force`
+  - Start services: `./scripts/env/start-dev.sh`
+  - Verify all PM2 processes online: `pnpm pm2:status`
+  - Check for crashloops
+  - Run health checks: `./scripts/env/check-health.sh`
 
-**Dependencies:** Phase 1 (API endpoints)
-**Estimate:** 1.5 hours
-**Priority:** HIGH
+**5.5 E2E Pipeline Test**
+- **Package:** N/A (integration test)
+- **Estimate:** 30 minutes
+- **Dependencies:** 5.4
+- **Priority:** Critical
+- **Tasks:**
+  - Run: `./scripts/run-pipeline-test.sh "Hello World API"`
+  - Monitor logs for "Invalid task assignment" errors
+  - Verify workflow advances beyond 0%
+  - Check scaffold agent task execution
+  - Verify result publishing
+  - Monitor orchestrator result receipt
+  - Validate workflow state transitions
 
-#### 2.2: Create React Query Hooks (1 hour)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/hooks/useStats.ts` (EXTEND EXISTING)
-- `packages/dashboard/src/hooks/useWorkflows.ts` (EXTEND EXISTING)
-- `packages/dashboard/src/hooks/useWorkflow.ts` (CREATE NEW)
-- `packages/dashboard/src/hooks/useTasks.ts` (CREATE NEW)
-- `packages/dashboard/src/hooks/useTrace.ts` (CREATE NEW)
+**5.6 Monitor for Regressions**
+- **Package:** N/A (monitoring)
+- **Estimate:** 15 minutes
+- **Dependencies:** 5.5
+- **Priority:** High
+- **Tasks:**
+  - Run: `pnpm pm2:logs --lines 200`
+  - Search for ConcurrencyConflictError (should see retry logic working)
+  - Search for schema validation errors (should be zero)
+  - Check for unexpected errors
+  - Verify trace logging still works
+  - Monitor agent task completion
 
-**Tasks:**
-- [ ] Implement `useStats(refetchInterval?: number)` hook
-- [ ] Implement `useWorkflows(filters, options)` hook
-- [ ] Implement `useWorkflow(id: string)` hook
-- [ ] Implement `useTasks(filters, options)` hook
-- [ ] Implement `useTrace(traceId: string)` hook
-- [ ] Configure default polling intervals (5s for dashboard, 10s for lists)
-- [ ] Add error states and retry logic
+**5.7 Run Multiple Workflows**
+- **Package:** N/A (stress test)
+- **Estimate:** 10 minutes
+- **Dependencies:** 5.5
+- **Priority:** Medium
+- **Tasks:**
+  - Run 3-5 workflows concurrently
+  - Verify no race conditions
+  - Check CAS retry logic under load
+  - Monitor resource usage
+  - Validate all workflows complete successfully
 
-**Dependencies:** Task 2.1 (API client)
-**Estimate:** 1 hour
-**Priority:** HIGH
+### Phase 6: Documentation and Commit (30 minutes)
 
-#### 2.3: Verify TypeScript Types (30 min)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/types/index.ts` (VERIFY/EXTEND)
+**6.1 Update CLAUDE.md**
+- **Package:** N/A (docs)
+- **Estimate:** 15 minutes
+- **Dependencies:** Phase 5 complete
+- **Priority:** High
+- **Tasks:**
+  - Add Session #64 completion summary
+  - Document schema unification
+  - List files modified
+  - Update known issues (remove "Invalid task assignment")
+  - Update next session priorities
 
-**Tasks:**
-- [ ] Ensure types match Prisma schema from orchestrator
-- [ ] Add any missing interfaces (Workflow, Task, TraceSpan, DashboardStats, etc.)
-- [ ] Verify all enums are defined
-- [ ] Run `pnpm typecheck` - ensure 0 errors
+**6.2 Create Commit**
+- **Package:** N/A (git operation)
+- **Estimate:** 10 minutes
+- **Dependencies:** 6.1
+- **Priority:** High
+- **Tasks:**
+  - Stage all changes: `git add .`
+  - Create descriptive commit message
+  - Reference Session #64 and Option A
+  - List key changes (schema unification, 250 lines removed)
+  - Include before/after comparison
 
-**Dependencies:** None
-**Estimate:** 30 min
-**Priority:** MEDIUM
-
-**Phase 2 Summary:**
-- **Total Time:** 2-3 hours
-- **Files:** ~8 files (extend 3, create 5)
-- **Dependencies:** Phase 1
-- **Success Metric:** All hooks return typed data without errors
-
----
-
-### Phase 3: Core Pages Implementation (4-5 hours)
-
-#### 3.1: Dashboard Page Implementation (1.5 hours)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/pages/Dashboard.tsx` (IMPLEMENT)
-
-**Tasks:**
-- [ ] Build Dashboard page layout:
-  - Heading: "Dashboard Overview"
-  - 4 metric cards (Total, Running, Completed, Failed)
-  - Time series chart (workflows over time) - use placeholder for now
-  - Active workflows table (status=running)
-- [ ] Use `useStats()` hook for metrics
-- [ ] Use `useWorkflows({ status: 'running' })` for active workflows
-- [ ] Add auto-refresh (5s polling)
-- [ ] Show loading states (LoadingSpinner)
-- [ ] Show error states (ErrorDisplay)
-- [ ] **Fix E2E tests:**
-  - "Dashboard Overview" heading visible ✅
-  - Metric cards visible ✅
-  - Active workflows table visible ✅
-
-**Dependencies:** Phase 2 (hooks)
-**Estimate:** 1.5 hours
-**Priority:** 🔥 HIGH (fixes 3 E2E tests)
-
-#### 3.2: Workflows Page Implementation (1.5 hours)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/pages/WorkflowsPage.tsx` (IMPLEMENT)
-- `packages/dashboard/src/components/Workflows/WorkflowTable.tsx` (CREATE NEW)
-
-**Tasks:**
-- [ ] Build Workflows page:
-  - Heading: "Workflows"
-  - Filter controls (status, type dropdowns)
-  - Workflows table with columns:
-    - Name, Type, Status, Stage, Progress, Trace ID, Created, Actions
-  - Pagination controls (if needed)
-- [ ] Use `useWorkflows(filters)` hook
-- [ ] Implement filter state management (useState)
-- [ ] Make table rows clickable (navigate to `/workflows/:id`)
-- [ ] Add StatusBadge component for status column
-- [ ] Add ProgressBar component for progress column
-- [ ] **Fix E2E test:**
-  - Table columns visible (Name, Type, Status, Stage, etc.) ✅
-
-**Dependencies:** Phase 2 (hooks)
-**Estimate:** 1.5 hours
-**Priority:** HIGH (fixes 1 E2E test)
-
-#### 3.3: Workflow Detail Page Implementation (1-1.5 hours)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/pages/WorkflowPage.tsx` (IMPLEMENT)
-- `packages/dashboard/src/components/Workflows/WorkflowTimeline.tsx` (CREATE NEW)
-
-**Tasks:**
-- [ ] Build Workflow detail page:
-  - Heading with workflow name
-  - Status badge and progress bar
-  - Metadata section (ID, Type, Trace ID, timestamps)
-  - Tasks table (all tasks for workflow)
-  - Event timeline (stage transitions) - simplified for MVP
-- [ ] Use `useWorkflow(id)` hook from URL params
-- [ ] Use `useTasks({ workflow_id: id })` hook
-- [ ] Make trace_id clickable (link to `/traces/:traceId`)
-- [ ] Handle 404 if workflow not found
-
-**Dependencies:** Phase 2 (hooks)
-**Estimate:** 1-1.5 hours
-**Priority:** MEDIUM
-
-**Phase 3 Summary:**
-- **Total Time:** 4-5 hours
-- **Files:** ~5 files (implement 3 pages, create 2 components)
-- **Dependencies:** Phase 2
-- **Success Metric:** 10/11 E2E tests pass (missing only Agents page test)
-
----
-
-### Phase 4: Trace Visualization (2-3 hours)
-
-#### 4.1: Span Tree Component (1.5 hours)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/components/Traces/SpanTree.tsx` (CREATE NEW)
-- `packages/dashboard/src/components/Traces/SpanNode.tsx` (CREATE NEW)
-
-**Tasks:**
-- [ ] Create hierarchical span tree component:
-  - Recursive TreeNode rendering
-  - Expand/collapse functionality (useState)
-  - Indent by depth (20px per level using margin/padding)
-  - Show span_id, entity_type, duration, status
-- [ ] Build tree from flat span list using parent_span_id linking
-- [ ] Color-code by status (use StatusBadge colors)
-- [ ] Show duration in ms
-- [ ] Handle orphaned spans gracefully
-
-**Dependencies:** Phase 2 (useTrace hook)
-**Estimate:** 1.5 hours
-**Priority:** MEDIUM
-
-#### 4.2: Traces Page Implementation (1 hour)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/pages/TracesPage.tsx` (IMPLEMENT)
-
-**Tasks:**
-- [ ] Build Traces page:
-  - Trace search input (by trace_id) - get from URL params
-  - Trace metadata display
-  - Span tree visualization (use SpanTree component)
-  - Related workflows table
-  - Related tasks table
-- [ ] Use `useTrace(traceId)` hook from URL params
-- [ ] Handle empty state (no trace_id in URL)
-- [ ] Handle not found state (404)
-
-**Dependencies:** Task 4.1 (SpanTree component)
-**Estimate:** 1 hour
-**Priority:** MEDIUM
-
-**Phase 4 Summary:**
-- **Total Time:** 2-3 hours
-- **Files:** ~3 files (1 page, 2 components)
-- **Dependencies:** Phase 2
-- **Success Metric:** Trace page displays span hierarchy correctly
+**6.3 Final Validation**
+- **Package:** All packages
+- **Estimate:** 5 minutes
+- **Dependencies:** 6.2
+- **Priority:** Medium
+- **Tasks:**
+  - Verify all success criteria met
+  - Check git status is clean
+  - Review commit diff
+  - Ensure no debug code committed
+  - Verify build artifacts not committed
 
 ---
 
-### Phase 5: Charts & Polish (3-4 hours)
-
-#### 5.1: Time Series Chart (1 hour)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/components/Charts/TimeSeriesChart.tsx` (CREATE NEW)
-
-**Tasks:**
-- [ ] Create Recharts LineChart component
-- [ ] Props: `data: TimeSeriesData[], height?: number`
-- [ ] X-axis: timestamp (formatted as "HH:mm" using date-fns)
-- [ ] Y-axis: workflow count
-- [ ] Tooltip with formatted date
-- [ ] Responsive container
-- [ ] Color: Blue gradient
-- [ ] Add to Dashboard page
-
-**Dependencies:** None (isolated component)
-**Estimate:** 1 hour
-**Priority:** MEDIUM
-
-#### 5.2: Agent Performance Page (1.5 hours)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- `packages/dashboard/src/pages/AgentsPage.tsx` (IMPLEMENT)
-- `packages/dashboard/src/components/Charts/AgentPerformanceChart.tsx` (CREATE NEW)
-
-**Tasks:**
-- [ ] Create Recharts BarChart component (stacked: success vs failed)
-- [ ] Build Agents page:
-  - Heading: "Agent Performance"
-  - Agent stats cards (one per agent type)
-  - Success rate chart (use AgentPerformanceChart)
-  - Response time metrics table (p50, p95, p99)
-  - Retry analysis chart (optional, time permitting)
-- [ ] Use `useStats()` hook for agent data
-- [ ] Add auto-refresh (10s polling)
-
-**Dependencies:** Phase 2 (hooks)
-**Estimate:** 1.5 hours
-**Priority:** LOW (not tested by E2E)
-
-#### 5.3: Styling & UX Polish (1 hour)
-**Package:** `@agentic-sdlc/dashboard`
-**Files:**
-- All component files
-
-**Tasks:**
-- [ ] Apply consistent spacing (Tailwind spacing scale: p-4, mb-6, etc.)
-- [ ] Add hover states to interactive elements (hover:bg-gray-50)
-- [ ] Ensure color contrast meets WCAG AA
-- [ ] Test layout on 768px, 1024px, 1440px widths
-- [ ] Polish tables (zebra striping, borders, rounded corners)
-- [ ] Add empty states ("No workflows found" messages)
-- [ ] Improve loading states (consider skeletons)
-
-**Dependencies:** All previous frontend tasks
-**Estimate:** 1 hour
-**Priority:** MEDIUM
-
-**Phase 5 Summary:**
-- **Total Time:** 3-4 hours
-- **Files:** ~5 files (2 pages, 2 charts, various styling)
-- **Dependencies:** Phase 2-4
-- **Success Metric:** All pages polished and professional-looking
-
----
-
-## Risk Assessment
-
-### Risk Matrix
+## Risk Matrix
 
 | Risk | Probability | Impact | Mitigation Strategy |
 |------|------------|--------|-------------------|
-| **API routes not registered** | HIGH (current issue) | CRITICAL | **Phase 1 Task 1.5** - Verify all routes in server.ts immediately; test with curl |
-| **Service implementations incomplete** | Medium | High | **Phase 1 Tasks 1.1-1.3** - Thorough verification step before coding; create missing implementations |
-| **Database queries too slow** | Low | High | Add indexes on trace_id, workflow_id, status columns; use EXPLAIN ANALYZE; implement pagination |
-| **E2E tests flaky** | Medium | Medium | Add explicit waits for API calls; use Playwright's auto-waiting; increase timeouts |
-| **Charts rendering incorrectly** | Low | Medium | Test with various data sizes (empty, 1 item, 100 items); validate Recharts props with TypeScript |
-| **Polling causing performance issues** | Low | Medium | Make polling intervals configurable; add tab visibility detection to pause when hidden |
-| **TypeScript type mismatches** | Low | Low | Share types between frontend and backend; use Zod schemas for validation |
-| **Build size too large** | Low | Low | Code-split routes with React.lazy; tree-shake unused Recharts components |
-| **Missing trace_id in old workflows** | High | Low | Handle null gracefully; show "N/A" in UI |
+| **Breaking all agents simultaneously** | High | Critical | Feature branch + rollback script, thorough testing before merge |
+| **Missing edge cases in envelope parsing** | Medium | High | Comprehensive unit tests, E2E validation, manual testing with various payloads |
+| **TypeScript compilation errors** | Medium | Medium | Incremental builds after each phase, fix errors immediately |
+| **Agent crashloops after deployment** | Low | High | Pre-deployment health checks, PM2 auto-restart, monitor logs closely |
+| **Lost business logic during refactor** | Low | Critical | Careful code review, preserve all domain logic, only remove compatibility wrappers |
+| **Trace context broken** | Medium | Medium | Test distributed tracing after changes, verify trace_id propagation |
+| **Performance degradation** | Low | Medium | Monitor response times, check for added parsing overhead |
+| **Concurrency issues resurface** | Medium | High | Already have retry logic (Session #64), monitor CAS conflicts |
+| **Rollback needed mid-cleanup** | Low | High | Git feature branch allows clean revert, document rollback procedure |
+| **Workflow stuck for different reason** | Medium | Medium | Comprehensive logging, trace message flow, have debugging runbook ready |
+| **Schema evolution breaks again** | Low | Medium | Establish schema versioning policy, document canonical schema location |
+| **Agent-specific payload validation fails** | Medium | Medium | Add payload schema validation in each agent, clear error messages |
+
+### Risk Mitigation Details
+
+**High-Risk Mitigations:**
+1. **Feature Branch Isolation**: All changes on `fix/nuclear-cleanup-option-a`, can revert instantly
+2. **Incremental Testing**: Test after each phase, not just at the end
+3. **Rollback Script**: Pre-written script to restore previous state
+4. **Backup State**: Database and logs backed up before starting
+5. **PM2 Auto-Restart**: Services automatically restart on crash (limit 5 restarts)
+6. **Health Monitoring**: Continuous health checks during testing
+
+**Medium-Risk Mitigations:**
+1. **Type Safety**: TypeScript catches most schema issues at compile time
+2. **Unit Tests**: Each agent has unit tests for parsing logic
+3. **E2E Validation**: Real workflow execution validates end-to-end
+4. **Code Review**: Careful review of each agent's executeTask method
+5. **Trace Logging**: `🔍 [AGENT-TRACE]` markers help debug message flow
 
 ---
 
 ## Testing Strategy
 
-### E2E Tests (Playwright) - PRIMARY VALIDATION
-**EXISTING TESTS (must pass):**
-- [ ] Dashboard page loads with heading ✅
-- [ ] Dashboard displays metric cards ✅
-- [ ] Dashboard displays active workflows table ✅
-- [ ] Workflows page loads ✅
-- [ ] Workflows page filters by status ✅
-- [ ] Workflows page filters by type ✅
-- [ ] Workflows page displays correct columns ✅
-- [ ] Navigation between pages works ✅
-- [ ] Active nav link highlighted ✅
-- [ ] 404 page displays for invalid routes ✅
-- [ ] Header displays on all pages ✅
+### Unit Tests (Vitest)
 
-**Run:** `pnpm test:e2e` (from packages/dashboard/)
-**Success Criteria:** 11/11 tests pass
+**Location:** `packages/agents/*/src/__tests__/*.test.ts`
 
-### Manual Testing (During Development)
-- [ ] Start orchestrator: `./scripts/env/start-dev.sh`
-- [ ] Start dashboard: `cd packages/dashboard && pnpm dev`
-- [ ] Test all API endpoints with curl
-- [ ] Test all pages load without errors
-- [ ] Test filters and navigation
-- [ ] Test with real workflow data
+**Test Cases to Add/Update:**
+
+**BaseAgent Tests** (`packages/agents/base-agent/src/__tests__/base-agent.test.ts`)
+```typescript
+describe('BaseAgent - Schema Validation', () => {
+  it('should validate ExecutionEnvelope successfully', () => {
+    const envelope = {
+      message_id: uuid(),
+      task_id: uuid(),
+      workflow_id: uuid(),
+      agent_type: 'scaffold',
+      payload: { name: 'test', description: 'test', requirements: ['req1'] },
+      constraints: { timeout_ms: 300000, max_retries: 3, required_confidence: 80 },
+      metadata: { created_at: new Date().toISOString(), created_by: 'test', trace_id: 'trace-123' }
+    };
+
+    const result = baseAgent.validateTask(envelope);
+    expect(result).toEqual(envelope);
+  });
+
+  it('should reject invalid envelope structure', () => {
+    const invalidEnvelope = {
+      type: 'scaffold', // Wrong field name
+      name: 'test',
+      description: 'test'
+    };
+
+    expect(() => baseAgent.validateTask(invalidEnvelope)).toThrow('Invalid task assignment');
+  });
+
+  it('should reject envelope missing required fields', () => {
+    const incompleteEnvelope = {
+      task_id: uuid(),
+      workflow_id: uuid()
+      // Missing agent_type, payload, etc.
+    };
+
+    expect(() => baseAgent.validateTask(incompleteEnvelope)).toThrow();
+  });
+
+  it('should preserve trace context from envelope', () => {
+    const envelope = createValidEnvelope({
+      metadata: { trace_id: 'trace-456', span_id: 'span-789' }
+    });
+
+    const result = baseAgent.validateTask(envelope);
+    expect(result.metadata.trace_id).toBe('trace-456');
+  });
+});
+```
+
+**Scaffold Agent Tests** (`packages/agents/scaffold-agent/src/__tests__/scaffold-agent.test.ts`)
+```typescript
+describe('ScaffoldAgent - Envelope Parsing', () => {
+  it('should extract ScaffoldPayload from envelope', () => {
+    const envelope = createValidEnvelope({
+      agent_type: 'scaffold',
+      payload: {
+        name: 'my-app',
+        description: 'Test app',
+        requirements: ['Node.js', 'Express']
+      }
+    });
+
+    const scaffoldTask = scaffoldAgent.parseTask(envelope);
+    expect(scaffoldTask.payload.name).toBe('my-app');
+    expect(scaffoldTask.payload.requirements).toHaveLength(2);
+  });
+
+  it('should handle array requirements correctly', () => {
+    const envelope = createValidEnvelope({
+      payload: {
+        requirements: ['req1', 'req2', 'req3']
+      }
+    });
+
+    const scaffoldTask = scaffoldAgent.parseTask(envelope);
+    expect(Array.isArray(scaffoldTask.payload.requirements)).toBe(true);
+    expect(scaffoldTask.payload.requirements).toEqual(['req1', 'req2', 'req3']);
+  });
+
+  it('should preserve trace_id through execution', async () => {
+    const envelope = createValidEnvelope({
+      metadata: { trace_id: 'trace-123' }
+    });
+
+    const result = await scaffoldAgent.executeTask(envelope);
+    expect(result.trace_id).toBe('trace-123');
+  });
+});
+```
+
+**Expected Test Results:**
+- [ ] All BaseAgent unit tests pass
+- [ ] All ScaffoldAgent unit tests pass
+- [ ] All ValidationAgent unit tests pass
+- [ ] All E2EAgent unit tests pass
+- [ ] All IntegrationAgent unit tests pass
+- [ ] All DeploymentAgent unit tests pass
+- [ ] Coverage: 90%+ on modified files
+
+**Run Command:**
+```bash
+turbo run test
+```
+
+### Integration Tests
+
+**Redis Message Bus Integration**
+```typescript
+describe('Message Bus - ExecutionEnvelope Integration', () => {
+  it('should publish and receive ExecutionEnvelope correctly', async () => {
+    const envelope = createValidEnvelope();
+
+    await messageBus.publish('agent:scaffold:tasks', envelope);
+
+    const received = await new Promise((resolve) => {
+      messageBus.subscribe('agent:scaffold:tasks', (msg) => resolve(msg));
+    });
+
+    expect(received).toEqual(envelope);
+  });
+
+  it('should handle envelope serialization/deserialization', async () => {
+    const envelope = createValidEnvelope({
+      payload: { complex: { nested: { data: [1, 2, 3] } } }
+    });
+
+    await messageBus.publish('test:topic', envelope);
+    const received = await consumeMessage('test:topic');
+
+    expect(received.payload.complex.nested.data).toEqual([1, 2, 3]);
+  });
+});
+```
+
+**Orchestrator-Agent Communication**
+```typescript
+describe('Orchestrator → Agent → Orchestrator Flow', () => {
+  it('should complete full message roundtrip', async () => {
+    const workflow = await orchestrator.createWorkflow({
+      type: 'app',
+      name: 'test-workflow'
+    });
+
+    // Wait for scaffold agent to pick up task
+    await waitFor(() => {
+      const logs = getAgentLogs('scaffold');
+      return logs.includes('Task received');
+    });
+
+    // Wait for result to return
+    const updatedWorkflow = await waitFor(async () => {
+      const wf = await orchestrator.getWorkflow(workflow.id);
+      return wf.progress > 0 ? wf : null;
+    });
+
+    expect(updatedWorkflow.progress).toBeGreaterThan(0);
+  });
+});
+```
+
+**Expected Results:**
+- [ ] Message bus correctly serializes ExecutionEnvelope
+- [ ] Agents receive envelopes without corruption
+- [ ] Full orchestrator → agent → orchestrator flow works
+- [ ] No "Invalid task assignment" errors in integration tests
+
+**Run Command:**
+```bash
+turbo run test
+```
+
+### End-to-End Tests
+
+**Pipeline Test** (`./scripts/run-pipeline-test.sh`)
+
+**Test Case 1: Simple Workflow**
+```bash
+./scripts/run-pipeline-test.sh "Hello World API"
+```
+
+**Expected Outcome:**
+- [ ] Workflow created successfully
+- [ ] Scaffold agent receives task (no "Invalid task assignment" error)
+- [ ] Scaffold agent executes task
+- [ ] Scaffold agent publishes result
+- [ ] Orchestrator receives result
+- [ ] Workflow advances to next stage (progress > 0%)
+- [ ] No schema validation errors in logs
+- [ ] Trace context preserved through execution
+
+**Validation Steps:**
+1. Monitor logs: `pnpm pm2:logs`
+2. Search for errors: `pnpm pm2:logs | grep -i error`
+3. Check workflow status: Query database for workflow progress
+4. Verify agent task execution: Check agent logs for "Task received" and "Publishing result"
+5. Confirm state transitions: Verify workflow moved from "initialization" to next stage
+
+**Test Case 2: Concurrent Workflows**
+```bash
+./scripts/run-pipeline-test.sh "Test App 1" &
+./scripts/run-pipeline-test.sh "Test App 2" &
+./scripts/run-pipeline-test.sh "Test App 3" &
+wait
+```
+
+**Expected Outcome:**
+- [ ] All 3 workflows execute concurrently
+- [ ] No race conditions
+- [ ] CAS retry logic handles concurrent updates (may see `[SESSION #64 RETRY]` in logs - this is expected and correct)
+- [ ] All workflows complete successfully
+- [ ] No schema validation errors
+
+**Test Case 3: Error Recovery**
+```bash
+# Simulate agent failure by stopping scaffold agent mid-execution
+./scripts/run-pipeline-test.sh "Error Recovery Test"
+# After 30s, kill scaffold agent
+pnpm pm2:stop scaffold-agent
+# Wait 30s
+# Restart scaffold agent
+pnpm pm2:start scaffold-agent
+# Workflow should resume
+```
+
+**Expected Outcome:**
+- [ ] Workflow survives agent restart
+- [ ] Task gets reprocessed after agent restart
+- [ ] No duplicate execution
+- [ ] Workflow completes successfully
+
+**E2E Test Checklist:**
+- [ ] Single workflow completes end-to-end
+- [ ] Concurrent workflows execute without conflicts
+- [ ] Agent restart doesn't break workflows
+- [ ] No "Invalid task assignment" errors in any scenario
+- [ ] Trace context preserved across all operations
+- [ ] State machine advances workflows correctly
+- [ ] Results published and received successfully
 
 ### Build Validation
-- [ ] TypeScript compilation: `pnpm typecheck` (dashboard + orchestrator)
-- [ ] Frontend build: `cd packages/dashboard && pnpm build`
-- [ ] Backend build: `cd packages/orchestrator && pnpm build`
-- [ ] All packages build: `turbo run build` (from root)
 
-### Performance Tests (Manual)
-- [ ] Dashboard page loads in < 500ms (empty cache)
-- [ ] API responses < 200ms for stats endpoints
-- [ ] Charts render smoothly (no jank)
-- [ ] Polling doesn't block UI interaction
+**Full Build Test:**
+```bash
+# Clean build from scratch
+rm -rf packages/*/dist
+turbo run build --force
+```
 
----
+**Expected Results:**
+- [ ] All 12+ packages build successfully
+- [ ] Zero TypeScript compilation errors
+- [ ] Zero TypeScript type errors
+- [ ] No circular dependency warnings
+- [ ] Build completes in < 2 minutes (with cache)
 
-## Timeline & Milestones
+**Type Check Test:**
+```bash
+turbo run typecheck
+```
 
-### Recommended Implementation Order
+**Expected Results:**
+- [ ] All packages pass type checking
+- [ ] Zero type errors
+- [ ] ExecutionEnvelope type properly exported
+- [ ] No missing imports
 
-**Day 1 (4-5 hours): Backend API Foundation**
-- Phase 1: Tasks 1.1-1.5 (Verify & Register All Routes)
-- **Milestone:** All API endpoints accessible and returning data
-- **Validation:** `curl http://localhost:3000/api/v1/stats/overview` returns JSON
+**Lint Check:**
+```bash
+turbo run lint
+```
 
-**Day 2 (3-4 hours): Frontend Data Layer**
-- Phase 2: Tasks 2.1-2.3 (API Client & Hooks)
-- **Milestone:** React Query successfully fetching data
-- **Validation:** React Query DevTools shows successful queries
+**Expected Results:**
+- [ ] Zero linting errors (if ESLint configured)
+- [ ] Code formatting consistent
+- [ ] No unused imports
 
-**Day 3 (4-5 hours): Core Pages**
-- Phase 3: Tasks 3.1-3.3 (Dashboard, Workflows, Workflow Detail)
-- **Milestone:** 10/11 E2E tests pass
-- **Validation:** `pnpm test:e2e` shows improvements
+### Performance Tests
 
-**Day 4 (2-3 hours): Trace Visualization**
-- Phase 4: Tasks 4.1-4.2 (SpanTree, Traces Page)
-- **Milestone:** Trace page displays hierarchy
-- **Validation:** Manual test with real trace_id
+**Baseline Metrics** (to verify no regression):
+- Workflow creation: < 100ms
+- Task dispatch: < 50ms
+- Agent task receipt: < 200ms
+- Schema validation: < 5ms
+- End-to-end workflow: < 30 seconds
 
-**Day 5 (3-4 hours): Charts & Polish**
-- Phase 5: Tasks 5.1-5.3 (Charts, Agents, Styling)
-- **Milestone:** All 11 E2E tests pass, production-ready UI
-- **Validation:** Full E2E suite passes, manual QA complete
+**Load Test:**
+```bash
+# Create 10 workflows simultaneously
+for i in {1..10}; do
+  ./scripts/run-pipeline-test.sh "Load Test $i" &
+done
+wait
+```
 
-**Total Estimated Time:** 15-20 hours over 5 days
+**Expected Results:**
+- [ ] All workflows complete successfully
+- [ ] Response times within acceptable range
+- [ ] No memory leaks
+- [ ] PM2 processes remain stable
+- [ ] Database connections don't exhaust
+
+### Regression Tests
+
+**Verify No Functionality Lost:**
+- [ ] Distributed tracing still works (trace_id propagation)
+- [ ] CAS retry logic still works (optimistic locking)
+- [ ] Workflow state machine still advances correctly
+- [ ] All agent types can execute tasks
+- [ ] Result publishing still works
+- [ ] Dashboard can still query workflows
+- [ ] Health checks still pass
+
+### Security Tests
+
+**Schema Validation Security:**
+```typescript
+describe('Security - Schema Validation', () => {
+  it('should reject malicious payloads', () => {
+    const maliciousEnvelope = {
+      task_id: uuid(),
+      agent_type: 'scaffold',
+      payload: {
+        __proto__: { polluted: true },
+        constructor: { prototype: { polluted: true } }
+      }
+    };
+
+    expect(() => validateTask(maliciousEnvelope)).toThrow();
+  });
+
+  it('should sanitize user input in payload', () => {
+    const envelope = createValidEnvelope({
+      payload: {
+        name: '<script>alert("xss")</script>',
+        description: '../../etc/passwd'
+      }
+    });
+
+    const sanitized = scaffoldAgent.parseTask(envelope);
+    expect(sanitized.payload.name).not.toContain('<script>');
+  });
+});
+```
+
+**Expected Results:**
+- [ ] Prototype pollution prevented
+- [ ] XSS attempts sanitized
+- [ ] Path traversal blocked
+- [ ] Schema validation rejects malformed data
 
 ---
 
 ## Success Metrics
 
-### Technical Metrics
-- **Code Quality:**
-  - 0 TypeScript errors ✅
-  - All 11 E2E tests pass ✅
-  - All API endpoints return 200 OK ✅
-- **Performance:**
-  - Initial load < 500ms ✅
-  - API response < 200ms (p95) ✅
-  - Chart render < 100ms ✅
-- **Test Coverage:**
-  - 11/11 E2E tests pass ✅
-  - All API endpoints manually tested ✅
+### Functional Success
 
-### User Experience Metrics
-- **Usability:**
-  - Dashboard loads without errors ✅
-  - Filters work as expected ✅
-  - Navigation is intuitive ✅
-- **Observability:**
-  - Can find any workflow by ID ✅
-  - Can correlate workflow to trace ✅
-  - Can see agent performance ✅
-- **Reliability:**
-  - Handles API errors gracefully ✅
-  - Shows loading states ✅
-  - Auto-recovers from failures ✅
+| Metric | Target | Measurement Method |
+|--------|--------|-------------------|
+| **Schema Validation Errors** | Zero | Search logs for "Invalid task assignment" |
+| **Workflow Completion Rate** | 100% | Run 10 test workflows, all complete |
+| **Agent Task Execution** | 100% | All 5 agents execute tasks without validation failures |
+| **Concurrent Workflow Success** | 100% | 5 concurrent workflows all complete |
+| **Build Success** | 100% | `turbo run build` exits with code 0 |
+| **Test Pass Rate** | 100% | All unit tests pass |
+| **E2E Test Success** | 100% | Pipeline test completes successfully |
+
+### Code Quality
+
+| Metric | Target | Measurement Method |
+|--------|--------|-------------------|
+| **TypeScript Errors** | Zero | `turbo run typecheck` |
+| **Lines of Code Removed** | 250+ | Git diff summary |
+| **Backward Compatibility Code** | Zero | Manual code review |
+| **Session Markers Remaining** | Zero | Search for `SESSION #36`, `#37`, `#47` |
+| **Deprecated Files Deleted** | 2 | integration-agent/types.ts, deployment-agent/types.ts |
+| **Code Duplication** | Zero duplicate schemas | Only 1 TaskAssignmentSchema exists |
+
+### Performance
+
+| Metric | Target | Measurement Method |
+|--------|--------|-------------------|
+| **Schema Validation Time** | < 5ms | Benchmark test |
+| **Agent Startup Time** | < 5 seconds | PM2 logs |
+| **Workflow Creation Time** | < 100ms | API response time |
+| **End-to-End Workflow Time** | < 60 seconds | Pipeline test duration |
+| **Memory Usage** | No increase | PM2 monit before/after |
+
+### Reliability
+
+| Metric | Target | Measurement Method |
+|--------|--------|-------------------|
+| **Agent Crashloop Rate** | Zero | PM2 restart count after 1 hour |
+| **CAS Conflict Retry Success** | 100% | Monitor `[SESSION #64 RETRY]` logs |
+| **Trace Context Preservation** | 100% | Verify trace_id in all agent logs |
+| **Message Delivery Success** | 100% | No messages stuck in Redis streams |
+| **Database Transaction Success** | 100% | No Prisma errors in logs |
 
 ---
 
 ## Dependencies
 
-### External Dependencies (Already Installed ✅)
-- React 18.2.0
-- React Router DOM 6.20.0
-- TanStack React Query 5.12.0
-- Recharts 2.10.0
-- TailwindCSS 3.3.6
-- date-fns 2.30.0
-- Vite 5.0.8
-- Playwright 1.44.0
+### External Dependencies
+- **Prisma Client**: Database ORM (already installed)
+- **Zod**: Schema validation (already installed)
+- **Redis**: Message bus (running in Docker)
+- **PostgreSQL**: Database (running in Docker)
+- **PM2**: Process manager (already installed)
+- **Turbo**: Monorepo build system (already installed)
 
-### Internal Dependencies (Package Build Order)
+### Internal Dependencies (Build Order)
+
 ```
-1. @agentic-sdlc/shared-types (exists, no changes needed)
-   ↓
-2. @agentic-sdlc/shared-utils (exists, no changes needed)
-   ↓
-3. @agentic-sdlc/orchestrator (MODIFY - verify & register API routes)
-   ↓
-4. @agentic-sdlc/dashboard (IMPLEMENT - frontend components)
+@agentic-sdlc/shared-types
+    ↓
+@agentic-sdlc/shared-utils
+    ↓
+@agentic-sdlc/orchestrator
+    ↓
+@agentic-sdlc/agents/base-agent
+    ↓
+┌───────────┬───────────┬────────┬───────────┬───────────┐
+│  scaffold │validation │  e2e   │integration│deployment │
+└───────────┴───────────┴────────┴───────────┴───────────┘
 ```
 
-### Infrastructure Dependencies
-- PostgreSQL database (running, with trace fields from Session #60) ✅
-- Redis (running, for message bus) ✅
-- Orchestrator service (running on port 3000) ✅
+**Build Strategy:**
+1. Build shared-types first (exports canonical schema)
+2. Build orchestrator (uses shared-types)
+3. Build base-agent (depends on shared-types)
+4. Build all concrete agents (depend on base-agent)
 
-### Data Dependencies
-- Workflow records in database (create test workflows if empty)
-- Task records with trace_id populated
-- At least 1 completed workflow for testing
+**Turbo handles this automatically via `turbo run build`**
 
----
+### Blockers
 
-## Key Files Summary
-
-### Backend Files (Orchestrator)
-| File | Action | Status | Priority |
-|------|--------|--------|----------|
-| `src/repositories/stats.repository.ts` | VERIFY/EXTEND | EXISTS | 🔥 CRITICAL |
-| `src/services/stats.service.ts` | VERIFY/EXTEND | EXISTS | 🔥 CRITICAL |
-| `src/api/routes/stats.routes.ts` | VERIFY | EXISTS | 🔥 CRITICAL |
-| `src/repositories/trace.repository.ts` | VERIFY/EXTEND | EXISTS | HIGH |
-| `src/services/trace.service.ts` | VERIFY/EXTEND | EXISTS | HIGH |
-| `src/api/routes/trace.routes.ts` | VERIFY | EXISTS | HIGH |
-| `src/repositories/task.repository.ts` | CREATE/VERIFY | UNKNOWN | MEDIUM |
-| `src/services/task.service.ts` | CREATE/VERIFY | UNKNOWN | MEDIUM |
-| `src/api/routes/task.routes.ts` | VERIFY | EXISTS | MEDIUM |
-| `src/api/routes/workflow.routes.ts` | EXTEND | EXISTS | MEDIUM |
-| `src/server.ts` | **MODIFY** | EXISTS | 🔥 **CRITICAL** |
-
-### Frontend Files (Dashboard)
-| File | Action | Status | Priority |
-|------|--------|--------|----------|
-| `src/api/client.ts` | IMPLEMENT | STUB | HIGH |
-| `src/hooks/useStats.ts` | IMPLEMENT | STUB | HIGH |
-| `src/hooks/useWorkflows.ts` | EXTEND | STUB | HIGH |
-| `src/hooks/useWorkflow.ts` | CREATE | MISSING | HIGH |
-| `src/hooks/useTasks.ts` | CREATE | MISSING | MEDIUM |
-| `src/hooks/useTrace.ts` | CREATE | MISSING | MEDIUM |
-| `src/pages/Dashboard.tsx` | IMPLEMENT | STUB | 🔥 HIGH |
-| `src/pages/WorkflowsPage.tsx` | IMPLEMENT | STUB | HIGH |
-| `src/pages/WorkflowPage.tsx` | IMPLEMENT | STUB | MEDIUM |
-| `src/pages/TracesPage.tsx` | IMPLEMENT | STUB | MEDIUM |
-| `src/pages/AgentsPage.tsx` | IMPLEMENT | STUB | LOW |
-| `src/components/Charts/TimeSeriesChart.tsx` | CREATE | MISSING | MEDIUM |
-| `src/components/Charts/AgentPerformanceChart.tsx` | CREATE | MISSING | LOW |
-| `src/components/Traces/SpanTree.tsx` | CREATE | MISSING | MEDIUM |
+| Blocker | Impact | Resolution |
+|---------|--------|------------|
+| None identified | N/A | No external blockers |
 
 ---
 
-## References
+## Rollout Plan
 
-### Design Documents
-- [DASHBOARD_IMPLEMENTATION_PLAN.md](./DASHBOARD_IMPLEMENTATION_PLAN.md) - Original specification
-- [agentic-sdlc-tracing.md](./agentic-sdlc-tracing.md) - Distributed tracing design
-- [DATABASE_QUERY_GUIDE.md](./DATABASE_QUERY_GUIDE.md) - SQL query examples
-- [TRACE_IMPLEMENTATION_REVIEW.md](./TRACE_IMPLEMENTATION_REVIEW.md) - Tracing compliance review
-- [CLAUDE.md](./CLAUDE.md) - Project overview and session history
+### Phase 1: Development (This Session)
+- Implement all changes on feature branch
+- Test locally with PM2 dev environment
+- Validate E2E with test workflows
+- Fix any issues discovered
+- Complete all success criteria
 
-### Codebase References
-- Orchestrator API: `packages/orchestrator/src/api/routes/`
-- Workflow Service: `packages/orchestrator/src/services/workflow.service.ts`
-- Prisma Schema: `packages/orchestrator/prisma/schema.prisma`
-- Dashboard App: `packages/dashboard/src/App.tsx`
+### Phase 2: Validation (Before Commit)
+- Run full test suite 3 times to verify consistency
+- Test with various workflow types (app, feature, bugfix)
+- Monitor for 1 hour under normal load
+- Review all code changes for quality
+- Ensure no debug code or TODOs remain
+
+### Phase 3: Commit (End of Session)
+- Create detailed commit message
+- Update CLAUDE.md with Session #64 completion
+- Document lessons learned
+- Mark all success criteria as met
+
+### Phase 4: Future Sessions
+- Consider implementing strategic BaseAgent refactor (15-20 hours, see EPCC_EXPLORE.md)
+- Add idempotency layer (2-3 hours)
+- Add prompt auditing (2-3 hours)
+- Implement message deduplication (1-2 hours)
+
+### Rollback Procedure
+
+**If something goes wrong during implementation:**
+
+1. **Immediate Rollback:**
+   ```bash
+   git checkout main
+   ./scripts/env/stop-dev.sh
+   turbo run build
+   ./scripts/env/start-dev.sh
+   ```
+
+2. **Partial Rollback (revert specific commits):**
+   ```bash
+   git log --oneline  # Find commit SHA
+   git revert <commit-sha>
+   turbo run build
+   ./scripts/env/start-dev.sh
+   ```
+
+3. **Emergency Rollback (nuclear option):**
+   ```bash
+   git reset --hard HEAD~1  # Go back 1 commit
+   git clean -fd            # Remove untracked files
+   turbo run build --force
+   ./scripts/env/start-dev.sh
+   ```
+
+4. **Verify Rollback Success:**
+   ```bash
+   pnpm pm2:status  # All processes online
+   ./scripts/run-pipeline-test.sh "Rollback Verification Test"
+   # Workflow should complete (even if with "Invalid task assignment" error)
+   ```
 
 ---
 
-## Checklist for CODE Phase
+## Implementation Checklist
 
-Before proceeding to `/epcc-code`, ensure:
+Before proceeding to CODE phase, verify:
 
-- [x] All objectives are clearly defined ✅
-- [x] All tasks are broken down into < 4 hour chunks ✅
-- [x] All dependencies are identified ✅
-- [x] All risks are assessed and mitigated ✅
-- [x] Test strategy is comprehensive ✅
-- [x] Success criteria are measurable ✅
-- [x] Timeline is realistic ✅
-- [ ] All stakeholders agree on scope ⏳ (awaiting user confirmation)
+### Planning Complete
+- [x] Objectives clearly defined
+- [x] Technical approach thoroughly designed
+- [x] All tasks broken down with estimates (6-8 hours total)
+- [x] Dependencies identified (build order documented)
+- [x] Risks assessed with mitigation strategies (12 risks documented)
+- [x] Test strategy comprehensive (unit, integration, E2E, security)
+- [x] Success criteria measurable (functional, quality, performance, reliability)
+- [x] Documentation plan created (CLAUDE.md, commit message)
+- [x] Timeline realistic (6 phases over 6-8 hours)
+- [x] Resources available (all tools installed, services running)
+- [x] Rollback plan documented (4-step procedure)
+
+### Stakeholder Alignment
+- [ ] User confirmed Option A (Nuclear Cleanup) is preferred approach
+- [ ] User understands this is breaking change (all agents updated simultaneously)
+- [ ] User aware of 6-8 hour time commitment
+- [ ] User ready to proceed to CODE phase
+
+### Environment Ready
+- [x] Feature branch strategy planned
+- [x] Backup procedure documented
+- [x] Build validation steps defined
+- [x] Test cases documented
+- [x] Rollback procedure ready
 
 ---
 
-**Plan Status:** ✅ READY TO IMPLEMENT
-**Next Step:** Await user approval, then proceed to `/epcc-code`
-**Estimated Completion:** 15-20 hours (5 days @ 3-4 hours/day)
+## Next Steps
+
+**Ready for CODE Phase!**
+
+Once user confirms approval of this plan:
+
+1. **User Action Required:**
+   - Review this plan (EPCC_PLAN.md)
+   - Confirm Option A (Nuclear Cleanup) is still desired approach
+   - Approve proceeding to CODE phase
+   - Provide any feedback or adjustments
+
+2. **After User Approval:**
+   - Transition to `/epcc-code` command
+   - Begin Phase 1: Preparation
+   - Follow task breakdown exactly as documented
+   - Update todo list with progress
+   - Commit when all success criteria met
+
+3. **During CODE Phase:**
+   - Execute tasks in order (no skipping)
+   - Test after each phase (not just at end)
+   - Monitor for issues continuously
+   - Document any deviations from plan
+   - Use rollback procedure if needed
+
+4. **After CODE Phase:**
+   - Run `/epcc-commit` to create commit
+   - Update CLAUDE.md with Session #64 completion
+   - Mark Session #64 as complete
+   - Plan next session priorities
 
 ---
 
-## 🚨 CRITICAL FIRST STEP
+## Appendix: Key Code Patterns
 
-**Before ANY frontend work, MUST complete:**
+### Before (Broken)
 
-1. **Phase 1, Task 1.1:** Verify stats routes exist and register in server.ts
-2. **Phase 1, Task 1.5:** Test `curl http://localhost:3000/api/v1/stats/overview`
-3. **Verify response:** Should return JSON, not ECONNREFUSED
+**Base Agent - Duplicate Schema:**
+```typescript
+// packages/agents/base-agent/src/types.ts (LINES 19-31 - DELETE THIS)
+export const TaskAssignmentSchema = z.object({
+  task_id: z.string().uuid(),
+  workflow_id: z.string().uuid(),
+  type: z.string(),  // ❌ Wrong field name
+  name: z.string(),  // ❌ Expects at root
+  description: z.string(),
+  requirements: z.string(),  // ❌ Expects string, not array
+  priority: z.enum(['critical', 'high', 'medium', 'low']),
+  context: z.record(z.unknown()).optional(),
+  deadline: z.string().optional()
+});
+```
 
-**This single change will fix 4/11 failing E2E tests immediately.**
+**Base Agent - Wrong Validation:**
+```typescript
+// packages/agents/base-agent/src/base-agent.ts (LINE 287 - UPDATE THIS)
+validateTask(task: unknown): TaskAssignment {
+  try {
+    return TaskAssignmentSchema.parse(task);  // ❌ Wrong schema!
+  } catch (error) {
+    throw new ValidationError('Invalid task assignment', ...);
+  }
+}
+```
+
+**Scaffold Agent - Manual Envelope Unwrapping:**
+```typescript
+// packages/agents/scaffold-agent/src/scaffold-agent.ts (LINES 70-100 - SIMPLIFY THIS)
+// SESSION #37: Use envelope payload directly
+const envelope = task as any;
+const scaffoldTask: ScaffoldTask = {
+  task_id: task.task_id as any,
+  workflow_id: task.workflow_id as any,
+  payload: {
+    project_type: envelope.payload?.project_type || 'app',
+    name: envelope.payload?.name || task.name || 'untitled',  // ❌ Messy fallbacks
+    description: envelope.payload?.description || task.description || '',
+    requirements: Array.isArray(envelope.payload?.requirements)
+      ? envelope.payload.requirements
+      : (task.requirements || '').split('. ')  // ❌ String vs array confusion
+  }
+};
+```
+
+### After (Fixed)
+
+**Shared Types - Canonical Schema:**
+```typescript
+// packages/shared/types/src/index.ts (ADD EXPORTS)
+export {
+  ExecutionEnvelopeSchema,
+  ExecutionEnvelope,
+  TaskAssignmentSchema,  // Re-export from orchestrator
+  TaskAssignment
+} from '@agentic-sdlc/orchestrator/types';
+```
+
+**Base Agent - Correct Validation:**
+```typescript
+// packages/agents/base-agent/src/base-agent.ts (UPDATE)
+import { ExecutionEnvelopeSchema, ExecutionEnvelope } from '@agentic-sdlc/shared-types';
+
+/**
+ * Validates incoming task envelope against canonical schema.
+ * @param task - Raw task data from message bus
+ * @returns Validated ExecutionEnvelope
+ * @throws ValidationError if schema validation fails
+ */
+validateTask(task: unknown): ExecutionEnvelope {
+  try {
+    return ExecutionEnvelopeSchema.parse(task);  // ✅ Correct schema!
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new ValidationError(
+        'Invalid task envelope',
+        error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+      );
+    }
+    throw new ValidationError('Invalid task assignment', [String(error)]);
+  }
+}
+```
+
+**Scaffold Agent - Clean Envelope Parsing:**
+```typescript
+// packages/agents/scaffold-agent/src/scaffold-agent.ts (SIMPLIFY)
+import { ExecutionEnvelope } from '@agentic-sdlc/shared-types';
+
+async executeTask(envelope: ExecutionEnvelope): Promise<AgentResult> {
+  // ✅ Clean extraction from envelope.payload
+  const scaffoldPayload = envelope.payload as ScaffoldPayload;
+
+  const scaffoldTask: ScaffoldTask = {
+    task_id: envelope.task_id,
+    workflow_id: envelope.workflow_id,
+    payload: {
+      project_type: scaffoldPayload.project_type || 'app',
+      name: scaffoldPayload.name,  // ✅ No fallbacks needed
+      description: scaffoldPayload.description,
+      requirements: scaffoldPayload.requirements  // ✅ Already an array
+    }
+  };
+
+  // Execute business logic...
+  const result = await this.scaffoldProject(scaffoldTask);
+
+  return {
+    task_id: envelope.task_id,
+    workflow_id: envelope.workflow_id,
+    trace_id: envelope.metadata.trace_id,  // ✅ Trace context preserved
+    status: 'success',
+    result
+  };
+}
+```
+
+**Key Improvements:**
+1. ✅ Single source of truth for schema (orchestrator types)
+2. ✅ Type-safe envelope parsing
+3. ✅ No backward compatibility fallbacks
+4. ✅ Clean separation: envelope structure vs. domain payload
+5. ✅ Trace context preserved automatically
+6. ✅ Clear error messages on validation failure
 
 ---
 
-**Ready for CODE phase?** ⏳ Awaiting user approval to begin implementation.
+## Summary
+
+This plan provides a comprehensive, executable strategy for **Option A: Nuclear Cleanup** to:
+
+1. **Fix Critical Blocker:** Eliminate "Invalid task assignment" errors blocking all workflows
+2. **Unify Architecture:** Single canonical schema (ExecutionEnvelope) across all components
+3. **Remove Legacy Code:** Clean up 250+ lines of backward compatibility code
+4. **Improve Maintainability:** Clear architectural boundaries, no duplication
+5. **Validate Thoroughly:** Comprehensive testing strategy (unit, integration, E2E, security)
+
+**Estimated Time:** 6-8 hours
+**Risk Level:** Medium-High (mitigated by feature branch, rollback plan, incremental testing)
+**Expected Outcome:** All workflows execute successfully, clean codebase, production-ready system
+
+**Ready to proceed to CODE phase upon user approval.**

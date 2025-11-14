@@ -39,6 +39,27 @@ export class ConflictError extends BaseError {
   }
 }
 
+export class ConcurrencyConflictError extends BaseError {
+  constructor(
+    message: string,
+    public workflowId: string,
+    public expectedVersion: number,
+    public details?: any
+  ) {
+    super(
+      message,
+      'CONCURRENCY_CONFLICT',
+      409,
+      {
+        workflow_id: workflowId,
+        expected_version: expectedVersion,
+        retry_recommended: true,
+        ...details
+      }
+    );
+  }
+}
+
 export class UnauthorizedError extends BaseError {
   constructor(message: string) {
     super(message, 'UNAUTHORIZED', 401);

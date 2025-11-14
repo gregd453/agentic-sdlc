@@ -1,10 +1,58 @@
 import { PrismaClient, Workflow, WorkflowStage, AgentTask } from '@prisma/client';
 import { CreateWorkflowRequest } from '../types';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, ConcurrencyConflictError } from '../utils/errors';
 import { logger } from '../utils/logger';
 
 export class WorkflowRepository {
   constructor(private prisma: PrismaClient) {}
+
+  /**
+   * SESSION #64: Retry wrapper for handling optimistic locking conflicts
+   * Retries operations with exponential backoff when ConcurrencyConflictError occurs
+   */
+  private async withRetry<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 3,
+    baseDelayMs: number = 50
+  ): Promise<T> {
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error: any) {
+        lastError = error;
+
+        // Only retry on concurrency conflicts
+        if (!(error instanceof ConcurrencyConflictError)) {
+          throw error;
+        }
+
+        // Don't retry on last attempt
+        if (attempt === maxRetries) {
+          logger.error('[SESSION #64 RETRY] Max retries exceeded for concurrency conflict', {
+            workflow_id: error.workflowId,
+            attempts: attempt + 1,
+            error_code: error.code
+          });
+          throw error;
+        }
+
+        // Exponential backoff: 50ms, 100ms, 200ms
+        const delayMs = baseDelayMs * Math.pow(2, attempt);
+        logger.info('[SESSION #64 RETRY] Retrying after concurrency conflict', {
+          workflow_id: error.workflowId,
+          attempt: attempt + 1,
+          max_retries: maxRetries,
+          delay_ms: delayMs
+        });
+
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+    }
+
+    throw lastError!;
+  }
 
   async create(data: CreateWorkflowRequest & { created_by: string; trace_id?: string; current_span_id?: string }): Promise<Workflow> {
     return await this.prisma.$transaction(async (tx) => {
@@ -105,47 +153,57 @@ export class WorkflowRepository {
       stage_outputs: any;
     }>
   ): Promise<Workflow> {
-    const existing = await this.findById(id);
-    if (!existing) {
-      throw new NotFoundError(`Workflow ${id} not found`);
-    }
-
-    // SESSION #26: Compare-And-Swap (CAS) for atomic stage updates
-    // Only update if version matches (prevents stale writes from concurrent updates)
-    const currentVersion = existing.version;
-
-    try {
-      const updated = await this.prisma.workflow.update({
-        where: {
-          id,
-          version: currentVersion  // CAS condition: only update if version unchanged
-        },
-        data: {
-          ...data,
-          version: { increment: 1 }  // Increment version on successful update
-        } as any
-      });
-
-      logger.info('[SESSION #26 CAS] Workflow updated successfully (CAS check passed)', {
-        workflow_id: id,
-        updates: data,
-        version: currentVersion,
-        new_version: currentVersion + 1
-      });
-
-      return updated;
-    } catch (error: any) {
-      // If update failed, it means version mismatch (another process updated it)
-      if (error.code === 'P2025') {
-        logger.warn('[SESSION #26 CAS] Update rejected - version mismatch (concurrent update detected)', {
-          workflow_id: id,
-          expected_version: currentVersion,
-          attempted_updates: data
-        });
-        throw new Error(`CAS failed for workflow ${id}: concurrent update detected`);
+    // SESSION #64: Wrap update in retry logic to handle concurrent updates
+    return this.withRetry(async () => {
+      // Re-fetch on each retry to get latest version
+      const existing = await this.findById(id);
+      if (!existing) {
+        throw new NotFoundError(`Workflow ${id} not found`);
       }
-      throw error;
-    }
+
+      // SESSION #26: Compare-And-Swap (CAS) for atomic stage updates
+      // Only update if version matches (prevents stale writes from concurrent updates)
+      const currentVersion = existing.version;
+
+      try {
+        const updated = await this.prisma.workflow.update({
+          where: {
+            id,
+            version: currentVersion  // CAS condition: only update if version unchanged
+          },
+          data: {
+            ...data,
+            version: { increment: 1 }  // Increment version on successful update
+          } as any
+        });
+
+        logger.info('[SESSION #64 CAS] Workflow updated successfully (CAS check passed)', {
+          workflow_id: id,
+          updates: data,
+          version: currentVersion,
+          new_version: currentVersion + 1
+        });
+
+        return updated;
+      } catch (error: any) {
+        // If update failed, it means version mismatch (another process updated it)
+        if (error.code === 'P2025') {
+          logger.warn('[SESSION #64 CAS] Optimistic lock failure - concurrent update detected', {
+            workflow_id: id,
+            expected_version: currentVersion,
+            attempted_updates: data,
+            error_code: 'CONCURRENCY_CONFLICT'
+          });
+          throw new ConcurrencyConflictError(
+            `Workflow ${id} was modified by another process (version ${currentVersion} no longer current)`,
+            id,
+            currentVersion,
+            { attempted_updates: data }
+          );
+        }
+        throw error;
+      }
+    });
   }
 
   async updateState(
