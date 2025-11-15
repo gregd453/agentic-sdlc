@@ -561,6 +561,7 @@ export class WorkflowStateMachineService {
   private machines = new Map<string, any>();
   private messageBus?: IMessageBus; // Phase 4: Message bus for autonomous event handling
   private stateManager?: WorkflowStateManager; // Phase 6: State persistence and recovery
+  private taskCreator?: (workflowId: string, stage: string, workflowData?: any) => Promise<void>; // SESSION #66: Task creation callback
 
   constructor(
     private repository: WorkflowRepository,
@@ -580,6 +581,58 @@ export class WorkflowStateMachineService {
     if (stateManager) {
       logger.info('[PHASE-6] WorkflowStateMachineService initialized with state persistence');
     }
+  }
+
+  // SESSION #66: Set task creation callback (called after WorkflowService is constructed)
+  public setTaskCreator(taskCreator: (workflowId: string, stage: string, workflowData?: any) => Promise<void>): void {
+    this.taskCreator = taskCreator;
+    logger.info('[SESSION #66] Task creator callback registered with state machine');
+  }
+
+  /**
+   * SESSION #66 STRATEGIC: Wait for workflow stage transition to complete
+   * Replaces setTimeout-based race condition with deterministic polling
+   */
+  private async waitForStageTransition(
+    workflowId: string,
+    previousStage: string,
+    maxWaitMs: number = 5000
+  ): Promise<any> {
+    const maxAttempts = Math.floor(maxWaitMs / 100);
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const workflow = await this.repository.findById(workflowId);
+
+      if (!workflow) {
+        logger.error('[SESSION #66] Workflow not found during stage transition wait', {
+          workflowId,
+          previousStage,
+          attempt
+        });
+        return null;
+      }
+
+      if (workflow.current_stage !== previousStage) {
+        logger.info('[SESSION #66] Stage transition detected', {
+          workflowId,
+          from: previousStage,
+          to: workflow.current_stage,
+          attempts: attempt + 1,
+          elapsed_ms: (attempt + 1) * 100
+        });
+        return workflow;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    logger.warn('[SESSION #66] Timeout waiting for stage transition', {
+      workflowId,
+      previousStage,
+      maxWaitMs
+    });
+
+    return null;  // Consistent with not-found case
   }
 
   createStateMachine(workflowId: string, type: string): any {
@@ -775,6 +828,60 @@ export class WorkflowStateMachineService {
               stage: message.stage,
               eventId: message.id
             });
+
+            // SESSION #66 STRATEGIC: Create task for next stage after transition
+            // Replaced setTimeout with deterministic waitForStageTransition
+            if (this.taskCreator) {
+              try {
+                // Wait for state machine to process transition and update database
+                // Uses polling with timeout instead of hope-based 200ms setTimeout
+                const workflow = await this.waitForStageTransition(workflowId, message.stage);
+
+                if (!workflow) {
+                  logger.error('[SESSION #66] Workflow state not available after stage transition (not found or timeout)', {
+                    workflow_id: workflowId,
+                    completed_stage: message.stage
+                  });
+                  return;
+                }
+
+                const isTerminal = ['completed', 'failed', 'cancelled'].includes(workflow.status);
+                if (!isTerminal) {
+                  logger.info('[SESSION #66] Creating task for next stage after STAGE_COMPLETE', {
+                    workflow_id: workflowId,
+                    next_stage: workflow.current_stage,
+                    completed_stage: message.stage,
+                    transition_verified: true
+                  });
+
+                  await this.taskCreator(workflowId, workflow.current_stage, {
+                    name: workflow.name,
+                    description: workflow.description,
+                    requirements: workflow.requirements,
+                    type: workflow.type
+                  });
+
+                  logger.info('[SESSION #66] Task created successfully for next stage', {
+                    workflow_id: workflowId,
+                    stage: workflow.current_stage
+                  });
+                } else {
+                  logger.info('[SESSION #66] Workflow in terminal state, no task created', {
+                    workflow_id: workflowId,
+                    status: workflow.status
+                  });
+                }
+              } catch (taskError) {
+                logger.error('[SESSION #66] Failed to create task for next stage', {
+                  workflow_id: workflowId,
+                  error: taskError instanceof Error ? taskError.message : String(taskError)
+                });
+              }
+            } else {
+              logger.warn('[SESSION #66] taskCreator not available, cannot create next task', {
+                workflow_id: workflowId
+              });
+            }
           } else {
             logger.info('[PHASE-4] Sending STAGE_FAILED to state machine', {
               workflow_id: workflowId,

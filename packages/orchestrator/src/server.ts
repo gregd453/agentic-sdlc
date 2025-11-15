@@ -146,6 +146,11 @@ export async function createServer() {
     messageBus // Phase 3: messageBus always available from container
   );
 
+  // SESSION #66: Register task creator callback with state machine
+  // This enables the state machine to create tasks for the next stage after transitions
+  stateMachineService.setTaskCreator(workflowService.createTaskForStage.bind(workflowService));
+  logger.info('[SESSION #66] Task creator registered with state machine');
+
   // Initialize dashboard services
   const statsService = new StatsService(statsRepository);
   const traceService = new TraceService(traceRepository, workflowRepository);

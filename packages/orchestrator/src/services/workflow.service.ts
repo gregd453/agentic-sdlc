@@ -48,10 +48,10 @@ export class WorkflowService {
 
     this.setupEventHandlers();
 
-    // Phase 2: Set up message bus subscription for agent results (async, non-blocking)
-    this.setupMessageBusSubscription().catch(err => {
-      logger.error('[PHASE-2] Failed to initialize message bus subscription', { error: err });
-    });
+    // SESSION #66 STRATEGIC: Removed setupMessageBusSubscription()
+    // Task orchestration is now handled by WorkflowStateMachineService
+    // The state machine subscribes to orchestrator:results and creates tasks
+    logger.info('[SESSION #66] WorkflowService constructor complete - task orchestration delegated to state machine');
   }
 
   private setupEventHandlers(): void {
@@ -90,7 +90,28 @@ export class WorkflowService {
    * Phase 2: Set up message bus subscription for agent results
    * Replaces per-workflow callback registration with single persistent subscription
    */
+  /**
+   * ⚠️ DEPRECATED (Session #66 Strategic Cleanup)
+   *
+   * This method is NO LONGER CALLED and will be removed in a future session.
+   *
+   * Historical context: Previously, WorkflowService subscribed to orchestrator:results
+   * and processed agent results via handleAgentResult() → handleTaskCompletion().
+   * This created duplicate processing with the state machine subscription.
+   *
+   * Current architecture: WorkflowStateMachineService is the sole orchestrator.
+   * It subscribes to orchestrator:results, sends STAGE_COMPLETE events, and creates tasks.
+   *
+   * @deprecated Use WorkflowStateMachineService for task orchestration
+   */
   private async setupMessageBusSubscription(): Promise<void> {
+    throw new Error('[SESSION #66] DEPRECATED: setupMessageBusSubscription is no longer used. Task orchestration handled by state machine.');
+  }
+
+  /**
+   * ⚠️ DEPRECATED - This method is kept for reference but is no longer active
+   */
+  private async _DEPRECATED_setupMessageBusSubscription(): Promise<void> {
     if (!this.messageBus) {
       logger.warn('[PHASE-2] setupMessageBusSubscription called but messageBus not available');
       return;
@@ -450,7 +471,7 @@ export class WorkflowService {
     metrics.increment('workflows.retried');
   }
 
-  private async createTaskForStage(workflowId: string, stage: string, workflowData?: any): Promise<void> {
+  public async createTaskForStage(workflowId: string, stage: string, workflowData?: any): Promise<void> {
     const taskId = randomUUID();
     const agentType = this.getAgentTypeForStage(stage);
 
@@ -594,6 +615,13 @@ export class WorkflowService {
     }
   }
 
+  /**
+   * ⚠️ DEPRECATED (Session #66 Strategic Cleanup)
+   *
+   * This method is NO LONGER USED. Task orchestration is handled by WorkflowStateMachineService.
+   *
+   * @deprecated State machine handles all result processing and task creation
+   */
   private async handleAgentResult(result: any): Promise<void> {
     console.log('[DEBUG-ORCH-4] 🟢 handleAgentResult ENTRY', {
       has_result: !!result,
@@ -714,11 +742,25 @@ export class WorkflowService {
     }
   }
 
+  /**
+   * ⚠️ DEPRECATED (Session #66 Strategic Cleanup)
+   *
+   * This method is NO LONGER USED. Task creation is handled by WorkflowStateMachineService.
+   *
+   * @deprecated State machine creates tasks after STAGE_COMPLETE events
+   */
   private async handleTaskCompletion(event: any): Promise<void> {
     const { task_id, workflow_id } = event.payload;
     const completedStage = event.payload?.stage;
     const eventTimestamp = new Date().toISOString();
     const workerId = process.env.WORKER_ID || 'default-worker';
+
+    console.log('[DEBUG-WF-1] 🔵 handleTaskCompletion called', {
+      workflow_id,
+      task_id,
+      stage: completedStage,
+      timestamp: eventTimestamp
+    });
 
     // ============================================================================
     // PHASE 2 INVESTIGATION: Truth table logging - comprehensive event diagnostics
@@ -841,6 +883,15 @@ export class WorkflowService {
       // Update workflow state machine
       const stateMachine = this.stateMachineService.getStateMachine(workflow_id);
       if (stateMachine) {
+        console.log('[DEBUG-WF-2] 🟢 About to send STAGE_COMPLETE', {
+          workflow_id,
+          completed_stage: completedStage,
+          current_db_stage: workflow.current_stage,
+          current_db_progress: workflow.progress,
+          eventId: eventId,
+          timestamp: new Date().toISOString()
+        });
+
         // 🔍 WORKFLOW TRACE: Sending STAGE_COMPLETE to state machine
         logger.info('🔍 [WORKFLOW-TRACE] Sending STAGE_COMPLETE to state machine', {
           workflow_id,
@@ -854,10 +905,27 @@ export class WorkflowService {
           eventId: eventId
         });
 
+        console.log('[DEBUG-WF-3] ✅ STAGE_COMPLETE sent to state machine', {
+          workflow_id
+        });
+
         // Wait for state machine to process the transition and update database
         // The transitionToNextStage action (in onDone handler) is async and updates the database
         // We need to wait for the database to reflect the new current_stage
+        console.log('[DEBUG-TASK-1] ⏳ Waiting for stage transition', {
+          workflow_id,
+          completedStage
+        });
+
         const updatedWorkflow = await this.waitForStageTransition(workflow_id, completedStage);
+
+        console.log('[DEBUG-TASK-2] 🔍 Got updatedWorkflow', {
+          workflow_id,
+          hasWorkflow: !!updatedWorkflow,
+          status: updatedWorkflow?.status,
+          current_stage: updatedWorkflow?.current_stage,
+          progress: updatedWorkflow?.progress
+        });
 
         if (updatedWorkflow) {
           logger.info('Workflow state after stage completion', {
@@ -868,7 +936,21 @@ export class WorkflowService {
           });
 
           // Create task for the next stage if workflow is not in a terminal state
+          console.log('[DEBUG-TASK-3] 🔍 Checking if should create task', {
+            workflow_id,
+            status: updatedWorkflow.status,
+            isNotCompleted: updatedWorkflow.status !== 'completed',
+            isNotFailed: updatedWorkflow.status !== 'failed',
+            isNotCancelled: updatedWorkflow.status !== 'cancelled',
+            shouldCreateTask: updatedWorkflow.status !== 'completed' && updatedWorkflow.status !== 'failed' && updatedWorkflow.status !== 'cancelled'
+          });
+
           if (updatedWorkflow.status !== 'completed' && updatedWorkflow.status !== 'failed' && updatedWorkflow.status !== 'cancelled') {
+            console.log('[DEBUG-TASK-4] ✅ Creating task for next stage', {
+              workflow_id,
+              next_stage: updatedWorkflow.current_stage
+            });
+
             logger.info('Creating task for next stage', {
               workflow_id,
               workflow_type: updatedWorkflow.type,
@@ -883,7 +965,17 @@ export class WorkflowService {
               requirements: updatedWorkflow.requirements,
               type: updatedWorkflow.type
             });
+
+            console.log('[DEBUG-TASK-5] ✅ Task created successfully', {
+              workflow_id,
+              stage: updatedWorkflow.current_stage
+            });
           } else {
+            console.log('[DEBUG-TASK-6] ⚠️ NOT creating task - terminal state', {
+              workflow_id,
+              status: updatedWorkflow.status
+            });
+
             logger.info('Workflow reached terminal state, no new task created', {
               workflow_id,
               status: updatedWorkflow.status
