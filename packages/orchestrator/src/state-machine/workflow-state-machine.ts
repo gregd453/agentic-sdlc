@@ -574,7 +574,13 @@ export class WorkflowStateMachineService {
 
     // Phase 4: Set up autonomous event subscription
     if (messageBus) {
-      this.setupAutonomousEventHandling();
+      console.log('[DEBUG-STATE-MACHINE-CONSTRUCTOR] About to call setupAutonomousEventHandling');
+      this.setupAutonomousEventHandling().catch((err) => {
+        console.error('[DEBUG-STATE-MACHINE-CONSTRUCTOR-ERROR] setupAutonomousEventHandling failed!', err);
+        logger.error('[PHASE-4] Failed to set up autonomous event handling', { error: err });
+      });
+    } else {
+      console.log('[DEBUG-STATE-MACHINE-CONSTRUCTOR] No messageBus provided to constructor!');
     }
 
     // Phase 6: Log state manager availability
@@ -774,21 +780,43 @@ export class WorkflowStateMachineService {
    */
   private async setupAutonomousEventHandling(): Promise<void> {
     if (!this.messageBus) {
+      console.log('[DEBUG-STATE-MACHINE-INIT] setupAutonomousEventHandling - no messageBus!');
       logger.warn('[PHASE-4] setupAutonomousEventHandling called but messageBus not available');
       return;
     }
 
+    console.log('[DEBUG-STATE-MACHINE-INIT] Setting up state machine result handler subscription');
     logger.info('[PHASE-4] Setting up autonomous state machine event handling');
 
     try {
       const { REDIS_CHANNELS } = await import('@agentic-sdlc/shared-types');
+      console.log('[DEBUG-STATE-MACHINE-INIT] About to subscribe to:', REDIS_CHANNELS.ORCHESTRATOR_RESULTS);
 
       // Subscribe to agent results for autonomous STAGE_COMPLETE events
       await this.messageBus.subscribe(REDIS_CHANNELS.ORCHESTRATOR_RESULTS, async (message: any) => {
         try {
+          console.log('[DEBUG-STATE-MACHINE-1] Raw message received from orchestrator:results', {
+            message_type: typeof message,
+            message_keys: Object.keys(message || {}).join(','),
+            has_workflow_id: !!message?.workflow_id,
+            has_stage: !!message?.stage,
+            has_success: !!message?.success
+          });
+
           // The message IS the AgentResultSchema-compliant object (no payload wrapper)
           // redis-bus adapter already unwrapped the envelope and extracted the message
           const agentResult = message;
+
+          console.log('[DEBUG-STATE-MACHINE-2] AgentResult structure', {
+            workflow_id: agentResult.workflow_id,
+            task_id: agentResult.task_id,
+            agent_id: agentResult.agent_id,
+            success: agentResult.success,
+            status: agentResult.status,
+            stage: agentResult.stage,
+            has_result: !!agentResult.result,
+            all_keys: Object.keys(agentResult).join(',')
+          });
 
           logger.info('[PHASE-4] State machine received agent result', {
             workflow_id: agentResult.workflow_id,
@@ -799,15 +827,32 @@ export class WorkflowStateMachineService {
           const workflowId = agentResult.workflow_id;
 
           if (!workflowId) {
+            console.log('[DEBUG-STATE-MACHINE-ERROR] No workflow_id in result!', {
+              agent_id: agentResult.agent_id,
+              has_workflow_id: !!agentResult.workflow_id,
+              workflow_id_value: agentResult.workflow_id
+            });
             logger.warn('[PHASE-4] No workflow_id in agent result', {
               agent_id: agentResult.agent_id,
               has_workflow_id: !!agentResult.workflow_id
             });
             return;
           }
+
+          console.log('[DEBUG-STATE-MACHINE-3] Looking up state machine', {
+            workflow_id: workflowId,
+            machines_count: this.machines.size,
+            machine_exists: this.machines.has(workflowId)
+          });
+
           const stateMachine = this.getStateMachine(workflowId);
 
           if (!stateMachine) {
+            console.log('[DEBUG-STATE-MACHINE-ERROR] No state machine found!', {
+              workflow_id: workflowId,
+              available_machines: Array.from(this.machines.keys()).join(','),
+              message_id: message.id
+            });
             logger.warn('[PHASE-4] No state machine found for workflow', {
               workflow_id: workflowId,
               message_id: message.id
@@ -815,8 +860,19 @@ export class WorkflowStateMachineService {
             return;
           }
 
+          console.log('[DEBUG-STATE-MACHINE-4] State machine found, checking success', {
+            workflow_id: workflowId,
+            success: agentResult.success,
+            status: agentResult.status
+          });
+
           // Determine event based on agent result
           if (agentResult.success) {
+            console.log('[DEBUG-STATE-MACHINE-5] Result is successful, preparing STAGE_COMPLETE', {
+              workflow_id: workflowId,
+              stage_from_message: message.stage,
+              task_id: agentResult.task_id
+            });
             logger.info('[PHASE-4] Sending STAGE_COMPLETE to state machine', {
               workflow_id: workflowId,
               stage: message.stage,
