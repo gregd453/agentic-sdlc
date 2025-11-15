@@ -226,6 +226,12 @@ export abstract class BaseAgent implements AgentLifecycle {
       }
     );
 
+    console.log('[DEBUG-AGENT-INIT] Subscription completed, handler registered', {
+      taskChannel,
+      consumerGroup,
+      agent_type: this.capabilities.type
+    });
+
     this.logger.info('[PHASE-3] Agent subscribed to message bus for tasks', {
       taskChannel,
       consumerGroup
