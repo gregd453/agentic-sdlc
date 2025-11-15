@@ -168,7 +168,7 @@ module.exports = {
     // ==========================================
     {
       name: 'agent-integration',
-      script: './packages/agents/integration-agent/dist/index.js',  // Uses index.js entry point
+      script: './packages/agents/integration-agent/dist/run-agent.js',
       cwd: projectRoot,
 
       env: {
@@ -201,7 +201,7 @@ module.exports = {
     // ==========================================
     {
       name: 'agent-deployment',
-      script: './packages/agents/deployment-agent/dist/index.js',  // Uses index.js entry point
+      script: './packages/agents/deployment-agent/dist/run-agent.js',
       cwd: projectRoot,
 
       env: {

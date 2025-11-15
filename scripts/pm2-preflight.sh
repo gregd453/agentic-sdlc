@@ -32,9 +32,8 @@ else
 fi
 
 # Check agent builds
-# Note: Some agents use run-agent.js, others use index.js as entry point
-AGENTS_WITH_RUN_AGENT=("scaffold-agent" "validation-agent" "e2e-agent")
-AGENTS_WITH_INDEX=("integration-agent" "deployment-agent")
+# All agents now use run-agent.js as entry point
+AGENTS_WITH_RUN_AGENT=("scaffold-agent" "validation-agent" "e2e-agent" "integration-agent" "deployment-agent")
 
 for agent in "${AGENTS_WITH_RUN_AGENT[@]}"; do
   echo "Checking $agent..."
@@ -43,16 +42,6 @@ for agent in "${AGENTS_WITH_RUN_AGENT[@]}"; do
     MISSING_ARTIFACTS=1
   else
     echo "  ✅ packages/agents/$agent/dist/run-agent.js"
-  fi
-done
-
-for agent in "${AGENTS_WITH_INDEX[@]}"; do
-  echo "Checking $agent..."
-  if [ ! -f "$PROJECT_ROOT/packages/agents/$agent/dist/index.js" ]; then
-    echo "  ❌ Missing: packages/agents/$agent/dist/index.js"
-    MISSING_ARTIFACTS=1
-  else
-    echo "  ✅ packages/agents/$agent/dist/index.js"
   fi
 done
 
