@@ -141,7 +141,25 @@ export class TemplateEngine {
    * Get inline templates for common files
    */
   private getInlineTemplate(name: string): string | null {
+    // Strip -template suffix if present (SESSION #67: Fix template name mismatch)
+    const templateKey = name.replace(/-template$/, '');
+
     const templates: Record<string, string> = {
+      // SESSION #67: Add app template for generic applications
+      app: `// {{project_name}}
+// {{description}}
+
+export function main(): void {
+  console.log("{{message}}");
+  console.log("Application started successfully!");
+}
+
+// Run if this is the main module
+if (require.main === module) {
+  main();
+}
+`,
+
       package: `{
   "name": "{{kebabCase project_name}}",
   "version": "0.1.0",
@@ -329,7 +347,7 @@ describe('{{pascalCase component_name}}', () => {
 `
     };
 
-    return templates[name] || null;
+    return templates[templateKey] || null;
   }
 
   /**
