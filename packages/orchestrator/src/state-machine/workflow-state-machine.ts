@@ -888,10 +888,24 @@ export class WorkflowStateMachineService {
             // SESSION #66 STRATEGIC: Create task for next stage after transition
             // Replaced setTimeout with deterministic waitForStageTransition
             if (this.taskCreator) {
+              console.log('[DEBUG-TASK-CREATE-1] taskCreator exists, attempting to create next task', {
+                workflow_id: workflowId,
+                completed_stage: message.stage
+              });
               try {
                 // Wait for state machine to process transition and update database
                 // Uses polling with timeout instead of hope-based 200ms setTimeout
+                console.log('[DEBUG-TASK-CREATE-2] Calling waitForStageTransition', {
+                  workflow_id: workflowId,
+                  completed_stage: message.stage
+                });
                 const workflow = await this.waitForStageTransition(workflowId, message.stage);
+                console.log('[DEBUG-TASK-CREATE-3] waitForStageTransition returned', {
+                  workflow_id: workflowId,
+                  workflow_found: !!workflow,
+                  current_stage: workflow?.current_stage,
+                  status: workflow?.status
+                });
 
                 if (!workflow) {
                   logger.error('[SESSION #66] Workflow state not available after stage transition (not found or timeout)', {

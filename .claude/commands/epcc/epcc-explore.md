@@ -15,21 +15,20 @@ You are in the **EXPLORE** phase of the Explore-Plan-Code-Commit workflow. Your 
 - Identifying constraints and dependencies
 - Documenting everything in EPCC_EXPLORE.md
 
-All implementation will happen in the CODE phase. Use the following subagents in parallel for this explore phase:
+All implementation will happen in the CODE phase.
 
-## Parallel Exploration Subagents
+## Exploration Strategy
 
-IMPORTANT: Use the following subagents in parallel for this explore phase:
-@code-archaeologist @system-designer @business-analyst @test-generator @documentation-agent
+This is an autonomous AI-driven SDLC platform built with TypeScript/Node.js. Focus your exploration on:
+1. **CLAUDE.md first** - Contains critical platform state, architecture rules, and session history
+2. **Monorepo structure** - pnpm workspaces with Turbo for build orchestration
+3. **Hexagonal Architecture** - Core domain, Ports (interfaces), Adapters (implementations), Orchestration
+4. **Message Bus** - Redis Streams for pub/sub and task distribution (packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts)
+5. **AgentEnvelopeSchema v2.0.0** - All messages validated against this canonical schema
+6. **Agent Pattern** - All agents extend BaseAgent from @agentic-sdlc/base-agent
+7. **Platform Services** - 7 PM2 processes: orchestrator, scaffold/validation/integration/e2e/deployment agents, dashboard
 
-**Agent Instructions**: Each agent must ONLY explore and document findings. Save all implementation ideas for the CODE phase:
-- @code-archaeologist: Analyze legacy code structure and uncover hidden patterns (NO CODING - only analysis)
-- @system-designer: Identify design patterns and architectural conventions (NO IMPLEMENTATION - only observation)  
-- @business-analyst: Map dependencies and process flows (NO CHANGES - only documentation)
-- @test-generator: Explore existing tests and coverage gaps (NO TEST WRITING - only assessment)
-- @documentation-agent: Review and analyze all documentation (NO NEW DOCS - only review)
-
-Note: This is the first phase - findings will be documented in EPCC_EXPLORE.md for use in subsequent phases. Always check for CLAUDE.md files first as they contain critical project-specific instructions.
+Note: CLAUDE.md (Session #68) documents platform state at 98% production readiness.
 
 
 ## Exploration Focus
@@ -104,16 +103,19 @@ cat pnpm-workspace.yaml  # Workspace packages
 # List all packages in monorepo
 ls -la packages/
 
-# Check individual package configurations
-find packages -name "package.json" -exec echo {} \; -exec cat {} \;
+# Check PM2 ecosystem configuration
+cat ecosystem.config.js  # PM2 process definitions for 7 services
+
+# Review environment startup
+cat scripts/env/start-dev.sh  # How to start all services
+cat scripts/env/check-health.sh  # Health check endpoint
 
 # Document findings in EPCC_EXPLORE.md, do not create new files
 ```
 
-### Step 4: Pattern Recognition
+### Step 4: Pattern Recognition - Canonical Patterns
 ```bash
 # This project uses Hexagonal Architecture (Ports & Adapters)
-# Look for hexagonal architecture patterns
 find packages/orchestrator/src/hexagonal -type f -name "*.ts"
 
 # Check for architectural layers
@@ -122,18 +124,26 @@ ls -la packages/orchestrator/src/hexagonal/ports/     # Interfaces
 ls -la packages/orchestrator/src/hexagonal/adapters/  # Implementations
 ls -la packages/orchestrator/src/hexagonal/orchestration/ # Orchestration
 
+# CRITICAL: Message Bus Pattern (Redis Streams)
+# This is THE canonical message bus - do NOT duplicate
+cat packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts
+
+# CRITICAL: Schema Validation (AgentEnvelopeSchema v2.0.0)
+# This is THE canonical schema - imported from packages/shared/types
+cat packages/shared/types/src/messages/agent-envelope.ts
+grep -r "AgentEnvelopeSchema" packages/ --include="*.ts" | head -5
+
 # Look for Service pattern (*.service.ts files)
-find packages -name "*.service.ts" | head -20
+find packages -name "*.service.ts" | head -10
 
-# Check for message bus and pub/sub patterns
-grep -r "messageBus" packages/orchestrator/src/ --include="*.ts" | head -10
-grep -r "publish\|subscribe" packages/orchestrator/src/hexagonal/ --include="*.ts" | head -10
+# Look for Agent patterns - all extend BaseAgent
+find packages/agents -name "*-agent.ts" -exec head -20 {} \;
 
-# Look for Agent patterns
-find packages/agents -name "base-agent.ts" -o -name "*-agent.ts"
+# Check for dependency injection via OrchestratorContainer
+grep -r "OrchestratorContainer" packages/ --include="*.ts" | head -5
 
 # Document patterns found in EPCC_EXPLORE.md
-# DO NOT create new pattern implementations
+# DO NOT create new pattern implementations or duplicate canonical files
 ```
 
 ### Step 5: Constraint Identification
@@ -145,20 +155,24 @@ find packages/agents -name "base-agent.ts" -o -name "*-agent.ts"
 
 ### Step 6: Similar Implementation Search
 ```bash
-# Find similar features or patterns in TypeScript
-grep -r "authentication" packages/ --include="*.ts"
-grep -r "similar_feature_name" packages/ --include="*.ts"
+# Find workflow examples in orchestrator
+grep -r "WorkflowStateMachine\|buildAgentEnvelope\|publishWorkflow" packages/orchestrator/ --include="*.ts" | head -10
 
-# Look for existing test patterns
+# Look for existing test patterns (Vitest)
 find packages -name "*.test.ts" -o -name "*.spec.ts" | head -10
 
-# Check environment setup scripts
-ls -la scripts/env/
-cat scripts/env/start-dev.sh  # How to start dev environment
-cat scripts/env/stop-dev.sh   # How to stop dev environment
+# Check agent implementations - these are the canonical examples
+ls packages/agents/*/src/*-agent.ts
+head -50 packages/agents/scaffold-agent/src/scaffold-agent.ts  # Template agent implementation
 
-# Review E2E test patterns
-cat scripts/run-pipeline-test.sh  # How E2E tests are run
+# Review E2E test execution
+cat scripts/run-pipeline-test.sh  # How E2E tests validate workflows
+
+# Check workflow state machine - critical for understanding flow
+cat packages/orchestrator/src/state-machine/workflow-state-machine.ts
+
+# Review distributed tracing patterns (session #60)
+grep -r "trace_id\|WORKFLOW-TRACE\|AGENT-TRACE" packages/ --include="*.ts" | head -5
 ```
 
 ## Exploration Deliverables
@@ -285,17 +299,19 @@ Before proceeding to PLAN phase, ensure all findings are documented in `EPCC_EXP
 
 **REMINDER**: No code should be written during this phase. If you discover issues or have implementation ideas, document them in EPCC_EXPLORE.md for later phases:
 
-- [ ] CLAUDE.md files reviewed and understood
-- [ ] Project structure fully mapped
-- [ ] All dependencies identified
-- [ ] Coding patterns documented
-- [ ] Similar implementations reviewed
-- [ ] Constraints clearly understood
-- [ ] Risks and challenges assessed
-- [ ] Testing approach understood
-- [ ] Deployment process reviewed
-- [ ] Documentation reviewed
-- [ ] Team conventions identified (including CLAUDE.md instructions)
+- [ ] CLAUDE.md reviewed - current platform state at Session #68 (98% production ready)
+- [ ] Architecture rules understood (Schema, Imports, Message Bus, DI)
+- [ ] Monorepo structure mapped (orchestrator + 5 agents + shared packages)
+- [ ] Hexagonal architecture layers identified (core/ports/adapters/orchestration)
+- [ ] Redis Streams message bus pattern understood
+- [ ] AgentEnvelopeSchema v2.0.0 canonical location verified
+- [ ] BaseAgent pattern reviewed across all agent implementations
+- [ ] PM2 process management understood (7 services)
+- [ ] Workflow state machine logic reviewed
+- [ ] Distributed tracing patterns (trace_id propagation) understood
+- [ ] Testing approach with Vitest + E2E scripts understood
+- [ ] Build process with Turbo and pnpm understood
+- [ ] Constraints and risks from recent sessions identified
 
 ## Interactive Exploration Mode
 

@@ -8,6 +8,21 @@ import { AgentResultSchema, VERSION } from '@agentic-sdlc/shared-types';
 // Phase 3: Import IMessageBus from orchestrator and trace utilities
 import type { IMessageBus } from '@agentic-sdlc/orchestrator';
 import { extractTraceContext, type TraceContext } from '@agentic-sdlc/shared-utils';
+// Phase 2.1: Import dependency injection services
+import {
+  LoggerConfigService,
+  getLoggerConfigService,
+  createConfigurableLogger,
+  type ConfigurableLoggerOptions
+} from '@agentic-sdlc/logger-config';
+import {
+  ConfigurationManager,
+  getConfigurationManager
+} from '@agentic-sdlc/config-manager';
+import {
+  ServiceLocator,
+  getServiceLocator
+} from '@agentic-sdlc/service-locator';
 import {
   AgentLifecycle,
   AgentCapabilities,
@@ -31,6 +46,11 @@ export abstract class BaseAgent implements AgentLifecycle {
   protected readonly capabilities: AgentCapabilities;
   protected readonly claudeCircuitBreaker: CircuitBreaker;
 
+  // Phase 2.1: Dependency injection services
+  protected readonly loggerConfigService: LoggerConfigService;
+  protected readonly configurationManager: ConfigurationManager;
+  protected readonly serviceLocator: ServiceLocator;
+
   private startTime: number;
   private tasksProcessed: number = 0;
   private errorsCount: number = 0;
@@ -41,7 +61,11 @@ export abstract class BaseAgent implements AgentLifecycle {
 
   constructor(
     capabilities: AgentCapabilities,
-    messageBus: IMessageBus  // Phase 3: Inject message bus via DI
+    messageBus: IMessageBus,  // Phase 3: Inject message bus via DI
+    // Phase 2.1: DI parameters with defaults to singleton services
+    loggerConfigService?: LoggerConfigService,
+    configurationManager?: ConfigurationManager,
+    serviceLocator?: ServiceLocator
   ) {
     this.agentId = `${capabilities.type}-${randomUUID().slice(0, 8)}`;
     this.capabilities = capabilities;
@@ -52,17 +76,24 @@ export abstract class BaseAgent implements AgentLifecycle {
       throw new AgentError('messageBus is required for Phase 3 message bus integration', 'CONFIG_ERROR');
     }
 
-    // Initialize logger
-    this.logger = pino({
+    // Phase 2.1: Initialize DI services with defaults to singletons
+    this.loggerConfigService = loggerConfigService || getLoggerConfigService();
+    this.configurationManager = configurationManager || getConfigurationManager();
+    this.serviceLocator = serviceLocator || getServiceLocator();
+
+    // Phase 2.1: Create configurable logger using LoggerConfigService
+    // Get module-level configuration for this agent type
+    const agentLogLevel = this.loggerConfigService.getModuleLevel(capabilities.type);
+
+    // Create logger with trace context support
+    const loggerOptions: ConfigurableLoggerOptions = {
       name: this.agentId,
-      transport: {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          translateTime: 'UTC:yyyy-mm-dd HH:MM:ss'
-        }
-      }
-    });
+      level: agentLogLevel,
+      moduleLevel: capabilities.type,
+      prettyPrint: true
+    };
+
+    this.logger = createConfigurableLogger(loggerOptions);
 
     // Initialize Anthropic client
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -719,7 +750,7 @@ export abstract class BaseAgent implements AgentLifecycle {
     return this.claudeCircuitBreaker.execute(async () => {
       try {
         const response = await this.anthropic.messages.create({
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5-20251001',
           max_tokens: maxTokens,
           temperature: 0.3,
           system: systemPrompt,

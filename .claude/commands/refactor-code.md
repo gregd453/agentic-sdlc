@@ -25,16 +25,19 @@ If no target specified, scan for code that needs refactoring.
 - **Large-scale refactors**: Think hard about module restructuring and dependency management
 - **System-wide refactors**: Think intensely about complete architectural transformations
 
-## Parallel Refactoring Subagents
+## Refactoring for Agentic SDLC Platform
 
-For comprehensive refactoring, deploy parallel agents:
-@system-designer @code-archaeologist @test-generator @performance-profiler
+Before refactoring, understand the platform architecture:
+- **Hexagonal Architecture**: Code must remain in correct layer (core/ports/adapters/services)
+- **Canonical Files**: Never refactor away from shared implementations:
+  - `packages/shared/types/src/messages/agent-envelope.ts` - Schema definition
+  - `packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts` - Message bus
+  - `packages/agents/base-agent/src/base-agent.ts` - Agent base class
+- **Message Patterns**: Redis Streams publish/subscribe with AgentEnvelopeSchema
+- **Build System**: Turbo monorepo - refactoring must preserve build order (Shared → Orchestrator → Agents)
+- **Testing**: Vitest for unit/integration, E2E via `./scripts/run-pipeline-test.sh`
 
-These subagents work concurrently to ensure safe, effective refactoring:
-- @system-designer: Identify design patterns and suggest architectural improvements
-- @code-archaeologist: Detect anti-patterns and analyze legacy code dependencies
-- @test-generator: Ensure comprehensive test coverage before and after refactoring
-- @performance-profiler: Monitor for performance regressions during refactoring
+Safe refactoring = improving code without changing behavior or breaking message flow.
 
 ## Refactoring Principles
 
@@ -44,55 +47,93 @@ These subagents work concurrently to ensure safe, effective refactoring:
 4. **DRY**: Eliminate duplication
 5. **SOLID**: Apply SOLID principles where appropriate
 
-## Refactoring Catalog
+## Refactoring Catalog for This Platform
 
-### 1. Method-Level Refactorings
-```python
-# Before: Long method
-def process_order(order):
-    # 50 lines of code doing multiple things
-    validate_order()
-    calculate_totals()
-    apply_discounts()
-    send_notifications()
-    update_inventory()
+### 1. Hexagonal Layer Refactorings
 
-# After: Extract methods
-def process_order(order):
-    validated_order = validate_order(order)
-    order_with_totals = calculate_totals(validated_order)
-    final_order = apply_discounts(order_with_totals)
-    send_notifications(final_order)
-    update_inventory(final_order)
-    return final_order
+#### Extract Port Interface
+```typescript
+// Before: Service with mixed concerns
+export class WorkflowService {
+    // Database logic mixed with business logic mixed with message publishing
+}
+
+// After: Extract port interface
+// File: packages/orchestrator/src/hexagonal/ports/IWorkflowRepository.ts
+export interface IWorkflowRepository {
+    findById(id: string): Promise<Workflow>
+    save(workflow: Workflow): Promise<void>
+}
+
+// File: packages/orchestrator/src/hexagonal/adapters/PostgresWorkflowRepository.ts
+export class PostgresWorkflowRepository implements IWorkflowRepository {
+    // Database implementation
+}
+
+// File: packages/orchestrator/src/services/workflow.service.ts
+export class WorkflowService {
+    constructor(private readonly repository: IWorkflowRepository) {}
+    // Now dependencies are injected, service is cleaner
+}
 ```
 
-### 2. Class-Level Refactorings
-```python
-# Extract class for cohesive functionality
-# Before: God class
-class UserManager:
-    def create_user()
-    def delete_user()
-    def authenticate()
-    def authorize()
-    def send_email()
-    def log_activity()
+#### Extract Adapter
+```typescript
+// Before: Service doing its own Redis operations
+export class MessageService {
+    async publish(topic: string, data: any) {
+        const redis = new Redis()
+        await redis.publish(topic, JSON.stringify(data))
+    }
+}
 
-# After: Separated concerns
-class UserRepository:
-    def create_user()
-    def delete_user()
+// After: Use canonical redis-bus.adapter
+// File: packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts (canonical)
+// Use this adapter everywhere, never duplicate Redis logic
 
-class AuthService:
-    def authenticate()
-    def authorize()
+export class MessageService {
+    constructor(private readonly messageBus: IMessageBus) {}
+    async publish(topic: string, data: any) {
+        await this.messageBus.publish(topic, data)
+    }
+}
+```
 
-class NotificationService:
-    def send_email()
+### 2. Agent-Level Refactorings
 
-class AuditLogger:
-    def log_activity()
+#### Extract Agent Handler
+```typescript
+// Before: Agent doing multiple task types in processTask
+export class MyAgent extends BaseAgent {
+    async processTask(envelope: AgentEnvelope) {
+        if (envelope.metadata.stage === 'validate:code') {
+            // 50 lines of validation logic
+        } else if (envelope.metadata.stage === 'validate:types') {
+            // 40 lines of type checking logic
+        }
+    }
+}
+
+// After: Extract handlers
+export class MyAgent extends BaseAgent {
+    async processTask(envelope: AgentEnvelope) {
+        const handler = this.getHandler(envelope.metadata.stage)
+        return await handler(envelope)
+    }
+
+    private getHandler(stage: string) {
+        if (stage === 'validate:code') return this.handleCodeValidation
+        if (stage === 'validate:types') return this.handleTypeValidation
+    }
+
+    private async handleCodeValidation(envelope: AgentEnvelope) {
+        // Focused validation logic
+    }
+
+    private async handleTypeValidation(envelope: AgentEnvelope) {
+        // Focused type checking logic
+    }
+}
 ```
 
 ### 3. Code Smells to Fix
@@ -122,121 +163,178 @@ class AuditLogger:
 - Introduce parameter object
 - Preserve whole object
 
-## Refactoring Process
+## Refactoring Process for TypeScript Monorepo
 
 ### Step 1: Identify Refactoring Opportunities
-```python
-def analyze_code_quality():
-    metrics = {
-        "cyclomatic_complexity": measure_complexity(),
-        "code_duplication": find_duplicates(),
-        "method_length": check_method_lengths(),
-        "class_cohesion": measure_cohesion(),
-        "coupling": measure_coupling()
-    }
-    return prioritize_refactorings(metrics)
+```bash
+# Find code quality metrics
+turbo run test:coverage  # Identify low coverage areas
+
+# Search for code smells
+grep -r "TODO\|FIXME\|HACK\|XXX" packages/ --include="*.ts" | head -20
+
+# Find duplicated patterns
+grep -r "if.*if\|switch.*switch" packages/ --include="*.ts" | head -10
+
+# Identify long methods (over 30 lines)
+grep -r "^\s*async\s\|^\s*private\s\|^\s*public\s" packages/ --include="*.ts" | wc -l
+
+# Check for unused imports
+turbo run lint --filter=@agentic-sdlc/[package]
 ```
 
 ### Step 2: Create Safety Net
-```python
-def prepare_for_refactoring():
-    # Ensure tests exist
-    if not has_adequate_tests():
-        generate_characterization_tests()
-    
-    # Create baseline
-    run_tests()
-    capture_behavior_snapshot()
-    create_performance_baseline()
+```bash
+# Ensure tests exist for target file
+find packages/[package]/src/__tests__ -name "*target*.test.ts"
+
+# Run all tests to establish baseline
+turbo run test
+
+# Run E2E tests to verify behavior
+./scripts/env/start-dev.sh
+./scripts/run-pipeline-test.sh "Baseline Test"
+./scripts/env/stop-dev.sh
+
+# Create git checkpoint
+git add -A
+git commit -m "checkpoint: before refactoring [target]"
 ```
 
-### Step 3: Apply Refactoring
-```python
-def apply_refactoring(refactoring_type, target):
-    # Make the change
-    backup = create_backup()
-    apply_transformation(refactoring_type, target)
-    
-    # Verify behavior preserved
-    if not verify_behavior_preserved():
-        rollback(backup)
-        raise RefactoringError("Behavior changed")
-    
-    # Commit if successful
-    commit_refactoring()
+### Step 3: Apply Refactoring Incrementally
+```bash
+# Make ONE refactoring at a time
+# Example: Extract interface from service
+
+# 1. Make the change
+# File: packages/orchestrator/src/hexagonal/ports/INewPort.ts
+# File: packages/orchestrator/src/hexagonal/adapters/NewAdapter.ts
+# File: packages/orchestrator/src/services/target.service.ts (update to use port)
+
+# 2. Verify behavior preserved
+turbo run typecheck --filter=@agentic-sdlc/[package]
+turbo run lint --filter=@agentic-sdlc/[package]
+turbo run test --filter=@agentic-sdlc/[package]
+
+# 3. If tests pass, commit this small change
+git add packages/[package]/src/hexagonal/...
+git commit -m "refactor([package]): extract [interface] port interface"
+
+# 4. Repeat for next refactoring
 ```
 
 ## Common Refactoring Patterns
 
-### 1. Replace Conditional with Polymorphism
-```python
-# Before
-def calculate_pay(employee):
-    if employee.type == "SALARIED":
-        return employee.monthly_salary
-    elif employee.type == "HOURLY":
-        return employee.hourly_rate * employee.hours_worked
-    elif employee.type == "COMMISSIONED":
-        return employee.base_salary + employee.commission
+### 1. Replace Stage Conditionals with Strategy Pattern
+```typescript
+// Before: Multiple if statements checking stage
+async processEnvelope(envelope: AgentEnvelope) {
+    if (envelope.metadata.stage === 'scaffold:started') {
+        // 40 lines of scaffold logic
+    } else if (envelope.metadata.stage === 'validate:started') {
+        // 35 lines of validation logic
+    } else if (envelope.metadata.stage === 'e2e:started') {
+        // 30 lines of e2e logic
+    }
+}
 
-# After
-class Employee(ABC):
-    @abstractmethod
-    def calculate_pay(self):
-        pass
+// After: Strategy pattern with handlers
+const stageHandlers: Record<string, Handler> = {
+    'scaffold:started': handleScaffold,
+    'validate:started': handleValidate,
+    'e2e:started': handleE2E
+}
 
-class SalariedEmployee(Employee):
-    def calculate_pay(self):
-        return self.monthly_salary
-
-class HourlyEmployee(Employee):
-    def calculate_pay(self):
-        return self.hourly_rate * self.hours_worked
+async processEnvelope(envelope: AgentEnvelope) {
+    const handler = stageHandlers[envelope.metadata.stage]
+    if (handler) {
+        return await handler(envelope)
+    }
+}
 ```
 
-### 2. Replace Magic Numbers with Named Constants
-```python
-# Before
-if user.age >= 18:
-    allow_access()
+### 2. Extract Configuration Constants
+```typescript
+// Before: Magic strings scattered in code
+await this.messageBus.subscribe(
+    'agent:scaffold:tasks',
+    async (envelope) => { /* ... */ },
+    { consumerGroup: 'orchestrator-scaffold-group' }
+)
 
-# After
-MINIMUM_AGE_FOR_ACCESS = 18
-if user.age >= MINIMUM_AGE_FOR_ACCESS:
-    allow_access()
+// After: Named constants
+const MESSAGE_TOPICS = {
+    SCAFFOLD_TASKS: 'agent:scaffold:tasks',
+    VALIDATION_TASKS: 'agent:validation:tasks',
+} as const
+
+const CONSUMER_GROUPS = {
+    ORCHESTRATOR_SCAFFOLD: 'orchestrator-scaffold-group',
+    ORCHESTRATOR_VALIDATION: 'orchestrator-validation-group',
+} as const
+
+await this.messageBus.subscribe(
+    MESSAGE_TOPICS.SCAFFOLD_TASKS,
+    async (envelope) => { /* ... */ },
+    { consumerGroup: CONSUMER_GROUPS.ORCHESTRATOR_SCAFFOLD }
+)
 ```
 
-### 3. Extract Interface
-```python
-# Before: Concrete dependency
-class OrderService:
-    def __init__(self):
-        self.emailer = SmtpEmailer()
+### 3. Extract Message Handler
+```typescript
+// Before: Service with mixed concerns
+export class WorkflowService {
+    async onWorkflowCreated(envelope: AgentEnvelope) {
+        // Validate
+        // Update database
+        // Publish message
+        // Log metrics
+    }
+}
 
-# After: Dependency on abstraction
-class OrderService:
-    def __init__(self, emailer: EmailerInterface):
-        self.emailer = emailer
+// After: Separate handler
+export class WorkflowCreatedHandler {
+    constructor(
+        private readonly repository: IWorkflowRepository,
+        private readonly messageBus: IMessageBus,
+        private readonly metrics: IMetrics
+    ) {}
+
+    async handle(envelope: AgentEnvelope): Promise<void> {
+        const workflow = this.createWorkflow(envelope.payload)
+        await this.repository.save(workflow)
+        await this.publishNext(envelope)
+        this.metrics.recordWorkflowCreated()
+    }
+}
 ```
 
-## Command Options
+## Command Options for This Platform
 
 ```bash
 # Analyze and suggest refactorings
-/refactor-code --analyze
+/refactor-code --analyze  # Scans for code smells in TypeScript
 
-# Auto-refactor with specific patterns
-/refactor-code --pattern extract-method
-/refactor-code --pattern remove-duplication
+# Refactor specific package
+/refactor-code --target "@agentic-sdlc/orchestrator"
+/refactor-code --target "@agentic-sdlc/base-agent"
 
-# Refactor specific file or module
-/refactor-code --target src/services/user_service.py
+# Refactor specific file
+/refactor-code --target "packages/orchestrator/src/services/workflow.service.ts"
 
-# Interactive refactoring
-/refactor-code --interactive
+# Refactor with focus on hexagonal layer
+/refactor-code --focus ports        # Extract port interfaces
+/refactor-code --focus adapters     # Clean up adapters
+/refactor-code --focus services     # Simplify services
+/refactor-code --focus orchestration # Improve state machine
 
-# Safe mode (extra verification)
-/refactor-code --safe-mode
+# Safe mode (includes E2E tests after changes)
+/refactor-code --safe-mode --target "packages/[package]/src/[target]"
+
+# After refactoring, verify with
+turbo run build
+turbo run test --filter=@agentic-sdlc/[package]
+./scripts/run-pipeline-test.sh "Refactoring Test"
 ```
 
 ## Quality Metrics
@@ -313,9 +411,70 @@ class ModernProcessor(PaymentProcessor):
 processor = ModernProcessor() if feature_flag else LegacyProcessor()
 ```
 
-## Integration with Tools
+## Integration with Platform Tools
 
-- **Code Analysis**: Radon, Pylint, SonarQube
-- **Automated Refactoring**: Rope, Bowler, LibCST
-- **Testing**: Pytest, Coverage.py
-- **Version Control**: Git reflog for safety
+### Build System (Turbo)
+```bash
+# Verify refactoring didn't break build
+turbo run typecheck --filter=@agentic-sdlc/[package]
+turbo run build --filter=@agentic-sdlc/[package]
+
+# Full monorepo build to check dependencies
+turbo run build
+```
+
+### Testing (Vitest)
+```bash
+# Unit tests for refactored code
+turbo run test --filter=@agentic-sdlc/[package]
+
+# Integration tests to verify message patterns work
+turbo run test  # Full suite
+
+# Coverage to identify untested paths
+turbo run test:coverage
+```
+
+### Linting
+```bash
+# Check for style issues
+turbo run lint --filter=@agentic-sdlc/[package]
+```
+
+### E2E Validation
+```bash
+# Start environment
+./scripts/env/start-dev.sh
+
+# Run pipeline test
+./scripts/run-pipeline-test.sh "Refactoring Validation"
+
+# Check health
+./scripts/env/check-health.sh
+
+# Stop when done
+./scripts/env/stop-dev.sh
+```
+
+### Version Control
+```bash
+# Safe refactoring checkpoints
+git commit -m "refactor([package]): extract [interface]"
+
+# If problems arise, revert single commits
+git revert HEAD  # Revert last change
+```
+
+### Before/After Metrics
+```bash
+# Before refactoring
+turbo run test:coverage > before-coverage.txt
+git log --oneline | head -5 > before-commits.txt
+
+# After refactoring
+turbo run test:coverage > after-coverage.txt
+git log --oneline | head -5 > after-commits.txt
+
+# Compare results
+diff before-coverage.txt after-coverage.txt
+```

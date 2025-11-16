@@ -17,7 +17,7 @@ export interface ConflictResolution {
  */
 export class ConflictResolverService {
   private anthropic: Anthropic;
-  private model: string = 'claude-3-haiku-20240307';
+  private model: string = 'claude-haiku-4-5-20251001';
 
   constructor(anthropicClient: Anthropic) {
     this.anthropic = anthropicClient;

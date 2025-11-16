@@ -1,0 +1,26 @@
+{
+  "name": "@agentic-sdlc/service-locator",
+  "version": "1.0.0",
+  "description": "Service locator pattern implementation with plugin service management and configuration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@agentic-sdlc/shared-types": "workspace:*",
+    "@agentic-sdlc/config-manager": "workspace:*",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@vitest/coverage-v8": "^1.4.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.0"
+  }
+}

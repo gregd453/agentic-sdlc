@@ -4,6 +4,9 @@ import {
   ScaffoldTask,
   AGENT_TYPES
 } from '@agentic-sdlc/shared-types';
+import { LoggerConfigService } from '@agentic-sdlc/logger-config';
+import { ConfigurationManager } from '@agentic-sdlc/config-manager';
+import { ServiceLocator } from '@agentic-sdlc/service-locator';
 import path from 'path';
 import { TemplateEngine } from './template-engine';
 import { FileGenerator } from './file-generator';
@@ -23,7 +26,13 @@ export class ScaffoldAgent extends BaseAgent {
   private readonly fileGenerator: FileGenerator;
   private readonly templateEngine: TemplateEngine;
 
-  constructor(messageBus: any) {
+  // Phase 2.2: Accept DI services in constructor
+  constructor(
+    messageBus: any,
+    loggerConfigService?: LoggerConfigService,
+    configurationManager?: ConfigurationManager,
+    serviceLocator?: ServiceLocator
+  ) {
     super(
       {
         // SESSION #37: Use constants for agent type
@@ -37,7 +46,10 @@ export class ScaffoldAgent extends BaseAgent {
           'create-tests'
         ]
       },
-      messageBus
+      messageBus,
+      loggerConfigService,
+      configurationManager,
+      serviceLocator
     );
 
     this.fileGenerator = new FileGenerator(this.logger);
@@ -434,6 +446,16 @@ export class ScaffoldAgent extends BaseAgent {
           path: 'src/vite-env.d.ts',
           type: 'source',
           template_source: 'app/react-spa/src/vite-env.d.ts'
+        },
+        {
+          path: 'src/api/client.ts',
+          type: 'source',
+          template_source: 'app/react-spa/src/api/client.ts'
+        },
+        {
+          path: 'src/types/envelope.ts',
+          type: 'source',
+          template_source: 'app/react-spa/src/types/envelope.ts'
         }
       );
     } else {

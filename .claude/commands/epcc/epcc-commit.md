@@ -22,18 +22,20 @@ If no commit message was provided above, I'll generate one based on the work doc
 4. **Pass Checks**: All tests and linters passing
 5. **Professional PR**: Ready for review
 
-## Parallel Commit Subagents
+## Pre-Commit Verification for Agentic SDLC Platform
 
-Deploy specialized finalization agents concurrently:
-@qa-engineer @security-reviewer @documentation-agent @deployment-agent @project-manager
+Before committing, you need to:
+1. **Verify all tests pass** - Unit, integration, and E2E
+2. **Build the platform** - Turbo build all packages
+3. **Validate schema** - No /src/ imports, AgentEnvelopeSchema compliance
+4. **Check PM2 services** - All 7 running, no errors
+5. **Review CLAUDE.md** - Update with session accomplishments
+6. **Write EPCC_COMMIT.md** - Document what was done
 
-- @qa-engineer: Run final test suite and validate quality metrics
-- @security-reviewer: Perform final security scan before commit
-- @documentation-agent: Ensure all documentation is complete and updated
-- @deployment-agent: Validate deployment readiness and CI/CD configuration
-- @project-manager: Review completion against original requirements
-
-Note: Original requirements can be found in EPCC_PLAN.md if it exists.
+Reference:
+- EPCC_PLAN.md - Original requirements
+- EPCC_CODE.md - Implementation details
+- EPCC_EXPLORE.md - Architecture findings
 
 ## Pre-Commit Checklist
 
@@ -42,7 +44,7 @@ Note: Original requirements can be found in EPCC_PLAN.md if it exists.
 # Run all tests across monorepo
 turbo run test
 
-# Check code coverage
+# Check code coverage (target: 85%+)
 turbo run test:coverage
 
 # Type checking (TypeScript)
@@ -51,14 +53,17 @@ turbo run typecheck
 # Run linters
 turbo run lint
 
-# Build all packages
+# Build all packages (Shared → Orchestrator → Agents)
 turbo run build
 
-# Security scan
+# Verify NO /src/ imports in compiled code
+grep -r "from '@agentic-sdlc.*\/src\/" packages/*/dist/ && echo "ERROR: /src/ imports found" || echo "OK: No /src/ imports"
+
+# Security scan for vulnerabilities
 pnpm audit
 
-# Remove debug code
-grep -r "console.log\|debugger\|TODO\|FIXME" packages/
+# Remove debug code (keep trace logging, remove DEBUG-*)
+grep -r "DEBUG-\|console\.log\|debugger" packages/ --include="*.ts" | grep -v WORKFLOW-TRACE | grep -v AGENT-TRACE
 
 # Verify no build artifacts in git
 git status --ignored
@@ -66,20 +71,21 @@ git status --ignored
 
 ### Documentation Check
 ```bash
-# Ensure documentation is updated
-ls -la EPCC_*.md
+# Ensure EPCC files are complete and committed
+ls -la EPCC_*.md  # Should have EXPLORE, PLAN, CODE, COMMIT
 
-# Check if CLAUDE.md needs updates (very important!)
+# CRITICAL: Update CLAUDE.md with session summary
+# Include: what fixed, files changed, new platform state
 cat CLAUDE.md
 
-# Check if README needs updates
-grep -i "[feature-name]" README.md
+# Verify code has appropriate comments
+grep -r "@param\|@returns\|@throws\|🔍 \[WORKFLOW-TRACE\]\|🔍 \[AGENT-TRACE\]" packages/orchestrator/src/ --include="*.ts" | head -10
 
-# Verify TSDoc comments in code
-grep -r "@param\|@returns\|@throws" packages/[package]/src/
+# Check package.json exports correct (never expose /src/)
+cat packages/shared/types/package.json | grep -A 5 '"exports"'
 
-# Check package.json exports if adding new modules
-cat packages/[package]/package.json
+# Verify .claude/commands are current (update if platform changed significantly)
+ls -la .claude/commands/
 ```
 
 ## Output File: EPCC_COMMIT.md
@@ -113,28 +119,47 @@ Generate `EPCC_COMMIT.md` to document the complete change:
 ## Files Changed
 ```
 Modified:
-  packages/orchestrator/src/hexagonal/ports/IFeature.ts
-  packages/orchestrator/src/hexagonal/adapters/FeatureAdapter.ts
-  packages/orchestrator/src/services/feature.service.ts
+  packages/orchestrator/src/hexagonal/ports/INewPort.ts          # New interface
+  packages/orchestrator/src/hexagonal/adapters/NewAdapter.ts     # Implementation
+  packages/orchestrator/src/services/new-feature.service.ts      # Service layer
+  packages/orchestrator/src/state-machine/workflow-state-machine.ts # Routing if needed
 
 Added:
-  packages/orchestrator/src/hexagonal/__tests__/feature.test.ts
-  packages/agents/my-agent/src/my-agent.ts
+  packages/orchestrator/src/hexagonal/__tests__/new-feature.test.ts  # Unit tests
+  packages/agents/[agent-name]/src/[agent-name]-agent.ts            # If agent change
 
 Updated:
-  packages/orchestrator/package.json (added dependency)
-  packages/agents/my-agent/package.json (added dependency)
-  CLAUDE.md (updated status)
-  README.md
+  packages/orchestrator/package.json           # If dependencies added
+  packages/agents/[agent-name]/package.json    # If agent dependencies changed
+  packages/shared/types/src/messages/agent-envelope.ts  # ONLY if schema changed
+  CLAUDE.md                                   # Session summary (CRITICAL)
+  .claude/commands/                           # If platform patterns changed
+```
+
+Example CLAUDE.md update:
+```markdown
+### Session #XX: [Feature Name] ✅
+**Problem:** [What was broken or missing]
+**Root Cause:** [Why it happened]
+**Fix:** [What was changed]
+- Modified X files in hexagonal/{core/ports/adapters}
+- Added message pattern for {topic}
+- Updated {agent-name} to subscribe to {topic}
+**Result:** {outcome} - E2E validated
+**Files Modified:** {count} files across {package-count} packages
+```
 ```
 
 ## Testing Summary
 - Unit Tests (Vitest): ✅ All passing (X tests)
 - Integration Tests (Vitest): ✅ All passing (X tests)
-- E2E Tests (Pipeline): ✅ All passing (X workflows)
-- TypeScript: ✅ No compilation errors
-- Build: ✅ All packages built successfully
-- Coverage: 95% (increased from 92%)
+- E2E Tests (Pipeline): ✅ All passing (./scripts/run-pipeline-test.sh)
+- TypeScript: ✅ No compilation errors (turbo run typecheck)
+- Build: ✅ All packages built successfully (turbo run build)
+- Linting: ✅ No issues (turbo run lint)
+- Coverage: X% (target: 85%+)
+- Health Checks: ✅ All 7 PM2 services healthy
+- Schema Validation: ✅ AgentEnvelopeSchema v2.0.0 compliant
 
 ## Performance Impact
 - Baseline: Xms
@@ -155,42 +180,82 @@ Updated:
 - [x] CHANGELOG.md entry added
 - [x] EPCC documents completed
 
-## Commit Message
+## Commit Message Template
 
 ```
-feat(orchestrator): Add [feature name] with [key capability]
+[type]([package]): [brief description of change]
 
-- Implement [specific functionality] in hexagonal/[layer]
-- Add message bus integration for [purpose]
-- Update @agentic-sdlc/[package] with [changes]
-- Add comprehensive test coverage (Vitest)
-- Update documentation and CLAUDE.md
+[Detailed explanation of what changed and why]
 
-Affected packages:
-- @agentic-sdlc/orchestrator
-- @agentic-sdlc/[agent-name]
-- @agentic-sdlc/shared-types
+Hexagonal Architecture:
+- Layer: [core/ports/adapters/orchestration]
+- Files: [number affected]
+- Impact: [what this changes about system behavior]
 
-Architecture:
-- Hexagonal layer: [core/ports/adapters/orchestration]
-- Message bus: [pub/sub pattern details]
-- Agent coordination: [details]
+Message Bus Integration (if applicable):
+- Topic: [publish/subscribe topic names]
+- Schema: AgentEnvelopeSchema v2.0.0
+- Pattern: [request-response, pub-sub, streaming]
+
+Affected Packages:
+- @agentic-sdlc/orchestrator (Y files changed)
+- @agentic-sdlc/[agent-name] (Y files changed)
+- @agentic-sdlc/shared-types (N files changed)
 
 Testing:
-- Unit tests: X added
-- Integration tests: X added
-- E2E validation: ./scripts/run-pipeline-test.sh
+- Unit tests: X added/modified
+- Integration tests: Y added/modified
+- E2E validation: ./scripts/run-pipeline-test.sh [scenario]
 
-Closes #[issue-number]
+Validation:
+- turbo run build ✅
+- turbo run test ✅
+- turbo run typecheck ✅
+- Health checks: 7/7 services ✅
+- ./scripts/env/check-health.sh ✅
 
-Based on:
-- Exploration: EPCC_EXPLORE.md
-- Plan: EPCC_PLAN.md
-- Implementation: EPCC_CODE.md
+Documentation:
+- CLAUDE.md updated with session #XX summary
+- EPCC_EXPLORE.md | EPCC_PLAN.md | EPCC_CODE.md | EPCC_COMMIT.md
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+Based on EPCC workflow:
+- Exploration findings in EPCC_EXPLORE.md
+- Plan details in EPCC_PLAN.md
+- Implementation in EPCC_CODE.md
 
+🤖 Generated with Claude Code
 Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+Example for this platform:
+```
+feat(orchestrator): Add workflow state machine message routing
+
+Routes workflow envelopes through agent pipeline based on stage metadata.
+Implements pub/sub pattern for orchestrator→agent→orchestrator coordination.
+
+Hexagonal Architecture:
+- Layer: orchestration
+- Files: workflow-state-machine.ts updated
+- Impact: Central routing logic for all workflow messages
+
+Message Bus Integration:
+- Topics: workflow:*, agent:*:tasks, agent:*:results
+- Schema: AgentEnvelopeSchema v2.0.0 with metadata.stage
+- Pattern: Request-response with state transitions
+
+Affected Packages:
+- @agentic-sdlc/orchestrator (2 files changed)
+
+Testing:
+- Unit tests: 8 added
+- Integration tests: 4 added
+- E2E validation: ./scripts/run-pipeline-test.sh "Workflow Routing"
+
+Validation:
+- turbo run build ✅
+- turbo run test ✅ (99% coverage)
+- Health checks: 7/7 services ✅
 ```
 
 ## Pull Request Description
@@ -342,25 +407,31 @@ Brief description of changes
 ## Post-Commit Actions
 
 ### After Committing
-1. Create/Update Pull Request
-2. Request code review
-3. Address review feedback
-4. Merge when approved
-5. Delete feature branch
-6. Update project board
+1. Push feature branch to remote
+2. Create Pull Request with EPCC_COMMIT.md content as description
+3. Request code review
+4. Address review feedback
+5. Merge to main when approved
+6. Delete feature branch
 
-### Clean Up EPCC Files
+### EPCC File Management
 ```bash
-# Archive EPCC documents (optional)
-mkdir -p .epcc-archive/[feature-name]
-mv EPCC_*.md .epcc-archive/[feature-name]/
-
-# Or keep for reference (recommended for this project)
+# IMPORTANT: Commit all EPCC files - they document the session
 git add EPCC_*.md
-git commit -m "docs: Add EPCC documentation for [feature]"
 
-# Update CLAUDE.md with session summary
-# This is CRITICAL - CLAUDE.md tracks project state
+# Commit with session documentation
+git commit -m "docs(session-#XX): Add EPCC workflow documentation"
+
+# Update CLAUDE.md before committing
+# This is CRITICAL for tracking platform state across sessions
+# Include: Problem → Root Cause → Fix → Result → Files Changed
+
+# Example CLAUDE.md commit
+git add CLAUDE.md
+git commit -m "docs(session-#XX): Update CLAUDE.md with [feature] completion"
+
+# Verify documentation is in history
+git log --oneline | head -10  # Should show your commits
 ```
 
 ## Integration with CI/CD

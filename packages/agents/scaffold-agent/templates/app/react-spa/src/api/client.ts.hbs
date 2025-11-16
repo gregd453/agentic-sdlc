@@ -3,7 +3,7 @@
  * Follows envelope pattern for all responses
  */
 
-import type { ApiEnvelope, SuccessEnvelope, ErrorEnvelope } from '../types/envelope';
+import type { ApiEnvelope, ErrorEnvelope } from '../types/envelope';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -38,9 +38,9 @@ class ApiClient {
   ): Promise<ApiEnvelope<T>> {
     const url = `${this.baseUrl}${path}`;
 
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     };
 
     // Add x-user-id header if authenticated

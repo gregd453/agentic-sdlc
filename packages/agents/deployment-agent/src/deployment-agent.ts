@@ -1,4 +1,7 @@
 import { BaseAgent } from '@agentic-sdlc/base-agent';
+import { LoggerConfigService } from '@agentic-sdlc/logger-config';
+import { ConfigurationManager } from '@agentic-sdlc/config-manager';
+import { ServiceLocator } from '@agentic-sdlc/service-locator';
 import {
   DeploymentTask,
   DeploymentResultType,
@@ -19,6 +22,7 @@ import { HealthCheckService } from './services/health-check.service';
 /**
  * Deployment Agent
  * Handles Docker image building, AWS ECR/ECS deployments, and health checks
+ * Phase 2.2: Updated to accept DI services
  */
 export class DeploymentAgent extends BaseAgent {
   private dockerService: DockerService;
@@ -27,7 +31,12 @@ export class DeploymentAgent extends BaseAgent {
   private deploymentStrategy: DeploymentStrategyService;
   private healthCheckService: HealthCheckService;
 
-  constructor(messageBus: any) {
+  constructor(
+    messageBus: any,
+    loggerConfigService?: LoggerConfigService,
+    configurationManager?: ConfigurationManager,
+    serviceLocator?: ServiceLocator
+  ) {
     super(
       {
         type: 'deployment',
@@ -41,7 +50,10 @@ export class DeploymentAgent extends BaseAgent {
           'health_check'
         ]
       },
-      messageBus
+      messageBus,
+      loggerConfigService,
+      configurationManager,
+      serviceLocator
     );
 
     this.dockerService = new DockerService();
@@ -451,10 +463,28 @@ export class DeploymentAgent extends BaseAgent {
 
   /**
    * Execute method required by BaseAgent
-   * Wraps executeTask for compatibility
+   * SESSION #67: Updated to handle AgentEnvelope v2.0.0
    */
   async execute(task: any): Promise<any> {
-    const result = await this.executeTask(task);
+    // SESSION #67: Extract DeploymentTask from AgentEnvelope.payload
+    const deploymentTask: DeploymentTask = {
+      task_id: task.task_id,
+      workflow_id: task.workflow_id,
+      agent_type: 'deployment',
+      action: task.payload.action,
+      status: 'pending',
+      priority: task.priority === 'critical' ? 90 :
+                task.priority === 'high' ? 70 :
+                task.priority === 'medium' ? 50 : 30,
+      payload: task.payload,
+      version: '1.0.0',
+      timeout_ms: task.constraints?.timeout_ms || 120000,
+      retry_count: task.retry_count || 0,
+      max_retries: task.constraints?.max_retries || 3,
+      created_at: task.metadata?.created_at || new Date().toISOString()
+    };
+
+    const result = await this.executeTask(deploymentTask);
     // Determine success based on result type
     const success = 'success' in result.result
       ? result.result.success
@@ -463,8 +493,8 @@ export class DeploymentAgent extends BaseAgent {
         : true;
 
     return {
-      task_id: task.task_id || this.generateTraceId(),
-      workflow_id: task.workflow_id || 'deployment-workflow',
+      task_id: task.task_id,
+      workflow_id: task.workflow_id,
       status: success ? 'success' : 'failure',
       output: result,
       errors: success ? [] : ['Task execution failed']

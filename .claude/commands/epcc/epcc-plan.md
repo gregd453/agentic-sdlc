@@ -37,20 +37,22 @@ If no specific feature or task was provided above, ask the user: "What feature o
 - **System changes**: Think hard about ripple effects
 - **Architecture decisions**: Ultrathink about long-term implications
 
-## Parallel Planning Subagents
+## Planning Context for This Platform
 
-Deploy specialized planning agents you have access to:
-@system-designer @tech-evaluator @business-analyst @security-reviewer @qa-engineer @project-manager
+This is an autonomous AI-driven SDLC platform. Before planning, review:
+- **EPCC_EXPLORE.md** - If exploration phase was completed, reference findings here
+- **CLAUDE.md** - Current platform state and architecture rules (Session #68: 98% production ready)
+- **Recent commits** - See git log for Session #67-68 patterns
 
-**Agent Instructions**: Each agent must ONLY plan and document. Save all implementation for the CODE phase:
-- @system-designer: Design system architecture and component interactions (NO CODING - only design)
-- @tech-evaluator: Evaluate technology choices and build vs buy decisions (NO IMPLEMENTATION)
-- @business-analyst: Break down requirements into manageable tasks (NO IMPLEMENTATION)
-- @security-reviewer: Assess risks and identify potential vulnerabilities (NO FIXES - only identify)
-- @qa-engineer: Plan comprehensive testing strategy (NO TEST WRITING - only strategy)
-- @project-manager: Calculate realistic timelines and resource allocation (PLANNING ONLY)
+Key platform facts:
+- **Architecture**: Hexagonal (core/ports/adapters) + Message Bus (Redis Streams) + Agent-based
+- **Canonical Files**: Never duplicate `agent-envelope.ts`, `redis-bus.adapter.ts`, `base-agent.ts`
+- **Message Pattern**: All messages wrapped in AgentEnvelopeSchema v2.0.0
+- **Build System**: Turbo monorepo with pnpm workspaces
+- **Testing**: Vitest for unit/integration, E2E via `./scripts/run-pipeline-test.sh`
+- **Deployment**: PM2 manages 7 services (orchestrator + agents + dashboard)
 
-Note: You can find details about the codebase in EPCC_EXPLORE.md if it exists.
+Note: Reference EPCC_EXPLORE.md findings if exploration was completed.
 
 ## Planning Framework
 
@@ -104,50 +106,72 @@ Note: You can find details about the codebase in EPCC_EXPLORE.md if it exists.
 5. Return response
 ```
 
-### Step 3: Task Breakdown
+### Step 3: Task Breakdown for Agentic SDLC Platform
 
-Use TodoWrite to create trackable tasks (DO NOT implement these tasks now - only document them):
+Break down tasks by these dimensions:
 
-For this TypeScript monorepo project, break down tasks by:
-1. **Hexagonal layer** (core domain, ports, adapters, orchestration)
-2. **Package scope** (which workspace package: orchestrator, agents, shared)
-3. **Build dependencies** (which packages need to build first)
-4. **Test coverage** (unit tests, integration tests, E2E tests)
+1. **Hexagonal layer**: Core domain, ports (interfaces), adapters (implementations), orchestration
+2. **Package scope**: Which @agentic-sdlc/* package (orchestrator, base-agent, shared-types, specific agent)
+3. **Message bus integration**: If task touches messaging, define publish/subscribe patterns
+4. **Schema validation**: If task adds fields, verify AgentEnvelopeSchema v2.0.0 updates
+5. **Agent coordination**: If multi-agent, define task routing and result aggregation
+6. **Build dependencies**: Shared → Orchestrator → Agents (turbo execution order)
+7. **Test coverage**: Unit (Vitest), Integration (Vitest with mocks), E2E (pipeline test)
 
-Example task breakdown:
+Example task breakdown for this platform:
 ```typescript
-// Document in EPCC_PLAN.md
+// Document in EPCC_PLAN.md with platform-specific structure
 const tasks = [
     {
         "id": "1",
-        "content": "Define domain interfaces in hexagonal/ports/",
+        "content": "Define new port interface in hexagonal/ports/",
         "package": "@agentic-sdlc/orchestrator",
-        "estimate": "2 hours",
+        "layer": "ports",
+        "estimate": "1.5 hours",
         "dependencies": [],
+        "testing": ["unit test for interface contract"],
         "priority": "high"
     },
     {
         "id": "2",
         "content": "Implement adapter in hexagonal/adapters/",
         "package": "@agentic-sdlc/orchestrator",
-        "estimate": "3 hours",
+        "layer": "adapters",
+        "estimate": "2.5 hours",
         "dependencies": ["1"],
+        "testing": ["unit test with mock dependencies"],
         "priority": "high"
     },
     {
         "id": "3",
-        "content": "Add service to orchestrator services/",
+        "content": "Create service layer for orchestration",
         "package": "@agentic-sdlc/orchestrator",
-        "estimate": "4 hours",
+        "layer": "services",
+        "estimate": "2 hours",
         "dependencies": ["1", "2"],
-        "priority": "medium"
+        "messaging": "publishWorkflow('workflow:new', envelope) with Redis Streams",
+        "testing": ["integration test with message bus mock"],
+        "priority": "high"
     },
     {
         "id": "4",
-        "content": "Write unit tests with Vitest",
-        "package": "@agentic-sdlc/orchestrator",
+        "content": "Update agent to subscribe and process",
+        "package": "@agentic-sdlc/[agent-name]",
+        "base_class": "extends BaseAgent from @agentic-sdlc/base-agent",
         "estimate": "2 hours",
         "dependencies": ["3"],
+        "messaging": "subscribe('workflow:new') via messageBus.subscribe()",
+        "testing": ["agent unit test + E2E via ./scripts/run-pipeline-test.sh"],
+        "priority": "high"
+    },
+    {
+        "id": "5",
+        "content": "Validate schema and run full pipeline test",
+        "package": "all",
+        "estimate": "1.5 hours",
+        "dependencies": ["4"],
+        "validation": "AgentEnvelopeSchema v2.0.0, no /src/ imports, Turbo build successful",
+        "testing": ["turbo run build && turbo run test && ./scripts/run-pipeline-test.sh"],
         "priority": "high"
     }
 ]
@@ -166,45 +190,62 @@ const tasks = [
 | Security vulnerability | Low | Critical | Security review, penetration testing |
 ```
 
-### Step 5: Test Strategy
+### Step 5: Test Strategy for Agentic SDLC Platform
 
 ```markdown
 ## Testing Plan
 
 ### Unit Tests (Vitest)
-- [ ] Domain logic tests in hexagonal/core/
-- [ ] Service logic tests (*.service.test.ts)
-- [ ] Adapter tests (mock ports)
-- [ ] Utility function tests
+- [ ] Hexagonal layer tests (core/ports/adapters)
+  - Core domain logic (hexagonal/core/)
+  - Port interface contracts (hexagonal/ports/ - interface definitions)
+  - Adapter implementations (hexagonal/adapters/ with mocked ports)
+- [ ] Service layer tests (*.service.test.ts)
+- [ ] Agent logic tests (agents/[name]/src/[name].test.ts)
+- [ ] Utility and validator tests
 - Run: `pnpm test` or `turbo run test`
-- Coverage target: 90%
+- Command: `turbo run test --filter=@agentic-sdlc/[package]`
+- Coverage target: 85%+
 
-### Integration Tests (Vitest)
-- [ ] Message bus pub/sub tests
-- [ ] Redis stream tests
-- [ ] PostgreSQL integration tests
-- [ ] Agent-to-orchestrator communication tests
+### Integration Tests (Vitest with Real Components)
+- [ ] Message bus pub/sub tests (redis-bus.adapter behavior)
+- [ ] Redis Streams tests (ACK timing, consumer groups)
+- [ ] Workflow state machine tests (stage transitions)
+- [ ] AgentEnvelopeSchema v2.0.0 validation tests
+- [ ] Multi-agent communication tests (agent→orchestrator→agent)
+- [ ] Trace ID propagation tests (distributed tracing)
 - Run: `pnpm test` (integration tests in __tests__ directories)
 - Coverage target: 80%
 
-### End-to-End Tests
-- [ ] Full workflow tests (scaffold → validate → e2e)
-- [ ] Multi-agent coordination tests
-- [ ] Error recovery and retry tests
+### End-to-End Pipeline Tests
+- [ ] Full workflow lifecycle (scaffold → validate → integration → e2e)
+- [ ] Multi-agent coordination (workflow creation through completion)
+- [ ] Error handling and recovery
+- [ ] React SPA code generation validation
+- [ ] Message envelope integrity across services
 - Run: `./scripts/run-pipeline-test.sh "Test Description"`
-- Environment: `./scripts/env/start-dev.sh`
-- Coverage target: Critical paths
+- Setup: `./scripts/env/start-dev.sh` (starts all 7 PM2 services)
+- Teardown: `./scripts/env/stop-dev.sh`
+- Coverage: All critical paths, ~30 min execution time
 
 ### Build Validation
 - [ ] TypeScript compilation: `turbo run build`
 - [ ] Type checking: `turbo run typecheck`
 - [ ] Linting: `turbo run lint`
-- [ ] All packages build in dependency order
+- [ ] All packages build in dependency order (Shared → Orchestrator → Agents)
+- [ ] No /src/ imports in dist files (schema validation)
+- [ ] Package index exports correct (from @agentic-sdlc/shared-types, etc.)
+
+### Deployment Validation
+- [ ] Health checks pass: `./scripts/env/check-health.sh`
+- [ ] Dashboard accessible on port 3001
+- [ ] All 7 PM2 processes running (pnpm pm2:status)
+- [ ] No ERROR or CRITICAL logs (pnpm pm2:logs)
 
 ### Security Tests
-- [ ] Message validation tests
-- [ ] Schema validation tests
-- [ ] Input sanitization tests
+- [ ] Message envelope validation (AgentEnvelopeSchema)
+- [ ] No sensitive data in logs
+- [ ] Input sanitization in orchestrator handlers
 - [ ] Dependency audit: `pnpm audit`
 ```
 
@@ -343,16 +384,20 @@ Before proceeding to CODE phase, ensure all plans are documented in `EPCC_PLAN.m
 
 **REMINDER**: No code should be written during this phase. If you're tempted to implement something, document it as a task instead:
 
-- [ ] Objectives clearly defined
-- [ ] Approach thoroughly designed
-- [ ] Tasks broken down and estimated
-- [ ] Dependencies identified
-- [ ] Risks assessed and mitigated
-- [ ] Test strategy defined
-- [ ] Success criteria established
-- [ ] Documentation planned
-- [ ] Timeline realistic
-- [ ] Resources available
+- [ ] Objectives clearly defined (business value + success criteria)
+- [ ] Approach thoroughly designed (hexagonal layers + message flow)
+- [ ] Tasks broken down and estimated (platform-specific structure)
+- [ ] Dependencies identified (package build order: shared → orchestrator → agents)
+- [ ] Risks assessed and mitigated (especially schema/message bus impacts)
+- [ ] Test strategy defined (unit + integration + E2E pipeline)
+- [ ] Success criteria established (measurable outcomes)
+- [ ] Message bus impact analyzed (publish/subscribe patterns if applicable)
+- [ ] Schema changes planned (AgentEnvelopeSchema v2.0.0 updates if needed)
+- [ ] Build validation planned (turbo build, no /src/ imports, all tests pass)
+- [ ] E2E validation planned (./scripts/run-pipeline-test.sh scenarios)
+- [ ] Documentation planned (CLAUDE.md updates, code comments)
+- [ ] Deployment plan clear (PM2 process restart, health checks)
+- [ ] Timeline realistic (include Turbo build + test execution time)
 
 ## Usage Examples
 

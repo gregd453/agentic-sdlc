@@ -13,6 +13,9 @@
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
+    "@agentic-sdlc/logger-config": "workspace:*",
+    "@agentic-sdlc/config-manager": "workspace:*",
+    "@agentic-sdlc/service-locator": "workspace:*",
     "@agentic-sdlc/orchestrator": "workspace:*",
     "@agentic-sdlc/shared-types": "workspace:^",
     "@agentic-sdlc/shared-utils": "workspace:*",

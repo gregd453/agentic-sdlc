@@ -1,54 +1,32 @@
-2025-11-14 15:59:56 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 15:59:56 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 15:59:56 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:05:54 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:05:54 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:05:54 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:29 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:29 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:29 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:32 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:32 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:32 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:37 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:37 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:37 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:39 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:39 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:39 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:44 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:44 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:44 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:47 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:47 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:47 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:50 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:50 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:50 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:54 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:54 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:54 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:59 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:59 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:13:59 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:14:02 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:14:02 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:14:02 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:25:15 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:25:15 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:25:15 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:38:28 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:38:28 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:38:28 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:46:42 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:46:42 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:46:42 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:50:25 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:50:25 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:50:25 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:52:11 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:52:11 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:52:11 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:52:16 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:52:16 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
-2025-11-14 16:52:16 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 13:54:03 -05:00: ❌ CLAUDE API ERROR: Claude API error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CVABWqfP6vh4wuwfs54yW"}
+2025-11-15 13:54:03 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 13:54:03 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 13:54:03 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 13:54:03 -05:00: ❌ CLAUDE API ERROR: Claude API error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CVABWsG8AzyVF5wZDZycY"}
+2025-11-15 13:54:03 -05:00: ❌ CLAUDE API ERROR: Claude API error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CVABWsgAwbYf8hhA4f61n"}
+2025-11-15 13:54:03 -05:00: ❌ CLAUDE API ERROR: Claude API error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CVABWt3kQfwvDaz1BxqrW"}
+2025-11-15 13:54:03 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 13:54:03 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 13:54:03 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 13:54:03 -05:00: ❌ CLAUDE API ERROR: Claude API error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CVABWtYWrRGF1Efd4c6tJ"}
+2025-11-15 13:54:03 -05:00: ❌ CLAUDE API ERROR: Circuit breaker is OPEN. Request rejected.
+2025-11-15 14:56:26 -05:00: ❌ CLAUDE API ERROR: Claude API error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CVAGGntdVXDoNkerhtHNf"}
+2025-11-15 14:56:26 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 14:56:26 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 14:56:26 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 14:56:26 -05:00: ❌ CLAUDE API ERROR: Claude API error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CVAGGphXgQvcr3Tq5zhKQ"}
+2025-11-15 14:56:26 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 14:56:26 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 14:56:26 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:16:25 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:16:25 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:16:25 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:16:29 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:16:29 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:16:29 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:28:18 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:28:18 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:28:18 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:28:33 -05:00: Template not found: app-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:28:33 -05:00: Template not found: package-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-15 15:28:33 -05:00: Template not found: tsconfig-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates

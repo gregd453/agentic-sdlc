@@ -63,9 +63,18 @@ importers:
 
   packages/agents/base-agent:
     dependencies:
+      '@agentic-sdlc/config-manager':
+        specifier: workspace:*
+        version: link:../../shared/config-manager
+      '@agentic-sdlc/logger-config':
+        specifier: workspace:*
+        version: link:../../shared/logger-config
       '@agentic-sdlc/orchestrator':
         specifier: workspace:*
         version: link:../../orchestrator
+      '@agentic-sdlc/service-locator':
+        specifier: workspace:*
+        version: link:../../shared/service-locator
       '@agentic-sdlc/shared-types':
         specifier: workspace:^
         version: link:../../shared/types
@@ -112,6 +121,18 @@ importers:
       '@agentic-sdlc/base-agent':
         specifier: workspace:*
         version: link:../base-agent
+      '@agentic-sdlc/config-manager':
+        specifier: workspace:*
+        version: link:../../shared/config-manager
+      '@agentic-sdlc/logger-config':
+        specifier: workspace:*
+        version: link:../../shared/logger-config
+      '@agentic-sdlc/orchestrator':
+        specifier: workspace:*
+        version: link:../../orchestrator
+      '@agentic-sdlc/service-locator':
+        specifier: workspace:*
+        version: link:../../shared/service-locator
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -173,9 +194,18 @@ importers:
       '@agentic-sdlc/base-agent':
         specifier: workspace:*
         version: link:../base-agent
+      '@agentic-sdlc/config-manager':
+        specifier: workspace:*
+        version: link:../../shared/config-manager
+      '@agentic-sdlc/logger-config':
+        specifier: workspace:*
+        version: link:../../shared/logger-config
       '@agentic-sdlc/orchestrator':
         specifier: workspace:*
         version: link:../../orchestrator
+      '@agentic-sdlc/service-locator':
+        specifier: workspace:*
+        version: link:../../shared/service-locator
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -231,6 +261,18 @@ importers:
       '@agentic-sdlc/base-agent':
         specifier: workspace:*
         version: link:../base-agent
+      '@agentic-sdlc/config-manager':
+        specifier: workspace:*
+        version: link:../../shared/config-manager
+      '@agentic-sdlc/logger-config':
+        specifier: workspace:*
+        version: link:../../shared/logger-config
+      '@agentic-sdlc/orchestrator':
+        specifier: workspace:*
+        version: link:../../orchestrator
+      '@agentic-sdlc/service-locator':
+        specifier: workspace:*
+        version: link:../../shared/service-locator
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -283,9 +325,18 @@ importers:
       '@agentic-sdlc/base-agent':
         specifier: workspace:*
         version: link:../base-agent
+      '@agentic-sdlc/config-manager':
+        specifier: workspace:*
+        version: link:../../shared/config-manager
+      '@agentic-sdlc/logger-config':
+        specifier: workspace:*
+        version: link:../../shared/logger-config
       '@agentic-sdlc/orchestrator':
         specifier: workspace:*
         version: link:../../orchestrator
+      '@agentic-sdlc/service-locator':
+        specifier: workspace:*
+        version: link:../../shared/service-locator
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -341,9 +392,18 @@ importers:
       '@agentic-sdlc/base-agent':
         specifier: workspace:*
         version: link:../base-agent
+      '@agentic-sdlc/config-manager':
+        specifier: workspace:*
+        version: link:../../shared/config-manager
+      '@agentic-sdlc/logger-config':
+        specifier: workspace:*
+        version: link:../../shared/logger-config
       '@agentic-sdlc/orchestrator':
         specifier: workspace:*
         version: link:../../orchestrator
+      '@agentic-sdlc/service-locator':
+        specifier: workspace:*
+        version: link:../../shared/service-locator
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -552,6 +612,56 @@ importers:
         specifier: ^1.0.0
         version: 1.6.1(@types/node@20.19.24)
 
+  packages/shared/agent-registry:
+    dependencies:
+      '@agentic-sdlc/shared-types':
+        specifier: workspace:*
+        version: link:../types
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.24
+      '@vitest/coverage-v8':
+        specifier: ^1.4.0
+        version: 1.6.1(vitest@1.6.1(@types/node@20.19.24))
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@20.19.24)
+
+  packages/shared/config-manager:
+    dependencies:
+      '@agentic-sdlc/shared-types':
+        specifier: workspace:*
+        version: link:../types
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.0
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+    devDependencies:
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.24
+      '@vitest/coverage-v8':
+        specifier: ^1.4.0
+        version: 1.6.1(vitest@1.6.1(@types/node@20.19.24))
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@20.19.24)
+
   packages/shared/contracts:
     dependencies:
       '@agentic-sdlc/shared-types':
@@ -575,6 +685,50 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.24)
+
+  packages/shared/logger-config:
+    dependencies:
+      pino:
+        specifier: ^8.19.0
+        version: 8.21.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.24
+      '@vitest/coverage-v8':
+        specifier: ^1.4.0
+        version: 1.6.1(vitest@1.6.1(@types/node@20.19.24))
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@20.19.24)
+
+  packages/shared/service-locator:
+    dependencies:
+      '@agentic-sdlc/config-manager':
+        specifier: workspace:*
+        version: link:../config-manager
+      '@agentic-sdlc/shared-types':
+        specifier: workspace:*
+        version: link:../types
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.24
+      '@vitest/coverage-v8':
+        specifier: ^1.4.0
+        version: 1.6.1(vitest@1.6.1(@types/node@20.19.24))
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
         version: 1.6.1(@types/node@20.19.24)
 
   packages/shared/test-utils:
@@ -624,6 +778,37 @@ importers:
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
+
+  packages/shared/workflow-engine:
+    dependencies:
+      '@agentic-sdlc/config-manager':
+        specifier: workspace:*
+        version: link:../config-manager
+      '@agentic-sdlc/shared-types':
+        specifier: workspace:*
+        version: link:../types
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.0
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+    devDependencies:
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.24
+      '@vitest/coverage-v8':
+        specifier: ^1.4.0
+        version: 1.6.1(vitest@1.6.1(@types/node@20.19.24))
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@20.19.24)
 
 packages:
 

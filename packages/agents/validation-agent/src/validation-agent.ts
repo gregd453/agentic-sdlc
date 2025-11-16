@@ -1,8 +1,7 @@
 import { BaseAgent, AgentEnvelope, TaskResult, AgentError } from '@agentic-sdlc/base-agent';
-import {
-  isValidationEnvelope,
-  validateEnvelope
-} from '@agentic-sdlc/shared-types';
+import { LoggerConfigService } from '@agentic-sdlc/logger-config';
+import { ConfigurationManager } from '@agentic-sdlc/config-manager';
+import { ServiceLocator } from '@agentic-sdlc/service-locator';
 import {
   ValidationCheckResult,
   PolicyConfig,
@@ -20,11 +19,17 @@ import * as fs from 'fs-extra';
 /**
  * ValidationAgent - Performs code validation with quality gate enforcement
  * Phase 3: Updated to accept messageBus parameter
+ * Phase 2.2: Updated to accept DI services
  */
 export class ValidationAgent extends BaseAgent {
   private policy: PolicyConfig | null = null;
 
-  constructor(messageBus: any) {
+  constructor(
+    messageBus: any,
+    loggerConfigService?: LoggerConfigService,
+    configurationManager?: ConfigurationManager,
+    serviceLocator?: ServiceLocator
+  ) {
     super(
       {
         type: 'validation',
@@ -37,7 +42,10 @@ export class ValidationAgent extends BaseAgent {
           'quality-gates'
         ]
       },
-      messageBus
+      messageBus,
+      loggerConfigService,
+      configurationManager,
+      serviceLocator
     );
   }
 
@@ -74,97 +82,65 @@ export class ValidationAgent extends BaseAgent {
     });
 
     try {
-      // SESSION #47: Enhanced envelope extraction debugging
-      const taskObj = task as any;
-      this.logger.info('[SESSION #38] Task structure debug', {
-        has_context: !!taskObj.context,
-        context_keys: taskObj.context ? Object.keys(taskObj.context).slice(0, 10) : [],
-        context_type: typeof taskObj.context,
-        has_payload: !!taskObj.payload,
-        payload_keys: taskObj.payload ? Object.keys(taskObj.payload).slice(0, 10) : [],
-        task_keys: Object.keys(taskObj).slice(0, 15),
-        context_agent_type: taskObj.context?.agent_type,
-        context_envelope_version: taskObj.context?.envelope_version
+      // SESSION #67: AgentEnvelope v2.0.0 - task IS the envelope, payload contains validation data
+      this.logger.info('[SESSION #67] Extracting validation data from task.payload', {
+        task_id: task.task_id,
+        workflow_id: task.workflow_id,
+        agent_type: task.agent_type,
+        has_payload: !!task.payload,
+        payload_keys: Object.keys(task.payload).join(', ')
       });
 
-      // SESSION #47: The envelope is at taskObj.context (from agent-dispatcher wrapper)
-      // Agent dispatcher sends: { payload: { context: envelope } }
-      // Base agent validates payload and passes to execute, so envelope is in task.context
-      const envelopeData = taskObj.context;
-
-      if (!envelopeData) {
-        this.logger.error('[SESSION #47] No context found in task', {
-          task_keys: Object.keys(taskObj),
-          task_id: task.task_id
-        });
-        throw new AgentError('No context envelope found in task', 'ENVELOPE_MISSING_ERROR');
-      }
-
-      this.logger.info('[SESSION #47] Attempting to validate envelope', {
-        envelope_agent_type: envelopeData.agent_type,
-        envelope_version: envelopeData.envelope_version,
-        has_payload: !!envelopeData.payload,
-        has_workflow_context: !!envelopeData.workflow_context
-      });
-
-      // Session #47: Log full envelope structure for debugging
-      console.log('[SESSION #47] Full envelope data:', JSON.stringify(envelopeData, null, 2));
-      console.log('[SESSION #47] Envelope keys:', Object.keys(envelopeData).join(', '));
-      console.log('[SESSION #47] Agent type:', envelopeData.agent_type);
-      console.log('[SESSION #47] Envelope version:', envelopeData.envelope_version);
-      console.log('[SESSION #47] Payload keys:', Object.keys(envelopeData.payload || {}).join(', '));
-
-      const validation = validateEnvelope(envelopeData);
-
-      if (!validation.success) {
-        console.log('[SESSION #47] Validation failed with error:', validation.error);
-        this.logger.error('[SESSION #37] Invalid envelope format', {
-          error: validation.error,
-          error_details: validation.error?.toString(),
-          task_id: task.task_id,
-          envelope_keys: Object.keys(envelopeData),
-          envelope_agent_type: envelopeData.agent_type,
-          envelope_str: JSON.stringify(envelopeData).substring(0, 200)
-        });
-
-        throw new AgentError(
-          `Invalid envelope: ${validation.error}`,
-          'ENVELOPE_VALIDATION_ERROR'
-        );
-      }
-
-      const envelope = validation.envelope!;
-
-      // Type guard to ensure this is a validation envelope
-      if (!isValidationEnvelope(envelope)) {
-        this.logger.warn('[SESSION #36] Wrong agent type routed to validation agent', {
+      // Validate agent type routing
+      if (task.agent_type !== 'validation') {
+        this.logger.warn('[SESSION #67] Wrong agent type routed to validation agent', {
           expected: 'validation',
-          actual: envelope.agent_type,
+          actual: task.agent_type,
           task_id: task.task_id
         });
 
         throw new AgentError(
-          `Wrong agent type: expected validation, got ${envelope.agent_type}`,
+          `Wrong agent type: expected validation, got ${task.agent_type}`,
           'WRONG_AGENT_TYPE'
         );
       }
 
-      this.logger.info('[SESSION #36] Envelope validated successfully', {
-        task_id: envelope.task_id,
-        workflow_id: envelope.workflow_id,
-        file_paths_count: envelope.payload.file_paths.length,
-        working_directory: envelope.payload.working_directory,
-        validation_types: envelope.payload.validation_types,
-        has_workflow_context: !!envelope.workflow_context
+      // Extract validation payload from task.payload
+      const payload = task.payload as any;
+
+      // Validate required fields are present
+      if (!payload.file_paths || !Array.isArray(payload.file_paths)) {
+        this.logger.error('[SESSION #67] Missing or invalid file_paths in payload', {
+          has_file_paths: !!payload.file_paths,
+          file_paths_type: typeof payload.file_paths,
+          payload_keys: Object.keys(payload)
+        });
+        throw new AgentError('Missing file_paths in validation payload', 'INVALID_PAYLOAD');
+      }
+
+      if (!payload.working_directory) {
+        this.logger.error('[SESSION #67] Missing working_directory in payload', {
+          payload_keys: Object.keys(payload)
+        });
+        throw new AgentError('Missing working_directory in validation payload', 'INVALID_PAYLOAD');
+      }
+
+      this.logger.info('[SESSION #67] Validation payload extracted successfully', {
+        task_id: task.task_id,
+        workflow_id: task.workflow_id,
+        file_paths_count: payload.file_paths.length,
+        working_directory: payload.working_directory,
+        validation_types: payload.validation_types || ['typescript', 'eslint'],
+        has_workflow_context: !!task.workflow_context
       });
 
-      // Extract context from envelope (type-safe!)
+      // Extract context from payload (matching orchestrator's buildAgentEnvelope)
       const context = {
-        project_path: envelope.payload.working_directory,
-        validation_types: envelope.payload.validation_types.filter((v): v is 'typescript' | 'eslint' | 'coverage' | 'security' =>
+        project_path: payload.working_directory,
+        validation_types: (payload.validation_types || ['typescript', 'eslint']).filter((v: string): v is 'typescript' | 'eslint' | 'coverage' | 'security' =>
           ['typescript', 'eslint', 'coverage', 'security'].includes(v)
         ),
-        coverage_threshold: envelope.payload.thresholds?.coverage,
+        coverage_threshold: payload.thresholds?.coverage,
         package_manager: 'pnpm' as const,
       };
 

@@ -1,4 +1,7 @@
 import { BaseAgent, AgentEnvelope, TaskResult } from '@agentic-sdlc/base-agent';
+import { LoggerConfigService } from '@agentic-sdlc/logger-config';
+import { ConfigurationManager } from '@agentic-sdlc/config-manager';
+import { ServiceLocator } from '@agentic-sdlc/service-locator';
 import path from 'path';
 import {
   E2ETaskContext,
@@ -13,11 +16,17 @@ import { generateE2EReport, formatE2EReportAsText } from './utils/report-generat
 
 /**
  * E2EAgent - Generates and executes end-to-end tests using Playwright
+ * Phase 2.2: Updated to accept DI services
  */
 export class E2EAgent extends BaseAgent {
   private anthropicApiKey: string;
 
-  constructor(messageBus: any) {
+  constructor(
+    messageBus: any,
+    loggerConfigService?: LoggerConfigService,
+    configurationManager?: ConfigurationManager,
+    serviceLocator?: ServiceLocator
+  ) {
     super(
       {
         type: 'e2e',
@@ -32,7 +41,10 @@ export class E2EAgent extends BaseAgent {
           'artifact-storage'
         ]
       },
-      messageBus
+      messageBus,
+      loggerConfigService,
+      configurationManager,
+      serviceLocator
     );
 
     this.anthropicApiKey = process.env.ANTHROPIC_API_KEY || '';

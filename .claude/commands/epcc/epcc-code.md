@@ -29,18 +29,23 @@ If no specific task was provided above, check `EPCC_PLAN.md` for the next task t
 - **Performance critical**: Think hard about optimization
 - **Security sensitive**: Ultrathink about vulnerabilities
 
-## Parallel Coding Subagents
+## Coding Guidelines for Agentic SDLC Platform
 
-Deploy specialized coding agents concurrently:
-@test-generator @optimization-engineer @security-reviewer @documentation-agent @ux-optimizer
+Before you start coding:
+1. **Review EPCC_PLAN.md** - Follow the task breakdown and estimates
+2. **Review EPCC_EXPLORE.md** - Reference discovered patterns
+3. **Read CLAUDE.md** - Understand architecture rules and constraints
+4. **Check recent commits** - See Session #67-68 patterns for this platform
 
-- @test-generator: Write tests BEFORE implementation (TDD approach)
-- @optimization-engineer: Optimize algorithms and queries during implementation
-- @security-reviewer: Validate security as code is written
-- @documentation-agent: Generate inline documentation and API docs
-- @ux-optimizer: Ensure user experience best practices in implementation
+Key principles:
+- **Hexagonal First**: Place code in the right hexagonal layer (core/ports/adapters/services)
+- **Never Duplicate**: Canonical files exist - use them, don't copy them
+- **Message Bus Pattern**: Use packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts
+- **Schema Validation**: All messages must validate against AgentEnvelopeSchema v2.0.0
+- **Test As You Code**: Write tests incrementally, TDD preferred for complex logic
+- **Import Correctly**: Use package index from @agentic-sdlc/shared-types, never /src/ paths
 
-Note: Review patterns in EPCC_EXPLORE.md and follow the plan in EPCC_PLAN.md if they exist.
+Note: Reference EPCC_EXPLORE.md and EPCC_PLAN.md throughout implementation.
 
 ## Implementation Approach
 
@@ -61,23 +66,29 @@ cat CLAUDE.md
 
 ### Step 2: Set Up Development Environment
 ```bash
-# Create feature branch
-git checkout -b feature/[task-name]
+# Create feature branch aligned with task name
+git checkout -b feature/[task-name-from-plan]
 
 # Install dependencies (if package.json changed)
 pnpm install
 
-# Set up test watchers (Vitest)
-pnpm test --watch  # Watch mode for tests
+# Start development environment (PM2-managed 7 services)
+./scripts/env/start-dev.sh  # Starts orchestrator + agents + dashboard
 
-# Build affected packages
-turbo run build --filter=@agentic-sdlc/[package-name]
+# Verify all services are running
+./scripts/env/check-health.sh  # Should show 7/7 healthy
 
-# Start development environment (if needed for E2E)
-./scripts/env/start-dev.sh
+# In another terminal, set up test watcher
+pnpm test --watch  # Watch mode for your specific package
 
-# Open relevant files in your editor
+# In another terminal, build and watch
+turbo run build --filter=@agentic-sdlc/[package-name] --watch
+
+# Tail logs to monitor changes
+pnpm pm2:logs  # Monitor all PM2 services in real-time
+
 # Focus on the specific package and hexagonal layer
+# Reference EPCC_PLAN.md task details
 ```
 
 ### Step 3: Test-Driven Development (if --tdd flag)
@@ -108,12 +119,12 @@ export function newFeature(data: InputType): OutputType {
 // turbo run build --filter=@agentic-sdlc/[package]
 ```
 
-### Step 4: Implementation Patterns
+### Step 4: Implementation Patterns for This Platform
 
 #### Pattern: Hexagonal Architecture - Port (Interface)
 ```typescript
-// File: packages/orchestrator/src/hexagonal/ports/IFeaturePort.ts
-export interface IFeaturePort {
+// File: packages/orchestrator/src/hexagonal/ports/INewPort.ts
+export interface INewPort {
     processData(input: InputType): Promise<OutputType>
     validateData(input: InputType): boolean
 }
@@ -121,10 +132,10 @@ export interface IFeaturePort {
 
 #### Pattern: Hexagonal Architecture - Adapter (Implementation)
 ```typescript
-// File: packages/orchestrator/src/hexagonal/adapters/FeatureAdapter.ts
-import { IFeaturePort } from '../ports/IFeaturePort'
+// File: packages/orchestrator/src/hexagonal/adapters/NewAdapter.ts
+import { INewPort } from '../ports/INewPort'
 
-export class FeatureAdapter implements IFeaturePort {
+export class NewAdapter implements INewPort {
     async processData(input: InputType): Promise<OutputType> {
         if (!this.validateData(input)) {
             throw new Error('Invalid input')
@@ -143,23 +154,32 @@ export class FeatureAdapter implements IFeaturePort {
 }
 ```
 
-#### Pattern: Service Layer
+#### Pattern: Service Layer with Message Bus
 ```typescript
 // File: packages/orchestrator/src/services/feature.service.ts
 import { IMessageBus } from '../hexagonal/ports/IMessageBus'
+import { buildAgentEnvelope } from '@agentic-sdlc/shared-types'
 
 export class FeatureService {
     constructor(
         private readonly messageBus: IMessageBus,
-        private readonly featureAdapter: IFeaturePort
+        private readonly featureAdapter: INewPort
     ) {}
 
     async execute(input: InputType): Promise<void> {
         try {
             const result = await this.featureAdapter.processData(input)
 
-            // Publish result via message bus
-            await this.messageBus.publish('feature:result', result, {
+            // Wrap in AgentEnvelopeSchema v2.0.0 (NEVER duplicate)
+            const envelope = buildAgentEnvelope({
+                payload: result,
+                stage: 'feature:complete',
+                workflowId: input.workflowId,
+                agentType: 'orchestrator'
+            })
+
+            // Publish via redis-bus adapter (NEVER duplicate)
+            await this.messageBus.publish('feature:result', envelope, {
                 key: input.id,
                 mirrorToStream: 'stream:feature:results'
             })
@@ -171,29 +191,62 @@ export class FeatureService {
 }
 ```
 
-#### Pattern: Message Bus Integration
+#### Pattern: Redis Streams Subscribe/Publish
 ```typescript
-// Subscribe to messages
+// CANONICAL: packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts
+// Use this adapter - do NOT duplicate redis logic
+// Subscription pattern:
 await this.messageBus.subscribe(
     'agent:scaffold:tasks',
-    async (message) => {
-        await this.handleTask(message)
+    async (envelope: AgentEnvelope) => {
+        // envelope.payload contains task data
+        // envelope.trace.trace_id for distributed tracing
+        // envelope.metadata.stage for routing
+        await this.handleTask(envelope)
     },
     {
-        consumerGroup: 'agent-scaffold-group',
+        consumerGroup: 'orchestrator-consumer-group',
         fromBeginning: false
     }
 )
 
-// Publish messages
-await this.messageBus.publish(
-    'agent:scaffold:results',
-    resultData,
-    {
-        key: workflowId,
-        mirrorToStream: 'stream:agent:scaffold:results'
+// Publish pattern (wrap in envelope first):
+const envelope = buildAgentEnvelope({
+    payload: taskData,
+    stage: 'orchestrator:task:created',
+    workflowId,
+    agentType: 'orchestrator'
+})
+await this.messageBus.publish('agent:scaffold:tasks', envelope, {
+    key: workflowId
+})
+```
+
+#### Pattern: Agent Implementation (extends BaseAgent)
+```typescript
+// File: packages/agents/[agent-name]/src/[agent-name]-agent.ts
+import { BaseAgent } from '@agentic-sdlc/base-agent'
+import { AgentEnvelope } from '@agentic-sdlc/shared-types'
+
+export class MyAgent extends BaseAgent {
+    constructor(messageBus) {
+        super(messageBus, {
+            type: 'my-agent',
+            version: '1.0.0',
+            capabilities: ['capability1']
+        })
     }
-)
+
+    async processTask(envelope: AgentEnvelope): Promise<AgentEnvelope> {
+        console.log(`[MyAgent] Processing task: ${envelope.trace.trace_id}`)
+
+        // Do work
+        const result = await this.doWork(envelope.payload)
+
+        // Return result wrapped in envelope (BaseAgent handles publish)
+        return this.buildResultEnvelope(result, envelope)
+    }
+}
 ```
 
 ## Code Quality Checklist
@@ -212,15 +265,20 @@ await this.messageBus.publish(
 - [ ] Log important operations
 
 ### After Coding
-- [ ] Run all tests: `pnpm test` or `turbo run test`
+- [ ] Run all tests: `turbo run test --filter=@agentic-sdlc/[package]`
 - [ ] Check code coverage: `turbo run test:coverage`
-- [ ] Build packages: `turbo run build`
+- [ ] Verify no /src/ imports in code (use @agentic-sdlc/shared-types)
+- [ ] Build affected packages: `turbo run build --filter=@agentic-sdlc/[package]`
+- [ ] Build everything: `turbo run build` (verify no errors)
 - [ ] Run type checking: `turbo run typecheck`
 - [ ] Run linters: `turbo run lint`
 - [ ] Update package.json if new dependencies added
-- [ ] Update documentation
-- [ ] Review for security issues
+- [ ] Verify AgentEnvelopeSchema usage (if message changes)
+- [ ] Update code comments with platform context
+- [ ] Review for security issues (input validation, trace_id safety)
 - [ ] Run E2E tests if applicable: `./scripts/run-pipeline-test.sh "Test Name"`
+- [ ] Check logs for errors: `pnpm pm2:logs` (no ERROR/CRITICAL)
+- [ ] Update CLAUDE.md if appropriate (Session milestone, fixes)
 
 ## Output File: EPCC_CODE.md
 
@@ -276,47 +334,50 @@ Document your implementation progress in `EPCC_CODE.md`:
 - [ ] Security considerations addressed
 ```
 
-## Common Implementation Patterns
+## Platform-Specific Implementation Patterns
 
-### Agent Implementation
+### Agent Implementation (Standard Pattern)
 ```typescript
 // File: packages/agents/[agent-name]/src/[agent-name]-agent.ts
 import { BaseAgent } from '@agentic-sdlc/base-agent'
-import { IMessageBus } from '@agentic-sdlc/orchestrator/hexagonal'
+import { AgentEnvelope } from '@agentic-sdlc/shared-types'
 
 export class MyAgent extends BaseAgent {
-    constructor(messageBus: IMessageBus) {
-        super(messageBus, {
-            type: 'my-agent',
-            version: '1.0.0',
-            capabilities: ['capability1', 'capability2']
-        })
+    async processTask(envelope: AgentEnvelope): Promise<AgentEnvelope> {
+        // BaseAgent handles message subscription automatically
+        console.log(`[MyAgent] Task: ${envelope.trace.trace_id} Stage: ${envelope.metadata.stage}`)
+
+        try {
+            // Do the work
+            const result = await this.executeWork(envelope.payload)
+
+            // Return wrapped in envelope (BaseAgent publishes automatically)
+            return this.buildResultEnvelope(result, envelope)
+        } catch (error) {
+            console.error(`[MyAgent] Error: ${error.message}`, { traceId: envelope.trace.trace_id })
+            throw error
+        }
     }
 
-    async processTask(task: TaskType): Promise<ResultType> {
-        console.log(`[MyAgent] Processing task: ${task.id}`)
-
-        // Implementation logic
-        const result = await this.doWork(task)
-
-        // Report result via message bus
-        await this.reportResult(task.workflowId, result)
-
-        return result
+    private async executeWork(payload: any): Promise<any> {
+        // Implementation specific to this agent
+        return payload
     }
 }
 ```
 
-### Container Integration
+### Container Integration (OrchestratorContainer)
 ```typescript
 // File: packages/agents/[agent-name]/src/run-agent.ts
-import { OrchestratorContainer } from '@agentic-sdlc/orchestrator/hexagonal'
-import { MyAgent } from './my-agent'
+import { OrchestratorContainer } from '@agentic-sdlc/orchestrator/hexagonal/bootstrap'
+import { MyAgent } from './[agent-name]-agent'
 
 async function main() {
+    // OrchestratorContainer handles dependency injection
     const container = new OrchestratorContainer({
         redisUrl: process.env.REDIS_URL || 'redis://localhost:6380',
-        redisNamespace: 'agent-my-agent',
+        redisNamespace: 'agent-[agent-name]',
+        dbUrl: process.env.DATABASE_URL || 'postgresql://...',
         coordinators: {}
     })
 
@@ -332,24 +393,67 @@ async function main() {
 main().catch(console.error)
 ```
 
-### Dependency Injection Pattern
+### Service with Dependency Injection Pattern
 ```typescript
-// File: packages/orchestrator/src/hexagonal/bootstrap.ts
-export class OrchestratorContainer {
-    private messageBus: IMessageBus
-    private stateManager: IStateManager
+// File: packages/orchestrator/src/services/workflow.service.ts
+import { OrchestratorContainer } from '../hexagonal/bootstrap'
+import { WorkflowStateMachine } from '../state-machine/workflow-state-machine'
 
-    async initialize(): Promise<void> {
-        // Initialize dependencies
-        this.messageBus = new RedisMessageBus(this.config)
-        this.stateManager = new PostgresStateManager(this.config)
+export class WorkflowService {
+    constructor(
+        private readonly messageBus: IMessageBus,
+        private readonly stateManager: IStateManager,
+        private readonly stateMachine: WorkflowStateMachine
+    ) {}
 
-        await this.messageBus.connect()
-        await this.stateManager.connect()
+    async createWorkflow(request: WorkflowRequest): Promise<WorkflowResponse> {
+        // Dependency injection provides all needed services
+        const envelope = buildAgentEnvelope({
+            payload: request,
+            stage: 'orchestrator:workflow:created',
+            workflowId: generateId(),
+            agentType: 'orchestrator'
+        })
+
+        await this.messageBus.publish('workflow:created', envelope)
+        return { workflowId: envelope.metadata.workflowId }
+    }
+}
+```
+
+### Workflow State Machine Integration
+```typescript
+// File: packages/orchestrator/src/state-machine/workflow-state-machine.ts
+// This is the canonical workflow orchestration logic
+// It determines which agent gets tasks based on current stage
+
+export class WorkflowStateMachine {
+    async processEnvelope(envelope: AgentEnvelope): Promise<void> {
+        const stage = envelope.metadata.stage
+
+        switch (stage) {
+            case 'orchestrator:workflow:created':
+                // Route to scaffold agent
+                await this.routeToAgent(envelope, 'scaffold-agent')
+                break
+            case 'scaffold:complete':
+                // Route to validation agent
+                await this.routeToAgent(envelope, 'validation-agent')
+                break
+            // ... more stages
+        }
     }
 
-    getBus(): IMessageBus {
-        return this.messageBus
+    private async routeToAgent(envelope: AgentEnvelope, agentName: string): Promise<void> {
+        // State machine updates metadata with next stage
+        const nextEnvelope = {
+            ...envelope,
+            metadata: {
+                ...envelope.metadata,
+                stage: `${agentName}:started`
+            }
+        }
+        await this.messageBus.publish(`agent:${agentName}:tasks`, nextEnvelope)
     }
 }
 ```

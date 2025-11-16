@@ -1,4 +1,7 @@
 import { BaseAgent } from '@agentic-sdlc/base-agent';
+import { LoggerConfigService } from '@agentic-sdlc/logger-config';
+import { ConfigurationManager } from '@agentic-sdlc/config-manager';
+import { ServiceLocator } from '@agentic-sdlc/service-locator';
 import {
   IntegrationTask,
   IntegrationResult,
@@ -17,6 +20,7 @@ import { IntegrationTestRunnerService } from './services/integration-test-runner
 /**
  * Integration Agent
  * Handles branch merging, AI-powered conflict resolution, dependency updates, and integration testing
+ * Phase 2.2: Updated to accept DI services
  */
 export class IntegrationAgent extends BaseAgent {
   private gitService: GitService;
@@ -24,7 +28,13 @@ export class IntegrationAgent extends BaseAgent {
   private dependencyUpdater: DependencyUpdaterService;
   private testRunner: IntegrationTestRunnerService;
 
-  constructor(messageBus: any, repoPath: string = process.cwd()) {
+  constructor(
+    messageBus: any,
+    repoPath: string = process.cwd(),
+    loggerConfigService?: LoggerConfigService,
+    configurationManager?: ConfigurationManager,
+    serviceLocator?: ServiceLocator
+  ) {
     super(
       {
         type: 'integration',
@@ -36,7 +46,10 @@ export class IntegrationAgent extends BaseAgent {
           'integration_testing'
         ]
       },
-      messageBus
+      messageBus,
+      loggerConfigService,
+      configurationManager,
+      serviceLocator
     );
 
     this.gitService = new GitService(repoPath);
@@ -399,13 +412,31 @@ export class IntegrationAgent extends BaseAgent {
 
   /**
    * Execute method required by BaseAgent
-   * Wraps executeTask for compatibility
+   * SESSION #67: Updated to handle AgentEnvelope v2.0.0
    */
   async execute(task: any): Promise<any> {
-    const result = await this.executeTask(task);
+    // SESSION #67: Extract IntegrationTask from AgentEnvelope.payload
+    const integrationTask: IntegrationTask = {
+      task_id: task.task_id,
+      workflow_id: task.workflow_id,
+      agent_type: 'integration',
+      action: task.payload.action,
+      status: 'pending',
+      priority: task.priority === 'critical' ? 90 :
+                task.priority === 'high' ? 70 :
+                task.priority === 'medium' ? 50 : 30,
+      payload: task.payload,
+      version: '1.0.0',
+      timeout_ms: task.constraints?.timeout_ms || 120000,
+      retry_count: task.retry_count || 0,
+      max_retries: task.constraints?.max_retries || 3,
+      created_at: task.metadata?.created_at || new Date().toISOString()
+    };
+
+    const result = await this.executeTask(integrationTask);
     return {
-      task_id: task.task_id || this.generateTraceId(),
-      workflow_id: task.workflow_id || 'integration-workflow',
+      task_id: task.task_id,
+      workflow_id: task.workflow_id,
       status: result.result.success ? 'success' : 'failure',
       output: result,
       errors: result.result.success ? [] : ['Task execution failed']
