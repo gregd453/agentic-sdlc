@@ -57,3 +57,9 @@ export {
   type RequestId,
   type TraceContext
 } from './tracing';
+
+// Trace context auto-propagation
+export {
+  TraceContextManager,
+  createTraceContextMiddleware
+} from './trace-context';

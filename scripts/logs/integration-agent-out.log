@@ -17721,3 +17721,297 @@
 2025-11-15 20:39:17 -05:00:   consumerGroup: 'agent-integration-group',
 2025-11-15 20:39:17 -05:00:   consumerName: 'consumer-1763256015953'
 2025-11-15 20:39:17 -05:00: }
+2025-11-15 20:39:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:39:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:39:22 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:39:22 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:39:22 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:39:22 -05:00: }
+2025-11-15 20:39:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:39:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:39:28 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:39:28 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:39:28 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:39:28 -05:00: }
+2025-11-15 20:39:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:39:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:39:33 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:39:33 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:39:33 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:39:33 -05:00: }
+2025-11-15 20:39:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:39:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:39:38 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:39:38 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:39:38 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:39:38 -05:00: }
+2025-11-15 20:39:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:39:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:39:43 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:39:43 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:39:43 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:39:43 -05:00: }
+2025-11-15 20:39:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:39:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:39:48 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:39:48 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:39:48 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:39:48 -05:00: }
+2025-11-15 20:39:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:39:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:39:53 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:39:53 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:39:53 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:39:53 -05:00: }
+2025-11-15 20:39:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:39:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:39:58 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:39:58 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:39:58 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:39:58 -05:00: }
+2025-11-15 20:40:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:03 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:03 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:03 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:03 -05:00: }
+2025-11-15 20:40:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:08 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:08 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:08 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:08 -05:00: }
+2025-11-15 20:40:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:13 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:13 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:13 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:13 -05:00: }
+2025-11-15 20:40:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:18 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:18 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:18 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:18 -05:00: }
+2025-11-15 20:40:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:23 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:23 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:23 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:23 -05:00: }
+2025-11-15 20:40:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:28 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:28 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:28 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:28 -05:00: }
+2025-11-15 20:40:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:33 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:33 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:33 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:33 -05:00: }
+2025-11-15 20:40:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:38 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:38 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:38 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:38 -05:00: }
+2025-11-15 20:40:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:43 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:43 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:43 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:43 -05:00: }
+2025-11-15 20:40:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:48 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:48 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:48 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:48 -05:00: }
+2025-11-15 20:40:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:53 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:53 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:53 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:53 -05:00: }
+2025-11-15 20:40:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:40:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:40:58 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:40:58 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:40:58 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:40:58 -05:00: }
+2025-11-15 20:41:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:03 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:03 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:03 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:03 -05:00: }
+2025-11-15 20:41:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:08 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:08 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:08 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:08 -05:00: }
+2025-11-15 20:41:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:13 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:13 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:13 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:13 -05:00: }
+2025-11-15 20:41:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:18 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:18 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:18 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:18 -05:00: }
+2025-11-15 20:41:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:23 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:23 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:23 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:23 -05:00: }
+2025-11-15 20:41:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:28 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:28 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:28 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:28 -05:00: }
+2025-11-15 20:41:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:33 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:33 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:33 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:33 -05:00: }
+2025-11-15 20:41:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:38 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:38 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:38 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:38 -05:00: }
+2025-11-15 20:41:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:43 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:43 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:43 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:43 -05:00: }
+2025-11-15 20:41:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:48 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:48 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:48 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:48 -05:00: }
+2025-11-15 20:41:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:53 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:53 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:53 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:53 -05:00: }
+2025-11-15 20:41:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:41:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:41:58 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:41:58 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:41:58 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:41:58 -05:00: }
+2025-11-15 20:42:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:03 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:03 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:03 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:03 -05:00: }
+2025-11-15 20:42:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:08 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:08 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:08 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:08 -05:00: }
+2025-11-15 20:42:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:13 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:13 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:13 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:13 -05:00: }
+2025-11-15 20:42:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:18 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:18 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:18 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:18 -05:00: }
+2025-11-15 20:42:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:23 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:23 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:23 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:23 -05:00: }
+2025-11-15 20:42:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:28 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:28 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:28 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:28 -05:00: }
+2025-11-15 20:42:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:33 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:33 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:33 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:33 -05:00: }
+2025-11-15 20:42:39 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:39 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:39 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:39 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:39 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:39 -05:00: }
+2025-11-15 20:42:44 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:44 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:44 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:44 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:44 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:44 -05:00: }
+2025-11-15 20:42:49 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:49 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:49 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:49 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:49 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:49 -05:00: }
+2025-11-15 20:42:54 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:54 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:54 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:54 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:54 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:54 -05:00: }
+2025-11-15 20:42:59 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:42:59 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:42:59 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:42:59 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:42:59 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:42:59 -05:00: }
+2025-11-15 20:43:04 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:43:04 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:43:04 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:43:04 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:43:04 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:43:04 -05:00: }
+2025-11-15 20:43:09 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:43:09 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:43:09 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:43:09 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:43:09 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:43:09 -05:00: }
+2025-11-15 20:43:14 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:43:14 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:43:14 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:43:14 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:43:14 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:43:14 -05:00: }
+2025-11-15 20:43:19 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:43:19 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:43:19 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:43:19 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:43:19 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:43:19 -05:00: }
+2025-11-15 20:43:24 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-15 20:43:24 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-15 20:43:24 -05:00:   streamKey: 'stream:agent:integration:tasks',
+2025-11-15 20:43:24 -05:00:   consumerGroup: 'agent-integration-group',
+2025-11-15 20:43:24 -05:00:   consumerName: 'consumer-1763256015953'
+2025-11-15 20:43:24 -05:00: }

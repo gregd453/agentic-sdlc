@@ -18,21 +18,34 @@ import {
  * 2. Configuration file (YAML/JSON)
  * 3. Environment variables
  * 4. Runtime overrides (future)
+ *
+ * Default Values:
+ * - Agent timeout: 30000ms (30 seconds)
+ * - Agent max retries: 3 attempts
+ * - Log level: info (recommended for production)
+ * - Trace enabled: true (for debugging distributed workflows)
+ * - Pretty print: true (human-readable logs in development)
  */
 export class ConfigurationManager {
   private config: AppConfig = { ...DEFAULT_APP_CONFIG };
   private readonly logger: any;
+  private readonly validateOnLoad: boolean;
 
   /**
-   * Constructor with optional logger injection
+   * Constructor with optional logger injection and validation-on-load flag
    * If no logger provided, uses console as fallback
+   *
+   * @param injectedLogger Optional logger instance for debug output
+   * @param validateOnLoad If true, throws on any validation errors during initialization
    */
-  constructor(injectedLogger?: any) {
+  constructor(injectedLogger?: any, validateOnLoad: boolean = true) {
     this.logger = injectedLogger || console;
+    this.validateOnLoad = validateOnLoad;
   }
 
   /**
    * Initialize configuration from file and environment
+   * @throws ConfigurationError if validateOnLoad is true and validation fails
    */
   async initialize(configPath?: string): Promise<void> {
     try {
@@ -52,10 +65,15 @@ export class ConfigurationManager {
 
       this.logger.log('✅ [ConfigurationManager] Configuration loaded and validated');
     } catch (error) {
-      throw new ConfigurationError(
-        `Failed to initialize configuration: ${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error : undefined
-      );
+      if (this.validateOnLoad || error instanceof ConfigurationError) {
+        throw new ConfigurationError(
+          `Failed to initialize configuration: ${error instanceof Error ? error.message : String(error)}`,
+          error instanceof Error ? error : undefined
+        );
+      }
+
+      // Log warning but don't throw if validateOnLoad is false
+      this.logger.warn('⚠️ [ConfigurationManager] Configuration validation failed (validateOnLoad=false):', error);
     }
   }
 

@@ -25,3 +25,14 @@ export {
   ServiceDefinitionSchema,
   ServiceLocatorConfigSchema
 } from './service-schema';
+
+export {
+  ServiceSelector,
+  HealthStatus,
+  SelectorError
+} from './service-selector';
+
+export type {
+  ServiceInstance,
+  SelectorConfig
+} from './service-selector';
