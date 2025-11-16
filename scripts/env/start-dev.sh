@@ -190,6 +190,33 @@ for i in {1..30}; do
   sleep 1
 done
 
+# Check and stop analytics service if running
+echo "  Checking Analytics Service..."
+if docker ps | grep -q "agentic-sdlc-analytics"; then
+  echo -e "  ${YELLOW}→${NC} Analytics service already running, stopping..."
+  docker-compose -f "$DOCKER_COMPOSE_FILE" down analytics-service 2>/dev/null || true
+  sleep 2
+fi
+
+# Start analytics service
+echo "  Starting Analytics Service on :3002..."
+if docker-compose -f "$DOCKER_COMPOSE_FILE" up -d analytics-service; then
+  for i in {1..30}; do
+    if curl -s http://localhost:3002/health 2>/dev/null | grep -q "healthy"; then
+      echo -e "  ${GREEN}✓${NC} Analytics Service ready on http://localhost:3002"
+      break
+    fi
+    if [ $i -eq 30 ]; then
+      echo -e "  ${YELLOW}!${NC} Analytics Service may not be ready"
+      docker logs agentic-sdlc-analytics 2>&1 | tail -5
+      break
+    fi
+    sleep 1
+  done
+else
+  echo -e "  ${YELLOW}!${NC} Analytics Service startup non-critical"
+fi
+
 # Give agents a moment to initialize
 sleep 2
 
@@ -202,7 +229,8 @@ echo "Services running (managed by PM2):"
 echo -e "  ${BLUE}PostgreSQL${NC}       → localhost:5433"
 echo -e "  ${BLUE}Redis${NC}            → localhost:6380"
 echo -e "  ${BLUE}Orchestrator${NC}     → http://localhost:3000"
-echo -e "  ${BLUE}Dashboard${NC}        → ${GREEN}http://localhost:3001${NC} ${YELLOW}← NEW!${NC}"
+echo -e "  ${BLUE}Dashboard${NC}        → http://localhost:3001"
+echo -e "  ${BLUE}Analytics Service${NC} → http://localhost:3002"
 echo -e "  ${BLUE}Scaffold Agent${NC}   → listening for tasks"
 echo -e "  ${BLUE}Validation Agent${NC} → listening for tasks"
 echo -e "  ${BLUE}E2E Agent${NC}        → listening for tasks"
@@ -217,7 +245,9 @@ echo -e "  ${BLUE}pnpm pm2:monit${NC}   → Live monitoring dashboard"
 echo ""
 echo "Quick Links:"
 echo -e "  ${BLUE}Orchestrator API${NC} → http://localhost:3000/api/v1/health"
-echo -e "  ${BLUE}Dashboard UI${NC}     → ${GREEN}http://localhost:3001${NC}"
+echo -e "  ${BLUE}Dashboard UI${NC}     → http://localhost:3001"
+echo -e "  ${BLUE}Analytics API${NC}    → http://localhost:3002/health"
+echo -e "  ${BLUE}Analytics Docs${NC}   → http://localhost:3002/docs"
 echo ""
 echo "Logs directory: $LOGS_DIR"
 echo ""
