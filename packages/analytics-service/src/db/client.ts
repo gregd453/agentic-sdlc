@@ -1,15 +1,18 @@
-import { PrismaClient } from '@prisma/client'
 import { logger } from '../utils/logger'
 
 // Singleton Prisma Client instance
-let prismaClient: PrismaClient | null = null
+let prismaClient: any = null
 
 /**
  * Get or create Prisma Client instance
  * Ensures only one instance is created across the application
+ * Uses dynamic require to delay @prisma/client import until needed
  */
-export function getPrismaClient(): PrismaClient {
+export function getPrismaClient(): any {
   if (!prismaClient) {
+    // Dynamically require Prisma only when needed, not at module load time
+    // This allows Prisma client to be generated before it's first used
+    const { PrismaClient } = require('@prisma/client')
     prismaClient = new PrismaClient()
 
     logger.info('Prisma Client initialized')
