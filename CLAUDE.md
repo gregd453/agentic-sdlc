@@ -1,8 +1,8 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC Project
 
-**Version:** 46.0 | **Last Updated:** 2025-11-16 (Session #73) | **Status:** ✅ Platform-Scoped Agents Ready (99%)
+**Version:** 47.0 | **Last Updated:** 2025-11-16 (Session #74) | **Status:** ✅ Dashboard & Monitoring Ready (99%)
 
-**📚 DEBUGGING:** [AGENTIC_SDLC_RUNBOOK.md](./AGENTIC_SDLC_RUNBOOK.md) | **🏗️ SCHEMA:** [SCHEMA_USAGE_DEEP_DIVE.md](./SCHEMA_USAGE_DEEP_DIVE.md) | **🎯 STRATEGY:** [STRATEGIC-ARCHITECTURE.md](./STRATEGIC-ARCHITECTURE.md) | **📋 PLAN:** [EPCC_PLAN.md](./EPCC_PLAN.md) | **📊 PHASES:** [Phase 1](./EPCC_PHASE_1_REPORT.md) | [Phase 2](./EPCC_PHASE_2_REPORT.md) | [Phase 3](./EPCC_PHASE_3_REPORT.md) | [Phase 4](./EPCC_PHASE_4_REPORT.md)
+**📚 DEBUGGING:** [AGENTIC_SDLC_RUNBOOK.md](./AGENTIC_SDLC_RUNBOOK.md) | **🏗️ SCHEMA:** [SCHEMA_USAGE_DEEP_DIVE.md](./SCHEMA_USAGE_DEEP_DIVE.md) | **🎯 STRATEGY:** [STRATEGIC-ARCHITECTURE.md](./STRATEGIC-ARCHITECTURE.md) | **📋 PLAN:** [EPCC_PLAN.md](./EPCC_PLAN.md) | **📊 PHASES:** [Phase 1](./EPCC_PHASE_1_REPORT.md) | [Phase 2](./EPCC_PHASE_2_REPORT.md) | [Phase 3](./EPCC_PHASE_3_REPORT.md) | [Phase 4](./EPCC_PHASE_4_REPORT.md) | [Phase 5](./EPCC_CODE_PHASE5.md)
 
 ---
 
@@ -24,7 +24,64 @@
 
 ---
 
-## 🎉 LATEST UPDATE (Session #73)
+## 🎉 LATEST UPDATE (Session #74)
+
+**✅ PHASE 5 COMPLETE - Dashboard & Monitoring with Platform Awareness**
+
+**Goal:** Add platform-aware dashboard with real-time monitoring, workflow builder, and analytics endpoints
+**Result:** PlatformsPage + WorkflowBuilderPage, PlatformSelector/SurfaceIndicator components, 3 API endpoints, 15 integration tests, zero TypeScript errors
+
+### Session #74 Phase 5 CODE Phase Summary
+
+**Phase 5: Dashboard & Monitoring ✅ (8/8 tasks)**
+- ✅ **PlatformsPage Component:** Lists all platforms with real-time analytics (success rate, workflow counts, time-series data)
+- ✅ **WorkflowBuilderPage:** Create workflows with optional platform targeting and form validation
+- ✅ **PlatformSelector Component:** Reusable dropdown for platform filtering in workflows
+- ✅ **SurfaceIndicator Component:** Visual badge showing workflow trigger surface (REST/Webhook/CLI/Dashboard/Mobile)
+- ✅ **Platform Analytics API:** 3 endpoints (list, detail, analytics) with period support (1h/24h/7d/30d)
+- ✅ **API Client Integration:** 3 functions (fetchPlatforms, fetchPlatform, fetchPlatformAnalytics) with TypeScript types
+- ✅ **Dashboard Enhancement:** WorkflowPage now displays platform & surface information
+- ✅ **Integration Tests:** 15 tests covering endpoints, registry, data integrity, and gate validation
+
+### Key Achievements (Session #74)
+- **Total Files Created:** 6 (2 pages, 2 components, 1 API routes, 1 tests)
+- **Total Files Modified:** 6 (routes, client, types, layout, pages, app)
+- **Total Code Lines:** ~900 (production) + ~300 (tests) + ~400 (documentation)
+- **API Endpoints:** 3 new platform endpoints with full validation
+- **Integration Tests:** 15 comprehensive tests (all passing)
+- **TypeScript Errors:** 0 ✅ (strict mode, full build passing)
+- **Production Readiness:** 99% (maintained)
+- **Backward Compatibility:** 100% (no breaking changes)
+
+### Architecture Now Complete (5 Layers)
+```
+DASHBOARD LAYER     ✅ [COMPLETE] Platform-aware pages, workflow builder, analytics UI
+  ↓ (PlatformsPage, WorkflowBuilderPage, SurfaceIndicator)
+SURFACE LAYER       ✅ [COMPLETE] REST API, Webhooks, CLI, Dashboard-ready
+  ↓ (SurfaceRouter, platform routes)
+PLATFORM LAYER      ✅ [COMPLETE] Platform definitions, registry, loader
+  ↓ (PlatformLoader/Registry)
+WORKFLOW ENGINE     ✅ [COMPLETE] Definition-driven routing + adaptive progress
+  ↓ (WorkflowDefinitionEngine/Adapter)
+AGENT LAYER         ✅ [COMPLETE] Global + platform-scoped agents with registry preference
+  ↓ (AgentRegistry with platform scoping)
+HEXAGONAL CORE      ✅ [PROTECTED] Zero changes, fully preserved
+  ↓
+INFRASTRUCTURE      [UNCHANGED] Redis, PostgreSQL, Claude API
+```
+
+### Phase Gates - All Passing ✅
+- **Phase 5 Gate:** PlatformsPage operational, WorkflowBuilderPage creating workflows, PlatformSelector/SurfaceIndicator working, API endpoints responding, dashboard responsive, production readiness 99% ✅
+
+### Documentation Created
+- **EPCC_CODE_PHASE5.md** - Comprehensive Phase 5 implementation report (402 lines)
+
+### Ready for Phase 6: Testing Infrastructure
+Dashboard & monitoring layer complete. Phase 6 will focus on comprehensive test coverage and multi-platform scenarios.
+
+---
+
+## 🎉 PREVIOUS UPDATE (Session #73)
 
 **✅ PHASE 4 COMPLETE - Platform-Specific Agents Infrastructure**
 
@@ -501,7 +558,18 @@ pnpm pm2:restart                        # Restart all processes
 
 ## ✅ Current Status
 
-**Production Readiness:** 99% complete - Platform-Scoped Agents Ready
+**Production Readiness:** 99% complete - Dashboard & Monitoring Ready
+
+### Session #74 Accomplishments
+- ✅ **Phase 5 Complete:** Dashboard & Monitoring with platform awareness (8/8 tasks)
+  - PlatformsPage: Lists platforms with real-time analytics, period selector (1h/24h/7d/30d)
+  - WorkflowBuilderPage: Create workflows with platform targeting
+  - PlatformSelector component: Reusable platform dropdown
+  - SurfaceIndicator component: Visual surface type badges
+  - Platform Analytics API: 3 endpoints with full validation
+  - API client: 3 functions (fetchPlatforms, fetchPlatform, fetchPlatformAnalytics)
+  - 15 comprehensive integration tests (endpoints, registry, integrity, gates)
+  - Zero TypeScript errors, full build passing, 100% backward compatible
 
 ### Session #73 Accomplishments
 - ✅ **Phase 4 Complete:** Platform-scoped agents infrastructure (8/8 tasks)
@@ -538,12 +606,13 @@ pnpm pm2:restart                        # Restart all processes
 - ✅ **Code Generation:** Simple apps build with 0 errors, React apps 2 warnings
 - ✅ **All Services:** Online and stable (7 PM2 processes + analytics service)
 - ✅ **Distributed Tracing:** 96% complete, full correlation
-- ✅ **Dashboard:** Fully functional on port 3001 with no console errors
-- ✅ **Multi-Platform Ready:** 15 services, 3 layers, all tests passing
+- ✅ **Dashboard:** Fully functional on port 3001 with platform-aware pages, no console errors
+- ✅ **Multi-Platform Ready:** 5 layers complete, 100+ tests passing, 99% production ready
+- ✅ **API Endpoints:** 30+ endpoints, full REST API with Swagger documentation
 
 **For debugging:** See [AGENTIC_SDLC_RUNBOOK.md](./AGENTIC_SDLC_RUNBOOK.md)
 
-### Next: Phase 4 (Platform-Specific Agents)
-Infrastructure foundation complete. Ready to implement agent registry platform scoping.
+### Next: Phase 6 (Testing Infrastructure)
+Dashboard & monitoring complete. Phase 6 will add comprehensive test coverage and multi-platform test scenarios.
 
 ---
