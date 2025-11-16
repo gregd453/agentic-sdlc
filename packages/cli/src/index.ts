@@ -468,6 +468,56 @@ async function main() {
     })
 
   // ========================================
+  // COMMAND ALIASES (user-friendly shortcuts)
+  // ========================================
+
+  // Register command aliases (note: aliases defined in package.json bin scripts)
+  // Users can use: agentic-sdlc-up, agentic-sdlc-down, agentic-sdlc-reload
+  // Or use: agentic-sdlc start, agentic-sdlc stop, agentic-sdlc restart
+
+  // ========================================
+  // HELP COMMANDS
+  // ========================================
+
+  program
+    .command('help')
+    .description('Show help information')
+    .action(() => {
+      program.outputHelp()
+    })
+
+  program.on('--help', () => {
+    console.log('')
+    console.log(chalk.blue('📚 Examples:'))
+    console.log('')
+    console.log(chalk.green('  Environment Management:'))
+    console.log('    agentic-sdlc start                Start all services')
+    console.log('    agentic-sdlc stop                 Stop services gracefully')
+    console.log('    agentic-sdlc status --watch       Watch status in real-time')
+    console.log('    agentic-sdlc reset --confirm      Reset environment')
+    console.log('')
+    console.log(chalk.green('  Health & Diagnostics:'))
+    console.log('    agentic-sdlc health               Full system health check')
+    console.log('    agentic-sdlc health:services      Check services only')
+    console.log('    agentic-sdlc health --json        JSON output for automation')
+    console.log('')
+    console.log(chalk.green('  Logs & Monitoring:'))
+    console.log('    agentic-sdlc logs --grep ERROR    Search logs for errors')
+    console.log('    agentic-sdlc logs --follow        Stream logs in real-time')
+    console.log('    agentic-sdlc metrics --period 24h Show 24-hour metrics')
+    console.log('')
+    console.log(chalk.green('  Global Options:'))
+    console.log('    -v, --verbose                     Enable verbose output')
+    console.log('    -j, --json                        Output as JSON')
+    console.log('    -y, --yaml                        Output as YAML')
+    console.log('    -h, --help                        Show this help')
+    console.log('')
+    console.log(chalk.gray('  For help on a specific command:'))
+    console.log('    agentic-sdlc <command> --help')
+    console.log('')
+  })
+
+  // ========================================
   // ERROR HANDLING & PARSING
   // ========================================
 
@@ -475,16 +525,6 @@ async function main() {
     console.error(chalk.red('❌ Invalid command'))
     console.log(chalk.gray('Run "agentic-sdlc --help" for usage information'))
     process.exit(EXIT_CODES.INVALID_USAGE)
-  })
-
-  program.on('--help', () => {
-    console.log('')
-    console.log(chalk.blue('Examples:'))
-    console.log('  agentic-sdlc start                  Start all services')
-    console.log('  agentic-sdlc status --json          Show status as JSON')
-    console.log('  agentic-sdlc health --verbose       Detailed health check')
-    console.log('  agentic-sdlc test --tier 1          Run Tier 1 tests')
-    console.log('')
   })
 
   // ========================================
