@@ -145,7 +145,7 @@ describe('Phase 6: Gate Validation Tests', () => {
       expect(platforms.length).toBeGreaterThan(0)
 
       // Create workflow on each platform
-      const workflowPromises = platforms.map(platform =>
+      const workflowPromises = platforms.map((platform: any) =>
         app.inject({
           method: 'POST' as const,
           url: '/api/v1/workflows',
@@ -345,7 +345,7 @@ describe('Phase 6: Gate Validation Tests', () => {
       expect(platforms.length).toBeGreaterThan(0)
 
       // Create workflows on different platforms
-      const workflowPromises = platforms.slice(0, Math.min(3, platforms.length)).map(p =>
+      const workflowPromises = platforms.slice(0, Math.min(3, platforms.length)).map((p: any) =>
         app.inject({
           method: 'POST' as const,
           url: '/api/v1/workflows',

@@ -10,12 +10,15 @@ export interface IEnvironmentService {
   reset(): Promise<void>
 }
 
+import type { HealthCheckResult } from './commands.js'
+
 export interface IHealthService {
-  check(): Promise<Record<string, unknown>>
-  checkServices(): Promise<Record<string, unknown>>
+  check(verbose?: boolean): Promise<HealthCheckResult>
+  checkInfrastructure(): Promise<Record<string, unknown>>
   checkDatabase(): Promise<Record<string, unknown>>
+  checkCache(): Promise<Record<string, unknown>>
+  checkServices(): Promise<Record<string, unknown>>
   checkAgents(): Promise<Record<string, unknown>>
-  waitUntilReady(timeout?: number): Promise<void>
 }
 
 export interface ILogsService {

@@ -7,8 +7,11 @@
 
 import { Command } from 'commander'
 import chalk from 'chalk'
-import { logger } from './utils/index.js'
+import { logger, shell } from './utils/index.js'
 import { EXIT_CODES } from './config/defaults.js'
+import { EnvironmentService, HealthService, LogsService } from './services/index.js'
+
+const PROJECT_ROOT = process.cwd()
 
 /**
  * Main CLI application
@@ -45,9 +48,22 @@ async function main() {
     .option('--services <services>', 'Specific services to start (comma-separated)')
     .option('--skip-build', 'Skip build step')
     .option('--wait <timeout>', 'Wait timeout in seconds', '120')
-    .action(() => {
-      console.log(chalk.blue('Command: start (will be implemented in Task 3)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async options => {
+      try {
+        const waitTimeout = parseInt(options.wait, 10)
+        const service = new EnvironmentService(
+          program.opts().verbose || false,
+          options.skipBuild || false,
+          false,
+          waitTimeout
+        )
+        await service.start()
+        process.exit(EXIT_CODES.SUCCESS)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Start failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   program
@@ -55,18 +71,33 @@ async function main() {
     .description('Stop the environment')
     .option('--force', 'Force stop without graceful shutdown')
     .option('--services <services>', 'Specific services to stop')
-    .action(() => {
-      console.log(chalk.blue('Command: stop (will be implemented in Task 4)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async options => {
+      try {
+        const service = new EnvironmentService(program.opts().verbose || false)
+        await service.stop(options.force || false)
+        process.exit(EXIT_CODES.SUCCESS)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Stop failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   program
     .command('restart [service]')
     .description('Restart services')
     .option('--wait <timeout>', 'Wait timeout in seconds', '120')
-    .action(() => {
-      console.log(chalk.blue('Command: restart (will be implemented in Task 4)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async (service, options) => {
+      try {
+        const waitTimeout = parseInt(options.wait, 10)
+        const envService = new EnvironmentService(program.opts().verbose || false, false, false, waitTimeout)
+        await envService.restart(service || undefined)
+        process.exit(EXIT_CODES.SUCCESS)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Restart failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   program
@@ -74,18 +105,58 @@ async function main() {
     .description('Show environment status')
     .option('--watch', 'Watch for changes')
     .option('--interval <ms>', 'Interval in milliseconds', '1000')
-    .action(() => {
-      console.log(chalk.blue('Command: status (will be implemented in Task 5)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async options => {
+      try {
+        const service = new EnvironmentService(program.opts().verbose || false)
+        const status = await service.status()
+
+        if (program.opts().json) {
+          console.log(JSON.stringify(status, null, 2))
+        } else {
+          console.log(chalk.blue('\n📊 Environment Status:\n'))
+          console.log(JSON.stringify(status, null, 2))
+        }
+
+        if (options.watch) {
+          const interval = parseInt(options.interval, 10)
+          setInterval(async () => {
+            const newStatus = await service.status()
+            console.clear()
+            console.log(chalk.blue('\n📊 Environment Status (auto-refreshing):\n'))
+            console.log(JSON.stringify(newStatus, null, 2))
+          }, interval)
+        }
+
+        process.exit(EXIT_CODES.SUCCESS)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Status check failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   program
     .command('reset')
     .description('Reset environment (⚠️ data loss!)')
     .option('--confirm', 'Skip confirmation prompt')
-    .action(() => {
-      console.log(chalk.blue('Command: reset (will be implemented in Task 5)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async options => {
+      try {
+        if (!options.confirm) {
+          console.log(chalk.red('⚠️  WARNING: This will DELETE all data in the environment!'))
+          console.log(chalk.red('⚠️  Databases will be reset, all workflows will be lost.'))
+          console.log('')
+          console.log('Run with --confirm to proceed')
+          process.exit(EXIT_CODES.GENERIC_ERROR)
+        }
+
+        const service = new EnvironmentService(program.opts().verbose || false)
+        await service.reset()
+        process.exit(EXIT_CODES.SUCCESS)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Reset failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   // ========================================
@@ -97,33 +168,99 @@ async function main() {
     .description('Check system health')
     .option('--verbose', 'Show detailed information')
     .option('--wait <timeout>', 'Wait for health check (seconds)', '60')
-    .action(() => {
-      console.log(chalk.blue('Command: health (will be implemented in Task 5)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async () => {
+      try {
+        const service = new HealthService()
+        const result = await service.check()
+
+        if (program.opts().json) {
+          console.log(JSON.stringify(result, null, 2))
+        } else {
+          console.log('')
+          console.log(chalk.blue('📋 System Health Report'))
+          console.log(chalk.gray(`Overall Status: ${result.summary === 'healthy' ? chalk.green('✓ HEALTHY') : chalk.yellow('⚠ DEGRADED')}`))
+          console.log('')
+          console.log(JSON.stringify(result, null, 2))
+        }
+
+        const exitCode = result.summary === 'healthy' ? EXIT_CODES.SUCCESS : 1
+        process.exit(exitCode)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Health check failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   program
     .command('health:services')
     .description('Check service health only')
-    .action(() => {
-      console.log(chalk.blue('Command: health:services (will be implemented in Task 5)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async () => {
+      try {
+        const service = new HealthService()
+        const result = await service.checkServices()
+
+        if (program.opts().json) {
+          console.log(JSON.stringify(result, null, 2))
+        } else {
+          console.log(chalk.blue('\n🔧 Service Health:\n'))
+          console.log(JSON.stringify(result, null, 2))
+        }
+
+        process.exit(EXIT_CODES.SUCCESS)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Service health check failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   program
     .command('health:database')
     .description('Check database connectivity')
-    .action(() => {
-      console.log(chalk.blue('Command: health:database (will be implemented in Task 5)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async () => {
+      try {
+        const service = new HealthService()
+        const result = await service.checkDatabase()
+
+        if (program.opts().json) {
+          console.log(JSON.stringify(result, null, 2))
+        } else {
+          console.log(chalk.blue('\n💾 Database Health:\n'))
+          console.log(JSON.stringify(result, null, 2))
+        }
+
+        const healthy = (result as any).healthy
+        process.exit(healthy ? EXIT_CODES.SUCCESS : 1)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Database health check failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   program
     .command('health:agents')
     .description('Check agent registration and health')
-    .action(() => {
-      console.log(chalk.blue('Command: health:agents (will be implemented in Task 5)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async () => {
+      try {
+        const service = new HealthService()
+        const result = await service.checkAgents()
+
+        if (program.opts().json) {
+          console.log(JSON.stringify(result, null, 2))
+        } else {
+          console.log(chalk.blue('\n🤖 Agent Health:\n'))
+          console.log(JSON.stringify(result, null, 2))
+        }
+
+        const healthy = (result as any).healthy
+        process.exit(healthy ? EXIT_CODES.SUCCESS : 1)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Agent health check failed: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   // ========================================
@@ -137,9 +274,38 @@ async function main() {
     .option('--follow', 'Stream logs continuously')
     .option('--lines <number>', 'Number of lines to show', '100')
     .option('--grep <pattern>', 'Filter by pattern')
-    .action(() => {
-      console.log(chalk.blue('Command: logs (will be implemented in Task 6)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async options => {
+      try {
+        const service = new LogsService()
+        const lines = parseInt(options.lines, 10)
+
+        let result: string[]
+
+        if (options.grep) {
+          result = await service.grep(options.grep, {
+            service: options.service,
+            lines,
+          })
+        } else {
+          result = await service.tail({
+            service: options.service,
+            lines,
+          })
+        }
+
+        if (program.opts().json) {
+          console.log(JSON.stringify({ logs: result }, null, 2))
+        } else {
+          console.log(chalk.blue(`\n📋 Logs${options.service ? ` (${options.service})` : ' (all services)'}:\n`))
+          result.forEach(line => console.log(line))
+        }
+
+        process.exit(EXIT_CODES.SUCCESS)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Failed to retrieve logs: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   program
@@ -147,9 +313,26 @@ async function main() {
     .description('Show system metrics')
     .option('--service <service>', 'Filter by service')
     .option('--period <period>', 'Time period (1h, 24h, 7d)', '1h')
-    .action(() => {
-      console.log(chalk.blue('Command: metrics (will be implemented in Task 14)'))
-      process.exit(EXIT_CODES.GENERIC_ERROR)
+    .action(async options => {
+      try {
+        const result = await shell.exec('pnpm pm2:monit', {
+          cwd: PROJECT_ROOT,
+          ignoreErrors: true,
+        })
+
+        if (program.opts().json) {
+          console.log(JSON.stringify({ metrics: result.stdout }, null, 2))
+        } else {
+          console.log(chalk.blue(`\n📊 System Metrics (${options.period}):\n`))
+          console.log(result.stdout)
+        }
+
+        process.exit(EXIT_CODES.SUCCESS)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logger.error(`Failed to retrieve metrics: ${message}`)
+        process.exit(EXIT_CODES.GENERIC_ERROR)
+      }
     })
 
   // ========================================
