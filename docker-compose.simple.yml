@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: agentic-postgres
+    environment:
+      POSTGRES_DB: agentic_sdlc
+      POSTGRES_USER: agentic
+      POSTGRES_PASSWORD: agentic_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentic"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agentic-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: agentic-redis
+    command: redis-server --appendonly yes --requirepass agentic_password
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "agentic_password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agentic-network
+
+  dashboard:
+    image: agentic-sdlc-dashboard:latest
+    container_name: agentic-dashboard
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - redis
+    networks:
+      - agentic-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  agentic-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:

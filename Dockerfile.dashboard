@@ -1,0 +1,55 @@
+# Multi-stage build for Dashboard
+# Stage 1: Build
+FROM node:20.11.0-alpine AS builder
+
+# Install pnpm
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+# Copy all package.json files for dependency resolution
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Copy shared packages needed for dashboard
+COPY packages/dashboard/ ./packages/dashboard/
+COPY packages/shared/ ./packages/shared/
+
+# Install all dependencies (including dev for build)
+RUN pnpm install --no-frozen-lockfile
+
+# Copy remaining source code
+COPY . .
+
+# Build dashboard only
+RUN pnpm --filter @agentic-sdlc/dashboard build
+
+# Stage 2: Production image
+FROM node:20.11.0-alpine AS runner
+
+# Install dumb-init and lightweight http server
+RUN apk add --no-cache dumb-init python3
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S dashboard -u 1001
+
+WORKDIR /app
+
+# Copy built dashboard from builder
+COPY --from=builder --chown=dashboard:nodejs /app/packages/dashboard/dist ./dist
+
+# Switch to non-root user
+USER dashboard
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:3001/ || exit 1
+
+# Start with dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Serve the dashboard static files
+CMD ["python3", "-m", "http.server", "3001", "--directory", "/app/dist"]

@@ -1,8 +1,0 @@
-2025-11-15 16:52:52 -05:00: 4:52:52 PM [vite] http proxy error: /api/v1/stats/overview
-2025-11-15 16:52:52 -05:00: AggregateError [ECONNREFUSED]: 
-2025-11-15 16:52:52 -05:00:     at internalConnectMultiple (node:net:1134:18)
-2025-11-15 16:52:52 -05:00:     at afterConnectMultiple (node:net:1715:7)
-2025-11-15 16:52:52 -05:00: 4:52:52 PM [vite] http proxy error: /api/v1/workflows?status=running
-2025-11-15 16:52:52 -05:00: AggregateError [ECONNREFUSED]: 
-2025-11-15 16:52:52 -05:00:     at internalConnectMultiple (node:net:1134:18)
-2025-11-15 16:52:52 -05:00:     at afterConnectMultiple (node:net:1715:7)

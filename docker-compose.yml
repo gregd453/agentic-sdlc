@@ -64,6 +64,29 @@ services:
       - agentic-network
     restart: unless-stopped
 
+  analytics-service:
+    build:
+      context: .
+      dockerfile: packages/analytics-service/Dockerfile
+    container_name: agentic-sdlc-analytics
+    ports:
+      - "3002:3001"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://agentic:agentic_dev@postgres:5432/agentic_sdlc
+      - PORT=3001
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./packages/analytics-service:/app/packages/analytics-service
+      - /app/packages/analytics-service/node_modules
+      - /app/packages/analytics-service/dist
+    networks:
+      - agentic-network
+    restart: unless-stopped
+
   dashboard:
     build:
       context: ./packages/dashboard

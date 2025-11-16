@@ -1,14 +1,18 @@
 import { Link } from 'react-router-dom'
-import { useStats } from '../hooks/useStats'
+import { PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { useStats, useTimeSeries } from '../hooks/useStats'
 import { useWorkflows } from '../hooks/useWorkflows'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
+import ChartContainer from '../components/Common/ChartContainer'
 import { formatRelativeTime } from '../utils/formatters'
+import { statusColors } from '../utils/chartColorMap'
 
 export default function Dashboard() {
   const { data: stats, isLoading: statsLoading, error: statsError } = useStats()
   const { data: runningWorkflows, isLoading: workflowsLoading } = useWorkflows({ status: 'running' })
+  const { data: timeSeriesData, isLoading: timeSeriesLoading } = useTimeSeries('24h')
 
   if (statsLoading) {
     return <LoadingSpinner size="lg" className="py-12" />
@@ -19,6 +23,20 @@ export default function Dashboard() {
   }
 
   const overview = stats?.overview
+
+  // Prepare status distribution data for pie chart
+  const statusDistributionData = overview ? [
+    { name: 'Completed', value: overview.completed_workflows },
+    { name: 'Running', value: overview.running_workflows },
+    { name: 'Failed', value: overview.failed_workflows },
+    { name: 'Paused', value: overview.paused_workflows || 0 },
+  ].filter(item => item.value > 0) : []
+
+  // Prepare throughput data for area chart
+  const throughputData = timeSeriesData ? timeSeriesData.map((point: any) => ({
+    timestamp: new Date(point.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    count: point.count || 0
+  })) : []
 
   return (
     <div>
@@ -46,6 +64,69 @@ export default function Dashboard() {
           value={overview?.failed_workflows || 0}
           color="red"
         />
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Status Distribution Chart */}
+        <ChartContainer
+          title="Workflow Status Distribution"
+          subtitle="Current distribution of workflow statuses"
+          height={300}
+          isLoading={statsLoading}
+        >
+          {statusDistributionData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={statusDistributionData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {statusDistributionData.map((entry: any) => (
+                    <Cell key={`cell-${entry.name}`} fill={statusColors[entry.name.toLowerCase() as keyof typeof statusColors] || '#gray'} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">No workflow data available</div>
+          )}
+        </ChartContainer>
+
+        {/* Workflow Throughput Chart */}
+        <ChartContainer
+          title="Workflow Throughput (24h)"
+          subtitle="Workflow creation rate over the last 24 hours"
+          height={300}
+          isLoading={timeSeriesLoading}
+        >
+          {throughputData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={throughputData}>
+                <defs>
+                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="timestamp" />
+                <YAxis />
+                <Tooltip />
+                <Area type="monotone" dataKey="count" stroke="#3b82f6" fillOpacity={1} fill="url(#colorCount)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">No time series data available</div>
+          )}
+        </ChartContainer>
       </div>
 
       {/* Active Workflows Table */}

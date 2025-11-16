@@ -31,3 +31,47 @@ export function formatPercentage(value: number): string {
 export function truncateId(id: string, length: number = 8): string {
   return id.substring(0, length)
 }
+
+/**
+ * Calculate progress percentage based on workflow stage
+ * Each stage completed = 15% progress (7 stages max = 105%, capped at 100%)
+ */
+export function calculateProgressFromStage(
+  stage: string,
+  workflowType: string = 'app'
+): number {
+  // Define stage sequences for each workflow type
+  const stageSequences: Record<string, string[]> = {
+    app: [
+      'initialization',
+      'scaffolding',
+      'validation',
+      'e2e_testing',
+      'integration',
+      'deployment',
+      'monitoring',
+    ],
+    feature: [
+      'initialization',
+      'scaffolding',
+      'validation',
+      'e2e_testing',
+    ],
+    bugfix: [
+      'initialization',
+      'validation',
+      'e2e_testing',
+    ],
+  }
+
+  const stages = stageSequences[workflowType] || stageSequences.app
+  const stageIndex = stages.indexOf(stage)
+
+  if (stageIndex === -1) {
+    return 0 // Unknown stage
+  }
+
+  // Each completed stage = 15%, current stage gets its credit
+  // (index 0 = 15%, index 1 = 30%, index 2 = 45%, etc.)
+  return Math.min(100, (stageIndex + 1) * 15)
+}

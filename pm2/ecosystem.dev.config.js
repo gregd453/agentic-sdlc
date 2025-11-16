@@ -232,6 +232,11 @@ module.exports = {
     // ==========================================
     // DASHBOARD
     // ==========================================
+    // NOTE: Dashboard is now managed via Docker only (docker-compose.simple.yml)
+    // This avoids conflicts with dual PM2/Docker instances on port 3001.
+    // To run dashboard dev server: `docker-compose -f docker-compose.simple.yml up -d dashboard`
+    // COMMENTED OUT TO PREVENT DUPLICATE PORT BINDING:
+    /*
     {
       name: 'dashboard',
       script: 'pnpm',
@@ -263,5 +268,6 @@ module.exports = {
       listen_timeout: 10000,
       kill_timeout: 5000
     }
+    */
   ]
 };

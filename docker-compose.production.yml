@@ -245,6 +245,29 @@ services:
     networks:
       - agentic-network
 
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: agentic-dashboard-prod
+    restart: unless-stopped
+    depends_on:
+      orchestrator:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      VITE_API_URL: http://orchestrator:3000
+    ports:
+      - "3001:3001"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    networks:
+      - agentic-network
+
 networks:
   agentic-network:
     driver: bridge

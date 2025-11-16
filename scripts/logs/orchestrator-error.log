@@ -1,39 +1,18 @@
-2025-11-15 13:53:38 -05:00: (node:14511) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 13:53:38 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 13:53:38 -05:00: (node:14511) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 14:42:14 -05:00: (node:42212) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 14:42:14 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 14:42:14 -05:00: (node:42212) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 14:45:51 -05:00: (node:48367) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 14:45:51 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 14:45:51 -05:00: (node:48367) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 14:55:27 -05:00: (node:55870) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 14:55:27 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 14:55:27 -05:00: (node:55870) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 15:21:09 -05:00: (node:82821) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 15:21:09 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 15:21:09 -05:00: (node:82821) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 15:22:49 -05:00: (node:86273) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 15:22:49 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 15:22:49 -05:00: (node:86273) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 15:27:52 -05:00: (node:92862) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 15:27:52 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 15:27:52 -05:00: (node:92862) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 15:57:42 -05:00: (node:30077) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 15:57:42 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 15:57:42 -05:00: (node:30077) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 16:22:02 -05:00: (node:47089) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 16:22:02 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 16:22:02 -05:00: (node:47089) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 16:33:44 -05:00: (node:73972) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 16:33:44 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 16:33:44 -05:00: (node:73972) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 16:39:42 -05:00: (node:89619) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 16:39:42 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 16:39:42 -05:00: (node:89619) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 16:52:53 -05:00: (node:14151) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 16:52:53 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 16:52:53 -05:00: (node:14151) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
-2025-11-15 20:20:34 -05:00: (node:15563) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
-2025-11-15 20:20:34 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-11-15 20:20:34 -05:00: (node:15563) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-16 10:06:07 -05:00: (node:34083) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-16 10:06:07 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-16 10:06:07 -05:00: (node:34083) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-16 10:24:53 -05:00: (node:56617) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-16 10:24:53 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-16 10:24:53 -05:00: (node:56617) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-16 10:31:51 -05:00: (node:80309) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-16 10:31:51 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-16 10:31:51 -05:00: (node:80309) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-16 10:46:44 -05:00: (node:4106) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-16 10:46:44 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-16 10:46:44 -05:00: (node:4106) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-16 10:49:25 -05:00: (node:9415) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-16 10:49:25 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-16 10:49:25 -05:00: (node:9415) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-16 10:52:00 -05:00: (node:12931) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-16 10:52:00 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-16 10:52:00 -05:00: (node:12931) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.

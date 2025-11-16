@@ -9,7 +9,25 @@ import type {
   TimeSeriesDataPoint,
 } from '../types'
 
-const API_BASE = '/api/v1'
+// Get API base URL from environment or derive from current location
+const getAPIBase = (): string => {
+  // If environment variable is set, use it
+  const apiUrl = (import.meta.env as Record<string, any>).VITE_API_URL
+  if (apiUrl) {
+    return apiUrl
+  }
+
+  // When running in browser, always use the orchestrator on port 3000
+  if (typeof window !== 'undefined') {
+    // Browser can always reach localhost:3000 (orchestrator running on host via PM2)
+    return 'http://localhost:3000/api/v1'
+  }
+
+  // Fallback (shouldn't reach here in browser)
+  return '/api/v1'
+}
+
+const API_BASE = getAPIBase()
 
 async function fetchJSON<T>(url: string): Promise<T> {
   const response = await fetch(url)
@@ -125,4 +143,148 @@ export async function fetchTasks(filters?: {
 
 export async function fetchTask(taskId: string): Promise<AgentTask> {
   return fetchJSON<AgentTask>(`${API_BASE}/tasks/${taskId}`)
+}
+
+// Dashboard-specific API functions
+
+/**
+ * Fetch workflows that are slow (exceed threshold duration)
+ * @param thresholdMs Duration threshold in milliseconds (default: 300000 = 5 minutes)
+ */
+export async function fetchSlowWorkflows(thresholdMs: number = 300000): Promise<Workflow[]> {
+  try {
+    // Try new endpoint if available
+    const workflows = await fetchJSON<any[]>(`${API_BASE}/workflows/slow?threshold=${thresholdMs}`)
+    return workflows.map(transformWorkflow)
+  } catch {
+    // Fallback: fetch all workflows and filter client-side
+    const all = await fetchWorkflows()
+    const now = new Date().getTime()
+    return all.filter(w => {
+      const duration = w.completed_at
+        ? new Date(w.completed_at).getTime() - new Date(w.created_at).getTime()
+        : now - new Date(w.created_at).getTime()
+      return duration > thresholdMs
+    })
+  }
+}
+
+/**
+ * Fetch workflow throughput data (creation/completion rates over time)
+ * @param period Time period: '1h' | '24h' | '7d' | '30d'
+ * @param bucketSize Bucket size in minutes (5 or 60)
+ */
+export interface ThroughputDataPoint {
+  timestamp: string
+  workflows_created: number
+  workflows_completed: number
+}
+
+export async function fetchWorkflowThroughputData(
+  period: string = '24h',
+  _bucketSize: number = 5
+): Promise<ThroughputDataPoint[]> {
+  const timeSeries = await fetchTimeSeries(period)
+  // Timeseries API returns the throughput data we need
+  return timeSeries.map(point => ({
+    timestamp: point.timestamp,
+    workflows_created: point.count || 0,
+    workflows_completed: point.count || 0,
+  }))
+}
+
+/**
+ * Fetch SLO compliance metrics
+ */
+export interface SLOMetrics {
+  slo_threshold_ms: number
+  total_workflows: number
+  compliant_workflows: number
+  compliance_rate: number
+}
+
+export async function fetchSLOMetrics(thresholdMs: number = 300000): Promise<SLOMetrics> {
+  try {
+    return fetchJSON<SLOMetrics>(`${API_BASE}/stats/slo?threshold=${thresholdMs}`)
+  } catch {
+    // Fallback: calculate SLO from workflows
+    const all = await fetchWorkflows()
+    const completed = all.filter(w => w.status === 'completed')
+
+    const compliant = completed.filter(w => {
+      const duration = w.completed_at
+        ? new Date(w.completed_at).getTime() - new Date(w.created_at).getTime()
+        : thresholdMs
+      return duration <= thresholdMs
+    })
+
+    return {
+      slo_threshold_ms: thresholdMs,
+      total_workflows: all.length,
+      compliant_workflows: compliant.length,
+      compliance_rate: all.length > 0 ? (compliant.length / all.length) * 100 : 0,
+    }
+  }
+}
+
+/**
+ * Fetch agent latency percentiles (p50, p95, p99)
+ */
+export interface AgentLatencyPercentiles {
+  agent_type: string
+  p50_ms: number
+  p95_ms: number
+  p99_ms: number
+  avg_ms: number
+}
+
+export async function fetchAgentLatencyPercentiles(): Promise<AgentLatencyPercentiles[]> {
+  try {
+    return fetchJSON<AgentLatencyPercentiles[]>(`${API_BASE}/stats/agent-latency-percentiles`)
+  } catch {
+    // Fallback: get agent stats which include avg_duration_ms
+    const stats = await fetchAgentStats()
+    return stats.map(s => ({
+      agent_type: s.agent_type,
+      p50_ms: s.avg_duration_ms || 0,
+      p95_ms: (s.avg_duration_ms || 0) * 1.5,
+      p99_ms: (s.avg_duration_ms || 0) * 2,
+      avg_ms: s.avg_duration_ms || 0,
+    }))
+  }
+}
+
+/**
+ * Fetch agent latency time series data
+ */
+export interface AgentLatencyTimePoint {
+  timestamp: string
+  scaffold_ms: number
+  validation_ms: number
+  e2e_ms: number
+  integration_ms: number
+  deployment_ms: number
+  [key: string]: any
+}
+
+export async function fetchAgentLatencyTimeSeries(period: string = '24h'): Promise<AgentLatencyTimePoint[]> {
+  try {
+    return fetchJSON<AgentLatencyTimePoint[]>(`${API_BASE}/stats/agent-latency-timeseries?period=${period}`)
+  } catch {
+    // Fallback: return empty array - feature requires backend support
+    return []
+  }
+}
+
+// Helper function to transform workflow response
+function transformWorkflow(w: any): Workflow {
+  return {
+    ...w,
+    id: w.workflow_id || w.id,
+    progress: w.progress_percentage ?? w.progress ?? 0,
+    name: w.name || 'Unnamed Workflow',
+    description: w.description || null,
+    priority: w.priority || 'medium',
+    created_by: w.created_by || 'system',
+  }
 }

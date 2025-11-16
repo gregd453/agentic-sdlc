@@ -4,10 +4,10 @@
 # START-DEV.sh - Start Agentic SDLC Development Environment
 #
 # Starts all required services for complete pipeline testing:
-# - PostgreSQL 16
-# - Redis 7
+# - PostgreSQL 16 (via Docker)
+# - Redis 7 (via Docker)
+# - Dashboard UI (via Docker)
 # - Orchestrator API (via PM2)
-# - Dashboard UI (via PM2)
 # - Scaffold Agent (via PM2)
 # - Validation Agent (via PM2)
 # - E2E Agent (via PM2)
@@ -17,6 +17,7 @@
 # Updated in Session #58: Now uses PM2 for process management
 # Updated in Session #59: Auto-rebuild if source files are newer than builds
 # Updated in Session #61: Added Dashboard UI
+# Updated in Session #68: Dashboard moved to Docker-only (no PM2 duplication)
 #
 # Usage:
 #   ./scripts/env/start-dev.sh              # Start all services (auto-rebuild if needed)
@@ -58,13 +59,13 @@ mkdir -p "$LOGS_DIR"
 
 echo -e "${BLUE}================================================${NC}"
 echo -e "${BLUE}Agentic SDLC - Development Environment Startup${NC}"
-echo -e "${BLUE}(Using PM2 Process Management)${NC}"
+echo -e "${BLUE}(Docker + PM2 Process Management)${NC}"
 echo -e "${BLUE}================================================${NC}"
 echo ""
 
-# 1. Start Docker containers (PostgreSQL + Redis)
+# 1. Start Docker containers (PostgreSQL + Redis + Dashboard)
 echo -e "${YELLOW}[1/3]${NC} Starting Docker containers..."
-if docker-compose -f "$DOCKER_COMPOSE_FILE" up -d postgres redis 2>/dev/null; then
+if docker-compose -f "$DOCKER_COMPOSE_FILE" up -d postgres redis dashboard 2>/dev/null || docker-compose -f "$PROJECT_ROOT/docker-compose.simple.yml" up -d 2>/dev/null; then
   echo -e "${GREEN}✓${NC} Docker containers started"
 
   # Wait for containers to be healthy
@@ -172,11 +173,9 @@ for i in {1..30}; do
   sleep 1
 done
 
-# Clean up any dashboard using port 3001 (Docker container)
-echo "  Cleaning up port 3001..."
-docker rm -f agentic-dashboard 2>/dev/null || true
+# Dashboard is now managed by Docker, not removed
 
-# Wait for dashboard to be ready (PM2 manages it)
+# Wait for dashboard to be ready (Docker manages it)
 echo "  Waiting for Dashboard on :3001..."
 for i in {1..30}; do
   if curl -s http://localhost:3001 2>/dev/null | grep -q "<!doctype html"; then

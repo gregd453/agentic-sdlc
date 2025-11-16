@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { FilterProvider } from './contexts/FilterContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 import Layout from './components/Layout/Layout'
 import Dashboard from './pages/Dashboard'
 import WorkflowsPage from './pages/WorkflowsPage'
@@ -21,24 +23,28 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true
-        }}
-      >
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/workflows" element={<WorkflowsPage />} />
-            <Route path="/workflows/:id" element={<WorkflowPage />} />
-            <Route path="/traces" element={<TracesPage />} />
-            <Route path="/traces/:traceId" element={<TracesPage />} />
-            <Route path="/agents" element={<AgentsPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
+      <ThemeProvider>
+        <FilterProvider>
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true
+            }}
+          >
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/workflows" element={<WorkflowsPage />} />
+                <Route path="/workflows/:id" element={<WorkflowPage />} />
+                <Route path="/traces" element={<TracesPage />} />
+                <Route path="/traces/:traceId" element={<TracesPage />} />
+                <Route path="/agents" element={<AgentsPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </FilterProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

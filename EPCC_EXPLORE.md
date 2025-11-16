@@ -1,939 +1,271 @@
-# EPCC Exploration Report: Strategic Agent Abstraction Layer Design
+# Exploration Report: Strategic Architecture - Layered Platforms with Surface Abstractions
 
-**Phase:** EXPLORE (Analysis Only - No Code Implementation)
-**Date:** 2025-11-15 (Session #68)
-**Goal:** Design a strategic abstraction layer for configurable, plug-and-play agents with complete logging infrastructure
-**Status:** ✅ Complete Analysis
+**Status:** EXPLORATION PHASE (READ-ONLY)
+**Date:** 2025-11-16
+**Project:** Agentic SDLC - AI-driven Software Development Lifecycle Platform
+**Current Production Readiness:** 99% (Session #70)
 
 ---
 
 ## Executive Summary
 
-This exploration analyzes the **agents layer** of the Agentic SDLC platform to design a strategic abstraction that enables:
-- **Plug-and-Play Agent Patterns**: Predefined workflows and agents adhering to canonical architecture
-- **Configurable Agents**: Runtime configuration without code changes
-- **Logging Infrastructure Retention**: Complete distributed tracing (trace_id/span_id propagation)
-- **Log Level Management**: Configurable logging at agent, component, and module levels
+### Current State
+- **Project Type:** Autonomous AI-driven SDLC system with hexagonal architecture
+- **Primary Language:** TypeScript (strict mode)
+- **Platform Status:** Production-ready at 99% (Session #70)
+- **Architecture:** Hexagonal (Ports & Adapters) + Message Bus (Redis Streams) + Agent-based
+- **Monorepo:** pnpm workspaces with Turbo build orchestration
+- **Services:** 7 PM2 processes (orchestrator + 5 agents + dashboard + analytics)
 
-**Platform State:** 98% Production Ready (Session #68)
-- All agents building successfully
-- Message bus (Redis Streams) stable with proper ACK timing
-- AgentEnvelopeSchema v2.0.0 canonical and enforced
-- Distributed tracing working end-to-end
-- All 5 agents (scaffold, validation, integration, deployment, e2e) operational
+### Strategic Vision
+**STRATEGIC-ARCHITECTURE.md** proposes evolution from single-domain (app, feature, bugfix) to multi-platform system with:
+- 4+ independent platforms (Web Apps, Data Pipelines, Mobile Apps, Infrastructure)
+- 5 surface types (REST API, GitHub Webhook, CLI, Dashboard, Mobile API)
+- Layered abstraction: Surfaces → Platforms → Agents → Hexagonal Core → Infrastructure
 
----
-
-## Architecture Overview
-
-### System Topology
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                  Orchestrator (PM2)                      │
-│  - Workflow State Machine (xstate)                      │
-│  - Redis Message Bus (Streams + Pub/Sub)                │
-│  - OrchestratorContainer (DI)                           │
-└──────────────┬──────────────────────────────────────────┘
-               │ AgentEnvelope v2.0.0
-               │ (REDIS_CHANNELS.AGENT_TASKS)
-        ┌──────┴─────────────────────┐
-        │                            │
-   ┌────▼────┐  ┌──────────┐  ┌─────▼─────┐  ┌─────────┐  ┌─────────┐
-   │Scaffold │  │Validation│  │Integration│  │Deployment │  │E2E     │
-   │Agent    │  │Agent     │  │Agent      │  │Agent      │  │Agent   │
-   └────┬────┘  └──────────┘  └─────┬─────┘  └─────────┘  └─────────┘
-        │                            │
-        └────────────────┬───────────┘
-                         │
-                    AgentResult
-                    (REDIS_CHANNELS.ORCHESTRATOR_RESULTS)
-                         │
-                    ┌────▼──────────────┐
-                    │ State Machine     │
-                    │ Transition Logic  │
-                    └───────────────────┘
-```
+### Key Insight
+The strategic architecture is a **natural extension** that preserves the hexagonal core and adds layers above it. Database changes are additive and non-breaking.
 
 ---
 
-## Current Agent Layer Architecture
-
-### BaseAgent (Transport Layer Contract)
-
-**Location:** packages/agents/base-agent/src/base-agent.ts (783 lines)
-
-**Key Characteristics:**
-- Abstract base class for all agents
-- Implements AgentLifecycle interface
-- Handles Redis subscription, message unwrapping, trace context
-- Pino logger built-in (not injectable)
-- Circuit breaker for Claude API calls
-- Schema validation with detailed error logging
-
-**Current Logging Pattern:**
-```typescript
-// Pino logger with timestamp and colorization
-this.logger = pino({
-  name: this.agentId,
-  transport: {
-    target: 'pino-pretty',
-    options: { colorize: true, translateTime: 'UTC:yyyy-mm-dd HH:MM:ss' }
-  }
-});
-
-// Trace logging with standard prefixes
-this.logger.info('🔍 [AGENT-TRACE] Task received', {
-  workflow_id, task_id, stage, trace_id, span_id
-});
-```
-
-**Constraints:**
-- Logger hardcoded to Pino (cannot swap)
-- Log level control via process.env.DEBUG only
-- No per-module or per-agent log level configuration
-- Transport configuration fixed
-
-### Concrete Agent Implementations (All Pattern-Compliant)
-
-**Analyzed Agents:**
-
-1. **ScaffoldAgent** (packages/agents/scaffold-agent/src/scaffold-agent.ts)
-   - Capabilities: analyze-requirements, generate-structure, create-boilerplate
-   - Services: FileGenerator, TemplateEngine
-   - Domain Task: ScaffoldTask with project_type, name, tech_stack
-
-2. **ValidationAgent** (packages/agents/validation-agent/src/validation-agent.ts)
-   - Capabilities: typescript-compilation, eslint, coverage, security, quality-gates
-   - Services: PolicyConfig loader, 5 validators, quality gates
-   - Domain Task: ValidationTask with code path, rules, gates
-
-3. **IntegrationAgent** (packages/agents/integration-agent/src/integration-agent.ts)
-   - Capabilities: branch_merging, conflict_resolution, dependency_updates, testing
-   - Services: GitService, ConflictResolverService, DependencyUpdaterService
-   - Domain Task: IntegrationTask with action (merge, resolve, update, test)
-
-4. **DeploymentAgent** (packages/agents/deployment-agent/src/deployment-agent.ts)
-   - Capabilities: docker_build, ecr_push, ecs_deployment, rollback, health_check
-   - Services: DockerService, ECRService, ECSService, HealthCheckService
-   - Domain Task: DeploymentTask with action and AWS-specific payloads
-
-5. **E2EAgent** (packages/agents/e2e-agent/src/e2e-agent.ts)
-   - Capabilities: test-generation, playwright, page-objects, multi-browser, artifacts
-   - Services: Generators, Runners, ArtifactStorage
-   - Domain Task: E2ETaskContext with project path, URLs, test specs
-
-**Common Pattern Across All Agents:**
-```typescript
-export class ConcreteAgent extends BaseAgent {
-  constructor(messageBus: any) {
-    super({
-      type: 'agent-type',
-      version: '1.0.0',
-      capabilities: [...]
-    }, messageBus);
-    // Service instantiation here
-    this.service = new Service(this.logger);
-  }
-
-  async execute(task: AgentEnvelope): Promise<TaskResult> {
-    // Extract payload
-    // Map to domain task
-    // Call executeTask()
-    // Return TaskResult
-  }
-}
-```
-
----
-
-## Logging Infrastructure Deep Dive
-
-### Structured Logging System
-
-**Pino Configuration (Hardcoded):**
-```typescript
-// From BaseAgent constructor
-transport: {
-  target: 'pino-pretty',
-  options: {
-    colorize: true,
-    translateTime: 'UTC:yyyy-mm-dd HH:MM:ss'
-  }
-}
-```
-
-**Log Level Architecture:**
-```
-INFO      (always logged)
-WARN      (always logged)
-ERROR     (always logged)
-DEBUG     (only if process.env.DEBUG=true)
-```
-
-**Trace Logging Prefixes (Observed Pattern):**
-- `🔍 [AGENT-TRACE]` - Agent task lifecycle (received, processing, publishing)
-- `🔍 [MSG-UNWRAP]` - Message envelope parsing steps
-- `🔍 [VALIDATION]` - Task schema validation results
-- `🔍 [RESULT-VALIDATION]` - AgentResult schema compliance
-- `🔍 [WORKFLOW-TRACE]` - Orchestrator-level progression
-- `[SESSION #XX]` - Session-specific debug contexts
-- `[DEBUG-*]` - Ad-hoc debugging markers
-
-**Distributed Trace Context:**
-```typescript
-export interface TraceContext {
-  trace_id: string;      // Correlation ID (uniqueness: entire workflow)
-  span_id: string;       // Operation span (uniqueness: per task)
-  parent_span_id?: string; // Parent operation reference
-}
-
-// Extraction in receiveTask()
-this.currentTraceContext = extractTraceContext(envelope);
-
-// Propagation in reportResult()
-metadata: {
-  trace_id: this.currentTraceContext?.trace_id || randomUUID(),
-  // ... sent in AgentResult
-}
-```
-
-### Logging Limitations & Gaps
-
-1. **No Runtime Log Level Control**
-   - Cannot enable DEBUG without env var + restart
-   - Cannot disable INFO/WARN for quiet runs
-   - No per-module granularity
-
-2. **Logger Not Configurable**
-   - Pino hardcoded (cannot inject alternative)
-   - Transport options immutable
-   - Pretty-printing always on (no structured output option)
-
-3. **Trace Context Implicit**
-   - Relies on extraction utility (not transparent)
-   - No explicit context passing to child operations
-   - Loss of context in async boundaries possible
-
-4. **No Log Aggregation Support**
-   - No JSON structured logging mode
-   - Pretty-printing conflicts with log aggregation systems
-   - No correlation ID header support (HTTP context missing)
-
----
-
-## Configuration Analysis
-
-### Current Configuration Sources
-
-**1. Hardcoded Values (Agent Constructors)**
-```typescript
-// Example: ScaffoldAgent
-super({
-  type: AGENT_TYPES.SCAFFOLD,        // ← Hardcoded constant
-  version: '1.0.0',                   // ← Hardcoded literal
-  capabilities: [                      // ← Hardcoded array
-    'analyze-requirements',
-    'generate-structure',
-    // ...
-  ]
-}, messageBus);
-```
-
-**2. Environment Variables**
-```typescript
-// DeploymentAgent
-new ECRService(process.env.AWS_REGION || 'us-east-1')
-
-// BaseAgent
-const apiKey = process.env.ANTHROPIC_API_KEY;
-const redisPort = parseInt(process.env.REDIS_PORT || '6380');
-```
-
-**3. OrchestratorContainer Configuration**
-```typescript
-export interface BootstrapConfig {
-  redisUrl: string;
-  redisNamespace?: string;
-  redisDefaultTtl?: number;
-  coordinators: {
-    plan?: boolean;
-    code?: boolean;
-    certify?: boolean;
-  };
-}
-```
-
-### Configuration Limitations
-
-1. **Not Externalized**
-   - Agent capabilities hardcoded
-   - No YAML/JSON configuration files
-   - No configuration as code pattern
-
-2. **Not Runtime-Changeable**
-   - Changes require code edits
-   - No hot reload capability
-   - Rebuilds + redeployment needed
-
-3. **Not Validated**
-   - No schema for agent configuration
-   - No way to express constraints (timeout, retry bounds)
-   - Environment variable strings parsed ad-hoc
-
-4. **No Composition**
-   - Cannot create agent variants
-   - Cannot disable capabilities
-   - Cannot override service implementations
-
----
-
-## Dependency Injection & Service Management
-
-### Current DI Pattern
-
-**Constructor Injection (Minimal):**
-```typescript
-export abstract class BaseAgent {
-  constructor(
-    capabilities: AgentCapabilities,
-    messageBus: IMessageBus  // ← Only injected dependency
-  ) { ... }
-}
-```
-
-**Service Instantiation (Direct):**
-```typescript
-// In each agent constructor
-this.fileGenerator = new FileGenerator(this.logger);
-this.templateEngine = new TemplateEngine(path.join(__dirname, '../templates'));
-this.gitService = new GitService(repoPath);
-```
-
-**OrchestratorContainer Pattern:**
-```typescript
-export class OrchestratorContainer {
-  async initialize(): Promise<void> {
-    this.redis = await makeRedisSuite(this.config.redisUrl);
-    this.bus = makeRedisBus(this.redis.pub, this.redis.sub);
-    this.kv = makeRedisKV(this.redis.base);
-  }
-
-  async startOrchestrators(): Promise<void> {
-    if (this.config.coordinators.plan) {
-      const plan = new PlanCoordinator({ bus: this.bus, kv: this.kv, ... });
-      await plan.start();
-    }
-  }
-}
-```
-
-### DI Limitations
-
-1. **No Service Registry**
-   - Services hardcoded in agents
-   - Cannot swap implementations
-   - Testing requires mocking
-
-2. **No Factory Pattern**
-   - Agent instantiation scattered
-   - No agent discovery mechanism
-   - No plugin support
-
-3. **Tight Coupling**
-   - Services know about Pino logger
-   - Agents know concrete service types
-   - No interface-based abstraction for services
-
----
-
-## Workflow & Stage Architecture
-
-### Current Workflow Model
-
-**From workflow-state-machine.ts:**
-```typescript
-export interface WorkflowContext {
-  workflow_id: string;
-  type: string;
-  current_stage: string;
-  nextStage?: string;  // Computed
-  progress: number;
-  metadata: Record<string, any>;
-  decision_id?: string;
-  clarification_id?: string;
-  pending_decision?: boolean;
-  _seenEventIds?: Set<string>;  // Deduplication
-}
-
-export type WorkflowEvent =
-  | { type: 'START' }
-  | { type: 'STAGE_COMPLETE'; stage: string; eventId?: string }
-  | { type: 'STAGE_FAILED'; stage: string; error: Error }
-  | { type: 'DECISION_REQUIRED'; decision_id: string }
-  | { type: 'CLARIFICATION_REQUIRED'; clarification_id: string }
-  // ...
-```
-
-**Stage Progression (Implicit Convention):**
-```
-initialization → validation → integration → deployment → e2e_testing → completion
-```
-
-**Agent ↔ Stage Binding:**
-- scaffold agent → initialization stage
-- validation agent → validation stage
-- integration agent → integration stage
-- deployment agent → deployment stage
-- e2e agent → e2e_testing stage
-
-**Binding Type:** Convention-based (not enforced)
-
-### Workflow Limitations
-
-1. **Workflows Hardcoded**
-   - Fixed progression in state machine
-   - Cannot reuse stage sequences
-   - No composition of workflow stages
-
-2. **Stage Progression Implicit**
-   - No explicit workflow definition
-   - Agent type ≠ stage name contract implicit
-   - No way to express conditional routing
-
-3. **Agent-Stage Coupling**
-   - One agent per stage assumption
-   - No parallel execution support
-   - No agent chaining within stage
-
-4. **No Workflow Variants**
-   - E-commerce vs SaaS workflows would need separate state machines
-   - No parameterization support
-   - Code duplication for similar workflows
-
----
-
-## Message Schema Analysis
-
-### AgentEnvelopeSchema v2.0.0 (Canonical)
-
-**Location:** packages/shared/types/src/messages/agent-envelope.ts
-
-**Schema Structure:**
-```typescript
-const AgentEnvelopeSchema = z.object({
-  message_id: z.string(),
-  task_id: z.string(),
-  workflow_id: z.string(),
-  agent_type: z.string(),
-  priority: z.enum(['critical', 'high', 'medium', 'low']),
-
-  trace: z.object({
-    trace_id: z.string(),
-    span_id: z.string(),
-    parent_span_id: z.string().optional()
-  }),
-
-  metadata: z.object({
-    created_at: z.string().datetime(),
-    created_by: z.string(),
-    envelope_version: z.string()
-  }),
-
-  constraints: z.object({
-    timeout_ms: z.number(),
-    max_retries: z.number()
-  }),
-
-  payload: z.record(z.unknown()),
-  workflow_context: z.object({
-    current_stage: z.string(),
-    // ... additional workflow state
-  }).optional()
-});
-```
-
-**TaskResult Schema:**
-```typescript
-const TaskResultSchema = z.object({
-  message_id: z.string(),
-  task_id: z.string(),
-  workflow_id: z.string(),
-  agent_id: z.string(),
-  status: z.enum(['success', 'failure', 'partial']),
-  result: z.object({
-    data: z.record(z.unknown()),
-    metrics: z.object({
-      duration_ms: z.number()
-    }).optional()
-  }),
-  errors: z.array(z.object({
-    code: z.string(),
-    message: z.string(),
-    recoverable: z.boolean()
-  })).optional(),
-  metadata: z.object({
-    completed_at: z.string(),
-    trace_id: z.string()
-  })
-});
-```
-
-**Key Insight:** Payload is intentionally generic (z.record) to support domain-specific data at runtime.
-
----
-
-## Message Bus & Adapter Pattern
-
-### IMessageBus Interface (Port)
-
-**Location:** packages/orchestrator/src/hexagonal/ports/message-bus.port.ts
-
-```typescript
-export interface IMessageBus {
-  publish<T>(
-    topic: string,
-    message: T,
-    options?: PublishOptions
-  ): Promise<void>;
-
-  subscribe<T>(
-    topic: string,
-    handler: (message: T) => Promise<void>,
-    options?: SubscribeOptions
-  ): Promise<void>;
-
-  health(): Promise<HealthStatus>;
-}
-```
-
-### Redis Bus Adapter (redis-bus.adapter.ts)
-
-**Implementation Details:**
-- Separate pub/sub clients (required by Redis)
-- Stream mirroring for durability
-- Consumer group management (consumer group: agent-{type}-group)
-- ACK-on-success timing (critical reliability fix in Session #67)
-- Message deduplication support
-
-**Topic Convention:**
-```
-REDIS_CHANNELS.AGENT_TASKS(agentType)  // Input: 'agents:tasks:{agentType}'
-REDIS_CHANNELS.ORCHESTRATOR_RESULTS    // Output: 'orchestrator:results'
-```
-
----
-
-## Monorepo & Package Structure
-
-### Directory Layout
+## Current Monorepo Structure
 
 ```
 packages/
-├── agents/
-│   ├── base-agent/
-│   │   ├── src/
-│   │   │   ├── base-agent.ts (783 lines)
-│   │   │   ├── types.ts (80 lines)
-│   │   │   ├── example-agent.ts
-│   │   │   └── index.ts
-│   │   ├── tests/
-│   │   └── package.json
-│   ├── scaffold-agent/
-│   ├── validation-agent/
-│   ├── integration-agent/
-│   ├── deployment-agent/
-│   └── e2e-agent/
-├── orchestrator/
-│   └── src/
-│       ├── hexagonal/
-│       │   ├── core/ (logger, idempotency, retry)
-│       │   ├── ports/ (message-bus, kv-store)
-│       │   ├── adapters/ (redis-bus, redis-kv)
-│       │   ├── orchestration/ (base-orchestrator, plan-coordinator)
-│       │   └── persistence/ (workflow-state-manager)
-│       └── state-machine/ (workflow-state-machine.ts)
-├── shared/
-│   ├── types/ (AgentEnvelope, TaskResult schemas)
-│   ├── utils/ (retry, CircuitBreaker, trace utilities)
-│   ├── contracts/
-│   └── redis-core/ (logger.ts utility)
-└── dashboard/
-```
+├── orchestrator/          [Core orchestration with hexagonal architecture]
+├── agents/                [5 specialized agents + base-agent foundation]
+├── shared/                [11 packages: types, workflow-engine, agent-registry, etc.]
+├── analytics-service/     [NEW in Session #70: 12 read-only endpoints]
+├── dashboard/             [React UI for real-time monitoring]
+└── cli/                   [Command-line interface]
 
-### Export Convention
-
-```typescript
-// @agentic-sdlc/base-agent/package.json
-"main": "dist/index.js",
-"exports": {
-  ".": {
-    "types": "./dist/index.d.ts",
-    "default": "./dist/index.js"
-  }
-}
-
-// Index exports canonical types and BaseAgent
-export { BaseAgent };
-export { AgentEnvelope, TaskResult } from './types';
-```
-
-### Critical Constraint
-
-**Never duplicate schemas or core utilities**
-- Always import from @agentic-sdlc/shared-types
-- Never copy BaseAgent code
-- Always use IMessageBus (never Redis directly)
-
----
-
-## Error Handling Patterns
-
-### Error Type Hierarchy
-
-**From base-agent/src/types.ts:**
-
-```typescript
-export class AgentError extends Error {
-  constructor(message: string, public readonly code?: string) { ... }
-}
-
-export class ValidationError extends AgentError {
-  constructor(message: string, public readonly validationErrors: any[]) { ... }
-}
-
-export class TaskExecutionError extends AgentError {
-  constructor(message: string, public readonly task_id: string) { ... }
-}
-```
-
-### Error Handling in receiveTask()
-
-```typescript
-try {
-  const task = this.validateTask((message.payload as any).context);
-  const result = await retry(() => this.execute(task), { ... });
-  await this.reportResult(result, workflowStage);
-} catch (error) {
-  // Only report if result not already sent
-  const errorResult: TaskResult = {
-    status: 'failure',
-    errors: [{
-      code: 'TASK_EXECUTION_ERROR',
-      message: error.message,
-      recoverable: true
-    }]
-  };
-  await this.reportResult(errorResult);
-}
-```
-
-### Result Error Format
-
-**TaskResult format:**
-```typescript
-errors: [{
-  code: string;
-  message: string;
-  recoverable: boolean;
-}][]
-```
-
-**AgentResult format (mapped):**
-```typescript
-error: {
-  code: string;
-  message: string;
-  retryable: boolean;  // ← Renamed from recoverable
-}
+Root Documentation:
+├── CLAUDE.md              [Session #70: 99% production ready]
+├── ARCHITECTURE.md        [Component iteration design]
+├── PRODUCT-LINE-DESC.md   [Product line overview]
+└── STRATEGIC-ARCHITECTURE.md ← [Strategic vision document]
 ```
 
 ---
 
-## Key Architectural Decisions
+## How Strategic Vision Aligns with Hexagonal Core
 
-### ✅ AgentEnvelope as Universal Contract
-- Fixed structure enforced at validation
-- Payload remains generic for domain extension
-- Trace context propagated end-to-end
-- Cannot be extended per-agent
+### Protected (No Changes)
+```
+✅ hexagonal/core/        [Domain logic: retry, idempotency, logging]
+✅ hexagonal/ports/       [IMessageBus, IKVStore interfaces]
+✅ hexagonal/adapters/    [RedisStreamsAdapter, RedisKVAdapter]
+✅ AgentEnvelopeSchema v2.0.0 [Canonical message format]
+✅ BaseAgent              [Foundation for all agents]
+```
 
-### ✅ BaseAgent as Transport Layer
-- Handles all Redis pub/sub infrastructure
-- Unwraps envelopes and validates schemas
-- Extracts trace context automatically
-- Domain logic isolated in execute()
+### Extending (Add Platform Awareness)
+```
+⚡ workflow-engine        [Already supports definition-driven logic!]
+⚡ agent-registry         [Will support optional platform_id scoping]
+⚡ workflow.service.ts    [Will use definition-driven routing]
+⚡ api/routes/            [Will add /api/v1/platforms/* endpoints]
+```
 
-### ✅ Message Bus Abstraction
-- IMessageBus interface decouples from Redis
-- Agents depend only on abstraction
-- Implementation swappable (for testing, alternative transports)
-- Health checking built-in
+### New Layers (Non-Breaking Addition)
+```
+🆕 platforms/             [Platform loader, registry, definitions]
+🆕 surfaces/              [Surface adapters: REST, webhook, CLI, etc.]
+🆕 test-utils/            [GenericMockAgent for testing]
+```
 
-### ✅ Distributed Tracing Built-in
-- Trace context extracted in receiveTask()
-- Stored in currentTraceContext
-- Passed to reportResult() for correlation
-- Pino logger includes trace in all messages
-
-### ⚠️ Agent Registry Missing
-- No discovery mechanism
-- Agent instantiation scattered
-- Hardcoded in orchestrator startup
-
-### ⚠️ Configuration Not Externalized
-- Capabilities hardcoded in constructors
-- Service choices not configurable
-- Environment variables only for external services
-
-### ⚠️ Workflows Not Composable
-- Stage progression hardcoded
-- No way to parameterize workflows
-- Agent-stage binding implicit
+**Result:** Hexagonal core remains COMPLETELY PROTECTED. Strategic architecture adds layers above it using existing patterns.
 
 ---
 
-## Identified Design Gaps & Improvement Areas
+## Database Schema Changes
 
-### Gap 1: No Agent Registry/Discovery
-**Current State:** Agents scattered across packages, hardcoded in orchestrator
-**Problem:** Cannot dynamically add/remove agents without code changes
-**Impact:** Extends time-to-value for new agent types, requires redeploy
-
-**Example Use Case:**
+### New Tables (Non-Breaking)
 ```
-New "DataValidator" agent created
-→ Must add to AGENT_TYPES enum
-→ Must modify orchestrator startup
-→ Must rebuild and redeploy entire system
-```
+Platform
+├─ id, name, layer, description, config
+├─ workflowDefinitions FK
+├─ surfaces FK
+└─ agents FK
 
-### Gap 2: No Configuration Management
-**Current State:** Config via env vars or hardcoding
-**Problem:** Changes require code edits, no runtime configuration
-**Impact:** Operationally expensive, cannot tune in production
+WorkflowDefinition
+├─ id, platform_id, name, version, definition (JSON)
+└─ unique: (platform_id, name)
 
-**Example Use Case:**
-```
-Need to increase task timeout from 30s to 60s
-→ Must edit agent code
-→ Must rebuild agent package
-→ Must restart agent process
+PlatformSurface
+├─ id, platform_id, surface_type, config, enabled
+└─ unique: (platform_id, surface_type)
 ```
 
-### Gap 3: Logging Not Configurable at Runtime
-**Current State:** Hardcoded Pino with DEBUG env var only
-**Problem:** Cannot adjust log verbosity without restart
-**Impact:** Cannot troubleshoot production issues without downtime
-
-**Example Use Case:**
+### Modified Tables (Additive Only)
 ```
-Workflow stuck, need trace logging
-→ Must set DEBUG=true
-→ Must restart orchestrator and all agents
-→ All workflows get verbose logging (noisy)
-```
+Workflow
++ platform_id          [NEW: ties to platform]
++ workflow_definition_id [NEW: which definition]
++ surface_id           [NEW OPTIONAL: which surface triggered]
++ input_data           [NEW OPTIONAL: custom input]
++ layer                [NEW: for filtering]
+- type enum            [REMOVE: determined by platform + definition]
 
-### Gap 4: Workflow Not Explicitly Defined
-**Current State:** Stage progression implicit in state machine
-**Problem:** Cannot reuse workflows, hard to compose
-**Impact:** Workflow variants require separate state machine code
-
-**Example Use Case:**
-```
-SaaS vs E-commerce workflows share some stages but differ in others
-→ Would need two separate state machines
-→ Or complex conditional logic in single machine
-→ Cannot share stage definitions
+Agent
++ platform_id          [NEW OPTIONAL: NULL = global, UUID = scoped]
 ```
 
-### Gap 5: Task Mapping Duplicated
-**Current State:** Priority mapping, metadata extraction in each agent
-**Problem:** DRY violation, inconsistency risk
-**Impact:** Changes in one agent not reflected in others
-
-**Example Duplication:**
-```typescript
-// In IntegrationAgent
-priority: task.priority === 'critical' ? 90 :
-          task.priority === 'high' ? 70 :
-          task.priority === 'medium' ? 50 : 30,
-
-// In DeploymentAgent (identical)
-priority: task.priority === 'critical' ? 90 :
-          task.priority === 'high' ? 70 :
-          task.priority === 'medium' ? 50 : 30,
-```
-
-### Gap 6: Service Locator Missing
-**Current State:** Services instantiated directly in agents
-**Problem:** Hard to swap implementations, test, or reuse
-**Impact:** Testing requires constructor mocking, cannot dynamically swap storage backends
-
-**Example:**
-```
-Want to use S3 instead of local filesystem
-→ Must edit ScaffoldAgent constructor
-→ FileGenerator takes hardcoded path
-→ No way to inject alternative storage
-```
+**Strategy:** Create new tables first, add nullable columns to Workflow, then backfill when ready. Zero downtime.
 
 ---
 
-## Production Readiness Assessment
+## Backward Compatibility Strategy
 
-### ✅ What's Production Ready
+### Legacy Platform (Zero-Breaking-Change)
 
-1. **Schema Validation**
-   - AgentEnvelopeSchema v2.0.0 enforced end-to-end
-   - Detailed validation error logging
-   - Type safety with TypeScript strict mode
+Create "legacy-platform" with existing workflow types:
+- "app" (8 stages)
+- "feature" (5 stages)
+- "bugfix" (3 stages)
 
-2. **Message Bus Reliability**
-   - Redis Streams with proper ACK timing
-   - Consumer group management
-   - Deduplication support
-   - Health checking
+Existing API `/api/v1/workflows` routes to legacy-platform automatically.
 
-3. **Trace Correlation**
-   - trace_id propagated through entire workflow
-   - span_id for operation isolation
-   - Automatically included in all logs
-
-4. **Error Handling**
-   - Structured error types (AgentError, ValidationError)
-   - Retry logic with circuit breaker
-   - Recoverable flag for intelligent retries
-
-### ⚠️ What Needs Hardening
-
-1. **Agent Management**
-   - Agent registry needed for discovery
-   - Configuration externalization required
-   - Factory pattern for instantiation
-
-2. **Logging Control**
-   - Log levels need runtime configuration
-   - Per-module granularity missing
-   - Dashboard integration for log management
-
-3. **Workflow Composition**
-   - Explicit workflow definitions needed
-   - Stage composition and reuse required
-   - Conditional routing support
-
-4. **Service Dependencies**
-   - Service locator pattern missing
-   - Dependency injection incomplete
-   - Testing complexity due to tight coupling
+**Result:** All existing workflows continue working unchanged until explicitly migrated to new platforms.
 
 ---
 
-## Recommendations for Strategic Abstraction Layer
+## Implementation Timeline Assessment
 
-### Overarching Principles
+### Phase 1: Core Platform Infrastructure (1-2 weeks)
+- Create 3 new tables (Platform, WorkflowDefinition, PlatformSurface)
+- Create PlatformLoader, PlatformRegistry
+- Create "legacy-platform" for backward compatibility
 
-1. **Non-Breaking Changes**
-   - Don't modify BaseAgent.execute() signature
-   - Keep AgentEnvelopeSchema v2.0.0 unchanged
-   - IMessageBus interface stays as-is
-   - All existing agents continue to work
+### Phase 2: Surface Abstraction (1-2 weeks)
+- Create SurfaceRouter service
+- Implement REST, GitHub Webhook, CLI surface adapters
+- Add new /api/v1/platforms/* endpoints
 
-2. **Composition Over Inheritance**
-   - Layer new abstraction above BaseAgent
-   - Use composition for cross-cutting concerns
-   - Middleware pattern for logging, configuration
+### Phase 3: Workflow Engine Integration (1-2 weeks)
+- Update WorkflowStateMachineService for definition-driven routing
+- Implement adaptive progress calculation
+- Keep hard-coded STAGE_SEQUENCES as fallback
 
-3. **Configuration Externalization**
-   - YAML/JSON for workflow and agent definitions
-   - Environment variable overrides
-   - Runtime configuration updates (where possible)
+### Phase 4: Platform-Specific Agents (1 week)
+- Update AgentRegistry with optional platform_id
+- Implement agent lookup with platform context
+- Test global and platform-scoped agents
 
-4. **Complete Trace Preservation**
-   - Maintain trace_id → span_id → parent_span_id propagation
-   - Extend logging without breaking existing patterns
-   - Log level control while preserving trace context
+### Phase 5: Dashboard & Monitoring (1-2 weeks)
+- Add PlatformsPage, update WorkflowsPage
+- Add SurfaceIndicator, PlatformSelector components
+- Update API client for platform endpoints
 
-### Required Components (In Priority Order)
+### Phase 6: Testing Infrastructure (1 week)
+- Create GenericMockAgent class
+- Implement multi-platform test setup (11+ registrations)
+- Create comprehensive test suite
 
-#### Component 1: Agent Registry
-- **Purpose:** Discover and instantiate agents dynamically
-- **Inputs:** Agent metadata (name, version, capabilities, config schema)
-- **Outputs:** Agent factory functions
-- **Integration:** OrchestratorContainer uses registry at startup
+### Phase 7: Documentation & Graduation (1 week)
+- Create platform definition templates
+- Document platform onboarding
+- Update CLAUDE.md with new session info
 
-#### Component 2: Agent Configuration Manager
-- **Purpose:** Handle agent configuration with override hierarchy
-- **Levels:** defaults → environment → config file → runtime overrides
-- **Validation:** Schema enforcement per agent type
-- **Integration:** Injected into agents via constructor
-
-#### Component 3: Workflow Definition Engine
-- **Purpose:** Explicit workflow definitions with stage composition
-- **Formats:** YAML/JSON with validation
-- **Capabilities:** Reusable stages, conditional routing, agent binding
-- **Integration:** Feeds workflow definitions into state machine
-
-#### Component 4: Logger Configuration Service
-- **Purpose:** Runtime log level management across all agents
-- **Granularity:** Global, per-agent, per-module levels
-- **Features:** Dynamic updates, context-aware logging
-- **Integration:** Middleware in BaseAgent for level filtering
-
-#### Component 5: Service Locator / Factory
-- **Purpose:** Centralized service instantiation and dependency wiring
-- **Pattern:** Registry of service factories
-- **Capabilities:** Pluggable implementations, test doubles
-- **Integration:** Agents request services rather than create them
+**Total: 8 weeks (7-9 with contingency)**
 
 ---
 
-## References & Key Files
+## Risks Identified
 
-**Essential Architecture Files:**
-- CLAUDE.md (Platform status, session history)
-- AGENT-BASE-DESIGN.md (Design guidance for abstractions)
-- packages/agents/base-agent/src/base-agent.ts (783 lines - core transport layer)
-- packages/shared/types/src/messages/agent-envelope.ts (Schema definitions)
-- packages/orchestrator/src/state-machine/workflow-state-machine.ts (Workflow progression)
-- packages/orchestrator/src/hexagonal/bootstrap.ts (DI container)
+### HIGH: Database Migration (Mitigation: Phased approach)
+- Creating new tables first (non-blocking)
+- Adding nullable columns before requiring them
+- Backfilling in background
 
-**Agent Implementations (All Pattern-Consistent):**
-- packages/agents/scaffold-agent/src/scaffold-agent.ts
-- packages/agents/validation-agent/src/validation-agent.ts
-- packages/agents/integration-agent/src/integration-agent.ts
-- packages/agents/deployment-agent/src/deployment-agent.ts
-- packages/agents/e2e-agent/src/e2e-agent.ts
+### MEDIUM: Workflow State Machine Refactoring (Mitigation: Definition fallback)
+- Keep STAGE_SEQUENCES as fallback for legacy-platform
+- Load definitions with caching
+- Extensive testing before switching
 
-**Logging & Utilities:**
-- packages/orchestrator/src/hexagonal/core/logger.ts (Structured logging util)
-- packages/shared/redis-core/src/core/logger.ts (JSON logger helper)
-- packages/shared/utils/src/ (Trace extraction, retry, circuit breaker)
+### MEDIUM: Agent Registry Platform Scoping (Mitigation: Additive only)
+- Make platform_id optional
+- Implement precedence: platform-scoped → global
+- No breaking changes to existing registry
 
----
+### LOW: Dashboard Refactoring (Mitigation: Additive UI)
+- Add new pages alongside existing pages
+- Maintain backward-compatible URLs
+- Gradual migration optional
 
-## Exploration Completion Checklist
-
-- [x] CLAUDE.md reviewed - Session #68, 98% production ready
-- [x] AGENT-BASE-DESIGN.md analyzed - Design patterns and recommendations
-- [x] BaseAgent core implementation studied (783 lines)
-- [x] All 5 concrete agents reviewed and patterns identified
-- [x] Logging infrastructure fully mapped
-- [x] Configuration sources and limitations documented
-- [x] Dependency injection patterns analyzed
-- [x] Workflow state machine architecture understood
-- [x] Message schemas (AgentEnvelope, TaskResult) verified
-- [x] IMessageBus port and Redis adapter analyzed
-- [x] Monorepo structure and exports documented
-- [x] Error handling patterns classified
-- [x] Testing approach and mocking patterns identified
-- [x] 6 major design gaps identified and documented
-- [x] Production readiness evaluated
-- [x] Strategic recommendations formulated
+### LOW: Testing Infrastructure (Mitigation: Purely additive)
+- GenericMockAgent is new utility class
+- Existing mocks continue to work
+- No changes to current test patterns
 
 ---
 
-**Prepared for:** PLAN Phase (Strategic Design & Architecture)
-**Next Steps:** Design Agent Registry, Configuration Manager, Workflow Engine, Logger Service, Service Locator
-**Status:** ✅ Ready for PLAN Phase
+## Critical Success Factors
 
+1. **Database migration** - Non-breaking, phased approach
+2. **WorkflowEngine adoption** - Already supports definition-driven logic
+3. **Legacy platform abstraction** - Enables gradual migration
+4. **GenericMockAgent** - Enables parallel platform testing
+5. **Phase gates** - Testing at each step maintains 99% readiness
+
+---
+
+## Alignment with Session #70
+
+Session #70 added Analytics Service:
+- ✅ Read-only microservice pattern
+- ✅ Fastify + Prisma pattern
+- ✅ Docker multi-stage build
+- ✅ Separate read-only repository pattern
+
+This **directly enables** strategic architecture:
+- Platform-specific analytics can extend this pattern
+- Surfaces can be separate services
+- Prisma persistence ready for new tables
+- Docker CI/CD infrastructure proven
+
+---
+
+## Validation Checklist
+
+- [x] CLAUDE.md reviewed - Session #70 (99% production ready)
+- [x] STRATEGIC-ARCHITECTURE.md analyzed - Complete vision document
+- [x] Monorepo structure mapped - 6 main packages + shared
+- [x] Hexagonal architecture protected - No changes to core
+- [x] Database schema extensible - 3 new tables, 4 additive columns
+- [x] Redis Streams pattern verified - Unchanged usage
+- [x] Backward compatibility strategy - Legacy platform works
+- [x] Risk mitigation identified - 5 risks with solutions
+- [x] Timeline achievable - 8 weeks, clearly phased
+- [x] Session #70 alignment - Analytics service sets precedent
+- [x] Team capacity assessment - Well-defined, testable phases
+- [x] Dependencies clear - No blocking external changes
+- [x] Testing strategy - GenericMockAgent in Phase 6
+- [x] Production readiness - Maintains 99% through careful phasing
+
+---
+
+## Exploration Conclusion
+
+**RECOMMENDATION: PROCEED TO PLANNING PHASE**
+
+The STRATEGIC-ARCHITECTURE.md vision is:
+1. **Achievable** - 8-week phased implementation
+2. **Non-breaking** - Hexagonal core protected, backward compatible
+3. **Well-aligned** - Builds on Session #70 precedent
+4. **Production-ready** - Maintains 99% readiness through gates
+5. **Enterprise-grade** - Multi-platform, multi-tenant capable
+
+### For Planning Phase
+1. Create detailed EPCC_PLAN.md with acceptance criteria per phase
+2. Identify any team/resource constraints
+3. Schedule phase gates (every 1-2 weeks)
+4. Validate timeline with stakeholders
+
+### Key Planning Decisions
+1. **Database migration timing** - Early in Phase 1, non-blocking
+2. **Legacy platform creation** - First step, enables gradual migration
+3. **Testing strategy** - GenericMockAgent as foundation
+4. **Documentation approach** - Templates + examples per platform type
+
+Ready for planning.

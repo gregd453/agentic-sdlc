@@ -16,7 +16,10 @@ export function useWorkflows(filters?: {
 export function useWorkflow(id: string | undefined, refetchInterval: number = 5000) {
   return useQuery({
     queryKey: ['workflow', id],
-    queryFn: () => fetchWorkflow(id!),
+    queryFn: () => {
+      if (!id) throw new Error('Workflow ID is required')
+      return fetchWorkflow(id)
+    },
     enabled: !!id,
     refetchInterval: id ? refetchInterval : false,
   })
@@ -25,7 +28,10 @@ export function useWorkflow(id: string | undefined, refetchInterval: number = 50
 export function useWorkflowTasks(id: string | undefined) {
   return useQuery({
     queryKey: ['workflow', id, 'tasks'],
-    queryFn: () => fetchWorkflowTasks(id!),
+    queryFn: () => {
+      if (!id) throw new Error('Workflow ID is required')
+      return fetchWorkflowTasks(id)
+    },
     enabled: !!id,
     refetchInterval: false,
   })
@@ -34,7 +40,10 @@ export function useWorkflowTasks(id: string | undefined) {
 export function useWorkflowTimeline(id: string | undefined) {
   return useQuery({
     queryKey: ['workflow', id, 'timeline'],
-    queryFn: () => fetchWorkflowTimeline(id!),
+    queryFn: () => {
+      if (!id) throw new Error('Workflow ID is required')
+      return fetchWorkflowTimeline(id)
+    },
     enabled: false, // TODO: Timeline endpoint not implemented yet
     refetchInterval: false,
   })

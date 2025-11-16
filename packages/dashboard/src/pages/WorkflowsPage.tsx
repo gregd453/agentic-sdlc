@@ -5,7 +5,7 @@ import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import ProgressBar from '../components/Common/ProgressBar'
-import { formatRelativeTime, truncateId } from '../utils/formatters'
+import { formatRelativeTime, truncateId, calculateProgressFromStage } from '../utils/formatters'
 
 export default function WorkflowsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('')
@@ -118,7 +118,11 @@ export default function WorkflowsPage() {
                       {workflow.current_stage}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <ProgressBar value={workflow.progress} showLabel className="w-24" />
+                      <ProgressBar
+                        value={workflow.progress ?? calculateProgressFromStage(workflow.current_stage, workflow.type)}
+                        showLabel
+                        className="w-24"
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {workflow.trace_id ? (

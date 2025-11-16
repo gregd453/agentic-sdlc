@@ -5,13 +5,14 @@
 #
 # Gracefully stops all running services:
 # - Orchestrator (via PM2)
-# - Dashboard (via PM2)
 # - All Agents (via PM2)
-# - Redis
-# - PostgreSQL
+# - Dashboard (via Docker)
+# - Redis (via Docker)
+# - PostgreSQL (via Docker)
 #
 # Updated in Session #58: Now uses PM2 for process management
 # Updated in Session #61: Added Dashboard UI
+# Updated in Session #68: Dashboard moved to Docker-only (no PM2 duplication)
 #
 # Usage:
 #   ./scripts/env/stop-dev.sh              # Stop all services gracefully
@@ -44,7 +45,7 @@ done
 
 echo -e "${BLUE}================================================${NC}"
 echo -e "${BLUE}Agentic SDLC - Development Environment Shutdown${NC}"
-echo -e "${BLUE}(Using PM2 Process Management)${NC}"
+echo -e "${BLUE}(Docker + PM2 Process Management)${NC}"
 echo -e "${BLUE}================================================${NC}"
 echo ""
 
