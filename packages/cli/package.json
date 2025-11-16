@@ -1,0 +1,54 @@
+{
+  "name": "@agentic-sdlc/cli",
+  "version": "1.0.0",
+  "description": "Unified Command Center CLI for Agentic SDLC Platform",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "agentic-sdlc": "dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@agentic-sdlc/shared-types": "workspace:*",
+    "@prisma/client": "^5.8.0",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "inquirer": "^8.2.5",
+    "node-fetch": "^3.3.2",
+    "redis": "^4.6.12",
+    "ora": "^8.0.1",
+    "table": "^6.8.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.11.0",
+    "@vitest/coverage-v8": "^1.1.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "cli",
+    "agentic-sdlc",
+    "command-center",
+    "operational"
+  ],
+  "author": "Agentic SDLC Team",
+  "license": "MIT"
+}

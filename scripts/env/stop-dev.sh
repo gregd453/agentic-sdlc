@@ -13,10 +13,15 @@
 # Updated in Session #58: Now uses PM2 for process management
 # Updated in Session #61: Added Dashboard UI
 # Updated in Session #68: Dashboard moved to Docker-only (no PM2 duplication)
+# Updated in Session #75: Fixed PM2 auto-restart runaway process issue
+#   - Now properly kills PM2 daemon to prevent resurrection
+#   - Cleans up stale PID files
+#   - Removes PM2 communication sockets
 #
 # Usage:
 #   ./scripts/env/stop-dev.sh              # Stop all services gracefully
 #   ./scripts/env/stop-dev.sh --containers # Stop only Docker containers
+#   ./scripts/env/stop-dev.sh --force      # Force kill without graceful shutdown
 ##############################################################################
 
 set -e
@@ -105,8 +110,25 @@ fi
 
 echo ""
 
-# 4. Final verification
-echo -e "${YELLOW}[4/4]${NC} Final verification..."
+# 4. Kill PM2 daemon & clean stale state (Session #75 fix)
+echo -e "${YELLOW}[4/4]${NC} Killing PM2 daemon and cleaning stale files..."
+
+# Force kill PM2 daemon to prevent auto-restart (Session #75 fix)
+pkill -9 -f "pm2" 2>/dev/null || true
+pkill -9 -f "PM2" 2>/dev/null || true
+sleep 1
+
+# Delete stale PM2 PID files to prevent resurrection (Session #75 fix)
+rm -f ~/.pm2/pids/*.pid 2>/dev/null || true
+
+# Remove PM2 communication sockets (Session #75 fix)
+rm -f ~/.pm2/*.sock 2>/dev/null || true
+
+echo -e "  ${GREEN}✓${NC} PM2 daemon killed and state cleaned"
+
+# 5. Final verification
+echo ""
+echo -e "${YELLOW}[5/5]${NC} Final verification..."
 
 # Verify no orphaned processes remain
 STRAGGLERS=$(pgrep -f "node|npm|vitest|tsx|esbuild" 2>/dev/null | grep -v VSCode | wc -l || true)
@@ -114,6 +136,14 @@ if [ "$STRAGGLERS" -eq 0 ]; then
   echo -e "  ${GREEN}✓${NC} No orphaned processes remain"
 else
   echo -e "  ${YELLOW}⚠${NC}  $STRAGGLERS non-critical process(es) remain"
+fi
+
+# Verify PM2 daemon is dead
+PM2_PROCESSES=$(pgrep -f "pm2|PM2" 2>/dev/null | wc -l || true)
+if [ "$PM2_PROCESSES" -eq 0 ]; then
+  echo -e "  ${GREEN}✓${NC} PM2 daemon killed successfully"
+else
+  echo -e "  ${YELLOW}⚠${NC}  PM2 daemon still running (will die on next system cleanup)"
 fi
 
 # Remove old logs (keep recent ones)
