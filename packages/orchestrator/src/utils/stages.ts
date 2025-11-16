@@ -3,10 +3,15 @@ import { z } from 'zod';
 /**
  * Single source of truth for workflow stages
  * Prevents string mismatches and ensures enum-based validation
+ *
+ * Note: 'dependency_installation' stage added (Session #69) to install npm dependencies
+ * between scaffolding and validation stages. This ensures TypeScript and other validation
+ * tools have access to required modules before running checks.
  */
 export const StageEnum = z.enum([
   'initialization',
   'scaffolding',
+  'dependency_installation',
   'validation',
   'e2e_testing',
   'integration',
@@ -29,13 +34,15 @@ export function validateStage(stage: unknown): Stage {
 
 /**
  * Get all stages for a workflow type
+ * Note: dependency_installation stage added between scaffolding and validation (Session #69)
  */
 export function getStagesForType(workflowType: string): Stage[] {
   const stages: Record<string, Stage[]> = {
-    app: ['initialization', 'scaffolding', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring'],
-    feature: ['initialization', 'scaffolding', 'validation', 'e2e_testing'],
+    app: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring'],
+    feature: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'e2e_testing'],
     bugfix: ['initialization', 'validation', 'e2e_testing'],
-    default: ['initialization', 'scaffolding', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring']
+    service: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'integration', 'deployment'],
+    default: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring']
   };
 
   return stages[workflowType] || stages.default;

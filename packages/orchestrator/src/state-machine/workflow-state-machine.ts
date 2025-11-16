@@ -4,6 +4,7 @@ import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
 import { IMessageBus } from '../hexagonal/ports/message-bus.port';
 import { WorkflowStateManager, WorkflowStateSnapshot } from '../hexagonal/persistence/workflow-state-manager';
+import { getStagesForType } from '../utils/stages';
 
 export interface WorkflowContext {
   workflow_id: string;
@@ -251,8 +252,8 @@ export const createWorkflowStateMachine = (
         nextStage: ({ context }) => {
           // CRITICAL FIX: Compute the next stage ONCE on the event, BEFORE entering evaluating
           // This prevents re-evaluation in the evaluating entry action
-          const stages = getStagesForType(context.type);
-          const currentIndex = stages.indexOf(context.current_stage);
+          const stages = getStagesForType(context.type as any) as string[];
+          const currentIndex = (stages as string[]).indexOf(context.current_stage);
 
           // SESSION #28: Cleaned up debug logging (verified correct in Session #27)
           logger.debug('Computing next stage from current stage', {
@@ -525,37 +526,8 @@ export const createWorkflowStateMachine = (
   });
 };
 
-function getStagesForType(type: string): string[] {
-  const stageMap: Record<string, string[]> = {
-    app: [
-      'initialization',
-      'scaffolding',
-      'validation',
-      'e2e_testing',
-      'integration',
-      'deployment',
-      'monitoring'
-    ],
-    feature: [
-      'initialization',
-      'implementation',
-      'validation',
-      'testing',
-      'integration',
-      'deployment'
-    ],
-    bugfix: [
-      'initialization',
-      'debugging',
-      'fixing',
-      'validation',
-      'testing',
-      'deployment'
-    ]
-  };
-
-  return stageMap[type] || stageMap.app;
-}
+// Note: getStagesForType is now imported from ../utils/stages
+// This ensures consistency with the single source of truth for stage sequences
 
 export class WorkflowStateMachineService {
   private machines = new Map<string, any>();

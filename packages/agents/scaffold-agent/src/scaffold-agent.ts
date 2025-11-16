@@ -8,6 +8,7 @@ import { LoggerConfigService } from '@agentic-sdlc/logger-config';
 import { ConfigurationManager } from '@agentic-sdlc/config-manager';
 import { ServiceLocator } from '@agentic-sdlc/service-locator';
 import path from 'path';
+import { execSync } from 'child_process';
 import { TemplateEngine } from './template-engine';
 import { FileGenerator } from './file-generator';
 
@@ -70,11 +71,13 @@ export class ScaffoldAgent extends BaseAgent {
   async execute(task: AgentEnvelope): Promise<TaskResult> {
     const startTime = Date.now();
     const traceId = task.trace.trace_id;
+    const currentStage = task.workflow_context?.current_stage || 'unknown';
 
     this.logger.info('Executing scaffold task', {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
-      trace_id: traceId
+      trace_id: traceId,
+      stage: currentStage
     });
 
     try {
@@ -109,6 +112,41 @@ export class ScaffoldAgent extends BaseAgent {
         max_retries: task.constraints.max_retries,
         created_at: task.metadata.created_at
       };
+
+      // SESSION #69: Handle dependency_installation stage (new stage between scaffolding and validation)
+      if (currentStage === 'dependency_installation') {
+        this.logger.info('Dependency installation stage - installing project dependencies', {
+          task_id: scaffoldTask.task_id,
+          project_name: scaffoldTask.payload.name
+        });
+
+        const installResult = await this.installDependencies(scaffoldTask);
+
+        const duration = Date.now() - startTime;
+
+        return {
+          message_id: task.message_id,
+          task_id: scaffoldTask.task_id,
+          workflow_id: scaffoldTask.workflow_id,
+          agent_id: this.agentId,
+          status: 'success',
+          result: {
+            data: {
+              action: 'install_dependencies',
+              packages_installed: installResult.packagesInstalled,
+              installation_time_ms: installResult.duration_ms,
+              node_modules_created: true
+            },
+            metrics: {
+              duration_ms: duration
+            }
+          },
+          metadata: {
+            completed_at: new Date().toISOString(),
+            trace_id: task.trace.trace_id
+          }
+        };
+      }
 
       // Step 1: Analyze requirements using Claude
       this.logger.info('Analyzing requirements', { task_id: scaffoldTask.task_id });
@@ -1077,5 +1115,67 @@ IMPORTANT: Return ONLY the JSON object, no other text or formatting.`;
     });
 
     throw new Error(`${errorMsg}. Response preview: ${response.substring(0, 200)}`);
+  }
+
+  /**
+   * SESSION #69: Install project dependencies using pnpm
+   * This handler runs during the 'dependency_installation' workflow stage
+   * It executes `pnpm install` in the generated project directory
+   * Required before validation stage can run TypeScript checks
+   */
+  private async installDependencies(task: ScaffoldTask): Promise<{ packagesInstalled: number; duration_ms: number }> {
+    const startTime = Date.now();
+    const projectName = task.payload.name;
+    const workflowId = task.workflow_id;
+    // SESSION #69: Projects are stored in ai.output/{workflow_id}/{projectName}
+    const projectPath = path.resolve(`./ai.output/${workflowId}/${projectName}`);
+
+    this.logger.info('Starting dependency installation', {
+      task_id: task.task_id,
+      project_path: projectPath,
+      project_name: projectName
+    });
+
+    try {
+      // Run pnpm install with timeout and output capture
+      const command = `cd "${projectPath}" && pnpm install --no-frozen-lockfile`;
+
+      this.logger.info('Executing pnpm install command', {
+        task_id: task.task_id,
+        command,
+        timeout_ms: 300000
+      });
+
+      execSync(command, {
+        cwd: projectPath,
+        timeout: 300000, // 5 minute timeout
+        stdio: ['pipe', 'pipe', 'pipe'] // Capture stdout and stderr
+      });
+
+      const duration = Date.now() - startTime;
+
+      this.logger.info('Dependency installation completed successfully', {
+        task_id: task.task_id,
+        project_name: projectName,
+        duration_ms: duration
+      });
+
+      return {
+        packagesInstalled: -1, // Indicates success; exact count would require parsing pnpm output
+        duration_ms: duration
+      };
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      this.logger.error('Dependency installation failed', {
+        task_id: task.task_id,
+        project_name: projectName,
+        error: errorMessage,
+        duration_ms: duration
+      });
+
+      throw new Error(`Failed to install dependencies for project ${projectName}: ${errorMessage}`);
+    }
   }
 }

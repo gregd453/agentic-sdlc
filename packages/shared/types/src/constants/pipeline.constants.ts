@@ -55,6 +55,7 @@ export type AgentTypeConstant = typeof AGENT_TYPES[keyof typeof AGENT_TYPES];
 export const WORKFLOW_STAGES = {
   INITIALIZATION: 'initialization',
   SCAFFOLDING: 'scaffolding',
+  DEPENDENCY_INSTALLATION: 'dependency_installation',
   IMPLEMENTATION: 'implementation',
   VALIDATION: 'validation',
   TESTING: 'testing',
@@ -169,6 +170,7 @@ export type EventType = typeof EVENT_TYPES[keyof typeof EVENT_TYPES];
 export const STAGE_TO_AGENT_MAP: Record<string, AgentTypeConstant> = {
   [WORKFLOW_STAGES.INITIALIZATION]: AGENT_TYPES.SCAFFOLD,
   [WORKFLOW_STAGES.SCAFFOLDING]: AGENT_TYPES.SCAFFOLD,
+  [WORKFLOW_STAGES.DEPENDENCY_INSTALLATION]: AGENT_TYPES.SCAFFOLD,
   [WORKFLOW_STAGES.IMPLEMENTATION]: AGENT_TYPES.SCAFFOLD,
   [WORKFLOW_STAGES.VALIDATION]: AGENT_TYPES.VALIDATION,
   [WORKFLOW_STAGES.TESTING]: AGENT_TYPES.E2E_TEST,
@@ -184,11 +186,14 @@ export const STAGE_TO_AGENT_MAP: Record<string, AgentTypeConstant> = {
 
 /**
  * Defines the sequence of stages for each workflow type
+ * Note: dependency_installation stage added between scaffolding and validation
+ * to install npm dependencies before running type checking and tests
  */
 export const STAGE_SEQUENCES: Record<WorkflowTypeConstant, readonly WorkflowStageConstant[]> = {
   [WORKFLOW_TYPES.APP]: [
     WORKFLOW_STAGES.INITIALIZATION,
     WORKFLOW_STAGES.SCAFFOLDING,
+    WORKFLOW_STAGES.DEPENDENCY_INSTALLATION,
     WORKFLOW_STAGES.VALIDATION,
     WORKFLOW_STAGES.E2E_TESTING,
     WORKFLOW_STAGES.INTEGRATION,
@@ -198,6 +203,7 @@ export const STAGE_SEQUENCES: Record<WorkflowTypeConstant, readonly WorkflowStag
   [WORKFLOW_TYPES.FEATURE]: [
     WORKFLOW_STAGES.INITIALIZATION,
     WORKFLOW_STAGES.SCAFFOLDING,
+    WORKFLOW_STAGES.DEPENDENCY_INSTALLATION,
     WORKFLOW_STAGES.VALIDATION,
     WORKFLOW_STAGES.E2E_TESTING,
   ],
@@ -209,6 +215,7 @@ export const STAGE_SEQUENCES: Record<WorkflowTypeConstant, readonly WorkflowStag
   [WORKFLOW_TYPES.SERVICE]: [
     WORKFLOW_STAGES.INITIALIZATION,
     WORKFLOW_STAGES.SCAFFOLDING,
+    WORKFLOW_STAGES.DEPENDENCY_INSTALLATION,
     WORKFLOW_STAGES.VALIDATION,
     WORKFLOW_STAGES.INTEGRATION,
     WORKFLOW_STAGES.DEPLOYMENT,
