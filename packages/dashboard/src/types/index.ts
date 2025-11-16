@@ -141,3 +141,28 @@ export interface WorkflowStage {
   started_at: string | null
   completed_at: string | null
 }
+
+// Platform Types
+export type PlatformLayer = 'APPLICATION' | 'DATA' | 'INFRASTRUCTURE' | 'ENTERPRISE'
+
+export interface Platform {
+  id: string
+  name: string
+  layer: PlatformLayer
+  description?: string
+  enabled: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PlatformAnalytics {
+  platform_id: string
+  platform_name: string
+  total_workflows: number
+  completed_workflows: number
+  failed_workflows: number
+  running_workflows: number
+  avg_completion_time_ms: number | null
+  success_rate: number
+  timeseries: TimeSeriesDataPoint[]
+}

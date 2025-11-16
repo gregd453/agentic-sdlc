@@ -21,8 +21,11 @@ import { healthRoutes } from './api/routes/health.routes';
 import { statsRoutes } from './api/routes/stats.routes';
 import { traceRoutes } from './api/routes/trace.routes';
 import { taskRoutes } from './api/routes/task.routes';
+import { platformRoutes } from './api/routes/platform.routes';
 import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
 import { logger } from './utils/logger';
+import { PlatformLoaderService } from './services/platform-loader.service';
+import { PlatformRegistryService } from './services/platform-registry.service';
 import { metrics } from './utils/metrics';
 import {
   registerObservabilityMiddleware,
@@ -156,6 +159,12 @@ export async function createServer() {
   const traceService = new TraceService(traceRepository, workflowRepository);
   logger.info('Dashboard services initialized (StatsService, TraceService)');
 
+  // Initialize platform services
+  const platformLoader = new PlatformLoaderService(prisma);
+  const platformRegistry = new PlatformRegistryService(platformLoader);
+  await platformRegistry.initialize();
+  logger.info('Platform services initialized (PlatformRegistry with %d platforms)', platformRegistry.size());
+
   // Initialize pipeline services
   const qualityGateService = new QualityGateService();
   const pipelineExecutor = new PipelineExecutorService(
@@ -186,6 +195,7 @@ export async function createServer() {
   await fastify.register(statsRoutes, { statsService });
   await fastify.register(traceRoutes, { traceService });
   await fastify.register(taskRoutes, { workflowRepository });
+  await fastify.register(platformRoutes, { platformRegistry, statsService });
 
   // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 

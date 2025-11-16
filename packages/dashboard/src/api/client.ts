@@ -145,6 +145,44 @@ export async function fetchTask(taskId: string): Promise<AgentTask> {
   return fetchJSON<AgentTask>(`${API_BASE}/tasks/${taskId}`)
 }
 
+// Platform API
+export interface Platform {
+  id: string
+  name: string
+  layer: string
+  description?: string
+  enabled: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PlatformAnalytics {
+  platform_id: string
+  platform_name: string
+  total_workflows: number
+  completed_workflows: number
+  failed_workflows: number
+  running_workflows: number
+  avg_completion_time_ms: number | null
+  success_rate: number
+  timeseries: TimeSeriesDataPoint[]
+}
+
+export async function fetchPlatforms(): Promise<Platform[]> {
+  return fetchJSON<Platform[]>(`${API_BASE}/platforms`)
+}
+
+export async function fetchPlatform(id: string): Promise<Platform> {
+  return fetchJSON<Platform>(`${API_BASE}/platforms/${id}`)
+}
+
+export async function fetchPlatformAnalytics(
+  id: string,
+  period: string = '24h'
+): Promise<PlatformAnalytics> {
+  return fetchJSON<PlatformAnalytics>(`${API_BASE}/platforms/${id}/analytics?period=${period}`)
+}
+
 // Dashboard-specific API functions
 
 /**

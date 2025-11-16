@@ -4,6 +4,7 @@ import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import ProgressBar from '../components/Common/ProgressBar'
+import { SurfaceIndicator } from '../components/Common/SurfaceIndicator'
 import { formatDate, formatRelativeTime, truncateId } from '../utils/formatters'
 
 export default function WorkflowPage() {
@@ -60,6 +61,18 @@ export default function WorkflowPage() {
           value={workflow.completed_at ? formatDate(workflow.completed_at) : 'N/A'}
         />
         <MetadataCard label="Created By" value={workflow.created_by} />
+        {(workflow as any).platform_id && (
+          <MetadataCard
+            label="Platform"
+            value={<span className="text-sm font-mono">{truncateId((workflow as any).platform_id, 8)}</span>}
+          />
+        )}
+        {(workflow as any).surface && (
+          <MetadataCard
+            label="Triggered via"
+            value={<SurfaceIndicator surface={(workflow as any).surface} size="small" />}
+          />
+        )}
       </div>
 
       {/* Tasks Table */}

@@ -8,6 +8,8 @@ import WorkflowsPage from './pages/WorkflowsPage'
 import WorkflowPage from './pages/WorkflowPage'
 import TracesPage from './pages/TracesPage'
 import AgentsPage from './pages/AgentsPage'
+import { PlatformsPage } from './pages/PlatformsPage'
+import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 const queryClient = new QueryClient({
@@ -35,7 +37,9 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/workflows" element={<WorkflowsPage />} />
+                <Route path="/workflows/new" element={<WorkflowBuilderPage />} />
                 <Route path="/workflows/:id" element={<WorkflowPage />} />
+                <Route path="/platforms" element={<PlatformsPage />} />
                 <Route path="/traces" element={<TracesPage />} />
                 <Route path="/traces/:traceId" element={<TracesPage />} />
                 <Route path="/agents" element={<AgentsPage />} />

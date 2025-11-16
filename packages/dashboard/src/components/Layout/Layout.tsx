@@ -16,6 +16,7 @@ export default function Layout({ children }: LayoutProps) {
   const navLinks = [
     { path: '/', label: 'Dashboard' },
     { path: '/workflows', label: 'Workflows' },
+    { path: '/platforms', label: 'Platforms' },
     { path: '/traces', label: 'Traces' },
     { path: '/agents', label: 'Agents' },
   ]
@@ -47,6 +48,12 @@ export default function Layout({ children }: LayoutProps) {
                   </Link>
                 ))}
               </nav>
+              <Link
+                to="/workflows/new"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-colors"
+              >
+                + Create
+              </Link>
               <ThemeToggle />
             </div>
           </div>
