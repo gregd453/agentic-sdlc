@@ -33,7 +33,8 @@ export class IntegrationAgent extends BaseAgent {
     repoPath: string = process.cwd(),
     loggerConfigService?: LoggerConfigService,
     configurationManager?: ConfigurationManager,
-    serviceLocator?: ServiceLocator
+    serviceLocator?: ServiceLocator,
+    platformId?: string // Phase 4: Platform context for multi-platform SDLC system
   ) {
     super(
       {
@@ -49,7 +50,8 @@ export class IntegrationAgent extends BaseAgent {
       messageBus,
       loggerConfigService,
       configurationManager,
-      serviceLocator
+      serviceLocator,
+      platformId
     );
 
     this.gitService = new GitService(repoPath);

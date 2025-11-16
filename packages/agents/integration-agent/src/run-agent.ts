@@ -29,13 +29,15 @@ async function main() {
   console.log('[INTEGRATION] OrchestratorContainer initialized successfully');
 
   const messageBus = container.getBus();
-  const agent = new IntegrationAgent(messageBus);
+  const platformId = process.env.AGENT_PLATFORM_ID;
+  const agent = new IntegrationAgent(messageBus, undefined, undefined, undefined, undefined, platformId);
 
   try {
     // Initialize agent (connects to Redis, registers with orchestrator)
     await agent.initialize();
 
-    console.log('✅ Integration Agent running and listening for tasks');
+    const scope = platformId ? `[platform: ${platformId}]` : '[global]';
+    console.log(`✅ Integration Agent running and listening for tasks ${scope}`);
     console.log('📡 Connected to Redis:', process.env.REDIS_URL || 'redis://localhost:6380');
     console.log('🔑 Using Anthropic API key:', process.env.ANTHROPIC_API_KEY.substring(0, 20) + '...');
     console.log(`\nAgent is ready to receive tasks on channel: ${REDIS_CHANNELS.AGENT_TASKS(AGENT_TYPES.INTEGRATION)}`);

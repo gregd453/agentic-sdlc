@@ -29,13 +29,16 @@ async function main() {
   console.log('[PHASE-3] OrchestratorContainer initialized successfully');
 
   const messageBus = container.getBus();
-  const agent = new ScaffoldAgent(messageBus);
+  // Phase 4: Read platform ID from environment if specified
+  const platformId = process.env.AGENT_PLATFORM_ID;
+  const agent = new ScaffoldAgent(messageBus, undefined, undefined, undefined, platformId);
 
   try {
     // Initialize agent (connects to Redis, registers with orchestrator)
     await agent.initialize();
 
-    console.log('✅ Scaffold Agent running and listening for tasks');
+    const scope = platformId ? ` [platform: ${platformId}]` : ' [global]';
+    console.log('✅ Scaffold Agent running and listening for tasks' + scope);
     console.log('📡 Connected to Redis:', process.env.REDIS_URL || 'redis://localhost:6379');
     console.log('🔑 Using Anthropic API key:', process.env.ANTHROPIC_API_KEY.substring(0, 20) + '...');
     // SESSION #37: Use constants for channel name

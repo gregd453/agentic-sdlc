@@ -28,11 +28,13 @@ export class ScaffoldAgent extends BaseAgent {
   private readonly templateEngine: TemplateEngine;
 
   // Phase 2.2: Accept DI services in constructor
+  // Phase 4: Accept optional platform ID for platform-scoped agents
   constructor(
     messageBus: any,
     loggerConfigService?: LoggerConfigService,
     configurationManager?: ConfigurationManager,
-    serviceLocator?: ServiceLocator
+    serviceLocator?: ServiceLocator,
+    platformId?: string
   ) {
     super(
       {
@@ -50,7 +52,8 @@ export class ScaffoldAgent extends BaseAgent {
       messageBus,
       loggerConfigService,
       configurationManager,
-      serviceLocator
+      serviceLocator,
+      platformId // Phase 4: Pass platform context to base agent
     );
 
     this.fileGenerator = new FileGenerator(this.logger);

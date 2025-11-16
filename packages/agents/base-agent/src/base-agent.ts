@@ -45,6 +45,7 @@ export abstract class BaseAgent implements AgentLifecycle {
   protected readonly agentId: string;
   protected readonly capabilities: AgentCapabilities;
   protected readonly claudeCircuitBreaker: CircuitBreaker;
+  protected readonly platformId?: string; // Phase 4: Optional platform scoping
 
   // Phase 2.1: Dependency injection services
   protected readonly loggerConfigService: LoggerConfigService;
@@ -65,11 +66,13 @@ export abstract class BaseAgent implements AgentLifecycle {
     // Phase 2.1: DI parameters with defaults to singleton services
     loggerConfigService?: LoggerConfigService,
     configurationManager?: ConfigurationManager,
-    serviceLocator?: ServiceLocator
+    serviceLocator?: ServiceLocator,
+    platformId?: string // Phase 4: Optional platform context
   ) {
     this.agentId = `${capabilities.type}-${randomUUID().slice(0, 8)}`;
     this.capabilities = capabilities;
     this.messageBus = messageBus;
+    this.platformId = platformId; // Phase 4: Store platform context
 
     // Phase 3: Validate messageBus
     if (!messageBus) {
@@ -138,11 +141,12 @@ export abstract class BaseAgent implements AgentLifecycle {
   }
 
   async initialize(): Promise<void> {
-    this.logger.info('[PHASE-3] Initializing agent with message bus', {
+    this.logger.info('[PHASE-4] Initializing agent with message bus', {
       type: this.capabilities.type,
       version: this.capabilities.version,
       capabilities: this.capabilities.capabilities,
-      messageBus_available: !!this.messageBus
+      messageBus_available: !!this.messageBus,
+      platformId: this.platformId || 'global' // Phase 4: Include platform context
     });
 
     // Test Redis connections (still needed for result publishing)
@@ -188,13 +192,14 @@ export abstract class BaseAgent implements AgentLifecycle {
             envelope_keys: Object.keys(envelope).join(',')
           });
 
-          this.logger.info('[PHASE-3] Agent received task from message bus', {
+          this.logger.info('[PHASE-4] Agent received task from message bus', {
             workflow_id: envelope.workflow_id,
             task_id: envelope.task_id,
             agent_type: envelope.agent_type,
             channel: taskChannel,
             trace_id: envelope.trace?.trace_id,
-            span_id: envelope.trace?.span_id
+            span_id: envelope.trace?.span_id,
+            platformId: this.platformId || 'global' // Phase 4: Include platform context
           });
 
           // 🔍 AGENT TRACE: Task received
@@ -260,18 +265,22 @@ export abstract class BaseAgent implements AgentLifecycle {
     console.log('[DEBUG-AGENT-INIT] Subscription completed, handler registered', {
       taskChannel,
       consumerGroup,
-      agent_type: this.capabilities.type
+      agent_type: this.capabilities.type,
+      platformId: this.platformId || 'global'
     });
 
-    this.logger.info('[PHASE-3] Agent subscribed to message bus for tasks', {
+    this.logger.info('[PHASE-4] Agent subscribed to message bus for tasks', {
       taskChannel,
-      consumerGroup
+      consumerGroup,
+      platformId: this.platformId || 'global'
     });
 
     // Register agent with orchestrator (use publisher connection)
     await this.registerWithOrchestrator();
 
-    this.logger.info('[PHASE-3] Agent initialized successfully with message bus');
+    this.logger.info('[PHASE-4] Agent initialized successfully with message bus', {
+      platformId: this.platformId || 'global'
+    });
   }
 
   async receiveTask(message: AgentMessage): Promise<void> {

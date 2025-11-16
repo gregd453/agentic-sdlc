@@ -54,7 +54,7 @@ export class WorkflowRepository {
     throw lastError!;
   }
 
-  async create(data: CreateWorkflowRequest & { created_by: string; trace_id?: string; current_span_id?: string }): Promise<Workflow> {
+  async create(data: CreateWorkflowRequest & { created_by: string; trace_id?: string; current_span_id?: string; platform_id?: string; surface_id?: string; input_data?: Record<string, any> }): Promise<Workflow> {
     return await this.prisma.$transaction(async (tx) => {
       // Create workflow
       const workflow = await tx.workflow.create({
@@ -68,7 +68,11 @@ export class WorkflowRepository {
           current_stage: 'initialization',
           created_by: data.created_by,
           trace_id: data.trace_id, // Phase 3: Store trace_id
-          current_span_id: data.current_span_id // Phase 3: Store current_span_id
+          current_span_id: data.current_span_id, // Phase 3: Store current_span_id
+          // Phase 1: Store platform-aware fields
+          platform_id: data.platform_id || undefined,
+          surface_id: data.surface_id || undefined,
+          input_data: data.input_data || undefined
         }
       });
 

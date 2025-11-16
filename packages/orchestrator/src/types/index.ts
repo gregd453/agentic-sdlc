@@ -49,7 +49,11 @@ export const CreateWorkflowSchema = z.object({
   description: z.string().optional(),
   requirements: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high', 'critical']),
-  trace_id: z.string().uuid().optional() // Phase 3: Accept trace_id from HTTP request
+  trace_id: z.string().uuid().optional(), // Phase 3: Accept trace_id from HTTP request
+  // Phase 1: Platform awareness (optional for backward compatibility)
+  platform_id: z.string().uuid().optional(),
+  surface_id: z.string().uuid().optional(),
+  input_data: z.record(z.unknown()).optional()
 });
 
 export const WorkflowResponseSchema = z.object({

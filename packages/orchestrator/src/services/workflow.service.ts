@@ -301,6 +301,7 @@ export class WorkflowService {
       name: request.name,
       trace_id: traceId,
       span_id: spanId,
+      platform_id: request.platform_id, // Phase 1: Log platform awareness
       request_keys: Object.keys(request),
       full_request: JSON.stringify(request)
     });
@@ -311,7 +312,11 @@ export class WorkflowService {
         ...request,
         created_by: 'system', // In production, get from auth context
         trace_id: traceId, // Phase 3: Store trace_id
-        current_span_id: spanId // Phase 3: Store current span
+        current_span_id: spanId, // Phase 3: Store current span
+        // Phase 1: Store platform-aware fields
+        platform_id: request.platform_id || undefined,
+        surface_id: request.surface_id || undefined,
+        input_data: request.input_data || undefined
       });
 
       // Create state machine for workflow
@@ -1214,11 +1219,13 @@ export class WorkflowService {
       },
 
       // Workflow Context
+      // Phase 4: Include platform_id for platform-aware agent routing
       workflow_context: {
         workflow_type: workflow.type,
         workflow_name: workflow.name,
         current_stage: stage,
-        stage_outputs: stageOutputs
+        stage_outputs: stageOutputs,
+        platform_id: workflow.platform_id || undefined // Phase 4: Add platform context if available
       }
     };
 

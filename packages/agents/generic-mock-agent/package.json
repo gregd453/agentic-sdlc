@@ -1,0 +1,43 @@
+{
+  "name": "@agentic-sdlc/generic-mock-agent",
+  "version": "1.0.0",
+  "description": "Generic mock agent for testing multi-platform scenarios",
+  "type": "module",
+  "main": "dist/generic-mock-agent.js",
+  "types": "dist/generic-mock-agent.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "start": "node dist/run-agent.js"
+  },
+  "dependencies": {
+    "@agentic-sdlc/base-agent": "workspace:*",
+    "@agentic-sdlc/shared-types": "workspace:*",
+    "@agentic-sdlc/shared-utils": "workspace:*",
+    "@agentic-sdlc/orchestrator": "workspace:*",
+    "@anthropic-ai/sdk": "^0.24.3",
+    "dotenv": "^16.4.5",
+    "ioredis": "^5.3.7",
+    "pino": "^8.19.0"
+  },
+  "devDependencies": {
+    "@agentic-sdlc/agent-registry": "workspace:*",
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.1"
+  },
+  "keywords": [
+    "agentic-sdlc",
+    "mock-agent",
+    "testing",
+    "multi-platform",
+    "phase-4"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "directory": "packages/agents/generic-mock-agent"
+  }
+}

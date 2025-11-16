@@ -21,7 +21,8 @@ async function main() {
   console.log('[PHASE-3] OrchestratorContainer initialized successfully');
 
   const messageBus = container.getBus();
-  const agent = new ValidationAgent(messageBus);
+  const platformId = process.env.AGENT_PLATFORM_ID;
+  const agent = new ValidationAgent(messageBus, undefined, undefined, undefined, platformId);
   let isShuttingDown = false;
 
   // Handle graceful shutdown
@@ -42,7 +43,8 @@ async function main() {
     // Initialize and start the agent
     await agent.initialize();
 
-    console.log('✅ Validation agent started successfully');
+    const scope = platformId ? `[platform: ${platformId}]` : '[global]';
+    console.log(`✅ Validation agent started successfully ${scope}`);
     console.log('📡 Listening for validation tasks...');
 
     // Keep process alive with a proper mechanism

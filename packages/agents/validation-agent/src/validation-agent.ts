@@ -28,7 +28,8 @@ export class ValidationAgent extends BaseAgent {
     messageBus: any,
     loggerConfigService?: LoggerConfigService,
     configurationManager?: ConfigurationManager,
-    serviceLocator?: ServiceLocator
+    serviceLocator?: ServiceLocator,
+    platformId?: string // Phase 4: Platform context for multi-platform SDLC system
   ) {
     super(
       {
@@ -45,7 +46,8 @@ export class ValidationAgent extends BaseAgent {
       messageBus,
       loggerConfigService,
       configurationManager,
-      serviceLocator
+      serviceLocator,
+      platformId
     );
   }
 

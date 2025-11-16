@@ -27,10 +27,20 @@ model Workflow {
   trace_id         String?          @db.Text
   current_span_id  String?          @db.Text
 
+  // Platform-aware fields (nullable for backward compatibility)
+  platform_id      String?
+  workflow_definition_id String?
+  surface_id       String?
+  input_data       Json?
+  layer            String?
+
   created_at       DateTime         @default(now())
   updated_at       DateTime         @updatedAt
   completed_at     DateTime?
   created_by       String
+
+  platform         Platform?        @relation(fields: [platform_id], references: [id])
+  workflow_definition WorkflowDefinition? @relation(fields: [workflow_definition_id], references: [id])
 
   stages           WorkflowStage[]
   tasks            AgentTask[]
@@ -39,6 +49,8 @@ model Workflow {
   @@index([status])
   @@index([created_at])
   @@index([trace_id])
+  @@index([platform_id])
+  @@index([workflow_definition_id])
 }
 
 model WorkflowStage {
@@ -111,8 +123,14 @@ model Agent {
   registered_at   DateTime        @default(now())
   metadata        Json?
 
+  // Platform-aware field (nullable for global agents)
+  platform_id     String?
+
+  platform        Platform?       @relation(fields: [platform_id], references: [id])
+
   @@index([type])
   @@index([status])
+  @@index([platform_id])
 }
 
 enum WorkflowType {
@@ -170,4 +188,75 @@ enum Priority {
   medium
   high
   critical
+}
+
+enum PlatformLayer {
+  APPLICATION
+  DATA
+  INFRASTRUCTURE
+  ENTERPRISE
+}
+
+enum SurfaceType {
+  REST
+  WEBHOOK
+  CLI
+  DASHBOARD
+  MOBILE_API
+}
+
+model Platform {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  layer           PlatformLayer
+  description     String?
+  config          Json?            @default("{}")
+  enabled         Boolean          @default(true)
+
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+
+  workflow_definitions WorkflowDefinition[]
+  surfaces        PlatformSurface[]
+  workflows       Workflow[]
+  agents          Agent[]
+
+  @@index([layer])
+  @@index([enabled])
+}
+
+model WorkflowDefinition {
+  id              String           @id @default(uuid())
+  platform_id     String
+  name            String
+  version         String           @default("1.0.0")
+  description     String?
+  definition      Json             // Contains stage sequence, agent assignments, etc.
+  enabled         Boolean          @default(true)
+
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+
+  platform        Platform         @relation(fields: [platform_id], references: [id])
+  workflows       Workflow[]
+
+  @@unique([platform_id, name])
+  @@index([platform_id])
+  @@index([enabled])
+}
+
+model PlatformSurface {
+  id              String           @id @default(uuid())
+  platform_id     String
+  surface_type    SurfaceType
+  config          Json?            @default("{}")
+  enabled         Boolean          @default(true)
+
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+
+  platform        Platform         @relation(fields: [platform_id], references: [id])
+
+  @@unique([platform_id, surface_type])
+  @@index([platform_id])
 }
