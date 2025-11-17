@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { fetchPlatforms, fetchPlatformAnalytics } from '../api/client'
 import { formatDate, formatDuration } from '../utils/formatters'
 import { getPlatformLayerColor, formatLayerName } from '../utils/platformColors'
+import { logger } from '../utils/logger'
 import type { PlatformAnalytics } from '../types'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
@@ -56,8 +57,12 @@ export const PlatformsPage: React.FC = () => {
             const analytics = await fetchPlatformAnalytics(platform.id, selectedPeriod)
             return { ...platform, analytics }
           } catch (err) {
-            // Silently fail for individual platform analytics
-            // This allows other platforms to load even if one fails
+            // Log analytics load failure but continue with other platforms
+            logger.warn(
+              `Failed to load analytics for platform`,
+              `PlatformsPage.loadAnalytics`,
+              err
+            )
             return platform
           }
         })
@@ -65,7 +70,11 @@ export const PlatformsPage: React.FC = () => {
       setPlatforms(updatedPlatforms)
     } catch (err) {
       // Analytics load error is not critical - platforms still display
-      // Error is silently handled as we have graceful fallback in map
+      logger.error(
+        'Failed to load platform analytics',
+        'PlatformsPage.loadAnalytics',
+        err
+      )
     }
   }
 
