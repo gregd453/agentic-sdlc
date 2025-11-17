@@ -1,0 +1,281 @@
+{
+  "$schema": "logging-config.schema.json",
+  "version": "1.0",
+  "description": "Application-wide logging level configuration",
+  "updated": "2025-11-17",
+  "environments": {
+    "development": {
+      "globalLevel": "debug",
+      "prettyPrint": true,
+      "description": "Local development - maximum visibility",
+      "modules": {
+        "orchestrator": "debug",
+        "api-client": "debug",
+        "database": "debug",
+        "config": "debug",
+        "redis-bus": "debug",
+        "workflow-engine": "debug",
+        "health-check": "info",
+        "analytics-service": "info",
+        "scaffold-agent": "info",
+        "validation-agent": "info",
+        "e2e-agent": "info",
+        "integration-agent": "info",
+        "deployment-agent": "info",
+        "generic-mock-agent": "debug",
+        "cli-commands": "info",
+        "cli-database": "info",
+        "cli-environment": "info"
+      }
+    },
+    "production": {
+      "globalLevel": "info",
+      "prettyPrint": false,
+      "description": "Production - balanced visibility and performance",
+      "modules": {
+        "orchestrator": "info",
+        "api-client": "info",
+        "database": "info",
+        "config": "info",
+        "redis-bus": "info",
+        "workflow-engine": "info",
+        "health-check": "warn",
+        "analytics-service": "info",
+        "scaffold-agent": "info",
+        "validation-agent": "info",
+        "e2e-agent": "info",
+        "integration-agent": "info",
+        "deployment-agent": "info",
+        "generic-mock-agent": "warn",
+        "cli-commands": "info",
+        "cli-database": "info",
+        "cli-environment": "info"
+      }
+    },
+    "staging": {
+      "globalLevel": "debug",
+      "prettyPrint": true,
+      "description": "Staging environment - pre-production with debugging",
+      "modules": {
+        "orchestrator": "debug",
+        "api-client": "info",
+        "database": "info",
+        "config": "debug",
+        "redis-bus": "info",
+        "workflow-engine": "debug",
+        "health-check": "info",
+        "analytics-service": "info",
+        "scaffold-agent": "info",
+        "validation-agent": "info",
+        "e2e-agent": "info",
+        "integration-agent": "info",
+        "deployment-agent": "info",
+        "generic-mock-agent": "info",
+        "cli-commands": "info",
+        "cli-database": "info",
+        "cli-environment": "info"
+      }
+    },
+    "test": {
+      "globalLevel": "warn",
+      "prettyPrint": false,
+      "description": "Testing - minimal output to reduce noise",
+      "modules": {
+        "orchestrator": "warn",
+        "api-client": "warn",
+        "database": "warn",
+        "config": "warn",
+        "redis-bus": "warn",
+        "workflow-engine": "warn",
+        "health-check": "error",
+        "analytics-service": "warn",
+        "scaffold-agent": "warn",
+        "validation-agent": "warn",
+        "e2e-agent": "warn",
+        "integration-agent": "warn",
+        "deployment-agent": "warn",
+        "generic-mock-agent": "warn",
+        "cli-commands": "warn",
+        "cli-database": "warn",
+        "cli-environment": "warn"
+      }
+    }
+  },
+  "logLevelHierarchy": {
+    "trace": 10,
+    "debug": 20,
+    "info": 30,
+    "warn": 40,
+    "error": 50,
+    "fatal": 60
+  },
+  "logLevelDescriptions": {
+    "trace": "Most verbose - deep diagnostics, variable traces",
+    "debug": "Development level - debugging issues, detailed flow",
+    "info": "General information - normal operations (DEFAULT)",
+    "warn": "Warning conditions - something unexpected",
+    "error": "Error conditions - operation failed",
+    "fatal": "System failures - unrecoverable state"
+  },
+  "moduleDescriptions": {
+    "orchestrator": {
+      "description": "Workflow orchestration and coordination",
+      "criticality": "critical",
+      "suggestedLevel": "info"
+    },
+    "api-client": {
+      "description": "External API communication and integration",
+      "criticality": "high",
+      "suggestedLevel": "info"
+    },
+    "database": {
+      "description": "Database operations and queries",
+      "criticality": "high",
+      "suggestedLevel": "info"
+    },
+    "config": {
+      "description": "Configuration loading and management",
+      "criticality": "medium",
+      "suggestedLevel": "debug"
+    },
+    "redis-bus": {
+      "description": "Redis message bus and streaming",
+      "criticality": "high",
+      "suggestedLevel": "info"
+    },
+    "workflow-engine": {
+      "description": "Workflow definition and state machine",
+      "criticality": "high",
+      "suggestedLevel": "info"
+    },
+    "health-check": {
+      "description": "System health monitoring",
+      "criticality": "medium",
+      "suggestedLevel": "info"
+    },
+    "analytics-service": {
+      "description": "Metrics and analytics collection",
+      "criticality": "medium",
+      "suggestedLevel": "info"
+    },
+    "scaffold-agent": {
+      "description": "Project scaffolding agent",
+      "criticality": "high",
+      "suggestedLevel": "info"
+    },
+    "validation-agent": {
+      "description": "Code validation and linting",
+      "criticality": "high",
+      "suggestedLevel": "info"
+    },
+    "e2e-agent": {
+      "description": "End-to-end testing agent",
+      "criticality": "high",
+      "suggestedLevel": "info"
+    },
+    "integration-agent": {
+      "description": "Integration testing agent",
+      "criticality": "high",
+      "suggestedLevel": "info"
+    },
+    "deployment-agent": {
+      "description": "Deployment operations agent",
+      "criticality": "critical",
+      "suggestedLevel": "info"
+    },
+    "generic-mock-agent": {
+      "description": "Generic mock agent for testing",
+      "criticality": "low",
+      "suggestedLevel": "debug"
+    },
+    "cli-commands": {
+      "description": "CLI command execution",
+      "criticality": "medium",
+      "suggestedLevel": "info"
+    },
+    "cli-database": {
+      "description": "CLI database management",
+      "criticality": "medium",
+      "suggestedLevel": "info"
+    },
+    "cli-environment": {
+      "description": "CLI environment management",
+      "criticality": "medium",
+      "suggestedLevel": "info"
+    }
+  },
+  "commonScenarios": {
+    "debugging-workflow-issues": {
+      "description": "Investigate workflow execution problems",
+      "globalLevel": "debug",
+      "moduleOverrides": {
+        "orchestrator": "debug",
+        "workflow-engine": "debug",
+        "redis-bus": "debug"
+      }
+    },
+    "debugging-deployment-issues": {
+      "description": "Investigate deployment failures",
+      "globalLevel": "debug",
+      "moduleOverrides": {
+        "deployment-agent": "trace",
+        "api-client": "debug",
+        "redis-bus": "debug"
+      }
+    },
+    "debugging-agent-issues": {
+      "description": "Investigate specific agent failures",
+      "globalLevel": "debug",
+      "moduleOverrides": {
+        "scaffold-agent": "debug",
+        "validation-agent": "debug",
+        "e2e-agent": "debug",
+        "integration-agent": "debug"
+      }
+    },
+    "performance-profiling": {
+      "description": "Measure performance impact of logging",
+      "globalLevel": "warn",
+      "moduleOverrides": {}
+    },
+    "high-verbosity-diagnostics": {
+      "description": "Maximum detail for comprehensive diagnostics",
+      "globalLevel": "trace",
+      "moduleOverrides": {
+        "orchestrator": "trace",
+        "workflow-engine": "trace",
+        "redis-bus": "trace",
+        "database": "trace"
+      }
+    }
+  },
+  "recommendations": {
+    "production": [
+      "Set LOG_LEVEL=info to reduce noise",
+      "Override deployment-agent, orchestrator to info for visibility",
+      "Use DOCKER_ENV=true if containerized",
+      "Monitor ERROR and FATAL logs for production issues",
+      "Consider centralized log aggregation"
+    ],
+    "development": [
+      "Set LOG_LEVEL=debug for full visibility",
+      "Enable VERBOSE=true for CLI output",
+      "Use module-specific overrides to focus debugging",
+      "Leave generic-mock-agent at debug for testing",
+      "Check pretty-print is enabled (NODE_ENV=development)"
+    ],
+    "troubleshooting": [
+      "Start with globalLevel debug, then narrow down modules",
+      "Use module-specific overrides for targeted investigation",
+      "Check LOG_LEVEL environment variable is set correctly",
+      "Verify NODE_ENV for pretty-print expectations",
+      "Enable tracing for deepest diagnostic info"
+    ]
+  },
+  "notes": {
+    "format": "This is a reference configuration. Import into code via LoggerConfigService",
+    "precedence": "Environment variables override this config file",
+    "runtime": "Module levels can be changed at runtime via LoggerConfigService API",
+    "performance": "DEBUG and TRACE levels have minimal performance impact in async context"
+  }
+}

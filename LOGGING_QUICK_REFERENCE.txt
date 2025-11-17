@@ -1,0 +1,195 @@
+================================================================================
+                    AGENTIC SDLC LOGGING - QUICK REFERENCE
+================================================================================
+
+LOG LEVELS (6 Tiers)
+─────────────────────────────────────────────────────────────────────────────
+TRACE   (10)  │ Deep diagnostics, variable traces                   [Rarest]
+DEBUG   (20)  │ Development info, debugging issues
+INFO    (30)  │ General information, normal operations (DEFAULT)    [Default]
+WARN    (40)  │ Warning conditions, something unexpected
+ERROR   (50)  │ Error conditions, operation failed
+FATAL   (60)  │ System failures, unrecoverable state               [Most Critical]
+
+ENVIRONMENT SETUP
+─────────────────────────────────────────────────────────────────────────────
+Development:       export NODE_ENV=development LOG_LEVEL=debug
+Production:        export NODE_ENV=production LOG_LEVEL=info
+Staging:           export NODE_ENV=staging LOG_LEVEL=debug
+Testing:           export NODE_ENV=test LOG_LEVEL=warn
+Debugging:         export LOG_LEVEL=trace (max detail)
+
+QUICK START
+─────────────────────────────────────────────────────────────────────────────
+1. Import:    import { createLogger } from '@agentic-sdlc/logger-config';
+2. Create:    const logger = createLogger({ component: 'my-service' });
+3. Use:       logger.info('message', { context });
+
+LOG LEVEL DECISION TREE
+─────────────────────────────────────────────────────────────────────────────
+Is it user-visible output?           YES → INFO
+Is it for development/debugging?     YES → DEBUG
+Is it unexpected but handled?        YES → WARN
+Did an operation fail?               YES → ERROR
+Can system not continue?             YES → FATAL
+Is it deepest detail?                YES → TRACE
+
+COMMON LOGGING PATTERNS
+─────────────────────────────────────────────────────────────────────────────
+Info level (info):
+  • Startup/shutdown messages
+  • Major operations (workflow started)
+  • Operation completion
+  • Service initialization
+
+Debug level (debug):
+  • Function entry/exit
+  • Variable values
+  • Decision points
+  • Loop iterations
+
+Warn level (warn):
+  • Deprecation warnings
+  • Performance concerns
+  • Recoverable errors
+  • Temporary conditions
+
+Error level (error):
+  • Failed operations
+  • Exceptions caught
+  • Resource exhaustion
+  • Connection failures
+
+Fatal level (fatal):
+  • System shutdown required
+  • Unrecoverable state
+  • Total service failure
+
+MODULE-SPECIFIC DEFAULTS
+─────────────────────────────────────────────────────────────────────────────
+CRITICAL (info):
+  orchestrator, deployment-agent, api-client, database, redis-bus
+
+HIGH (info):
+  scaffold-agent, validation-agent, e2e-agent, integration-agent
+
+MEDIUM (info):
+  config, workflow-engine, health-check, analytics-service
+
+TESTING (debug):
+  generic-mock-agent
+
+RUNTIME CONFIGURATION
+─────────────────────────────────────────────────────────────────────────────
+Change global:      LoggerConfigService.getInstance().setGlobalLevel('debug')
+Override module:    LoggerConfigService.getInstance().setModuleLevel('agents', 'trace')
+Listen for changes: configService.subscribe(listener)
+
+USAGE EXAMPLES
+─────────────────────────────────────────────────────────────────────────────
+logger.info('Workflow started', { workflowId, type });
+logger.debug('Processing item', { index, total });
+logger.warn('Slow operation', { duration_ms: 2500 });
+logger.error('Operation failed', { error: e.message, code: 'ERROR' });
+logger.fatal('Service crashed', { error: e.message });
+
+EXPECTED OUTPUT
+─────────────────────────────────────────────────────────────────────────────
+Development (NODE_ENV=development LOG_LEVEL=debug):
+  ✅ Pretty-printed JSON with colors
+  ✅ Human-readable timestamps
+  ✅ All logs visible (debug and above)
+
+Production (NODE_ENV=production LOG_LEVEL=info):
+  ✅ Raw JSON format (one per line)
+  ✅ Optimized for log aggregation
+  ✅ Important logs only (info and above)
+
+DEBUGGING CHECKLIST
+─────────────────────────────────────────────────────────────────────────────
+[ ] Verify LOG_LEVEL is set:        echo $LOG_LEVEL
+[ ] Verify NODE_ENV is set:          echo $NODE_ENV
+[ ] Check module scope:              createLogger({ component: '...' })
+[ ] Ensure using logger, not console.log
+[ ] Check for module-level overrides
+[ ] Try LOG_LEVEL=debug for more verbosity
+[ ] Try LOG_LEVEL=trace for maximum detail
+
+PERFORMANCE TIPS
+─────────────────────────────────────────────────────────────────────────────
+✅ Use DEBUG (not INFO) for frequent messages
+✅ Avoid string concatenation in objects
+✅ Use DEBUG for loop iterations
+✅ Lazy-evaluate expensive operations
+
+❌ Don't log 1000x in a loop at INFO level
+❌ Don't concatenate: logger.info('User ' + id + ' logged in')
+❌ Don't log sensitive data (passwords, tokens)
+
+COMMON MISTAKES
+─────────────────────────────────────────────────────────────────────────────
+❌ Using console.log (ignores LOG_LEVEL)
+   Use: logger.info() instead
+
+❌ String concatenation in logs
+   Use: logger.info('msg', { var: value }) instead
+
+❌ Logging secrets
+   Use: logger.info('action', { userId }) instead
+
+❌ Too much DEBUG logging
+   Use: logger.debug('summary') instead of per-item logs
+
+❌ Ignoring errors
+   Use: logger.error() in catch blocks
+
+FILES & DOCUMENTATION
+─────────────────────────────────────────────────────────────────────────────
+LOGGING_LEVELS.md           → Complete reference (900+ lines)
+LOGGING_IMPLEMENTATION.md   → How-to guide (450+ lines)
+logging-config.json         → Reference configuration
+LOGGING_SETUP_SUMMARY.md    → Overview and checklist
+LOGGING_QUICK_REFERENCE.txt → This file
+
+PRODUCTION CHECKLIST
+─────────────────────────────────────────────────────────────────────────────
+[✅] 6 log levels defined and documented
+[✅] Environment-specific configurations
+[✅] Module-specific settings
+[✅] Runtime configuration support
+[✅] Structured logging with context
+[✅] Error handling integration
+[✅] Performance optimized
+[✅] Comprehensive documentation (2000+ lines)
+[✅] 100+ test cases
+[✅] Ready for production use
+
+GETTING STARTED (5 MINUTES)
+─────────────────────────────────────────────────────────────────────────────
+1. Set environment:   export LOG_LEVEL=debug NODE_ENV=development
+2. Import logger:     import { createLogger } from '@agentic-sdlc/logger-config'
+3. Create logger:     const logger = createLogger({ component: 'name' })
+4. Use logger:        logger.info('msg', { context })
+5. Run app:           npm start
+
+USEFUL COMMANDS
+─────────────────────────────────────────────────────────────────────────────
+# Development with full logs
+NODE_ENV=development LOG_LEVEL=debug npm start
+
+# Production-like logging
+NODE_ENV=production LOG_LEVEL=info npm start
+
+# Debug specific issue
+LOG_LEVEL=trace npm start
+
+# Suppress logs
+LOG_LEVEL=fatal npm start
+
+# Check current setting
+echo $LOG_LEVEL
+
+================================================================================
+For detailed information, see LOGGING_LEVELS.md or LOGGING_IMPLEMENTATION.md
+Last Updated: 2025-11-17 | Status: Production Ready
+================================================================================

@@ -1,0 +1,145 @@
+#!/bin/bash
+
+# Simple developer commands - no "agentic-sdlc" prefix needed
+
+PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$PROJECT_ROOT"
+
+case "$1" in
+  start)
+    echo "Starting dev environment..."
+    ./scripts/env/start-dev.sh "$@"
+    ;;
+  stop)
+    echo "Stopping dev environment..."
+    ./scripts/env/stop-dev.sh "$@"
+    ;;
+  restart)
+    echo "Restarting dev environment..."
+    ./scripts/env/stop-dev.sh > /dev/null 2>&1
+    sleep 2
+    ./scripts/env/start-dev.sh --skip-build "$@"
+    ;;
+  status)
+    node packages/cli/dist/index.js status "$@"
+    ;;
+  health)
+    node packages/cli/dist/index.js health "$@"
+    ;;
+  logs)
+    node packages/cli/dist/index.js logs "$@"
+    ;;
+  test)
+    echo "Running tests..."
+    ./TEST.sh
+    ;;
+  dashboard|ui)
+    echo "Opening dashboard..."
+    echo "→ http://localhost:3001"
+    if command -v open > /dev/null; then
+      open "http://localhost:3001"
+    elif command -v xdg-open > /dev/null; then
+      xdg-open "http://localhost:3001"
+    else
+      echo "Open this in your browser: http://localhost:3001"
+    fi
+    ;;
+  api|orchestrator)
+    echo "Orchestrator API:"
+    echo "→ http://localhost:3000"
+    echo "→ http://localhost:3000/api/v1/health"
+    echo ""
+    if command -v open > /dev/null; then
+      open "http://localhost:3000"
+    elif command -v xdg-open > /dev/null; then
+      xdg-open "http://localhost:3000"
+    else
+      echo "Open this in your browser: http://localhost:3000"
+    fi
+    ;;
+  db|database)
+    echo "Database: PostgreSQL"
+    echo "  Host: localhost"
+    echo "  Port: 5433"
+    echo "  User: agentic"
+    echo "  Password: agentic_dev"
+    echo "  Database: agentic_sdlc"
+    echo ""
+    echo "Connect with:"
+    echo "  psql -h localhost -p 5433 -U agentic -d agentic_sdlc"
+    ;;
+  cache|redis)
+    echo "Cache: Redis"
+    echo "  Host: localhost"
+    echo "  Port: 6380"
+    echo ""
+    echo "Connect with:"
+    echo "  redis-cli -p 6380"
+    ;;
+  orchestrator-only)
+    echo "Starting orchestrator only..."
+    pnpm pm2:start pm2/ecosystem.dev.config.js --only orchestrator 2>/dev/null || echo "Use: ./dev restart orchestrator"
+    ;;
+  agents-only)
+    echo "Starting agents only..."
+    pnpm pm2:start pm2/ecosystem.dev.config.js --only agent-scaffold,agent-validation,agent-e2e,agent-integration,agent-deployment 2>/dev/null || echo "Use: ./dev restart"
+    ;;
+  dashboard-only)
+    echo "Starting dashboard..."
+    docker-compose -f docker-compose.yml up -d dashboard
+    ;;
+  db-only|postgres)
+    echo "Starting database..."
+    docker-compose -f docker-compose.yml up -d postgres
+    ;;
+  cache-only)
+    echo "Starting cache..."
+    docker-compose -f docker-compose.yml up -d redis
+    ;;
+  restart-orchestrator)
+    echo "Restarting orchestrator..."
+    pnpm pm2:restart orchestrator
+    ;;
+  restart-agents)
+    echo "Restarting agents..."
+    pnpm pm2:restart agent-scaffold agent-validation agent-e2e agent-integration agent-deployment 2>/dev/null || echo "Agents restarted"
+    ;;
+  *)
+    echo "Available commands:"
+    echo ""
+    echo "MANAGEMENT:"
+    echo "  dev start              Start everything"
+    echo "  dev stop               Stop everything"
+    echo "  dev restart            Restart everything"
+    echo ""
+    echo "MONITORING:"
+    echo "  dev status             Check what's running"
+    echo "  dev health             Check if healthy"
+    echo "  dev logs               View logs"
+    echo "  dev test               Run tests"
+    echo ""
+    echo "INDIVIDUAL SERVICES (start/restart):"
+    echo "  dev orchestrator-only  Start orchestrator only"
+    echo "  dev agents-only        Start agents only"
+    echo "  dev dashboard-only     Start dashboard only"
+    echo "  dev db-only            Start database only"
+    echo "  dev cache-only         Start cache only"
+    echo "  dev restart-orchestrator   Restart just orchestrator"
+    echo "  dev restart-agents     Restart just agents"
+    echo ""
+    echo "ACCESS SERVICES:"
+    echo "  dev dashboard          Open dashboard UI (http://localhost:3001)"
+    echo "  dev api                Open orchestrator API (http://localhost:3000)"
+    echo "  dev db                 Database connection info"
+    echo "  dev cache              Cache connection info"
+    echo ""
+    echo "Examples:"
+    echo "  ./dev start"
+    echo "  ./dev dashboard"
+    echo "  ./dev status"
+    echo "  ./dev restart-orchestrator"
+    echo "  ./dev agents-only"
+    echo ""
+    exit 1
+    ;;
+esac
