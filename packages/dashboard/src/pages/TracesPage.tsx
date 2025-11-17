@@ -10,10 +10,11 @@ interface TraceItem {
   trace_id: string
   status: string
   started_at: string
-  completed_at?: string
-  duration_ms: number
+  completed_at: string | null
+  total_duration_ms: number | null
   span_count: number
-  workflow_id?: string
+  workflow_count: number
+  task_count: number
 }
 
 export default function TracesPage() {
@@ -21,31 +22,32 @@ export default function TracesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [pageSize, setPageSize] = useState(20)
 
-  // Fetch traces - note: using a placeholder fetch since traces endpoint may not be fully implemented
-  const { data: traces, isLoading, error } = useQuery({
+  // Fetch traces from the API endpoint
+  const { data: tracesData, isLoading, error } = useQuery({
     queryKey: ['traces', statusFilter, pageSize],
     queryFn: async () => {
       try {
         const params = new URLSearchParams()
         if (statusFilter) params.append('status', statusFilter)
         params.append('limit', pageSize.toString())
-        const url = `http://localhost:3000/api/v1/traces?${params}`
+        const url = `/api/v1/traces?${params}`
         const response = await fetch(url)
-        if (!response.ok) return []
+        if (!response.ok) return { traces: [], total: 0 }
         return response.json()
       } catch {
-        return []
+        return { traces: [], total: 0 }
       }
     },
     refetchInterval: 15000,
   })
 
+  const traces = tracesData?.traces || []
+
   // Filter traces based on search query
   const filteredTraces = useMemo(() => {
     if (!traces) return []
     return traces.filter((trace: TraceItem) =>
-      trace.trace_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      trace.workflow_id?.toLowerCase().includes(searchQuery.toLowerCase())
+      trace.trace_id.toLowerCase().includes(searchQuery.toLowerCase())
     )
   }, [traces, searchQuery])
 
@@ -167,16 +169,9 @@ export default function TracesPage() {
                         <code className="text-xs">{truncateId(trace.trace_id)}</code>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {trace.workflow_id ? (
-                          <Link
-                            to={`/workflows/${trace.workflow_id}`}
-                            className="text-primary-600 hover:text-primary-900"
-                          >
-                            {truncateId(trace.workflow_id)}
-                          </Link>
-                        ) : (
-                          <span className="text-gray-400">N/A</span>
-                        )}
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          {trace.workflow_count} workflow{trace.workflow_count !== 1 ? 's' : ''}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <StatusBadge status={trace.status} />
@@ -187,7 +182,7 @@ export default function TracesPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
-                        {trace.duration_ms}ms
+                        {trace.total_duration_ms ? `${trace.total_duration_ms}ms` : 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatRelativeTime(trace.started_at)}

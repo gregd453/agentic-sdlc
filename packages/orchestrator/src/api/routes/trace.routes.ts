@@ -11,6 +11,77 @@ export async function traceRoutes(
 ): Promise<void> {
   const { traceService } = options;
 
+  // List all traces with pagination
+  fastify.get('/api/v1/traces', {
+    schema: {
+      querystring: zodToJsonSchema(z.object({
+        limit: z.string().transform(v => parseInt(v, 10)).optional(),
+        offset: z.string().transform(v => parseInt(v, 10)).optional(),
+        status: z.string().optional()
+      })),
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            traces: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  trace_id: { type: 'string' },
+                  status: { type: 'string' },
+                  workflow_count: { type: 'number' },
+                  task_count: { type: 'number' },
+                  span_count: { type: 'number' },
+                  total_duration_ms: { type: ['number', 'null'] },
+                  started_at: { type: ['string', 'null'] },
+                  completed_at: { type: ['string', 'null'] }
+                }
+              }
+            },
+            total: { type: 'number' }
+          }
+        },
+        400: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{ Querystring: { limit?: string; offset?: string; status?: string } }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        const limit = request.query.limit ? parseInt(request.query.limit, 10) : 20;
+        const offset = request.query.offset ? parseInt(request.query.offset, 10) : 0;
+        const status = request.query.status;
+
+        // Validate limits
+        if (limit < 1 || limit > 1000) {
+          reply.code(400).send({
+            error: 'Limit must be between 1 and 1000'
+          });
+          return;
+        }
+
+        if (offset < 0) {
+          reply.code(400).send({
+            error: 'Offset must be non-negative'
+          });
+          return;
+        }
+
+        const result = await traceService.listTraces({ limit, offset, status });
+        reply.code(200).send(result);
+      } catch (error) {
+        logger.error('Failed to list traces', { error });
+        reply.code(500).send({
+          error: 'Internal server error'
+        });
+      }
+    }
+  });
+
   // Get trace details
   fastify.get('/api/v1/traces/:traceId', {
     schema: {

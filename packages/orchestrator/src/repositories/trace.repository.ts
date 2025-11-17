@@ -242,4 +242,121 @@ export class TraceRepository {
       throw error;
     }
   }
+
+  /**
+   * List all traces with pagination and filtering
+   */
+  async listTraces(options: {
+    limit?: number;
+    offset?: number;
+    status?: string;
+  } = {}): Promise<{
+    traces: Array<{
+      trace_id: string;
+      status: string;
+      workflow_count: number;
+      task_count: number;
+      span_count: number;
+      total_duration_ms: number | null;
+      started_at: Date | null;
+      completed_at: Date | null;
+    }>;
+    total: number;
+  }> {
+    try {
+      const { limit = 20, offset = 0, status } = options;
+
+      // Build filter object with proper type checking
+      const whereFilter: any = {
+        trace_id: { not: null }
+      };
+
+      if (status) {
+        whereFilter.status = status as any;
+      }
+
+      // Get all distinct trace IDs from workflows
+      const workflowTraces = await this.prisma.workflow.findMany({
+        where: whereFilter,
+        select: {
+          trace_id: true,
+          status: true,
+          created_at: true,
+          completed_at: true
+        },
+        orderBy: {
+          created_at: 'desc'
+        }
+      });
+
+      // Get unique trace IDs
+      const traceMap = new Map<string, {
+        status: string;
+        created_at: Date;
+        completed_at: Date | null;
+      }>();
+
+      for (const workflow of workflowTraces) {
+        if (workflow.trace_id) {
+          if (!traceMap.has(workflow.trace_id) ||
+              (traceMap.get(workflow.trace_id)?.created_at || new Date(0)) > workflow.created_at) {
+            traceMap.set(workflow.trace_id, {
+              status: workflow.status,
+              created_at: workflow.created_at,
+              completed_at: workflow.completed_at
+            });
+          }
+        }
+      }
+
+      const totalTraces = traceMap.size;
+      const traceIds = Array.from(traceMap.keys())
+        .sort((a, b) => {
+          const aTime = traceMap.get(a)?.created_at.getTime() || 0;
+          const bTime = traceMap.get(b)?.created_at.getTime() || 0;
+          return bTime - aTime;
+        })
+        .slice(offset, offset + limit);
+
+      // Build trace summaries
+      const traces = await Promise.all(
+        traceIds.map(async (traceId) => {
+          const [workflows, tasks] = await Promise.all([
+            this.findWorkflowsByTraceId(traceId),
+            this.findTasksByTraceId(traceId)
+          ]);
+
+          const spans = this.buildSpanList(workflows, tasks);
+          const traceInfo = traceMap.get(traceId)!;
+
+          const startTime = spans.length > 0 ? spans[0].created_at : null;
+          const endTime = spans.length > 0
+            ? spans
+                .filter(s => s.completed_at !== null)
+                .sort((a, b) => (b.completed_at?.getTime() || 0) - (a.completed_at?.getTime() || 0))[0]?.completed_at || null
+            : null;
+
+          const totalDuration = startTime && endTime
+            ? endTime.getTime() - startTime.getTime()
+            : null;
+
+          return {
+            trace_id: traceId,
+            status: traceInfo.status,
+            workflow_count: workflows.length,
+            task_count: tasks.length,
+            span_count: spans.length,
+            total_duration_ms: totalDuration,
+            started_at: startTime,
+            completed_at: endTime
+          };
+        })
+      );
+
+      return { traces, total: totalTraces };
+    } catch (error) {
+      logger.error('Failed to list traces', { error });
+      throw error;
+    }
+  }
 }

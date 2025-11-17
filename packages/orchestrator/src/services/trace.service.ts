@@ -228,4 +228,35 @@ export class TraceService {
       throw error;
     }
   }
+
+  /**
+   * List traces with pagination and filtering
+   */
+  async listTraces(options: {
+    limit?: number;
+    offset?: number;
+    status?: string;
+  } = {}): Promise<{
+    traces: Array<{
+      trace_id: string;
+      status: string;
+      workflow_count: number;
+      task_count: number;
+      span_count: number;
+      total_duration_ms: number | null;
+      started_at: Date | null;
+      completed_at: Date | null;
+    }>;
+    total: number;
+  }> {
+    try {
+      logger.debug('Listing traces', { limit: options.limit, offset: options.offset, status: options.status });
+      const result = await this.traceRepository.listTraces(options);
+      logger.debug('Traces listed', { count: result.traces.length, total: result.total });
+      return result;
+    } catch (error) {
+      logger.error('Failed to list traces', { error });
+      throw error;
+    }
+  }
 }

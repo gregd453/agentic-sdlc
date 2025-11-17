@@ -86,58 +86,45 @@ export class StatsRepository {
    */
   async getAgentStats(): Promise<AgentStats[]> {
     try {
-      const result = await this.prisma.agentTask.groupBy({
-        by: ['agent_type'],
-        _count: {
-          id: true
-        },
-        _avg: {
-          retry_count: true
-        }
-      });
+      // Use a single raw query to get all agent stats in one go
+      const result = await this.prisma.$queryRaw<Array<{
+        agent_type: string;
+        total_tasks: bigint;
+        completed_tasks: bigint;
+        failed_tasks: bigint;
+        cancelled_tasks: bigint;
+        avg_duration_ms: number | null;
+        avg_retries: number | null;
+      }>>`
+        SELECT
+          agent_type,
+          COUNT(*) as total_tasks,
+          COALESCE(SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END), 0) as completed_tasks,
+          COALESCE(SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END), 0) as failed_tasks,
+          COALESCE(SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END), 0) as cancelled_tasks,
+          AVG(EXTRACT(EPOCH FROM (completed_at - started_at)) * 1000)::float as avg_duration_ms,
+          AVG(retry_count)::float as avg_retries
+        FROM "AgentTask"
+        WHERE agent_type IS NOT NULL
+        GROUP BY agent_type
+        ORDER BY total_tasks DESC
+      `;
 
-      const agentStats: AgentStats[] = [];
+      const agentStats: AgentStats[] = result.map(row => {
+        const totalTasks = Number(row.total_tasks);
+        const completedTasks = Number(row.completed_tasks);
 
-      for (const row of result) {
-        const agentType = row.agent_type;
-
-        // Get status breakdown for this agent type
-        const statusBreakdown = await this.prisma.agentTask.groupBy({
-          by: ['status'],
-          where: {
-            agent_type: agentType
-          },
-          _count: {
-            id: true
-          }
-        });
-
-        // Calculate duration stats
-        const durationStats = await this.prisma.$queryRaw<Array<{ avg_duration: number | null }>>`
-          SELECT
-            AVG(EXTRACT(EPOCH FROM (completed_at - started_at)) * 1000)::float as avg_duration
-          FROM "AgentTask"
-          WHERE agent_type = ${agentType}
-            AND started_at IS NOT NULL
-            AND completed_at IS NOT NULL
-        `;
-
-        const completedTasks = statusBreakdown.find(s => s.status === 'completed')?._count.id || 0;
-        const failedTasks = statusBreakdown.find(s => s.status === 'failed')?._count.id || 0;
-        const cancelledTasks = statusBreakdown.find(s => s.status === 'cancelled')?._count.id || 0;
-        const totalTasks = row._count.id;
-
-        agentStats.push({
-          agent_type: agentType,
+        return {
+          agent_type: row.agent_type,
           total_tasks: totalTasks,
           completed_tasks: completedTasks,
-          failed_tasks: failedTasks,
-          cancelled_tasks: cancelledTasks,
-          avg_duration_ms: durationStats[0]?.avg_duration || 0,
-          avg_retries: row._avg.retry_count || 0,
+          failed_tasks: Number(row.failed_tasks),
+          cancelled_tasks: Number(row.cancelled_tasks),
+          avg_duration_ms: row.avg_duration_ms || 0,
+          avg_retries: row.avg_retries || 0,
           success_rate: totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
-        });
-      }
+        };
+      });
 
       logger.debug('Agent stats retrieved', { count: agentStats.length });
       return agentStats;
@@ -153,47 +140,64 @@ export class StatsRepository {
    */
   async getTimeSeriesData(period: string): Promise<TimeSeriesDataPoint[]> {
     try {
-      let interval: string;
       let timeFilter: Date;
-
       const now = new Date();
 
       switch (period) {
         case '1h':
-          interval = '5 minutes';
           timeFilter = new Date(now.getTime() - 60 * 60 * 1000);
           break;
         case '24h':
-          interval = '1 hour';
           timeFilter = new Date(now.getTime() - 24 * 60 * 60 * 1000);
           break;
         case '7d':
-          interval = '6 hours';
           timeFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
           break;
         case '30d':
-          interval = '1 day';
           timeFilter = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
           break;
         default:
-          interval = '1 hour';
           timeFilter = new Date(now.getTime() - 24 * 60 * 60 * 1000);
       }
 
-      const result = await this.prisma.$queryRaw<Array<{ timestamp: Date; count: bigint }>>`
-        SELECT
-          DATE_TRUNC(${interval}, created_at) as timestamp,
-          COUNT(*)::bigint as count
-        FROM "Workflow"
-        WHERE created_at >= ${timeFilter}
-        GROUP BY DATE_TRUNC(${interval}, created_at)
-        ORDER BY timestamp ASC
-      `;
+      // Get all workflows in the period and group by date in JavaScript
+      let workflows: Array<{ created_at: Date }> = [];
+      try {
+        workflows = await this.prisma.workflow.findMany({
+          where: {
+            created_at: {
+              gte: timeFilter
+            }
+          },
+          select: {
+            created_at: true
+          },
+          orderBy: {
+            created_at: 'asc'
+          }
+        });
+      } catch (dbError) {
+        logger.warn('Failed to fetch workflows from database, returning empty data', { dbError, period });
+        return [];
+      }
 
-      const data = result.map(row => ({
-        timestamp: row.timestamp,
-        count: Number(row.count)
-      }));
+      // Group workflows by date/hour
+      const grouped = new Map<string, number>();
+
+      workflows.forEach(workflow => {
+        const date = new Date(workflow.created_at);
+        // Round down to hour
+        date.setMinutes(0, 0, 0);
+        const key = date.toISOString();
+
+        grouped.set(key, (grouped.get(key) || 0) + 1);
+      });
+
+      // Convert to array and sort
+      const data = Array.from(grouped, ([timestamp, count]) => ({
+        timestamp: new Date(timestamp),
+        count
+      })).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
       logger.debug('Time series data retrieved', { period, count: data.length });
       return data;

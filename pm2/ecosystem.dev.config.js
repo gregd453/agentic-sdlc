@@ -35,7 +35,7 @@ module.exports = {
       // Environment
       env: {
         NODE_ENV: 'development',
-        PORT: 3000,
+        ORCHESTRATOR_PORT: 3051,
         DATABASE_URL: process.env.DATABASE_URL || 'postgresql://agentic:agentic_dev@localhost:5433/agentic_sdlc',
         REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6380',
         ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY

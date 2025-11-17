@@ -199,6 +199,33 @@ export async function createServer() {
 
   // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 
+  // Root endpoint
+  fastify.get('/', {
+    schema: {
+      tags: ['info'],
+      summary: 'API Information',
+      description: 'Returns API information and available endpoints',
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            version: { type: 'string' },
+            description: { type: 'string' },
+            documentation: { type: 'string' }
+          }
+        }
+      }
+    }
+  }, (request, reply) => {
+    return reply.send({
+      name: 'Agentic SDLC Orchestrator',
+      version: '0.1.0',
+      description: 'API for managing autonomous software development workflows',
+      documentation: '/documentation'
+    });
+  });
+
   // Metrics endpoints
   fastify.get('/metrics', {
     schema: {

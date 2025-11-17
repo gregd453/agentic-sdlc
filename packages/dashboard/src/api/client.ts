@@ -11,19 +11,14 @@ import type {
 
 // Get API base URL from environment or derive from current location
 const getAPIBase = (): string => {
-  // If environment variable is set, use it
+  // If environment variable is set, use it (for Docker or custom setups)
   const apiUrl = (import.meta.env as Record<string, any>).VITE_API_URL
   if (apiUrl) {
     return apiUrl
   }
 
-  // When running in browser, always use the orchestrator on port 3000
-  if (typeof window !== 'undefined') {
-    // Browser can always reach localhost:3000 (orchestrator running on host via PM2)
-    return 'http://localhost:3000/api/v1'
-  }
-
-  // Fallback (shouldn't reach here in browser)
+  // Default to relative path - Vite dev server will proxy to VITE_API_URL (localhost:3051)
+  // In production, this will be relative to the domain
   return '/api/v1'
 }
 

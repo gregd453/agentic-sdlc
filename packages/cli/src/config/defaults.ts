@@ -6,7 +6,7 @@ import { CLIConfig, EnvironmentConfig } from '../types/index.js'
 
 export const DEFAULT_CLI_CONFIG: CLIConfig = {
   // Service URLs
-  orchestratorUrl: process.env.ORCHESTRATOR_URL || 'http://localhost:3000',
+  orchestratorUrl: process.env.ORCHESTRATOR_URL || 'http://localhost:3051',
   analyticsUrl: process.env.ANALYTICS_URL || 'http://localhost:3002',
 
   // Database
@@ -73,6 +73,8 @@ export const EXIT_CODES = {
   TIMEOUT: 6,
   CONFIGURATION_ERROR: 7,
   VALIDATION_FAILED: 8,
+  TEST_FAILURE: 9,
+  DEPLOYMENT_FAILED: 10,
 }
 
 export const COMMAND_ALIASES = {
