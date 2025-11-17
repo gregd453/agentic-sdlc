@@ -32,14 +32,10 @@ WORKDIR /app
 
 # Copy workspace files from root
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY packages/orchestrator/package.json ./packages/orchestrator/
-COPY packages/orchestrator/prisma ./packages/orchestrator/prisma/
+COPY packages ./packages
 
-# Copy shared packages (needed for production)
-COPY packages/shared ./packages/shared
-
-# Install production dependencies only
-RUN pnpm install --frozen-lockfile --prod
+# Install dependencies and build pnpm's symlink structure
+RUN pnpm install --frozen-lockfile && pnpm install -r
 
 # Copy built application from builder stage
 COPY --from=builder /app/packages/orchestrator/dist ./packages/orchestrator/dist
@@ -53,6 +49,9 @@ RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
+# Set working directory to app root for proper module resolution
+WORKDIR /app
+
 # Expose port
 EXPOSE 3000
 
@@ -63,5 +62,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Run with dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application
+# Start the application from workspace root so Node resolves modules correctly
 CMD ["node", "packages/orchestrator/dist/index.js"]
