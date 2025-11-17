@@ -109,9 +109,37 @@ export abstract class BaseAgent implements AgentLifecycle {
     });
 
     // Initialize Redis clients (separate for pub/sub pattern)
+    // Validate REDIS_HOST and REDIS_PORT are set (required, no defaults)
+    const redisHost = process.env.REDIS_HOST;
+    const redisPortEnv = process.env.REDIS_PORT;
+
+    if (!redisHost) {
+      throw new AgentError(
+        'REDIS_HOST environment variable is not set. Required for Redis connection. ' +
+        'Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)',
+        'CONFIG_ERROR'
+      );
+    }
+
+    if (!redisPortEnv) {
+      throw new AgentError(
+        'REDIS_PORT environment variable is not set. Required for Redis connection. ' +
+        'Set REDIS_PORT in your environment or .env file (e.g., REDIS_PORT=6380)',
+        'CONFIG_ERROR'
+      );
+    }
+
+    const redisPort = parseInt(redisPortEnv, 10);
+    if (isNaN(redisPort) || redisPort < 1 || redisPort > 65535) {
+      throw new AgentError(
+        `REDIS_PORT must be a valid port number (1-65535), got: ${redisPortEnv}`,
+        'CONFIG_ERROR'
+      );
+    }
+
     const redisConfig = {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6380'),
+      host: redisHost,
+      port: redisPort,
       retryStrategy: (times: number) => Math.min(times * 100, 3000)
     };
 

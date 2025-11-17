@@ -5,16 +5,11 @@ import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import { formatRelativeTime, truncateId } from '../utils/formatters'
+import { TraceMetadata } from '../types'
 
-interface TraceItem {
+interface TraceListItem {
   trace_id: string
-  status: string
-  started_at: string
-  completed_at: string | null
-  total_duration_ms: number | null
-  span_count: number
-  workflow_count: number
-  task_count: number
+  metadata: TraceMetadata
 }
 
 export default function TracesPage() {
@@ -33,7 +28,7 @@ export default function TracesPage() {
   // Filter traces based on search query
   const filteredTraces = useMemo(() => {
     if (!traces) return []
-    return traces.filter((trace: TraceItem) =>
+    return traces.filter((trace: TraceListItem) =>
       trace.trace_id.toLowerCase().includes(searchQuery.toLowerCase())
     )
   }, [traces, searchQuery])
@@ -150,29 +145,29 @@ export default function TracesPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredTraces.map((trace: TraceItem) => (
+                  {filteredTraces.map((trace: TraceListItem) => (
                     <tr key={trace.trace_id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
                         <code className="text-xs">{truncateId(trace.trace_id)}</code>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          {trace.workflow_count} workflow{trace.workflow_count !== 1 ? 's' : ''}
+                          {trace.metadata.workflow_count} workflow{trace.metadata.workflow_count !== 1 ? 's' : ''}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <StatusBadge status={trace.status} />
+                        <StatusBadge status={trace.metadata.end_time ? 'completed' : 'running'} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {trace.span_count} spans
+                          {trace.metadata.span_count} spans
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
-                        {trace.total_duration_ms ? `${trace.total_duration_ms}ms` : 'N/A'}
+                        {trace.metadata.total_duration_ms ? `${trace.metadata.total_duration_ms}ms` : 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatRelativeTime(trace.started_at)}
+                        {trace.metadata.start_time ? formatRelativeTime(trace.metadata.start_time) : 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <Link

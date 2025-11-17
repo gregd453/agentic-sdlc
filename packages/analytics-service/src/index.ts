@@ -1,7 +1,27 @@
 import { createServer } from './server'
 import { logger } from './utils/logger'
 
-const port = parseInt(process.env.PORT || '3001', 10)
+// Validate PORT is set (required, no default)
+const portEnv = process.env.ANALYTICS_SERVICE_PORT || process.env.PORT;
+if (!portEnv) {
+  console.error('❌ ERROR: ANALYTICS_SERVICE_PORT environment variable is not set');
+  console.error('');
+  console.error('Usage:');
+  console.error('  export ANALYTICS_SERVICE_PORT=3001');
+  console.error('  npm start');
+  console.error('');
+  console.error('Or in .env file:');
+  console.error('  ANALYTICS_SERVICE_PORT=3001');
+  console.error('');
+  process.exit(1);
+}
+
+const port = parseInt(portEnv, 10);
+if (isNaN(port) || port < 1 || port > 65535) {
+  console.error(`❌ ERROR: ANALYTICS_SERVICE_PORT must be a valid port number (1-65535), got: ${portEnv}`);
+  process.exit(1);
+}
+
 const host = process.env.HOST || '0.0.0.0'
 
 async function main() {

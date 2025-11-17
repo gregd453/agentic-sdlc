@@ -319,7 +319,27 @@ export async function createServer() {
 }
 
 export async function startServer() {
-  const port = parseInt(process.env.ORCHESTRATOR_PORT || '3000', 10);
+  // Validate ORCHESTRATOR_PORT is set (required, no default)
+  const orchestratorPortEnv = process.env.ORCHESTRATOR_PORT;
+  if (!orchestratorPortEnv) {
+    console.error('❌ ERROR: ORCHESTRATOR_PORT environment variable is not set');
+    console.error('');
+    console.error('Usage:');
+    console.error('  export ORCHESTRATOR_PORT=3051');
+    console.error('  npm start');
+    console.error('');
+    console.error('Or in .env file:');
+    console.error('  ORCHESTRATOR_PORT=3051');
+    console.error('');
+    process.exit(1);
+  }
+
+  const port = parseInt(orchestratorPortEnv, 10);
+  if (isNaN(port) || port < 1 || port > 65535) {
+    console.error(`❌ ERROR: ORCHESTRATOR_PORT must be a valid port number (1-65535), got: ${orchestratorPortEnv}`);
+    process.exit(1);
+  }
+
   const host = process.env.HOST || '0.0.0.0';
 
   try {
