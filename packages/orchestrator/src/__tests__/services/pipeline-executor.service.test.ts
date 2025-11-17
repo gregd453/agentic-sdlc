@@ -3,6 +3,7 @@ import { PipelineExecutorService } from '../../services/pipeline-executor.servic
 import { EventBus } from '../../events/event-bus';
 // Phase 2: AgentDispatcherService removed
 import { QualityGateService } from '../../services/quality-gate.service';
+import { PipelineExecutionRepository } from '../../repositories/pipeline-execution.repository';
 import { PipelineDefinition } from '../../types/pipeline.types';
 
 // Phase 2: Tests skipped - PipelineExecutorService needs refactoring for message bus architecture
@@ -11,6 +12,8 @@ describe.skip('PipelineExecutorService', () => {
   let eventBus: EventBus;
   // Phase 2: agentDispatcher removed
   let qualityGateService: QualityGateService;
+  // Session #79: Added repository mock
+  let pipelineExecutionRepository: PipelineExecutionRepository;
 
   beforeEach(() => {
     // Create mocks
@@ -41,10 +44,24 @@ describe.skip('PipelineExecutorService', () => {
 
     qualityGateService = new QualityGateService();
 
+    // Session #79: Mock repository for pause/resume persistence
+    pipelineExecutionRepository = {
+      create: vi.fn(),
+      getById: vi.fn(),
+      getByWorkflowId: vi.fn(),
+      findByStatus: vi.fn(),
+      updateWithCAS: vi.fn(),
+      updateStatus: vi.fn(),
+      recordError: vi.fn(),
+      delete: vi.fn()
+    } as any;
+
     executor = new PipelineExecutorService(
       eventBus,
       // Phase 2: agentDispatcher parameter removed
-      qualityGateService
+      qualityGateService,
+      // Session #79: Pass repository
+      pipelineExecutionRepository
     );
   });
 

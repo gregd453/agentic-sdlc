@@ -45,6 +45,7 @@ model Workflow {
   stages           WorkflowStage[]
   tasks            AgentTask[]
   events           WorkflowEvent[]
+  pipeline_executions PipelineExecution[]
 
   @@index([status])
   @@index([created_at])
@@ -110,6 +111,34 @@ model WorkflowEvent {
 
   @@index([workflow_id])
   @@index([timestamp])
+}
+
+model PipelineExecution {
+  id              String          @id @default(cuid())
+  pipeline_id     String
+  workflow_id     String
+  status          WorkflowStatus  @default(initiated)
+  current_stage   Int
+
+  // Timestamps for tracking execution lifecycle
+  started_at      DateTime        @default(now())
+  paused_at       DateTime?
+  resumed_at      DateTime?
+  completed_at    DateTime?
+  failed_at       DateTime?
+  error_message   String?
+
+  // Metadata
+  created_at      DateTime        @default(now())
+  updated_at      DateTime         @updatedAt
+  version         Int             @default(1)  // For CAS (Compare-And-Swap) pattern
+
+  // Relationships
+  workflow        Workflow        @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+
+  @@index([workflow_id])
+  @@index([status])
+  @@index([created_at])
 }
 
 model Agent {

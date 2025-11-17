@@ -167,11 +167,20 @@ export async function createServer() {
 
   // Initialize pipeline services
   const qualityGateService = new QualityGateService();
+  // Session #79: Create repository for pipeline execution persistence
+  const { PipelineExecutionRepository } = await import('./repositories/pipeline-execution.repository');
+  const pipelineExecutionRepository = new PipelineExecutionRepository(prisma);
   const pipelineExecutor = new PipelineExecutorService(
     eventBus,
     // Phase 2: AgentDispatcherService removed (2 args now)
-    qualityGateService
+    qualityGateService,
+    // Session #79: Pass repository for pause/resume persistence
+    pipelineExecutionRepository
   );
+
+  // Session #79: Recover paused executions on startup
+  await pipelineExecutor.recoverPausedExecutions();
+  logger.info('Pipeline service initialized with pause/resume persistence (Session #79)');
 
   // Initialize WebSocket handler
   const pipelineWebSocketHandler = new PipelineWebSocketHandler(eventBus);
