@@ -96,7 +96,7 @@ services:
       - "3050:3050"
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=http://host.docker.internal:3051
+      - VITE_PROXY_TARGET=http://host.docker.internal:3051
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

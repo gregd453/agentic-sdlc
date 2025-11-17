@@ -29202,3 +29202,1886 @@
 2025-11-17 12:33:22 -05:00: {"ts":"2025-11-17T17:33:22.211Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
 2025-11-17 12:33:23 -05:00: {"ts":"2025-11-17T17:33:23.899Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
 2025-11-17 12:33:26 -05:00: {"ts":"2025-11-17T17:33:26.092Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-17 14:00:00 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-17 14:00:01 -05:00: 🔖 Version: 1.0.0
+2025-11-17 14:00:01 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.134Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.134Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.149Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.149Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.149Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.149Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.150Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.150Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.150Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.150Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.150Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.150Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.153Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-17 14:00:01 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.160Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-17 14:00:01 -05:00: [DEBUG-STREAM-INIT] Consumer group already exists (good - will continue from last position) {
+2025-11-17 14:00:01 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:01 -05:00:   consumerGroup: 'agent-validation-group'
+2025-11-17 14:00:01 -05:00: }
+2025-11-17 14:00:01 -05:00: [DEBUG-STREAM-INIT] Stream consumer loop STARTED {
+2025-11-17 14:00:01 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:01 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:01 -05:00:   consumerName: 'consumer-1763406001160',
+2025-11-17 14:00:01 -05:00:   topic: 'agent:validation:tasks'
+2025-11-17 14:00:01 -05:00: }
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.161Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763406001160"}
+2025-11-17 14:00:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:01 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:01 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:01 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:01 -05:00: }
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.161Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-17 14:00:01 -05:00: [DEBUG-AGENT-INIT] Subscription completed, handler registered {
+2025-11-17 14:00:01 -05:00:   taskChannel: 'agent:validation:tasks',
+2025-11-17 14:00:01 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:01 -05:00:   agent_type: 'validation',
+2025-11-17 14:00:01 -05:00:   platformId: 'global'
+2025-11-17 14:00:01 -05:00: }
+2025-11-17 14:00:01 -05:00: ✅ Validation agent started successfully [global]
+2025-11-17 14:00:01 -05:00: 📡 Listening for validation tasks...
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (validation-01905f44): [36m[PHASE-4] Initializing agent with message bus[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (validation-01905f44): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (validation-01905f44): [36m[PHASE-4] Agent subscribed to message bus for tasks[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (validation-01905f44): [36mRegistered with orchestrator[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (validation-01905f44): [36m[PHASE-4] Agent initialized successfully with message bus[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (validation-01905f44): [36mPolicy configuration loaded[39m
+2025-11-17 14:00:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:06 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:06 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:06 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:06 -05:00: }
+2025-11-17 14:00:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:11 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:11 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:11 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:11 -05:00: }
+2025-11-17 14:00:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:16 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:16 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:16 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:16 -05:00: }
+2025-11-17 14:00:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:21 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:21 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:21 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:21 -05:00: }
+2025-11-17 14:00:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:26 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:26 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:26 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:26 -05:00: }
+2025-11-17 14:00:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:31 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:31 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:31 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:31 -05:00: }
+2025-11-17 14:00:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:36 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:36 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:36 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:36 -05:00: }
+2025-11-17 14:00:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:41 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:41 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:41 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:41 -05:00: }
+2025-11-17 14:00:46 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:46 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:46 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:46 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:46 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:46 -05:00: }
+2025-11-17 14:00:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:51 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:51 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:51 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:51 -05:00: }
+2025-11-17 14:00:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:56 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:00:56 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:00:56 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:00:56 -05:00: }
+2025-11-17 14:01:01 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:01 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:01 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:01 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:01 -05:00: }
+2025-11-17 14:01:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:06 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:06 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:06 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:06 -05:00: }
+2025-11-17 14:01:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:11 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:11 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:11 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:11 -05:00: }
+2025-11-17 14:01:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:16 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:16 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:16 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:16 -05:00: }
+2025-11-17 14:01:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:21 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:21 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:21 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:21 -05:00: }
+2025-11-17 14:01:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:26 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:26 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:26 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:26 -05:00: }
+2025-11-17 14:01:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:31 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:31 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:31 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:31 -05:00: }
+2025-11-17 14:01:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:36 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:36 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:36 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:36 -05:00: }
+2025-11-17 14:01:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:41 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:41 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:41 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:41 -05:00: }
+2025-11-17 14:01:46 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:46 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:46 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:46 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:46 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:46 -05:00: }
+2025-11-17 14:01:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:51 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:51 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:51 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:51 -05:00: }
+2025-11-17 14:01:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:56 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:01:56 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:01:56 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:01:56 -05:00: }
+2025-11-17 14:02:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:02:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:02:02 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:02:02 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:02:02 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:02:02 -05:00: }
+2025-11-17 14:02:49 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:02:49 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:02:49 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:02:49 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:02:49 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:02:49 -05:00: }
+2025-11-17 14:02:54 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:02:54 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:02:54 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:02:54 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:02:54 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:02:54 -05:00: }
+2025-11-17 14:02:59 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:02:59 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:02:59 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:02:59 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:02:59 -05:00:   consumerName: 'consumer-1763406001160'
+2025-11-17 14:02:59 -05:00: }
+2025-11-17 14:02:59 -05:00: 
+2025-11-17 14:02:59 -05:00: Shutting down validation agent...
+2025-11-17 14:02:59 -05:00: {"ts":"2025-11-17T19:02:59.950Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-17 14:02:59 -05:00: {"ts":"2025-11-17T19:02:59.951Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-17 14:02:59 -05:00: {"ts":"2025-11-17T19:02:59.951Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-17 14:02:59 -05:00: {"ts":"2025-11-17T19:02:59.951Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:02:59] [32mINFO[39m (validation-01905f44): [36mCleaning up agent[39m
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:02:59] [32mINFO[39m (validation-01905f44): [36mDeregistered from orchestrator[39m
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:02:59] [32mINFO[39m (validation-01905f44): [36mAgent cleanup completed[39m
+2025-11-17 14:03:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:02 -05:00: {"ts":"2025-11-17T19:03:02.599Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:validation:tasks"}
+2025-11-17 14:03:02 -05:00: {"ts":"2025-11-17T19:03:02.599Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-17 14:03:02 -05:00: {"ts":"2025-11-17T19:03:02.599Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-17 14:03:03 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-17 14:03:03 -05:00: 🔖 Version: 1.0.0
+2025-11-17 14:03:03 -05:00: [PHASE-3] Initializing OrchestratorContainer for validation agent...
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.327Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-validation"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.327Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.341Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.342Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.342Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.343Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.343Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.343Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.343Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.343Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.343Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.343Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-validation"}
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.348Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-17 14:03:03 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.356Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:validation:tasks"}
+2025-11-17 14:03:03 -05:00: [DEBUG-STREAM-INIT] Consumer group already exists (good - will continue from last position) {
+2025-11-17 14:03:03 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:03 -05:00:   consumerGroup: 'agent-validation-group'
+2025-11-17 14:03:03 -05:00: }
+2025-11-17 14:03:03 -05:00: [DEBUG-STREAM-INIT] Stream consumer loop STARTED {
+2025-11-17 14:03:03 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:03 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:03 -05:00:   consumerName: 'consumer-1763406183356',
+2025-11-17 14:03:03 -05:00:   topic: 'agent:validation:tasks'
+2025-11-17 14:03:03 -05:00: }
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.357Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:validation:tasks","consumerGroup":"agent-validation-group","consumerName":"consumer-1763406183356"}
+2025-11-17 14:03:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:03 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:03 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:03 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:03 -05:00: }
+2025-11-17 14:03:03 -05:00: {"ts":"2025-11-17T19:03:03.357Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:validation:tasks","count":1}
+2025-11-17 14:03:03 -05:00: [DEBUG-AGENT-INIT] Subscription completed, handler registered {
+2025-11-17 14:03:03 -05:00:   taskChannel: 'agent:validation:tasks',
+2025-11-17 14:03:03 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:03 -05:00:   agent_type: 'validation',
+2025-11-17 14:03:03 -05:00:   platformId: 'global'
+2025-11-17 14:03:03 -05:00: }
+2025-11-17 14:03:03 -05:00: ✅ Validation agent started successfully [global]
+2025-11-17 14:03:03 -05:00: 📡 Listening for validation tasks...
+2025-11-17 14:03:03 -05:00: [2025-11-17 19:03:03] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-4] Initializing agent with message bus[39m
+2025-11-17 14:03:03 -05:00: [2025-11-17 19:03:03] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-17 14:03:03 -05:00: [2025-11-17 19:03:03] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-4] Agent subscribed to message bus for tasks[39m
+2025-11-17 14:03:03 -05:00: [2025-11-17 19:03:03] [32mINFO[39m (validation-e649cb3b): [36mRegistered with orchestrator[39m
+2025-11-17 14:03:03 -05:00: [2025-11-17 19:03:03] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-4] Agent initialized successfully with message bus[39m
+2025-11-17 14:03:03 -05:00: [2025-11-17 19:03:03] [32mINFO[39m (validation-e649cb3b): [36mPolicy configuration loaded[39m
+2025-11-17 14:03:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:08 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:08 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:08 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:08 -05:00: }
+2025-11-17 14:03:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:13 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:13 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:13 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:13 -05:00: }
+2025-11-17 14:03:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:18 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:18 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:18 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:18 -05:00: }
+2025-11-17 14:03:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:23 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:23 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:23 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:23 -05:00: }
+2025-11-17 14:03:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:28 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:28 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:28 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:28 -05:00: }
+2025-11-17 14:03:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:33 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:33 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:33 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:33 -05:00: }
+2025-11-17 14:03:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:38 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:38 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:38 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:38 -05:00: }
+2025-11-17 14:03:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:43 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:43 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:43 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:43 -05:00: }
+2025-11-17 14:03:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:48 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:48 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:48 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:48 -05:00: }
+2025-11-17 14:03:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:53 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:53 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:53 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:53 -05:00: }
+2025-11-17 14:03:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:58 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:03:58 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:03:58 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:03:58 -05:00: }
+2025-11-17 14:04:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:03 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:03 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:03 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:03 -05:00: }
+2025-11-17 14:04:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:08 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:08 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:08 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:08 -05:00: }
+2025-11-17 14:04:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:13 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:13 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:13 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:13 -05:00: }
+2025-11-17 14:04:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:18 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:18 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:18 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:18 -05:00: }
+2025-11-17 14:04:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:23 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:23 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:23 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:23 -05:00: }
+2025-11-17 14:04:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:28 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:28 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:28 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:28 -05:00: }
+2025-11-17 14:04:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:33 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:33 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:33 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:33 -05:00: }
+2025-11-17 14:04:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:38 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:38 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:38 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:38 -05:00: }
+2025-11-17 14:04:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:43 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:43 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:43 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:43 -05:00: }
+2025-11-17 14:04:49 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:49 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:49 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:49 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:49 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:49 -05:00: }
+2025-11-17 14:04:54 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:54 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:54 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:54 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:54 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:54 -05:00: }
+2025-11-17 14:04:59 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:59 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:59 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:04:59 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:04:59 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:04:59 -05:00: }
+2025-11-17 14:05:04 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:04 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:04 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:04 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:04 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:04 -05:00: }
+2025-11-17 14:05:09 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:09 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:09 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:09 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:09 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:09 -05:00: }
+2025-11-17 14:05:14 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:14 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:14 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:14 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:14 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:14 -05:00: }
+2025-11-17 14:05:19 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:19 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:19 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:19 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:19 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:19 -05:00: }
+2025-11-17 14:05:24 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:24 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:24 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:24 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:24 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:24 -05:00: }
+2025-11-17 14:05:29 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:29 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:29 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:29 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:29 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:29 -05:00: }
+2025-11-17 14:05:34 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:34 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:34 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:34 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:34 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:34 -05:00: }
+2025-11-17 14:05:39 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:39 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:39 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:39 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:39 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:39 -05:00: }
+2025-11-17 14:05:44 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:44 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:44 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:44 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:44 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:44 -05:00: }
+2025-11-17 14:05:49 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:49 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:49 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:49 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:49 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:49 -05:00: }
+2025-11-17 14:05:54 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:54 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:54 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:54 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:54 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:54 -05:00: }
+2025-11-17 14:05:59 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:59 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:59 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:05:59 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:05:59 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:05:59 -05:00: }
+2025-11-17 14:06:04 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:04 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:04 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:04 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:04 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:04 -05:00: }
+2025-11-17 14:06:09 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:09 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:09 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:09 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:09 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:09 -05:00: }
+2025-11-17 14:06:14 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:14 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:14 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:14 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:14 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:14 -05:00: }
+2025-11-17 14:06:19 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:19 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:19 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:19 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:19 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:19 -05:00: }
+2025-11-17 14:06:24 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:24 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:24 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:24 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:24 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:24 -05:00: }
+2025-11-17 14:06:29 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:29 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:29 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:29 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:29 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:29 -05:00: }
+2025-11-17 14:06:34 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:34 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:34 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:34 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:34 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:34 -05:00: }
+2025-11-17 14:06:39 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:39 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:39 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:39 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:39 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:39 -05:00: }
+2025-11-17 14:06:44 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:44 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:44 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:44 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:44 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:44 -05:00: }
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] Processing results { count: 1 }
+2025-11-17 14:06:47 -05:00: {"ts":"2025-11-17T19:06:47.183Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:validation:tasks","messageId":"1763406407182-0","unwrapPath":"messageData.payload.msg","workflow_id":"cc51ea37-5efa-45ab-b986-923e07835c15","task_id":"c6b845f3-99da-4fb0-81a5-1c1feb815611","trace_id":"aa9cc155-3122-4795-965a-63b12c16f333","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:06:47 -05:00:   topic: 'agent:validation:tasks',
+2025-11-17 14:06:47 -05:00:   hasHandlers: true,
+2025-11-17 14:06:47 -05:00:   handlerCount: 1,
+2025-11-17 14:06:47 -05:00:   subscriptionsKeys: 'agent:validation:tasks'
+2025-11-17 14:06:47 -05:00: }
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #65] Executing validation task[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #67] Extracting validation data from task.payload[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #67] Validation payload extracted successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Checking working directory existence[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Working directory exists, proceeding with validation[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running validation checks[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running TypeScript validation[39m
+2025-11-17 14:06:47 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:06:47 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:47 -05:00:   task_id: 'c6b845f3-99da-4fb0-81a5-1c1feb815611',
+2025-11-17 14:06:47 -05:00:   workflow_id: 'cc51ea37-5efa-45ab-b986-923e07835c15',
+2025-11-17 14:06:47 -05:00:   agent_id: 'validation-e649cb3b',
+2025-11-17 14:06:47 -05:00:   agent_type: 'validation',
+2025-11-17 14:06:47 -05:00:   success: true,
+2025-11-17 14:06:47 -05:00:   status: 'success',
+2025-11-17 14:06:47 -05:00:   action: 'execute_validation',
+2025-11-17 14:06:47 -05:00:   has_result: true,
+2025-11-17 14:06:47 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:06:47 -05:00:   has_metrics: true,
+2025-11-17 14:06:47 -05:00:   has_error: false,
+2025-11-17 14:06:47 -05:00:   timestamp: '2025-11-17T19:06:47.768Z',
+2025-11-17 14:06:47 -05:00:   version: '1.0.0',
+2025-11-17 14:06:47 -05:00:   full_object_sample: '{"task_id":"c6b845f3-99da-4fb0-81a5-1c1feb815611","workflow_id":"cc51ea37-5efa-45ab-b986-923e07835c15","agent_id":"validation-e649cb3b","agent_type":"validation","success":true,"status":"success","action":"execute_validation","result":{"data":{"report":{"task_id":"c6b845f3-99da-4fb0-81a5-1c1feb815611","workflow_id":"cc51ea37-5efa-45ab-b986-923e07835c15","timestamp":"2025-11-17T19:06:47.768Z","project_path":"/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/cc51ea37-5efa-45ab-b986-923e07835c15/F'
+2025-11-17 14:06:47 -05:00: }
+2025-11-17 14:06:47 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:06:47 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:06:47 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:06:47 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:47 -05:00:   missing_required: 'none'
+2025-11-17 14:06:47 -05:00: }
+2025-11-17 14:06:47 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:06:47 -05:00: {"ts":"2025-11-17T19:06:47.770Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:47 -05:00: {"ts":"2025-11-17T19:06:47.771Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406407182-0' }
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:47 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:47 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:47 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:47 -05:00: }
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] TypeScript validation completed[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running ESLint validation[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] ESLint validation completed[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] All validation checks completed[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36mValidation completed[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36mValidation Report:
+2025-11-17 14:06:47 -05:00: ================================================================================
+2025-11-17 14:06:47 -05:00: VALIDATION REPORT
+2025-11-17 14:06:47 -05:00: ================================================================================
+2025-11-17 14:06:47 -05:00: 
+2025-11-17 14:06:47 -05:00: Task ID:       c6b845f3-99da-4fb0-81a5-1c1feb815611
+2025-11-17 14:06:47 -05:00: Workflow ID:   cc51ea37-5efa-45ab-b986-923e07835c15
+2025-11-17 14:06:47 -05:00: Timestamp:     2025-11-17T19:06:47.768Z
+2025-11-17 14:06:47 -05:00: Project Path:  /Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/cc51ea37-5efa-45ab-b986-923e07835c15/Fix Dashboard Performance Issues
+2025-11-17 14:06:47 -05:00: Overall Status: PASSED
+2025-11-17 14:06:47 -05:00: 
+2025-11-17 14:06:47 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:06:47 -05:00: SUMMARY
+2025-11-17 14:06:47 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:06:47 -05:00: Total Checks:   2
+2025-11-17 14:06:47 -05:00: Passed:         1
+2025-11-17 14:06:47 -05:00: Failed:         0
+2025-11-17 14:06:47 -05:00: Warnings:       0
+2025-11-17 14:06:47 -05:00: Duration:       582ms
+2025-11-17 14:06:47 -05:00: 
+2025-11-17 14:06:47 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:06:47 -05:00: VALIDATION CHECKS
+2025-11-17 14:06:47 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:06:47 -05:00: ✓ TYPESCRIPT: passed (582ms)
+2025-11-17 14:06:47 -05:00: ⚠ ESLINT: skipped (0ms)
+2025-11-17 14:06:47 -05:00:   WARNING: No ESLint configuration found, skipping ESLint validation
+2025-11-17 14:06:47 -05:00: 
+2025-11-17 14:06:47 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:06:47 -05:00: QUALITY GATES
+2025-11-17 14:06:47 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:06:47 -05:00: Overall: PASSED ✓
+2025-11-17 14:06:47 -05:00: Evaluated: 0
+2025-11-17 14:06:47 -05:00: Passed:    0
+2025-11-17 14:06:47 -05:00: Failed:    0
+2025-11-17 14:06:47 -05:00: 
+2025-11-17 14:06:47 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:06:47 -05:00: RECOMMENDATIONS
+2025-11-17 14:06:47 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:06:47 -05:00: 1. All validation checks passed. Ready for next stage.
+2025-11-17 14:06:47 -05:00: 
+2025-11-17 14:06:47 -05:00: ================================================================================[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:06:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:52 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:52 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:52 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:52 -05:00: }
+2025-11-17 14:06:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:57 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:06:57 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:06:57 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:06:57 -05:00: }
+2025-11-17 14:07:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:02 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:02 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:02 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:02 -05:00: }
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] Processing results { count: 1 }
+2025-11-17 14:07:04 -05:00: {"ts":"2025-11-17T19:07:04.439Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:validation:tasks","messageId":"1763406424438-0","unwrapPath":"messageData.payload.msg","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","task_id":"2d25dc20-7039-4e2d-85a6-3730f1ac57e0","trace_id":"b8119a08-bdec-4db3-88bd-e3048d8ae9ab","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:07:04 -05:00:   topic: 'agent:validation:tasks',
+2025-11-17 14:07:04 -05:00:   hasHandlers: true,
+2025-11-17 14:07:04 -05:00:   handlerCount: 1,
+2025-11-17 14:07:04 -05:00:   subscriptionsKeys: 'agent:validation:tasks'
+2025-11-17 14:07:04 -05:00: }
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #65] Executing validation task[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #67] Extracting validation data from task.payload[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #67] Validation payload extracted successfully[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Checking working directory existence[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Working directory exists, proceeding with validation[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running validation checks[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running TypeScript validation[39m
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:07:05 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:05 -05:00:   task_id: '2d25dc20-7039-4e2d-85a6-3730f1ac57e0',
+2025-11-17 14:07:05 -05:00:   workflow_id: '99d13803-e696-4c7b-ba4f-c452391dbf10',
+2025-11-17 14:07:05 -05:00:   agent_id: 'validation-e649cb3b',
+2025-11-17 14:07:05 -05:00:   agent_type: 'validation',
+2025-11-17 14:07:05 -05:00:   success: false,
+2025-11-17 14:07:05 -05:00:   status: 'failed',
+2025-11-17 14:07:05 -05:00:   action: 'execute_validation',
+2025-11-17 14:07:05 -05:00:   has_result: true,
+2025-11-17 14:07:05 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:07:05 -05:00:   has_metrics: true,
+2025-11-17 14:07:05 -05:00:   has_error: true,
+2025-11-17 14:07:05 -05:00:   timestamp: '2025-11-17T19:07:05.156Z',
+2025-11-17 14:07:05 -05:00:   version: '1.0.0',
+2025-11-17 14:07:05 -05:00:   full_object_sample: '{"task_id":"2d25dc20-7039-4e2d-85a6-3730f1ac57e0","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","agent_id":"validation-e649cb3b","agent_type":"validation","success":false,"status":"failed","action":"execute_validation","result":{"data":{"report":{"task_id":"2d25dc20-7039-4e2d-85a6-3730f1ac57e0","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","timestamp":"2025-11-17T19:07:05.156Z","project_path":"/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/99d13803-e696-4c7b-ba4f-c452391dbf10/B'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:07:05 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:07:05 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:07:05 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:05 -05:00:   missing_required: 'none'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:07:05 -05:00: {"ts":"2025-11-17T19:07:05.160Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:05 -05:00: {"ts":"2025-11-17T19:07:05.160Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406424438-0' }
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:05 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:05 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:05 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] Processing results { count: 1 }
+2025-11-17 14:07:05 -05:00: {"ts":"2025-11-17T19:07:05.178Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:validation:tasks","messageId":"1763406425177-0","unwrapPath":"messageData.payload.msg","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","task_id":"afe5369d-44e1-44cc-a9a9-d99af472d192","trace_id":"461a5ffb-d5f8-4904-8615-144f022429f2","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:07:05 -05:00:   topic: 'agent:validation:tasks',
+2025-11-17 14:07:05 -05:00:   hasHandlers: true,
+2025-11-17 14:07:05 -05:00:   handlerCount: 1,
+2025-11-17 14:07:05 -05:00:   subscriptionsKeys: 'agent:validation:tasks'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] TypeScript validation completed[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running ESLint validation[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] ESLint validation completed[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] All validation checks completed[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36mValidation completed[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36mValidation Report:
+2025-11-17 14:07:05 -05:00: ================================================================================
+2025-11-17 14:07:05 -05:00: VALIDATION REPORT
+2025-11-17 14:07:05 -05:00: ================================================================================
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: Task ID:       2d25dc20-7039-4e2d-85a6-3730f1ac57e0
+2025-11-17 14:07:05 -05:00: Workflow ID:   99d13803-e696-4c7b-ba4f-c452391dbf10
+2025-11-17 14:07:05 -05:00: Timestamp:     2025-11-17T19:07:05.156Z
+2025-11-17 14:07:05 -05:00: Project Path:  /Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/99d13803-e696-4c7b-ba4f-c452391dbf10/Build Dashboard Application
+2025-11-17 14:07:05 -05:00: Overall Status: FAILED
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: SUMMARY
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: Total Checks:   2
+2025-11-17 14:07:05 -05:00: Passed:         0
+2025-11-17 14:07:05 -05:00: Failed:         1
+2025-11-17 14:07:05 -05:00: Warnings:       0
+2025-11-17 14:07:05 -05:00: Duration:       717ms
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: VALIDATION CHECKS
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: ✗ TYPESCRIPT: failed (717ms)
+2025-11-17 14:07:05 -05:00:   ERROR: src/api/client.ts:8:34 - Property 'env' does not exist on type 'ImportMeta'.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:1:37 - Cannot find module 'react' or its corresponding type declarations.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:98:5 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:98:5 - This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:99:7 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:100:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:100:40 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:101:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:101:71 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:102:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:104:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:105:7 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:107:7 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:108:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:109:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:109:31 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:112:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:112:28 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:114:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:114:50 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:116:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:117:15 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:117:52 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:118:15 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:118:62 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:119:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:122:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:123:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:123:55 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:124:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:124:66 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:125:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:125:68 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:126:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:127:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:129:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:130:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:130:23 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:132:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:133:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:136:26 - Parameter 'e' implicitly has an 'any' type.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:138:28 - Parameter 'e' implicitly has an 'any' type.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:140:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:140:62 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:141:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:143:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:145:15 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:145:33 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:147:15 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:148:32 - Parameter 'msg' implicitly has an 'any' type.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:149:19 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:150:21 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:150:65 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:151:21 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:153:21 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:154:19 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:156:15 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:158:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:159:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:161:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:162:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:162:38 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:163:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:164:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:164:48 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:165:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:165:35 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:166:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:166:52 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:167:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:167:53 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:168:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:168:58 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:169:13 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:169:58 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:170:11 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:171:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:173:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:174:24 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:174:44 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:175:9 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:176:7 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/App.tsx:177:5 - JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+2025-11-17 14:07:05 -05:00:   ERROR: src/main.tsx:1:19 - Cannot find module 'react' or its corresponding type declarations.
+2025-11-17 14:07:05 -05:00:   ERROR: src/main.tsx:2:22 - Cannot find module 'react-dom/client' or its corresponding type declarations.
+2025-11-17 14:07:05 -05:00:   ERROR: src/main.tsx:7:3 - This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+2025-11-17 14:07:05 -05:00: ⚠ ESLINT: skipped (0ms)
+2025-11-17 14:07:05 -05:00:   WARNING: No ESLint configuration found, skipping ESLint validation
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: QUALITY GATES
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: Overall: PASSED ✓
+2025-11-17 14:07:05 -05:00: Evaluated: 0
+2025-11-17 14:07:05 -05:00: Passed:    0
+2025-11-17 14:07:05 -05:00: Failed:    0
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: RECOMMENDATIONS
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: 1. Fix TypeScript compilation errors before proceeding. Run `pnpm typecheck` for details.
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: ================================================================================[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #65] Executing validation task[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #67] Extracting validation data from task.payload[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #67] Validation payload extracted successfully[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Checking working directory existence[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Working directory exists, proceeding with validation[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running validation checks[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running TypeScript validation[39m
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:07:05 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:05 -05:00:   task_id: 'afe5369d-44e1-44cc-a9a9-d99af472d192',
+2025-11-17 14:07:05 -05:00:   workflow_id: 'fc1d4ec2-c4cb-42cc-9fb4-45430f753f46',
+2025-11-17 14:07:05 -05:00:   agent_id: 'validation-e649cb3b',
+2025-11-17 14:07:05 -05:00:   agent_type: 'validation',
+2025-11-17 14:07:05 -05:00:   success: true,
+2025-11-17 14:07:05 -05:00:   status: 'success',
+2025-11-17 14:07:05 -05:00:   action: 'execute_validation',
+2025-11-17 14:07:05 -05:00:   has_result: true,
+2025-11-17 14:07:05 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:07:05 -05:00:   has_metrics: true,
+2025-11-17 14:07:05 -05:00:   has_error: false,
+2025-11-17 14:07:05 -05:00:   timestamp: '2025-11-17T19:07:05.750Z',
+2025-11-17 14:07:05 -05:00:   version: '1.0.0',
+2025-11-17 14:07:05 -05:00:   full_object_sample: '{"task_id":"afe5369d-44e1-44cc-a9a9-d99af472d192","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","agent_id":"validation-e649cb3b","agent_type":"validation","success":true,"status":"success","action":"execute_validation","result":{"data":{"report":{"task_id":"afe5369d-44e1-44cc-a9a9-d99af472d192","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","timestamp":"2025-11-17T19:07:05.750Z","project_path":"/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/fc1d4ec2-c4cb-42cc-9fb4-45430f753f46/A'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:07:05 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:07:05 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:07:05 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:05 -05:00:   missing_required: 'none'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:07:05 -05:00: {"ts":"2025-11-17T19:07:05.754Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:05 -05:00: {"ts":"2025-11-17T19:07:05.755Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406425177-0' }
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:05 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:05 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:05 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] TypeScript validation completed[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] Running ESLint validation[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] ESLint validation completed[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[SESSION #32] All validation checks completed[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36mValidation completed[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36mValidation Report:
+2025-11-17 14:07:05 -05:00: ================================================================================
+2025-11-17 14:07:05 -05:00: VALIDATION REPORT
+2025-11-17 14:07:05 -05:00: ================================================================================
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: Task ID:       afe5369d-44e1-44cc-a9a9-d99af472d192
+2025-11-17 14:07:05 -05:00: Workflow ID:   fc1d4ec2-c4cb-42cc-9fb4-45430f753f46
+2025-11-17 14:07:05 -05:00: Timestamp:     2025-11-17T19:07:05.750Z
+2025-11-17 14:07:05 -05:00: Project Path:  /Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output/fc1d4ec2-c4cb-42cc-9fb4-45430f753f46/Add Real-time Notifications
+2025-11-17 14:07:05 -05:00: Overall Status: PASSED
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: SUMMARY
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: Total Checks:   2
+2025-11-17 14:07:05 -05:00: Passed:         1
+2025-11-17 14:07:05 -05:00: Failed:         0
+2025-11-17 14:07:05 -05:00: Warnings:       0
+2025-11-17 14:07:05 -05:00: Duration:       572ms
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: VALIDATION CHECKS
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: ✓ TYPESCRIPT: passed (572ms)
+2025-11-17 14:07:05 -05:00: ⚠ ESLINT: skipped (0ms)
+2025-11-17 14:07:05 -05:00:   WARNING: No ESLint configuration found, skipping ESLint validation
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: QUALITY GATES
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: Overall: PASSED ✓
+2025-11-17 14:07:05 -05:00: Evaluated: 0
+2025-11-17 14:07:05 -05:00: Passed:    0
+2025-11-17 14:07:05 -05:00: Failed:    0
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: RECOMMENDATIONS
+2025-11-17 14:07:05 -05:00: --------------------------------------------------------------------------------
+2025-11-17 14:07:05 -05:00: 1. All validation checks passed. Ready for next stage.
+2025-11-17 14:07:05 -05:00: 
+2025-11-17 14:07:05 -05:00: ================================================================================[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (validation-e649cb3b): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:07:10 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:10 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:10 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:10 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:10 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:10 -05:00: }
+2025-11-17 14:07:15 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:15 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:15 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:15 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:15 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:15 -05:00: }
+2025-11-17 14:07:20 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:20 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:20 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:20 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:20 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:20 -05:00: }
+2025-11-17 14:07:25 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:25 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:25 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:25 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:25 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:25 -05:00: }
+2025-11-17 14:07:30 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:30 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:30 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:30 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:30 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:30 -05:00: }
+2025-11-17 14:07:35 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:35 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:35 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:35 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:35 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:35 -05:00: }
+2025-11-17 14:07:40 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:40 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:40 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:40 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:40 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:40 -05:00: }
+2025-11-17 14:07:45 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:45 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:45 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:45 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:45 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:45 -05:00: }
+2025-11-17 14:07:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:51 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:51 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:51 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:51 -05:00: }
+2025-11-17 14:07:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:56 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:07:56 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:07:56 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:07:56 -05:00: }
+2025-11-17 14:08:01 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:01 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:01 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:01 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:01 -05:00: }
+2025-11-17 14:08:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:06 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:06 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:06 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:06 -05:00: }
+2025-11-17 14:08:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:11 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:11 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:11 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:11 -05:00: }
+2025-11-17 14:08:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:16 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:16 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:16 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:16 -05:00: }
+2025-11-17 14:08:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:21 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:21 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:21 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:21 -05:00: }
+2025-11-17 14:08:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:26 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:26 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:26 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:26 -05:00: }
+2025-11-17 14:08:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:31 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:31 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:31 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:31 -05:00: }
+2025-11-17 14:08:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:36 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:36 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:36 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:36 -05:00: }
+2025-11-17 14:08:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:41 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:41 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:41 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:41 -05:00: }
+2025-11-17 14:08:46 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:46 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:46 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:46 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:46 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:46 -05:00: }
+2025-11-17 14:08:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:51 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:51 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:51 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:51 -05:00: }
+2025-11-17 14:08:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:56 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:08:56 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:08:56 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:08:56 -05:00: }
+2025-11-17 14:09:01 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:01 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:01 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:01 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:01 -05:00: }
+2025-11-17 14:09:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:06 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:06 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:06 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:06 -05:00: }
+2025-11-17 14:09:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:11 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:11 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:11 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:11 -05:00: }
+2025-11-17 14:09:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:16 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:16 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:16 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:16 -05:00: }
+2025-11-17 14:09:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:21 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:21 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:21 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:21 -05:00: }
+2025-11-17 14:09:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:26 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:26 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:26 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:26 -05:00: }
+2025-11-17 14:09:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:31 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:31 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:31 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:31 -05:00: }
+2025-11-17 14:09:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:36 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:36 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:36 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:36 -05:00: }
+2025-11-17 14:09:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:41 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:41 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:41 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:41 -05:00: }
+2025-11-17 14:09:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:47 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:47 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:47 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:47 -05:00: }
+2025-11-17 14:09:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:52 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:52 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:52 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:52 -05:00: }
+2025-11-17 14:09:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:57 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:09:57 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:09:57 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:09:57 -05:00: }
+2025-11-17 14:10:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:02 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:02 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:02 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:02 -05:00: }
+2025-11-17 14:10:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:07 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:07 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:07 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:07 -05:00: }
+2025-11-17 14:10:12 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:12 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:12 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:12 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:12 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:12 -05:00: }
+2025-11-17 14:10:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:17 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:17 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:17 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:17 -05:00: }
+2025-11-17 14:10:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:22 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:22 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:22 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:22 -05:00: }
+2025-11-17 14:10:27 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:27 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:27 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:27 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:27 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:27 -05:00: }
+2025-11-17 14:10:32 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:32 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:32 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:32 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:32 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:32 -05:00: }
+2025-11-17 14:10:37 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:37 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:37 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:37 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:37 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:37 -05:00: }
+2025-11-17 14:10:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:42 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:42 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:42 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:42 -05:00: }
+2025-11-17 14:10:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:47 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:47 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:47 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:47 -05:00: }
+2025-11-17 14:10:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:52 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:52 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:52 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:52 -05:00: }
+2025-11-17 14:10:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:57 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:10:57 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:10:57 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:10:57 -05:00: }
+2025-11-17 14:11:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:02 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:02 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:02 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:02 -05:00: }
+2025-11-17 14:11:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:08 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:08 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:08 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:08 -05:00: }
+2025-11-17 14:11:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:13 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:13 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:13 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:13 -05:00: }
+2025-11-17 14:11:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:18 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:18 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:18 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:18 -05:00: }
+2025-11-17 14:11:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:23 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:23 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:23 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:23 -05:00: }
+2025-11-17 14:11:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:28 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:28 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:28 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:28 -05:00: }
+2025-11-17 14:11:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:33 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:33 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:33 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:33 -05:00: }
+2025-11-17 14:11:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:38 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:38 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:38 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:38 -05:00: }
+2025-11-17 14:11:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:43 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:43 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:43 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:43 -05:00: }
+2025-11-17 14:11:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:48 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:48 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:48 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:48 -05:00: }
+2025-11-17 14:11:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:53 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:53 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:53 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:53 -05:00: }
+2025-11-17 14:11:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:58 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:11:58 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:11:58 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:11:58 -05:00: }
+2025-11-17 14:12:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:03 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:03 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:03 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:03 -05:00: }
+2025-11-17 14:12:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:08 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:08 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:08 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:08 -05:00: }
+2025-11-17 14:12:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:13 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:13 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:13 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:13 -05:00: }
+2025-11-17 14:12:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:18 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:18 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:18 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:18 -05:00: }
+2025-11-17 14:12:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:23 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:23 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:23 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:23 -05:00: }
+2025-11-17 14:12:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:28 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:28 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:28 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:28 -05:00: }
+2025-11-17 14:12:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:33 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:33 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:33 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:33 -05:00: }
+2025-11-17 14:12:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:38 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:38 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:38 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:38 -05:00: }
+2025-11-17 14:12:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:43 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:43 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:43 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:43 -05:00: }
+2025-11-17 14:12:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:48 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:48 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:48 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:48 -05:00: }
+2025-11-17 14:12:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:53 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:53 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:53 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:53 -05:00: }
+2025-11-17 14:12:59 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:59 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:59 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:12:59 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:12:59 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:12:59 -05:00: }
+2025-11-17 14:13:04 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:04 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:04 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:04 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:04 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:04 -05:00: }
+2025-11-17 14:13:09 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:09 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:09 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:09 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:09 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:09 -05:00: }
+2025-11-17 14:13:14 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:14 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:14 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:14 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:14 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:14 -05:00: }
+2025-11-17 14:13:19 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:19 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:19 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:19 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:19 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:19 -05:00: }
+2025-11-17 14:13:24 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:24 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:24 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:24 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:24 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:24 -05:00: }
+2025-11-17 14:13:29 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:29 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:29 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:29 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:29 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:29 -05:00: }
+2025-11-17 14:13:34 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:34 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:34 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:34 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:34 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:34 -05:00: }
+2025-11-17 14:13:39 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:39 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:39 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:39 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:39 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:39 -05:00: }
+2025-11-17 14:13:44 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:44 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:44 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:44 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:44 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:44 -05:00: }
+2025-11-17 14:13:49 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:49 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:49 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:49 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:49 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:49 -05:00: }
+2025-11-17 14:13:54 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:54 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:54 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:54 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:54 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:54 -05:00: }
+2025-11-17 14:13:59 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:59 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:59 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:13:59 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:13:59 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:13:59 -05:00: }
+2025-11-17 14:14:05 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:14:05 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:14:05 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:14:05 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:14:05 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:14:05 -05:00: }
+2025-11-17 14:14:10 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:14:10 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:14:10 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:14:10 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:14:10 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:14:10 -05:00: }
+2025-11-17 14:14:49 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:14:49 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:14:49 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:14:49 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:14:49 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:14:49 -05:00: }
+2025-11-17 14:15:19 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:15:19 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:15:19 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:15:19 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:15:19 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:15:19 -05:00: }
+2025-11-17 14:15:24 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:15:24 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:15:24 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:15:24 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:15:24 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:15:24 -05:00: }
+2025-11-17 14:16:15 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:16:15 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:16:15 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:16:15 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:16:15 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:16:15 -05:00: }
+2025-11-17 14:16:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:16:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:16:17 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:16:17 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:16:17 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:16:17 -05:00: }
+2025-11-17 14:16:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:16:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:16:42 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:16:42 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:16:42 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:16:42 -05:00: }
+2025-11-17 14:20:34 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:20:34 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:20:34 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:20:34 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:20:34 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:20:34 -05:00: }
+2025-11-17 14:20:39 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:20:39 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:20:39 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:20:39 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:20:39 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:20:39 -05:00: }
+2025-11-17 14:21:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:21:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:21:28 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:21:28 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:21:28 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:21:28 -05:00: }
+2025-11-17 14:21:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:21:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:21:33 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:21:33 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:21:33 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:21:33 -05:00: }
+2025-11-17 14:22:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:06 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:06 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:06 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:06 -05:00: }
+2025-11-17 14:22:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:11 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:11 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:11 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:11 -05:00: }
+2025-11-17 14:22:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:16 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:16 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:16 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:16 -05:00: }
+2025-11-17 14:22:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:21 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:21 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:21 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:21 -05:00: }
+2025-11-17 14:22:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:26 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:26 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:26 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:26 -05:00: }
+2025-11-17 14:22:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:31 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:31 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:31 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:31 -05:00: }
+2025-11-17 14:22:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:36 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:36 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:36 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:36 -05:00: }
+2025-11-17 14:22:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:41 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:41 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:41 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:41 -05:00: }
+2025-11-17 14:22:46 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:46 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:46 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:46 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:46 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:46 -05:00: }
+2025-11-17 14:22:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:51 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:51 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:51 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:51 -05:00: }
+2025-11-17 14:22:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:56 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:22:56 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:22:56 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:22:56 -05:00: }
+2025-11-17 14:23:01 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:01 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:01 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:01 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:01 -05:00: }
+2025-11-17 14:23:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:06 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:06 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:06 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:06 -05:00: }
+2025-11-17 14:23:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:11 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:11 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:11 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:11 -05:00: }
+2025-11-17 14:23:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:16 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:16 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:16 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:16 -05:00: }
+2025-11-17 14:23:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:21 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:21 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:21 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:21 -05:00: }
+2025-11-17 14:23:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:26 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:26 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:26 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:26 -05:00: }
+2025-11-17 14:23:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:31 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:31 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:31 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:31 -05:00: }
+2025-11-17 14:23:37 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:37 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:37 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:37 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:37 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:37 -05:00: }
+2025-11-17 14:23:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:42 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:42 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:42 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:42 -05:00: }
+2025-11-17 14:23:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:47 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:47 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:47 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:47 -05:00: }
+2025-11-17 14:23:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:52 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:52 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:52 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:52 -05:00: }
+2025-11-17 14:23:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:57 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:23:57 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:23:57 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:23:57 -05:00: }
+2025-11-17 14:24:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:02 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:02 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:02 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:02 -05:00: }
+2025-11-17 14:24:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:07 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:07 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:07 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:07 -05:00: }
+2025-11-17 14:24:12 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:12 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:12 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:12 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:12 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:12 -05:00: }
+2025-11-17 14:24:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:17 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:17 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:17 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:17 -05:00: }
+2025-11-17 14:24:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:22 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:22 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:22 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:22 -05:00: }
+2025-11-17 14:24:27 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:27 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:27 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:27 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:27 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:27 -05:00: }
+2025-11-17 14:24:32 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:32 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:32 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:32 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:32 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:32 -05:00: }
+2025-11-17 14:24:37 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:37 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:37 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:37 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:37 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:37 -05:00: }
+2025-11-17 14:24:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:42 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:42 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:42 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:42 -05:00: }
+2025-11-17 14:24:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:47 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:47 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:47 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:47 -05:00: }
+2025-11-17 14:24:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:52 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:52 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:52 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:52 -05:00: }
+2025-11-17 14:24:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:57 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:24:57 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:24:57 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:24:57 -05:00: }
+2025-11-17 14:25:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:02 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:02 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:02 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:02 -05:00: }
+2025-11-17 14:25:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:07 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:07 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:07 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:07 -05:00: }
+2025-11-17 14:25:12 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:12 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:12 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:12 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:12 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:12 -05:00: }
+2025-11-17 14:25:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:17 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:17 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:17 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:17 -05:00: }
+2025-11-17 14:25:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:22 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:22 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:22 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:22 -05:00: }
+2025-11-17 14:25:27 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:27 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:27 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:27 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:27 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:27 -05:00: }
+2025-11-17 14:25:32 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:32 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:32 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:32 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:32 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:32 -05:00: }
+2025-11-17 14:25:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:38 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:38 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:38 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:38 -05:00: }
+2025-11-17 14:25:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:43 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:43 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:43 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:43 -05:00: }
+2025-11-17 14:25:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:48 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:48 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:48 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:48 -05:00: }
+2025-11-17 14:25:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:53 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:53 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:53 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:53 -05:00: }
+2025-11-17 14:25:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:58 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:25:58 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:25:58 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:25:58 -05:00: }
+2025-11-17 14:26:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:03 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:26:03 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:26:03 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:26:03 -05:00: }
+2025-11-17 14:26:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:08 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:26:08 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:26:08 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:26:08 -05:00: }
+2025-11-17 14:26:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:13 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:26:13 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:26:13 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:26:13 -05:00: }
+2025-11-17 14:26:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:18 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:26:18 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:26:18 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:26:18 -05:00: }
+2025-11-17 14:26:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:23 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:26:23 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:26:23 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:26:23 -05:00: }
+2025-11-17 14:27:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:02 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:02 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:02 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:02 -05:00: }
+2025-11-17 14:27:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:07 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:07 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:07 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:07 -05:00: }
+2025-11-17 14:27:10 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:10 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:10 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:10 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:10 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:10 -05:00: }
+2025-11-17 14:27:15 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:15 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:15 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:15 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:15 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:15 -05:00: }
+2025-11-17 14:27:20 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:20 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:20 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:20 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:20 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:20 -05:00: }
+2025-11-17 14:27:25 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:25 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:25 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:25 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:25 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:25 -05:00: }
+2025-11-17 14:27:30 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:30 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:30 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:30 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:30 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:30 -05:00: }
+2025-11-17 14:27:35 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:35 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:35 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:35 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:35 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:35 -05:00: }
+2025-11-17 14:27:40 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:40 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:40 -05:00:   streamKey: 'stream:agent:validation:tasks',
+2025-11-17 14:27:40 -05:00:   consumerGroup: 'agent-validation-group',
+2025-11-17 14:27:40 -05:00:   consumerName: 'consumer-1763406183356'
+2025-11-17 14:27:40 -05:00: }

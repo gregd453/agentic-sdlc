@@ -5725,3 +5725,6 @@
 2025-11-17 12:33:26 -05:00:     at internalConnectMultiple (node:net:1134:18)
 2025-11-17 12:33:26 -05:00:     at afterConnectMultiple (node:net:1715:7)
 2025-11-17 12:33:26 -05:00:     at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+2025-11-17 14:04:29 -05:00: (node:36704) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-17 14:04:29 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-17 14:04:29 -05:00: (node:36704) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.

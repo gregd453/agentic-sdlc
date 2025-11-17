@@ -30580,3 +30580,2091 @@
 2025-11-17 12:33:22 -05:00: {"ts":"2025-11-17T17:33:22.285Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
 2025-11-17 12:33:23 -05:00: {"ts":"2025-11-17T17:33:23.966Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
 2025-11-17 12:33:26 -05:00: {"ts":"2025-11-17T17:33:26.010Z","scope":"redis-suite","msg":"sub-client error","level":"ERROR","error":"AggregateError"}
+2025-11-17 14:00:00 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-17 14:00:00 -05:00: 🔖 Version: 1.0.0
+2025-11-17 14:00:01 -05:00: 🚀 Starting Scaffold Agent...
+2025-11-17 14:00:01 -05:00: [PHASE-3] Initializing OrchestratorContainer for scaffold agent...
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.022Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-scaffold"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.022Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.038Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.038Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.038Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.039Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.039Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.039Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.039Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.039Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.039Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.039Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-scaffold"}
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.042Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-17 14:00:01 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.050Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:scaffold:tasks"}
+2025-11-17 14:00:01 -05:00: [DEBUG-STREAM-INIT] Consumer group already exists (good - will continue from last position) {
+2025-11-17 14:00:01 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:01 -05:00:   consumerGroup: 'agent-scaffold-group'
+2025-11-17 14:00:01 -05:00: }
+2025-11-17 14:00:01 -05:00: [DEBUG-STREAM-INIT] Stream consumer loop STARTED {
+2025-11-17 14:00:01 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:01 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:01 -05:00:   consumerName: 'consumer-1763406001050',
+2025-11-17 14:00:01 -05:00:   topic: 'agent:scaffold:tasks'
+2025-11-17 14:00:01 -05:00: }
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.051Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:scaffold:tasks","consumerGroup":"agent-scaffold-group","consumerName":"consumer-1763406001050"}
+2025-11-17 14:00:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:01 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:01 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:01 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:01 -05:00: }
+2025-11-17 14:00:01 -05:00: {"ts":"2025-11-17T19:00:01.051Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:scaffold:tasks","count":1}
+2025-11-17 14:00:01 -05:00: [DEBUG-AGENT-INIT] Subscription completed, handler registered {
+2025-11-17 14:00:01 -05:00:   taskChannel: 'agent:scaffold:tasks',
+2025-11-17 14:00:01 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:01 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:00:01 -05:00:   platformId: 'global'
+2025-11-17 14:00:01 -05:00: }
+2025-11-17 14:00:01 -05:00: ✅ Scaffold Agent running and listening for tasks [global]
+2025-11-17 14:00:01 -05:00: 📡 Connected to Redis: redis://localhost:6380
+2025-11-17 14:00:01 -05:00: 🔑 Using Anthropic API key: sk-ant-api03-DMugxEc...
+2025-11-17 14:00:01 -05:00: 
+2025-11-17 14:00:01 -05:00: Agent is ready to receive tasks on channel: agent:scaffold:tasks
+2025-11-17 14:00:01 -05:00: Press Ctrl+C to stop
+2025-11-17 14:00:01 -05:00: 
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (scaffold-91702431): [36mScaffold agent schemas registered[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (scaffold-91702431): [36m[PHASE-4] Initializing agent with message bus[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (scaffold-91702431): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (scaffold-91702431): [36m[PHASE-4] Agent subscribed to message bus for tasks[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (scaffold-91702431): [36mRegistered with orchestrator[39m
+2025-11-17 14:00:01 -05:00: [2025-11-17 19:00:01] [32mINFO[39m (scaffold-91702431): [36m[PHASE-4] Agent initialized successfully with message bus[39m
+2025-11-17 14:00:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:06 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:06 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:06 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:06 -05:00: }
+2025-11-17 14:00:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:11 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:11 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:11 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:11 -05:00: }
+2025-11-17 14:00:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:16 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:16 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:16 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:16 -05:00: }
+2025-11-17 14:00:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:21 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:21 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:21 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:21 -05:00: }
+2025-11-17 14:00:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:26 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:26 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:26 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:26 -05:00: }
+2025-11-17 14:00:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:31 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:31 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:31 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:31 -05:00: }
+2025-11-17 14:00:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:36 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:36 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:36 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:36 -05:00: }
+2025-11-17 14:00:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:41 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:41 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:41 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:41 -05:00: }
+2025-11-17 14:00:46 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:46 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:46 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:46 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:46 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:46 -05:00: }
+2025-11-17 14:00:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:51 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:51 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:51 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:51 -05:00: }
+2025-11-17 14:00:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:00:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:00:56 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:00:56 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:00:56 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:00:56 -05:00: }
+2025-11-17 14:01:01 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:01 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:01 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:01 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:01 -05:00: }
+2025-11-17 14:01:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:06 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:06 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:06 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:06 -05:00: }
+2025-11-17 14:01:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:11 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:11 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:11 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:11 -05:00: }
+2025-11-17 14:01:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:16 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:16 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:16 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:16 -05:00: }
+2025-11-17 14:01:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:21 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:21 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:21 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:21 -05:00: }
+2025-11-17 14:01:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:26 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:26 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:26 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:26 -05:00: }
+2025-11-17 14:01:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:31 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:31 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:31 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:31 -05:00: }
+2025-11-17 14:01:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:36 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:36 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:36 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:36 -05:00: }
+2025-11-17 14:01:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:41 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:41 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:41 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:41 -05:00: }
+2025-11-17 14:01:46 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:46 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:46 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:46 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:46 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:46 -05:00: }
+2025-11-17 14:01:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:51 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:51 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:51 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:51 -05:00: }
+2025-11-17 14:01:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:01:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:01:56 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:01:56 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:01:56 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:01:56 -05:00: }
+2025-11-17 14:02:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:02:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:02:02 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:02:02 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:02:02 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:02:02 -05:00: }
+2025-11-17 14:02:49 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:02:49 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:02:49 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:02:49 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:02:49 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:02:49 -05:00: }
+2025-11-17 14:02:54 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:02:54 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:02:54 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:02:54 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:02:54 -05:00:   consumerName: 'consumer-1763406001050'
+2025-11-17 14:02:54 -05:00: }
+2025-11-17 14:02:55 -05:00: 
+2025-11-17 14:02:55 -05:00: 
+2025-11-17 14:02:55 -05:00: 🛑 Shutting down Scaffold Agent...
+2025-11-17 14:02:55 -05:00: {"ts":"2025-11-17T19:02:55.273Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+2025-11-17 14:02:55 -05:00: {"ts":"2025-11-17T19:02:55.274Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+2025-11-17 14:02:55 -05:00: {"ts":"2025-11-17T19:02:55.274Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+2025-11-17 14:02:55 -05:00: {"ts":"2025-11-17T19:02:55.274Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+2025-11-17 14:02:55 -05:00: [2025-11-17 19:02:55] [32mINFO[39m (scaffold-91702431): [36mCleaning up agent[39m
+2025-11-17 14:02:55 -05:00: [2025-11-17 19:02:55] [32mINFO[39m (scaffold-91702431): [36mDeregistered from orchestrator[39m
+2025-11-17 14:02:55 -05:00: [2025-11-17 19:02:55] [32mINFO[39m (scaffold-91702431): [36mAgent cleanup completed[39m
+2025-11-17 14:02:59 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:02:59 -05:00: {"ts":"2025-11-17T19:02:59.790Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:scaffold:tasks"}
+2025-11-17 14:02:59 -05:00: {"ts":"2025-11-17T19:02:59.790Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+2025-11-17 14:02:59 -05:00: {"ts":"2025-11-17T19:02:59.790Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}
+2025-11-17 14:03:00 -05:00: 📦 @agentic-sdlc/shared-types loaded (Phase 5)
+2025-11-17 14:03:00 -05:00: 🔖 Version: 1.0.0
+2025-11-17 14:03:00 -05:00: 🚀 Starting Scaffold Agent...
+2025-11-17 14:03:00 -05:00: [PHASE-3] Initializing OrchestratorContainer for scaffold agent...
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.129Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-scaffold"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.129Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.143Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.143Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.143Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.143Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.143Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.144Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.144Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.144Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.144Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.144Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-scaffold"}
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.146Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+2025-11-17 14:03:00 -05:00: [PHASE-3] OrchestratorContainer initialized successfully
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.154Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:scaffold:tasks"}
+2025-11-17 14:03:00 -05:00: [DEBUG-STREAM-INIT] Consumer group already exists (good - will continue from last position) {
+2025-11-17 14:03:00 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:00 -05:00:   consumerGroup: 'agent-scaffold-group'
+2025-11-17 14:03:00 -05:00: }
+2025-11-17 14:03:00 -05:00: [DEBUG-STREAM-INIT] Stream consumer loop STARTED {
+2025-11-17 14:03:00 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:00 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:00 -05:00:   consumerName: 'consumer-1763406180154',
+2025-11-17 14:03:00 -05:00:   topic: 'agent:scaffold:tasks'
+2025-11-17 14:03:00 -05:00: }
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.155Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:scaffold:tasks","consumerGroup":"agent-scaffold-group","consumerName":"consumer-1763406180154"}
+2025-11-17 14:03:00 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:00 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:00 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:00 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:00 -05:00: }
+2025-11-17 14:03:00 -05:00: {"ts":"2025-11-17T19:03:00.155Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:scaffold:tasks","count":1}
+2025-11-17 14:03:00 -05:00: [DEBUG-AGENT-INIT] Subscription completed, handler registered {
+2025-11-17 14:03:00 -05:00:   taskChannel: 'agent:scaffold:tasks',
+2025-11-17 14:03:00 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:00 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:03:00 -05:00:   platformId: 'global'
+2025-11-17 14:03:00 -05:00: }
+2025-11-17 14:03:00 -05:00: ✅ Scaffold Agent running and listening for tasks [global]
+2025-11-17 14:03:00 -05:00: 📡 Connected to Redis: redis://localhost:6380
+2025-11-17 14:03:00 -05:00: 🔑 Using Anthropic API key: sk-ant-api03-DMugxEc...
+2025-11-17 14:03:00 -05:00: 
+2025-11-17 14:03:00 -05:00: Agent is ready to receive tasks on channel: agent:scaffold:tasks
+2025-11-17 14:03:00 -05:00: Press Ctrl+C to stop
+2025-11-17 14:03:00 -05:00: 
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:03:00] [32mINFO[39m (scaffold-702040e8): [36mScaffold agent schemas registered[39m
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:03:00] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Initializing agent with message bus[39m
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:03:00] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:03:00] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent subscribed to message bus for tasks[39m
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:03:00] [32mINFO[39m (scaffold-702040e8): [36mRegistered with orchestrator[39m
+2025-11-17 14:03:00 -05:00: [2025-11-17 19:03:00] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent initialized successfully with message bus[39m
+2025-11-17 14:03:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:02 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:02 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:02 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:02 -05:00: }
+2025-11-17 14:03:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:07 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:07 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:07 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:07 -05:00: }
+2025-11-17 14:03:12 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:12 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:12 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:12 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:12 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:12 -05:00: }
+2025-11-17 14:03:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:17 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:17 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:17 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:17 -05:00: }
+2025-11-17 14:03:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:22 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:22 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:22 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:22 -05:00: }
+2025-11-17 14:03:27 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:27 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:27 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:27 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:27 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:27 -05:00: }
+2025-11-17 14:03:32 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:32 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:32 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:32 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:32 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:32 -05:00: }
+2025-11-17 14:03:37 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:37 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:37 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:37 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:37 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:37 -05:00: }
+2025-11-17 14:03:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:42 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:42 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:42 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:42 -05:00: }
+2025-11-17 14:03:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:47 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:47 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:47 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:47 -05:00: }
+2025-11-17 14:03:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:52 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:52 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:52 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:52 -05:00: }
+2025-11-17 14:03:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:03:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:03:57 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:03:57 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:03:57 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:03:57 -05:00: }
+2025-11-17 14:04:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:03 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:03 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:03 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:03 -05:00: }
+2025-11-17 14:04:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:08 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:08 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:08 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:08 -05:00: }
+2025-11-17 14:04:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:13 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:13 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:13 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:13 -05:00: }
+2025-11-17 14:04:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:18 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:18 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:18 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:18 -05:00: }
+2025-11-17 14:04:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:23 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:23 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:23 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:23 -05:00: }
+2025-11-17 14:04:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:28 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:28 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:28 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:28 -05:00: }
+2025-11-17 14:04:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:33 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:33 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:33 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:33 -05:00: }
+2025-11-17 14:04:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:38 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:38 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:38 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:38 -05:00: }
+2025-11-17 14:04:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:43 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:43 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:43 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:43 -05:00: }
+2025-11-17 14:04:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:48 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:48 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:48 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:48 -05:00: }
+2025-11-17 14:04:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:53 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:53 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:53 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:53 -05:00: }
+2025-11-17 14:04:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:04:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:04:58 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:04:58 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:04:58 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:04:58 -05:00: }
+2025-11-17 14:05:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:03 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:03 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:03 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:03 -05:00: }
+2025-11-17 14:05:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:08 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:08 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:08 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:08 -05:00: }
+2025-11-17 14:05:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:13 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:13 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:13 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:13 -05:00: }
+2025-11-17 14:05:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:18 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:18 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:18 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:18 -05:00: }
+2025-11-17 14:05:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:23 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:23 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:23 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:23 -05:00: }
+2025-11-17 14:05:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:28 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:28 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:28 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:28 -05:00: }
+2025-11-17 14:05:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:33 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:33 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:33 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:33 -05:00: }
+2025-11-17 14:05:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:38 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:38 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:38 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:38 -05:00: }
+2025-11-17 14:05:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:43 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:43 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:43 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:43 -05:00: }
+2025-11-17 14:05:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:48 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:48 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:48 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:48 -05:00: }
+2025-11-17 14:05:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:53 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:53 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:53 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:53 -05:00: }
+2025-11-17 14:05:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:05:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:05:58 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:05:58 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:05:58 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:05:58 -05:00: }
+2025-11-17 14:06:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:03 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:06:03 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:06:03 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:06:03 -05:00: }
+2025-11-17 14:06:09 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:09 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:09 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:06:09 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:06:09 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:06:09 -05:00: }
+2025-11-17 14:06:14 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:14 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:14 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:06:14 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:06:14 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:06:14 -05:00: }
+2025-11-17 14:06:19 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:19 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:19 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:06:19 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:06:19 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:06:19 -05:00: }
+2025-11-17 14:06:24 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:06:24 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:24 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:06:24 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:06:24 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:06:24 -05:00: }
+2025-11-17 14:06:25 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+2025-11-17 14:06:25 -05:00: [DEBUG-STREAM] Processing results { count: 1 }
+2025-11-17 14:06:25 -05:00: {"ts":"2025-11-17T19:06:25.013Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763406385010-0","unwrapPath":"messageData.payload.msg","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","task_id":"e91756f5-2d54-42c6-b8ef-7e7361570789","trace_id":"b8119a08-bdec-4db3-88bd-e3048d8ae9ab","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:06:25 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:06:25 -05:00:   topic: 'agent:scaffold:tasks',
+2025-11-17 14:06:25 -05:00:   hasHandlers: true,
+2025-11-17 14:06:25 -05:00:   handlerCount: 1,
+2025-11-17 14:06:25 -05:00:   subscriptionsKeys: 'agent:scaffold:tasks'
+2025-11-17 14:06:25 -05:00: }
+2025-11-17 14:06:25 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:06:25 -05:00: [2025-11-17 19:06:25] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:06:25 -05:00: [2025-11-17 19:06:25] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:25 -05:00: [2025-11-17 19:06:25] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:25 -05:00: [2025-11-17 19:06:25] [32mINFO[39m (scaffold-702040e8): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:06:25 -05:00: [2025-11-17 19:06:25] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:06:25 -05:00: [2025-11-17 19:06:25] [32mINFO[39m (scaffold-702040e8): [36mExecuting scaffold task[39m
+2025-11-17 14:06:25 -05:00: [2025-11-17 19:06:25] [32mINFO[39m (scaffold-702040e8): [36mAnalyzing requirements[39m
+2025-11-17 14:06:25 -05:00: [2025-11-17 19:06:25] [32mINFO[39m (scaffold-702040e8): [36mCalling Claude API to analyze requirements[39m
+2025-11-17 14:06:32 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:06:32 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:32 -05:00:   task_id: 'e91756f5-2d54-42c6-b8ef-7e7361570789',
+2025-11-17 14:06:32 -05:00:   workflow_id: '99d13803-e696-4c7b-ba4f-c452391dbf10',
+2025-11-17 14:06:32 -05:00:   agent_id: 'scaffold-702040e8',
+2025-11-17 14:06:32 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:06:32 -05:00:   success: true,
+2025-11-17 14:06:32 -05:00:   status: 'success',
+2025-11-17 14:06:32 -05:00:   action: 'execute_scaffold',
+2025-11-17 14:06:32 -05:00:   has_result: true,
+2025-11-17 14:06:32 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:06:32 -05:00:   has_metrics: true,
+2025-11-17 14:06:32 -05:00:   has_error: false,
+2025-11-17 14:06:32 -05:00:   timestamp: '2025-11-17T19:06:32.573Z',
+2025-11-17 14:06:32 -05:00:   version: '1.0.0',
+2025-11-17 14:06:32 -05:00:   full_object_sample: '{"task_id":"e91756f5-2d54-42c6-b8ef-7e7361570789","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","agent_id":"scaffold-702040e8","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"files_generated":[{"path":"package.json","type":"config","template_source":"app/react-spa/package.json","size_bytes":1024,"checksum":"cGFja2Fn","content_preview":"// Generated from template: app/react-spa/package.json"},{"path":"vite.config.ts","type":"config",'
+2025-11-17 14:06:32 -05:00: }
+2025-11-17 14:06:32 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:06:32 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:06:32 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:06:32 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:32 -05:00:   missing_required: 'none'
+2025-11-17 14:06:32 -05:00: }
+2025-11-17 14:06:32 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:06:32 -05:00: {"ts":"2025-11-17T19:06:32.577Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:32 -05:00: {"ts":"2025-11-17T19:06:32.577Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:32 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:06:32 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406385010-0' }
+2025-11-17 14:06:32 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:32 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:06:32 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:06:32 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:06:32 -05:00: }
+2025-11-17 14:06:32 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+2025-11-17 14:06:32 -05:00: [DEBUG-STREAM] Processing results { count: 1 }
+2025-11-17 14:06:32 -05:00: {"ts":"2025-11-17T19:06:32.578Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763406390119-0","unwrapPath":"messageData.payload.msg","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","task_id":"92fc8dab-1693-4a69-b8be-262d58bb0104","trace_id":"461a5ffb-d5f8-4904-8615-144f022429f2","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:06:32 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:06:32 -05:00:   topic: 'agent:scaffold:tasks',
+2025-11-17 14:06:32 -05:00:   hasHandlers: true,
+2025-11-17 14:06:32 -05:00:   handlerCount: 1,
+2025-11-17 14:06:32 -05:00:   subscriptionsKeys: 'agent:scaffold:tasks'
+2025-11-17 14:06:32 -05:00: }
+2025-11-17 14:06:32 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36mClaude API response received[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36mRequirements analysis completed successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36mGenerating project structure[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36mCreating files[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating project files[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating base project directory[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Base project directory created[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating subdirectories[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Subdirectories created[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files created successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Verifying files on disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Directory exists check[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files found on disk[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36mScaffold task completed successfully[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36mExecuting scaffold task[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36mAnalyzing requirements[39m
+2025-11-17 14:06:33 -05:00: [2025-11-17 19:06:32] [32mINFO[39m (scaffold-702040e8): [36mCalling Claude API to analyze requirements[39m
+2025-11-17 14:06:40 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:06:40 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:40 -05:00:   task_id: '92fc8dab-1693-4a69-b8be-262d58bb0104',
+2025-11-17 14:06:40 -05:00:   workflow_id: 'fc1d4ec2-c4cb-42cc-9fb4-45430f753f46',
+2025-11-17 14:06:40 -05:00:   agent_id: 'scaffold-702040e8',
+2025-11-17 14:06:40 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:06:40 -05:00:   success: true,
+2025-11-17 14:06:40 -05:00:   status: 'success',
+2025-11-17 14:06:40 -05:00:   action: 'execute_scaffold',
+2025-11-17 14:06:40 -05:00:   has_result: true,
+2025-11-17 14:06:40 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:06:40 -05:00:   has_metrics: true,
+2025-11-17 14:06:40 -05:00:   has_error: false,
+2025-11-17 14:06:40 -05:00:   timestamp: '2025-11-17T19:06:40.981Z',
+2025-11-17 14:06:40 -05:00:   version: '1.0.0',
+2025-11-17 14:06:40 -05:00:   full_object_sample: '{"task_id":"92fc8dab-1693-4a69-b8be-262d58bb0104","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","agent_id":"scaffold-702040e8","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"files_generated":[{"path":"src/index.ts","type":"source","template_source":"feature-template","size_bytes":1024,"checksum":"c3JjL2lu","content_preview":"// Generated from template: feature-template"},{"path":"package.json","type":"config","template_source":"pac'
+2025-11-17 14:06:40 -05:00: }
+2025-11-17 14:06:40 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:06:40 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:06:40 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:06:40 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:40 -05:00:   missing_required: 'none'
+2025-11-17 14:06:40 -05:00: }
+2025-11-17 14:06:40 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:06:40 -05:00: {"ts":"2025-11-17T19:06:40.984Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:40 -05:00: {"ts":"2025-11-17T19:06:40.984Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:40 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:06:40 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406390119-0' }
+2025-11-17 14:06:40 -05:00: {"ts":"2025-11-17T19:06:40.985Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763406392575-0","unwrapPath":"messageData.payload.msg","workflow_id":"cc51ea37-5efa-45ab-b986-923e07835c15","task_id":"a52e56df-a885-458d-b5fe-f431024a942a","trace_id":"aa9cc155-3122-4795-965a-63b12c16f333","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:06:40 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:06:40 -05:00:   topic: 'agent:scaffold:tasks',
+2025-11-17 14:06:40 -05:00:   hasHandlers: true,
+2025-11-17 14:06:40 -05:00:   handlerCount: 1,
+2025-11-17 14:06:40 -05:00:   subscriptionsKeys: 'agent:scaffold:tasks'
+2025-11-17 14:06:40 -05:00: }
+2025-11-17 14:06:40 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36mClaude API response received[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36mRequirements analysis completed successfully[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36mGenerating project structure[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36mCreating files[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating project files[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating base project directory[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Base project directory created[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating subdirectories[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Subdirectories created[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36m[SESSION #36] Template rendering failed, using fallback[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files created successfully[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Verifying files on disk[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Directory exists check[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files found on disk[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36mScaffold task completed successfully[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36mExecuting scaffold task[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36mAnalyzing requirements[39m
+2025-11-17 14:06:41 -05:00: [2025-11-17 19:06:40] [32mINFO[39m (scaffold-702040e8): [36mCalling Claude API to analyze requirements[39m
+2025-11-17 14:06:47 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:06:47 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:47 -05:00:   task_id: 'a52e56df-a885-458d-b5fe-f431024a942a',
+2025-11-17 14:06:47 -05:00:   workflow_id: 'cc51ea37-5efa-45ab-b986-923e07835c15',
+2025-11-17 14:06:47 -05:00:   agent_id: 'scaffold-702040e8',
+2025-11-17 14:06:47 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:06:47 -05:00:   success: true,
+2025-11-17 14:06:47 -05:00:   status: 'success',
+2025-11-17 14:06:47 -05:00:   action: 'execute_scaffold',
+2025-11-17 14:06:47 -05:00:   has_result: true,
+2025-11-17 14:06:47 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:06:47 -05:00:   has_metrics: true,
+2025-11-17 14:06:47 -05:00:   has_error: false,
+2025-11-17 14:06:47 -05:00:   timestamp: '2025-11-17T19:06:47.058Z',
+2025-11-17 14:06:47 -05:00:   version: '1.0.0',
+2025-11-17 14:06:47 -05:00:   full_object_sample: '{"task_id":"a52e56df-a885-458d-b5fe-f431024a942a","workflow_id":"cc51ea37-5efa-45ab-b986-923e07835c15","agent_id":"scaffold-702040e8","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"files_generated":[{"path":"src/index.ts","type":"source","template_source":"bugfix-template","size_bytes":1024,"checksum":"c3JjL2lu","content_preview":"// Generated from template: bugfix-template"},{"path":"package.json","type":"config","template_source":"packa'
+2025-11-17 14:06:47 -05:00: }
+2025-11-17 14:06:47 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:06:47 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:06:47 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:06:47 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:47 -05:00:   missing_required: 'none'
+2025-11-17 14:06:47 -05:00: }
+2025-11-17 14:06:47 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:06:47 -05:00: {"ts":"2025-11-17T19:06:47.062Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:47 -05:00: {"ts":"2025-11-17T19:06:47.062Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406392575-0' }
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:06:47 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:06:47 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:06:47 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:06:47 -05:00: }
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] Processing results { count: 1 }
+2025-11-17 14:06:47 -05:00: {"ts":"2025-11-17T19:06:47.064Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763406392696-0","unwrapPath":"messageData.payload.msg","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","task_id":"be6e8bd7-aead-45a9-bf3d-4679fbcf4351","trace_id":"b8119a08-bdec-4db3-88bd-e3048d8ae9ab","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:06:47 -05:00:   topic: 'agent:scaffold:tasks',
+2025-11-17 14:06:47 -05:00:   hasHandlers: true,
+2025-11-17 14:06:47 -05:00:   handlerCount: 1,
+2025-11-17 14:06:47 -05:00:   subscriptionsKeys: 'agent:scaffold:tasks'
+2025-11-17 14:06:47 -05:00: }
+2025-11-17 14:06:47 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36mClaude API response received[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36mRequirements analysis completed successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36mGenerating project structure[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36mCreating files[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating project files[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating base project directory[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Base project directory created[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating subdirectories[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Subdirectories created[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [33mWARN[39m (scaffold-702040e8): [36m[SESSION #36] Template rendering failed, using fallback[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files created successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Verifying files on disk[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Directory exists check[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files found on disk[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36mScaffold task completed successfully[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36mExecuting scaffold task[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36mAnalyzing requirements[39m
+2025-11-17 14:06:47 -05:00: [2025-11-17 19:06:47] [32mINFO[39m (scaffold-702040e8): [36mCalling Claude API to analyze requirements[39m
+2025-11-17 14:06:54 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:06:54 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:54 -05:00:   task_id: 'be6e8bd7-aead-45a9-bf3d-4679fbcf4351',
+2025-11-17 14:06:54 -05:00:   workflow_id: '99d13803-e696-4c7b-ba4f-c452391dbf10',
+2025-11-17 14:06:54 -05:00:   agent_id: 'scaffold-702040e8',
+2025-11-17 14:06:54 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:06:54 -05:00:   success: true,
+2025-11-17 14:06:54 -05:00:   status: 'success',
+2025-11-17 14:06:54 -05:00:   action: 'execute_scaffold',
+2025-11-17 14:06:54 -05:00:   has_result: true,
+2025-11-17 14:06:54 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:06:54 -05:00:   has_metrics: true,
+2025-11-17 14:06:54 -05:00:   has_error: false,
+2025-11-17 14:06:54 -05:00:   timestamp: '2025-11-17T19:06:54.990Z',
+2025-11-17 14:06:54 -05:00:   version: '1.0.0',
+2025-11-17 14:06:54 -05:00:   full_object_sample: '{"task_id":"be6e8bd7-aead-45a9-bf3d-4679fbcf4351","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","agent_id":"scaffold-702040e8","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"files_generated":[{"path":"package.json","type":"config","template_source":"app/react-spa/package.json","size_bytes":1024,"checksum":"cGFja2Fn","content_preview":"// Generated from template: app/react-spa/package.json"},{"path":"vite.config.ts","type":"config",'
+2025-11-17 14:06:54 -05:00: }
+2025-11-17 14:06:54 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:06:54 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:06:54 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:06:54 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:06:54 -05:00:   missing_required: 'none'
+2025-11-17 14:06:54 -05:00: }
+2025-11-17 14:06:54 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:06:54 -05:00: {"ts":"2025-11-17T19:06:54.991Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:54 -05:00: {"ts":"2025-11-17T19:06:54.991Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:06:54 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:06:54 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406392696-0' }
+2025-11-17 14:06:54 -05:00: {"ts":"2025-11-17T19:06:54.992Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763406401105-0","unwrapPath":"messageData.payload.msg","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","task_id":"736be96c-f7e8-4b9e-9a8d-9799ca81c8d0","trace_id":"461a5ffb-d5f8-4904-8615-144f022429f2","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:06:54 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:06:54 -05:00:   topic: 'agent:scaffold:tasks',
+2025-11-17 14:06:54 -05:00:   hasHandlers: true,
+2025-11-17 14:06:54 -05:00:   handlerCount: 1,
+2025-11-17 14:06:54 -05:00:   subscriptionsKeys: 'agent:scaffold:tasks'
+2025-11-17 14:06:54 -05:00: }
+2025-11-17 14:06:54 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36mClaude API response received[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36mRequirements analysis completed successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36mGenerating project structure[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36mCreating files[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating project files[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating base project directory[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Base project directory created[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating subdirectories[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Subdirectories created[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files created successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Verifying files on disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Directory exists check[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files found on disk[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36mScaffold task completed successfully[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36mExecuting scaffold task[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36mAnalyzing requirements[39m
+2025-11-17 14:06:55 -05:00: [2025-11-17 19:06:54] [32mINFO[39m (scaffold-702040e8): [36mCalling Claude API to analyze requirements[39m
+2025-11-17 14:07:03 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:07:03 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:03 -05:00:   task_id: '736be96c-f7e8-4b9e-9a8d-9799ca81c8d0',
+2025-11-17 14:07:03 -05:00:   workflow_id: 'fc1d4ec2-c4cb-42cc-9fb4-45430f753f46',
+2025-11-17 14:07:03 -05:00:   agent_id: 'scaffold-702040e8',
+2025-11-17 14:07:03 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:07:03 -05:00:   success: true,
+2025-11-17 14:07:03 -05:00:   status: 'success',
+2025-11-17 14:07:03 -05:00:   action: 'execute_scaffold',
+2025-11-17 14:07:03 -05:00:   has_result: true,
+2025-11-17 14:07:03 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:07:03 -05:00:   has_metrics: true,
+2025-11-17 14:07:03 -05:00:   has_error: false,
+2025-11-17 14:07:03 -05:00:   timestamp: '2025-11-17T19:07:03.721Z',
+2025-11-17 14:07:03 -05:00:   version: '1.0.0',
+2025-11-17 14:07:03 -05:00:   full_object_sample: '{"task_id":"736be96c-f7e8-4b9e-9a8d-9799ca81c8d0","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","agent_id":"scaffold-702040e8","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"files_generated":[{"path":"src/index.ts","type":"source","template_source":"feature-template","size_bytes":1024,"checksum":"c3JjL2lu","content_preview":"// Generated from template: feature-template"},{"path":"package.json","type":"config","template_source":"pac'
+2025-11-17 14:07:03 -05:00: }
+2025-11-17 14:07:03 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:07:03 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:07:03 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:07:03 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:03 -05:00:   missing_required: 'none'
+2025-11-17 14:07:03 -05:00: }
+2025-11-17 14:07:03 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:07:03 -05:00: {"ts":"2025-11-17T19:07:03.724Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:03 -05:00: {"ts":"2025-11-17T19:07:03.724Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:03 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:07:03 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406401105-0' }
+2025-11-17 14:07:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:03 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:03 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:03 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:03 -05:00: }
+2025-11-17 14:07:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+2025-11-17 14:07:03 -05:00: [DEBUG-STREAM] Processing results { count: 1 }
+2025-11-17 14:07:03 -05:00: {"ts":"2025-11-17T19:07:03.726Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763406415106-0","unwrapPath":"messageData.payload.msg","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","task_id":"e68fe163-34d9-48ba-895e-a9af2ec7905f","trace_id":"b8119a08-bdec-4db3-88bd-e3048d8ae9ab","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:07:03 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:07:03 -05:00:   topic: 'agent:scaffold:tasks',
+2025-11-17 14:07:03 -05:00:   hasHandlers: true,
+2025-11-17 14:07:03 -05:00:   handlerCount: 1,
+2025-11-17 14:07:03 -05:00:   subscriptionsKeys: 'agent:scaffold:tasks'
+2025-11-17 14:07:03 -05:00: }
+2025-11-17 14:07:03 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mClaude API response received[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mRequirements analysis completed successfully[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mGenerating project structure[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mCreating files[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating project files[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating base project directory[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Base project directory created[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Creating subdirectories[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Subdirectories created[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36m[SESSION #36] Template rendering failed, using fallback[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Processing file[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Template rendered successfully[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Writing file to disk[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [33mWARN[39m (scaffold-702040e8): [36mUsing absolute path[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] File written successfully[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files created successfully[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Verifying files on disk[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Directory exists check[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #36] Files found on disk[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mScaffold task completed successfully[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:07:03 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:07:04 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:07:04 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:04 -05:00:   task_id: 'e68fe163-34d9-48ba-895e-a9af2ec7905f',
+2025-11-17 14:07:04 -05:00:   workflow_id: '99d13803-e696-4c7b-ba4f-c452391dbf10',
+2025-11-17 14:07:04 -05:00:   agent_id: 'scaffold-702040e8',
+2025-11-17 14:07:04 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:07:04 -05:00:   success: true,
+2025-11-17 14:07:04 -05:00:   status: 'success',
+2025-11-17 14:07:04 -05:00:   action: 'execute_scaffold',
+2025-11-17 14:07:04 -05:00:   has_result: true,
+2025-11-17 14:07:04 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:07:04 -05:00:   has_metrics: true,
+2025-11-17 14:07:04 -05:00:   has_error: false,
+2025-11-17 14:07:04 -05:00:   timestamp: '2025-11-17T19:07:04.322Z',
+2025-11-17 14:07:04 -05:00:   version: '1.0.0',
+2025-11-17 14:07:04 -05:00:   full_object_sample: '{"task_id":"e68fe163-34d9-48ba-895e-a9af2ec7905f","workflow_id":"99d13803-e696-4c7b-ba4f-c452391dbf10","agent_id":"scaffold-702040e8","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"action":"install_dependencies","packages_installed":-1,"installation_time_ms":595,"node_modules_created":true},"metrics":{"duration_ms":596}},"metrics":{"duration_ms":596},"timestamp":"2025-11-17T19:07:04.322Z","version":"1.0.0"}'
+2025-11-17 14:07:04 -05:00: }
+2025-11-17 14:07:04 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:07:04 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:07:04 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:07:04 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:04 -05:00:   missing_required: 'none'
+2025-11-17 14:07:04 -05:00: }
+2025-11-17 14:07:04 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:07:04 -05:00: {"ts":"2025-11-17T19:07:04.324Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:04 -05:00: {"ts":"2025-11-17T19:07:04.324Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406415106-0' }
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:04 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:04 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:04 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:04 -05:00: }
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] Processing results { count: 1 }
+2025-11-17 14:07:04 -05:00: {"ts":"2025-11-17T19:07:04.325Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763406423842-0","unwrapPath":"messageData.payload.msg","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","task_id":"3fc719f6-bf97-4665-8e53-a0cfae9f4382","trace_id":"461a5ffb-d5f8-4904-8615-144f022429f2","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] Checking handlers {
+2025-11-17 14:07:04 -05:00:   topic: 'agent:scaffold:tasks',
+2025-11-17 14:07:04 -05:00:   hasHandlers: true,
+2025-11-17 14:07:04 -05:00:   handlerCount: 1,
+2025-11-17 14:07:04 -05:00:   subscriptionsKeys: 'agent:scaffold:tasks'
+2025-11-17 14:07:04 -05:00: }
+2025-11-17 14:07:04 -05:00: [DEBUG-STREAM] About to invoke handlers { count: 1 }
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mExecuting scaffold task[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mDependency installation stage - installing project dependencies[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mStarting dependency installation[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:03] [32mINFO[39m (scaffold-702040e8): [36mExecuting pnpm install command[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36mDependency installation completed successfully[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:07:04 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+2025-11-17 14:07:05 -05:00:   keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:05 -05:00:   task_id: '3fc719f6-bf97-4665-8e53-a0cfae9f4382',
+2025-11-17 14:07:05 -05:00:   workflow_id: 'fc1d4ec2-c4cb-42cc-9fb4-45430f753f46',
+2025-11-17 14:07:05 -05:00:   agent_id: 'scaffold-702040e8',
+2025-11-17 14:07:05 -05:00:   agent_type: 'scaffold',
+2025-11-17 14:07:05 -05:00:   success: true,
+2025-11-17 14:07:05 -05:00:   status: 'success',
+2025-11-17 14:07:05 -05:00:   action: 'execute_scaffold',
+2025-11-17 14:07:05 -05:00:   has_result: true,
+2025-11-17 14:07:05 -05:00:   result_keys: 'data,metrics',
+2025-11-17 14:07:05 -05:00:   has_metrics: true,
+2025-11-17 14:07:05 -05:00:   has_error: false,
+2025-11-17 14:07:05 -05:00:   timestamp: '2025-11-17T19:07:05.057Z',
+2025-11-17 14:07:05 -05:00:   version: '1.0.0',
+2025-11-17 14:07:05 -05:00:   full_object_sample: '{"task_id":"3fc719f6-bf97-4665-8e53-a0cfae9f4382","workflow_id":"fc1d4ec2-c4cb-42cc-9fb4-45430f753f46","agent_id":"scaffold-702040e8","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"action":"install_dependencies","packages_installed":-1,"installation_time_ms":731,"node_modules_created":true},"metrics":{"duration_ms":731}},"metrics":{"duration_ms":731},"timestamp":"2025-11-17T19:07:05.057Z","version":"1.0.0"}'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+2025-11-17 14:07:05 -05:00:   required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+2025-11-17 14:07:05 -05:00:   optional_fields: 'artifacts, error, warnings',
+2025-11-17 14:07:05 -05:00:   what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+2025-11-17 14:07:05 -05:00:   missing_required: 'none'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [DEBUG-RESULT] ✅ Validation PASSED
+2025-11-17 14:07:05 -05:00: {"ts":"2025-11-17T19:07:05.059Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:05 -05:00: {"ts":"2025-11-17T19:07:05.059Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] Handlers completed successfully
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] Message ACKed { messageId: '1763406423842-0' }
+2025-11-17 14:07:05 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:05 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:05 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:05 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:05 -05:00: }
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-4] Agent received task from message bus[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Task received[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36m[SESSION #37 DEBUG] Stage extraction[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36mExecuting scaffold task[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36mDependency installation stage - installing project dependencies[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36mStarting dependency installation[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:04] [32mINFO[39m (scaffold-702040e8): [36mExecuting pnpm install command[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (scaffold-702040e8): [36mDependency installation completed successfully[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (scaffold-702040e8): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+2025-11-17 14:07:05 -05:00: [2025-11-17 19:07:05] [32mINFO[39m (scaffold-702040e8): [36m🔍 [AGENT-TRACE] Publishing result[39m
+2025-11-17 14:07:10 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:10 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:10 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:10 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:10 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:10 -05:00: }
+2025-11-17 14:07:15 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:15 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:15 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:15 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:15 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:15 -05:00: }
+2025-11-17 14:07:20 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:20 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:20 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:20 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:20 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:20 -05:00: }
+2025-11-17 14:07:25 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:25 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:25 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:25 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:25 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:25 -05:00: }
+2025-11-17 14:07:30 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:30 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:30 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:30 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:30 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:30 -05:00: }
+2025-11-17 14:07:35 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:35 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:35 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:35 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:35 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:35 -05:00: }
+2025-11-17 14:07:40 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:40 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:40 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:40 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:40 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:40 -05:00: }
+2025-11-17 14:07:45 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:45 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:45 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:45 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:45 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:45 -05:00: }
+2025-11-17 14:07:50 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:50 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:50 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:50 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:50 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:50 -05:00: }
+2025-11-17 14:07:55 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:07:55 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:07:55 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:07:55 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:07:55 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:07:55 -05:00: }
+2025-11-17 14:08:00 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:00 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:00 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:00 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:00 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:00 -05:00: }
+2025-11-17 14:08:05 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:05 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:05 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:05 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:05 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:05 -05:00: }
+2025-11-17 14:08:10 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:10 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:10 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:10 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:10 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:10 -05:00: }
+2025-11-17 14:08:15 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:15 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:15 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:15 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:15 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:15 -05:00: }
+2025-11-17 14:08:20 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:20 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:20 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:20 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:20 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:20 -05:00: }
+2025-11-17 14:08:25 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:25 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:25 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:25 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:25 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:25 -05:00: }
+2025-11-17 14:08:30 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:30 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:30 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:30 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:30 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:30 -05:00: }
+2025-11-17 14:08:35 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:35 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:35 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:35 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:35 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:35 -05:00: }
+2025-11-17 14:08:40 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:40 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:40 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:40 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:40 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:40 -05:00: }
+2025-11-17 14:08:45 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:45 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:45 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:45 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:45 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:45 -05:00: }
+2025-11-17 14:08:50 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:50 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:50 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:50 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:50 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:50 -05:00: }
+2025-11-17 14:08:55 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:08:55 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:08:55 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:08:55 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:08:55 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:08:55 -05:00: }
+2025-11-17 14:09:00 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:00 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:00 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:00 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:00 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:00 -05:00: }
+2025-11-17 14:09:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:06 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:06 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:06 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:06 -05:00: }
+2025-11-17 14:09:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:11 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:11 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:11 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:11 -05:00: }
+2025-11-17 14:09:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:16 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:16 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:16 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:16 -05:00: }
+2025-11-17 14:09:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:21 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:21 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:21 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:21 -05:00: }
+2025-11-17 14:09:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:26 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:26 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:26 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:26 -05:00: }
+2025-11-17 14:09:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:31 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:31 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:31 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:31 -05:00: }
+2025-11-17 14:09:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:36 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:36 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:36 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:36 -05:00: }
+2025-11-17 14:09:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:41 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:41 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:41 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:41 -05:00: }
+2025-11-17 14:09:46 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:46 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:46 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:46 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:46 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:46 -05:00: }
+2025-11-17 14:09:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:51 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:51 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:51 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:51 -05:00: }
+2025-11-17 14:09:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:09:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:09:56 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:09:56 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:09:56 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:09:56 -05:00: }
+2025-11-17 14:10:01 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:01 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:01 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:01 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:01 -05:00: }
+2025-11-17 14:10:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:06 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:06 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:06 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:06 -05:00: }
+2025-11-17 14:10:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:11 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:11 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:11 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:11 -05:00: }
+2025-11-17 14:10:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:16 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:16 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:16 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:16 -05:00: }
+2025-11-17 14:10:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:21 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:21 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:21 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:21 -05:00: }
+2025-11-17 14:10:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:26 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:26 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:26 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:26 -05:00: }
+2025-11-17 14:10:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:31 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:31 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:31 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:31 -05:00: }
+2025-11-17 14:10:37 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:37 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:37 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:37 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:37 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:37 -05:00: }
+2025-11-17 14:10:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:42 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:42 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:42 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:42 -05:00: }
+2025-11-17 14:10:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:47 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:47 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:47 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:47 -05:00: }
+2025-11-17 14:10:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:52 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:52 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:52 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:52 -05:00: }
+2025-11-17 14:10:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:10:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:10:57 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:10:57 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:10:57 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:10:57 -05:00: }
+2025-11-17 14:11:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:02 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:02 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:02 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:02 -05:00: }
+2025-11-17 14:11:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:07 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:07 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:07 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:07 -05:00: }
+2025-11-17 14:11:12 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:12 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:12 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:12 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:12 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:12 -05:00: }
+2025-11-17 14:11:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:17 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:17 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:17 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:17 -05:00: }
+2025-11-17 14:11:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:22 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:22 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:22 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:22 -05:00: }
+2025-11-17 14:11:27 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:27 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:27 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:27 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:27 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:27 -05:00: }
+2025-11-17 14:11:32 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:32 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:32 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:32 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:32 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:32 -05:00: }
+2025-11-17 14:11:37 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:37 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:37 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:37 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:37 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:37 -05:00: }
+2025-11-17 14:11:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:42 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:42 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:42 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:42 -05:00: }
+2025-11-17 14:11:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:47 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:47 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:47 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:47 -05:00: }
+2025-11-17 14:11:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:52 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:52 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:52 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:52 -05:00: }
+2025-11-17 14:11:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:11:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:11:57 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:11:57 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:11:57 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:11:57 -05:00: }
+2025-11-17 14:12:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:02 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:02 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:02 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:02 -05:00: }
+2025-11-17 14:12:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:07 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:07 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:07 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:07 -05:00: }
+2025-11-17 14:12:12 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:12 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:12 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:12 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:12 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:12 -05:00: }
+2025-11-17 14:12:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:17 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:17 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:17 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:17 -05:00: }
+2025-11-17 14:12:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:22 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:22 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:22 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:22 -05:00: }
+2025-11-17 14:12:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:28 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:28 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:28 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:28 -05:00: }
+2025-11-17 14:12:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:33 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:33 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:33 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:33 -05:00: }
+2025-11-17 14:12:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:38 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:38 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:38 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:38 -05:00: }
+2025-11-17 14:12:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:43 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:43 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:43 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:43 -05:00: }
+2025-11-17 14:12:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:48 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:48 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:48 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:48 -05:00: }
+2025-11-17 14:12:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:53 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:53 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:53 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:53 -05:00: }
+2025-11-17 14:12:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:12:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:12:58 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:12:58 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:12:58 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:12:58 -05:00: }
+2025-11-17 14:13:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:03 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:03 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:03 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:03 -05:00: }
+2025-11-17 14:13:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:08 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:08 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:08 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:08 -05:00: }
+2025-11-17 14:13:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:13 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:13 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:13 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:13 -05:00: }
+2025-11-17 14:13:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:18 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:18 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:18 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:18 -05:00: }
+2025-11-17 14:13:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:23 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:23 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:23 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:23 -05:00: }
+2025-11-17 14:13:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:28 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:28 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:28 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:28 -05:00: }
+2025-11-17 14:13:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:33 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:33 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:33 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:33 -05:00: }
+2025-11-17 14:13:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:38 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:38 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:38 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:38 -05:00: }
+2025-11-17 14:13:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:43 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:43 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:43 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:43 -05:00: }
+2025-11-17 14:13:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:48 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:48 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:48 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:48 -05:00: }
+2025-11-17 14:13:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:53 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:53 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:53 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:53 -05:00: }
+2025-11-17 14:13:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:13:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:13:58 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:13:58 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:13:58 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:13:58 -05:00: }
+2025-11-17 14:14:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:14:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:14:03 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:14:03 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:14:03 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:14:03 -05:00: }
+2025-11-17 14:14:09 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:14:09 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:14:09 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:14:09 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:14:09 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:14:09 -05:00: }
+2025-11-17 14:14:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:14:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:14:48 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:14:48 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:14:48 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:14:48 -05:00: }
+2025-11-17 14:14:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:14:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:14:53 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:14:53 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:14:53 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:14:53 -05:00: }
+2025-11-17 14:15:24 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:15:24 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:15:24 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:15:24 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:15:24 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:15:24 -05:00: }
+2025-11-17 14:16:14 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:16:14 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:16:14 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:16:14 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:16:14 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:16:14 -05:00: }
+2025-11-17 14:16:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:16:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:16:17 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:16:17 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:16:17 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:16:17 -05:00: }
+2025-11-17 14:16:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:16:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:16:42 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:16:42 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:16:42 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:16:42 -05:00: }
+2025-11-17 14:20:34 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:20:34 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:20:34 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:20:34 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:20:34 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:20:34 -05:00: }
+2025-11-17 14:20:39 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:20:39 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:20:39 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:20:39 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:20:39 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:20:39 -05:00: }
+2025-11-17 14:21:28 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:21:28 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:21:28 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:21:28 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:21:28 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:21:28 -05:00: }
+2025-11-17 14:21:33 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:21:33 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:21:33 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:21:33 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:21:33 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:21:33 -05:00: }
+2025-11-17 14:22:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:06 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:06 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:06 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:06 -05:00: }
+2025-11-17 14:22:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:11 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:11 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:11 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:11 -05:00: }
+2025-11-17 14:22:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:16 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:16 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:16 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:16 -05:00: }
+2025-11-17 14:22:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:21 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:21 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:21 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:21 -05:00: }
+2025-11-17 14:22:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:26 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:26 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:26 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:26 -05:00: }
+2025-11-17 14:22:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:31 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:31 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:31 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:31 -05:00: }
+2025-11-17 14:22:36 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:36 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:36 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:36 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:36 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:36 -05:00: }
+2025-11-17 14:22:41 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:41 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:41 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:41 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:41 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:41 -05:00: }
+2025-11-17 14:22:46 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:46 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:46 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:46 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:46 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:46 -05:00: }
+2025-11-17 14:22:51 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:51 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:51 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:51 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:51 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:51 -05:00: }
+2025-11-17 14:22:56 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:22:56 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:22:56 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:22:56 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:22:56 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:22:56 -05:00: }
+2025-11-17 14:23:01 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:01 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:01 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:01 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:01 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:01 -05:00: }
+2025-11-17 14:23:06 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:06 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:06 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:06 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:06 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:06 -05:00: }
+2025-11-17 14:23:11 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:11 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:11 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:11 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:11 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:11 -05:00: }
+2025-11-17 14:23:16 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:16 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:16 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:16 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:16 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:16 -05:00: }
+2025-11-17 14:23:21 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:21 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:21 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:21 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:21 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:21 -05:00: }
+2025-11-17 14:23:26 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:26 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:26 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:26 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:26 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:26 -05:00: }
+2025-11-17 14:23:31 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:31 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:31 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:31 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:31 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:31 -05:00: }
+2025-11-17 14:23:37 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:37 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:37 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:37 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:37 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:37 -05:00: }
+2025-11-17 14:23:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:42 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:42 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:42 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:42 -05:00: }
+2025-11-17 14:23:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:47 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:47 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:47 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:47 -05:00: }
+2025-11-17 14:23:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:52 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:52 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:52 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:52 -05:00: }
+2025-11-17 14:23:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:23:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:23:57 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:23:57 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:23:57 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:23:57 -05:00: }
+2025-11-17 14:24:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:02 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:02 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:02 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:02 -05:00: }
+2025-11-17 14:24:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:07 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:07 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:07 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:07 -05:00: }
+2025-11-17 14:24:12 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:12 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:12 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:12 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:12 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:12 -05:00: }
+2025-11-17 14:24:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:17 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:17 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:17 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:17 -05:00: }
+2025-11-17 14:24:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:22 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:22 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:22 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:22 -05:00: }
+2025-11-17 14:24:27 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:27 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:27 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:27 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:27 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:27 -05:00: }
+2025-11-17 14:24:32 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:32 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:32 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:32 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:32 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:32 -05:00: }
+2025-11-17 14:24:37 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:37 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:37 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:37 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:37 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:37 -05:00: }
+2025-11-17 14:24:42 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:42 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:42 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:42 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:42 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:42 -05:00: }
+2025-11-17 14:24:47 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:47 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:47 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:47 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:47 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:47 -05:00: }
+2025-11-17 14:24:52 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:52 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:52 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:52 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:52 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:52 -05:00: }
+2025-11-17 14:24:57 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:24:57 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:24:57 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:24:57 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:24:57 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:24:57 -05:00: }
+2025-11-17 14:25:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:02 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:02 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:02 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:02 -05:00: }
+2025-11-17 14:25:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:07 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:07 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:07 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:07 -05:00: }
+2025-11-17 14:25:12 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:12 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:12 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:12 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:12 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:12 -05:00: }
+2025-11-17 14:25:17 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:17 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:17 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:17 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:17 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:17 -05:00: }
+2025-11-17 14:25:22 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:22 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:22 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:22 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:22 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:22 -05:00: }
+2025-11-17 14:25:27 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:27 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:27 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:27 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:27 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:27 -05:00: }
+2025-11-17 14:25:32 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:32 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:32 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:32 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:32 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:32 -05:00: }
+2025-11-17 14:25:38 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:38 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:38 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:38 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:38 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:38 -05:00: }
+2025-11-17 14:25:43 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:43 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:43 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:43 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:43 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:43 -05:00: }
+2025-11-17 14:25:48 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:48 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:48 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:48 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:48 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:48 -05:00: }
+2025-11-17 14:25:53 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:53 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:53 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:53 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:53 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:53 -05:00: }
+2025-11-17 14:25:58 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:25:58 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:25:58 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:25:58 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:25:58 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:25:58 -05:00: }
+2025-11-17 14:26:03 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:03 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:03 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:26:03 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:26:03 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:26:03 -05:00: }
+2025-11-17 14:26:08 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:08 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:08 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:26:08 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:26:08 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:26:08 -05:00: }
+2025-11-17 14:26:13 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:13 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:13 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:26:13 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:26:13 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:26:13 -05:00: }
+2025-11-17 14:26:18 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:18 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:18 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:26:18 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:26:18 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:26:18 -05:00: }
+2025-11-17 14:26:23 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:26:23 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:26:23 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:26:23 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:26:23 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:26:23 -05:00: }
+2025-11-17 14:27:02 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:02 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:02 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:02 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:02 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:02 -05:00: }
+2025-11-17 14:27:07 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:07 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:07 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:07 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:07 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:07 -05:00: }
+2025-11-17 14:27:10 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:10 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:10 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:10 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:10 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:10 -05:00: }
+2025-11-17 14:27:15 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:15 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:15 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:15 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:15 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:15 -05:00: }
+2025-11-17 14:27:20 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:20 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:20 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:20 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:20 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:20 -05:00: }
+2025-11-17 14:27:25 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:25 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:25 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:25 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:25 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:25 -05:00: }
+2025-11-17 14:27:30 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:30 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:30 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:30 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:30 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:30 -05:00: }
+2025-11-17 14:27:35 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:35 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:35 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:35 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:35 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:35 -05:00: }
+2025-11-17 14:27:40 -05:00: [DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+2025-11-17 14:27:40 -05:00: [DEBUG-STREAM] About to call XREADGROUP {
+2025-11-17 14:27:40 -05:00:   streamKey: 'stream:agent:scaffold:tasks',
+2025-11-17 14:27:40 -05:00:   consumerGroup: 'agent-scaffold-group',
+2025-11-17 14:27:40 -05:00:   consumerName: 'consumer-1763406180154'
+2025-11-17 14:27:40 -05:00: }

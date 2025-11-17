@@ -1769,3 +1769,6 @@
 2025-11-17 12:33:27 -05:00:     at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
 2025-11-17 12:33:27 -05:00: [ioredis] Unhandled error event: Error: read ECONNRESET
 2025-11-17 12:33:27 -05:00:     at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+2025-11-17 14:06:40 -05:00: Template not found: feature-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-17 14:06:47 -05:00: Template not found: bugfix-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
+2025-11-17 14:07:03 -05:00: Template not found: feature-template. Available templates in /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/scaffold-agent/templates
