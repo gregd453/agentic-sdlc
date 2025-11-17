@@ -38,8 +38,8 @@ services:
 
   orchestrator:
     build:
-      context: ./packages/orchestrator
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/orchestrator/Dockerfile
     container_name: agentic-sdlc-orchestrator
     ports:
       - "3000:3000"
@@ -56,10 +56,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    volumes:
-      - ./packages/orchestrator:/app
-      - /app/node_modules
-      - /app/dist
+    # volumes:
+    #   - ./packages/orchestrator:/app  # Remove for production - breaks Docker image
+    #   - /app/node_modules
+    #   - /app/dist
     networks:
       - agentic-network
     restart: unless-stopped

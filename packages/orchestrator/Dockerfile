@@ -2,50 +2,47 @@
 FROM node:20-alpine AS builder
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@8.11.0 --activate
+RUN npm install -g pnpm@9
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
-COPY prisma ./prisma/
+# Copy all root files and all packages
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages ./packages
 
-# Install dependencies
+# Install dependencies (this will link all workspace packages)
 RUN pnpm install --frozen-lockfile
 
-# Copy source code
-COPY tsconfig.json ./
-COPY src ./src
-
 # Generate Prisma client
-RUN pnpm exec prisma generate
+RUN cd /app/packages/orchestrator && pnpm exec prisma generate
 
-# Build the application
-RUN pnpm run build
+# Build the application from workspace root
+RUN cd /app && pnpm -r --filter @agentic-sdlc/orchestrator... run build
 
 # Production stage
 FROM node:20-alpine AS production
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@8.11.0 --activate
+RUN npm install -g pnpm@9
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
-COPY prisma ./prisma/
+# Copy workspace files from root
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/orchestrator/package.json ./packages/orchestrator/
+COPY packages/orchestrator/prisma ./packages/orchestrator/prisma/
+
+# Copy shared packages (needed for production)
+COPY packages/shared ./packages/shared
 
 # Install production dependencies only
 RUN pnpm install --frozen-lockfile --prod
 
-# Generate Prisma client
-RUN pnpm exec prisma generate
-
 # Copy built application from builder stage
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/packages/orchestrator/dist ./packages/orchestrator/dist
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -67,4 +64,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start the application
-CMD ["node", "dist/index.js"]
+CMD ["node", "packages/orchestrator/dist/index.js"]
