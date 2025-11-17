@@ -1,5 +1,5 @@
 import { createMachine, interpret, fromPromise, assign } from 'xstate';
-import { logger } from '../utils/logger';
+import { logger, getRequestContext } from '../utils/logger';
 import { WorkflowRepository } from '../repositories/workflow.repository';
 import { EventBus } from '../events/event-bus';
 import { IMessageBus } from '../hexagonal/ports/message-bus.port';
@@ -51,7 +51,7 @@ export const createWorkflowStateMachine = (
         on: {
           START: {
             target: 'running',
-            actions: ['logTransition', 'updateWorkflowStatus']
+            actions: ['logTransition', 'updateWorkflowStage']
           }
         }
       },
@@ -80,7 +80,7 @@ export const createWorkflowStateMachine = (
           ],
           STAGE_FAILED: {
             target: 'failed',
-            actions: ['logError', 'updateWorkflowStatus']
+            actions: ['logError', 'updateWorkflowStage']
           },
           DECISION_REQUIRED: {
             target: 'awaiting_decision',
@@ -92,11 +92,11 @@ export const createWorkflowStateMachine = (
           },
           PAUSE: {
             target: 'paused',
-            actions: ['logTransition', 'updateWorkflowStatus']
+            actions: ['logTransition', 'updateWorkflowStage']
           },
           CANCEL: {
             target: 'cancelled',
-            actions: ['logTransition', 'updateWorkflowStatus']
+            actions: ['logTransition', 'updateWorkflowStage']
           }
         }
       },
@@ -104,15 +104,15 @@ export const createWorkflowStateMachine = (
         on: {
           DECISION_APPROVED: {
             target: 'running',
-            actions: ['clearDecisionId', 'logDecisionApproved', 'updateWorkflowStatus']
+            actions: ['clearDecisionId', 'logDecisionApproved', 'updateWorkflowStage']
           },
           DECISION_REJECTED: {
             target: 'failed',
-            actions: ['clearDecisionId', 'logDecisionRejected', 'updateWorkflowStatus']
+            actions: ['clearDecisionId', 'logDecisionRejected', 'updateWorkflowStage']
           },
           CANCEL: {
             target: 'cancelled',
-            actions: ['logTransition', 'updateWorkflowStatus']
+            actions: ['logTransition', 'updateWorkflowStage']
           }
         }
       },
@@ -120,11 +120,11 @@ export const createWorkflowStateMachine = (
         on: {
           CLARIFICATION_COMPLETE: {
             target: 'running',
-            actions: ['clearClarificationId', 'logClarificationComplete', 'updateWorkflowStatus']
+            actions: ['clearClarificationId', 'logClarificationComplete', 'updateWorkflowStage']
           },
           CANCEL: {
             target: 'cancelled',
-            actions: ['logTransition', 'updateWorkflowStatus']
+            actions: ['logTransition', 'updateWorkflowStage']
           }
         }
       },
@@ -170,11 +170,11 @@ export const createWorkflowStateMachine = (
         on: {
           RESUME: {
             target: 'running',
-            actions: ['logTransition', 'updateWorkflowStatus']
+            actions: ['logTransition', 'updateWorkflowStage']
           },
           CANCEL: {
             target: 'cancelled',
-            actions: ['logTransition', 'updateWorkflowStatus']
+            actions: ['logTransition', 'updateWorkflowStage']
           }
         }
       },
@@ -186,7 +186,7 @@ export const createWorkflowStateMachine = (
           },
           CANCEL: {
             target: 'cancelled',
-            actions: ['logTransition', 'updateWorkflowStatus']
+            actions: ['logTransition', 'updateWorkflowStage']
           }
         }
       },
@@ -212,22 +212,28 @@ export const createWorkflowStateMachine = (
           current_stage: context.current_stage
         });
       },
-      updateWorkflowStatus: async ({ context }) => {
-        // Status updates are handled by specific actions (markComplete, etc.)
+      updateWorkflowStage: async ({ context }) => {
+        // Session #78: Phase 5 - Renamed to clarify this updates STAGE, not STATUS
+        // Status updates are handled by specific actions (markComplete, notifyError, etc.)
+        const requestCtx = getRequestContext();
+        const traceId = requestCtx?.traceId || `trace-${context.workflow_id}`;
+
         try {
           await repository.update(context.workflow_id, {
             current_stage: context.current_stage
           });
-          logger.info('[SESSION #26] Workflow status updated successfully', {
+          logger.info('[SESSION #26] Workflow stage updated successfully', {
             workflow_id: context.workflow_id,
-            current_stage: context.current_stage
+            current_stage: context.current_stage,
+            trace_id: traceId
           });
         } catch (error: any) {
           if (error.message?.includes('CAS failed')) {
             logger.warn('[SESSION #26 CAS] Workflow update rejected due to concurrent modification', {
               workflow_id: context.workflow_id,
               current_stage: context.current_stage,
-              error: error.message
+              error: error.message,
+              trace_id: traceId
             });
             // Log but don't throw - let polling detect the actual DB state
           } else {
@@ -384,51 +390,145 @@ export const createWorkflowStateMachine = (
         });
       },
       markComplete: async ({ context }) => {
+        // Session #78: Phase 5 - Enhanced logging and error handling for workflow completion
+        const requestCtx = getRequestContext();
+        const traceId = requestCtx?.traceId || `trace-${context.workflow_id}`;
+
         context.progress = 100;
-        await repository.update(context.workflow_id, {
-          status: 'completed',
-          progress: 100,
-          completed_at: new Date()
-        });
+
+        try {
+          logger.info('Marking workflow as complete', {
+            workflow_id: context.workflow_id,
+            current_stage: context.current_stage,
+            trace_id: traceId
+          });
+
+          await repository.update(context.workflow_id, {
+            status: 'completed',
+            progress: 100,
+            completed_at: new Date()
+          });
+
+          logger.info('Workflow marked complete successfully', {
+            workflow_id: context.workflow_id,
+            status: 'completed',
+            trace_id: traceId
+          });
+        } catch (error) {
+          logger.error('Failed to mark workflow complete', {
+            workflow_id: context.workflow_id,
+            error,
+            trace_id: traceId
+          });
+          throw error;
+        }
       },
       notifyCompletion: async ({ context }) => {
-        await eventBus.publish({
-          id: `event-${Date.now()}`,
-          type: 'WORKFLOW_COMPLETED',
-          workflow_id: context.workflow_id,
-          payload: { workflow_id: context.workflow_id },
-          timestamp: new Date().toISOString(),
-          trace_id: `trace-${context.workflow_id}`
-        });
-        logger.info('Workflow completed', {
-          workflow_id: context.workflow_id
-        });
+        // Session #78: Phase 3 - Propagate trace_id from RequestContext instead of hardcoding
+        const requestCtx = getRequestContext();
+        const traceId = requestCtx?.traceId || `trace-${context.workflow_id}`;
+
+        try {
+          await eventBus.publish({
+            id: `event-${Date.now()}`,
+            type: 'WORKFLOW_COMPLETED',
+            workflow_id: context.workflow_id,
+            payload: { workflow_id: context.workflow_id },
+            timestamp: new Date().toISOString(),
+            trace_id: traceId  // ✅ Use propagated trace_id
+          });
+
+          logger.info('Workflow completed and published', {
+            workflow_id: context.workflow_id,
+            progress: context.progress,
+            trace_id: traceId
+          });
+        } catch (eventError) {
+          logger.error('Failed to publish workflow completion event', {
+            workflow_id: context.workflow_id,
+            eventError,
+            trace_id: traceId
+          });
+          // Don't rethrow - workflow is already marked complete in DB
+        }
       },
       notifyError: async ({ context }) => {
+        // Session #78: Phase 2 & 3 - Persist error status to DB BEFORE publishing event, propagate trace_id
+        const requestCtx = getRequestContext();
+        const traceId = requestCtx?.traceId || `trace-${context.workflow_id}`;
+
+        try {
+          await repository.update(context.workflow_id, {
+            status: 'failed'
+          });
+
+          logger.info('Workflow status persisted to failed', {
+            workflow_id: context.workflow_id,
+            error: context.error?.message,
+            trace_id: traceId
+          });
+        } catch (dbError) {
+          logger.error('Failed to persist error status to database', {
+            workflow_id: context.workflow_id,
+            dbError,
+            error: context.error?.message,
+            trace_id: traceId
+          });
+          // Continue to publish event even if DB fails (eventual consistency)
+        }
+
+        // Publish event after DB persistence
         await eventBus.publish({
           id: `event-${Date.now()}`,
           type: 'WORKFLOW_ERROR',
           workflow_id: context.workflow_id,
           payload: { workflow_id: context.workflow_id, error: context.error?.message },
           timestamp: new Date().toISOString(),
-          trace_id: `trace-${context.workflow_id}`
+          trace_id: traceId  // ✅ Use propagated trace_id
         });
-        logger.error('Workflow error state reached', {
+
+        logger.error('Workflow error state reached and published', {
           workflow_id: context.workflow_id,
-          error: context.error
+          error: context.error,
+          trace_id: traceId
         });
       },
       notifyCancellation: async ({ context }) => {
+        // Session #78: Phase 2 & 3 - Persist cancellation status to DB BEFORE publishing event, propagate trace_id
+        const requestCtx = getRequestContext();
+        const traceId = requestCtx?.traceId || `trace-${context.workflow_id}`;
+
+        try {
+          await repository.update(context.workflow_id, {
+            status: 'cancelled'
+          });
+
+          logger.info('Workflow status persisted to cancelled', {
+            workflow_id: context.workflow_id,
+            trace_id: traceId
+          });
+        } catch (dbError) {
+          logger.error('Failed to persist cancellation status to database', {
+            workflow_id: context.workflow_id,
+            dbError,
+            trace_id: traceId
+          });
+          // Continue to publish event even if DB fails (eventual consistency)
+        }
+
+        // Publish event after DB persistence
         await eventBus.publish({
           id: `event-${Date.now()}`,
           type: 'WORKFLOW_CANCELLED',
           workflow_id: context.workflow_id,
           payload: { workflow_id: context.workflow_id },
           timestamp: new Date().toISOString(),
-          trace_id: `trace-${context.workflow_id}`
+          trace_id: traceId  // ✅ Use propagated trace_id
         });
-        logger.info('Workflow cancelled', {
-          workflow_id: context.workflow_id
+
+        logger.info('Workflow cancelled and published', {
+          workflow_id: context.workflow_id,
+          trace_id: traceId
         });
       },
       recordDecisionId: ({ context, event }) => {

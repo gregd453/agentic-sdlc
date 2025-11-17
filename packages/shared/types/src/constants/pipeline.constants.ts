@@ -109,10 +109,13 @@ export type TaskStatusConstant = typeof TASK_STATUS[keyof typeof TASK_STATUS];
 
 /**
  * Workflow execution statuses
+ * IMPORTANT: Must match Prisma schema WorkflowStatus enum
+ * Session #78: Added PAUSED status for pause/resume support
  */
 export const WORKFLOW_STATUS = {
   INITIATED: 'initiated',
   RUNNING: 'running',
+  PAUSED: 'paused',
   SCAFFOLDING: 'scaffolding',
   VALIDATING: 'validating',
   TESTING: 'testing',
@@ -350,10 +353,24 @@ export function isFailureStatus(status: string): boolean {
 
 /**
  * Check if a status is terminal (workflow/task is done)
+ * Terminal statuses: completed, failed, cancelled, paused (no new tasks)
+ * Session #78: Added paused as terminal status
  */
-export function isTerminalStatus(status: string): boolean {
-  return isSuccessStatus(status) ||
-         isFailureStatus(status) ||
-         status === TASK_STATUS.CANCELLED ||
-         status === WORKFLOW_STATUS.CANCELLED;
+export function isTerminalStatus(status: string | null | undefined): boolean {
+  // Defensive: handle null/undefined
+  if (!status) {
+    return false;
+  }
+
+  const terminalStates = [
+    TASK_STATUS.SUCCESS,
+    TASK_STATUS.FAILED,
+    TASK_STATUS.CANCELLED,
+    WORKFLOW_STATUS.COMPLETED,
+    WORKFLOW_STATUS.FAILED,
+    WORKFLOW_STATUS.CANCELLED,
+    WORKFLOW_STATUS.PAUSED,
+  ];
+
+  return terminalStates.includes(status as any);
 }

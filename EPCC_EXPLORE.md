@@ -269,3 +269,284 @@ The STRATEGIC-ARCHITECTURE.md vision is:
 4. **Documentation approach** - Templates + examples per platform type
 
 Ready for planning.
+
+---
+
+---
+
+# Exploration Report: Critical Status Consistency Issues (Session #78)
+
+**Date**: 2025-11-17
+**Status**: EXPLORATION PHASE (READ-ONLY)
+**Phase**: EXPLORE - Critical Bug Audit Follow-up
+**Scope**: Workflow state management, database persistence, distributed tracing, status consistency
+**Severity**: 7 Critical Issues (4 Blockers, 1 High, 2 Medium)
+
+---
+
+## Executive Summary - Critical Findings
+
+An audit identified **7 major problems** affecting distributed tracing, database persistence, and workflow state management:
+
+- **4 Blockers**: Status enum mismatch, trace_id loss, terminal state persistence, pipeline pause/resume persistence
+- **1 High Priority**: Misleading function name causing developer confusion
+- **2 Medium Priority**: Incomplete terminal checks, missing logging
+
+**Current Status Consistency Score**: 65/100 (from audit)
+
+**Production Impact**:
+- Workflows may lose state on service restart (pause/resume)
+- Distributed tracing is broken (trace_id changes mid-workflow)
+- Dashboard shows inconsistent traces
+- Terminal state changes don't persist to DB
+
+---
+
+## Files Analyzed
+
+### 1. **workflow-state-machine.ts** (961 lines)
+**Core Issues**:
+- Line 215-237: START event only updates current_stage, NOT status field
+- Line 386: markComplete() - No logging before/after, missing error handling
+- Line 401: notifyCompletion() - Hardcodes trace_id as `trace-${workflow_id}`
+- **Line 414: notifyError()** - ⚠️ BLOCKER: Publishes event but doesn't persist 'failed' status to DB
+- **Line 428: notifyCancellation()** - ⚠️ BLOCKER: Publishes event but doesn't persist 'cancelled' status to DB
+- Line 890: Terminal status array missing 'paused' state
+
+**Patterns Found**:
+- Uses RequestContext AsyncLocalStorage for automatic trace_id injection
+- Event publishing via eventBus (redis-bus.adapter.ts)
+- Prisma repository pattern for DB access
+- CAS (Compare-And-Swap) for optimistic locking
+
+---
+
+### 2. **pipeline-executor.service.ts** (689 lines)
+**Core Issues**:
+- Line 35: In-memory storage: `activeExecutions: Map<string, PipelineExecution>`
+- **Line 565: pauseExecution()** - ⚠️ BLOCKER: Only updates Map, no DB persistence
+- **Line 578: resumeExecution()** - ⚠️ BLOCKER: Only updates Map, no DB persistence
+- Line 630: Pipeline creation generates NEW trace_id instead of propagating
+
+**Critical Finding**:
+- No PipelineExecution model exists in Prisma schema
+- Pause/resume state is lost on service restart
+- No audit trail for pause/resume operations
+
+---
+
+### 3. **Status Enum Mismatch** (BLOCKER)
+**PipelineStatus** (pipeline.types.ts):
+```
+'created' | 'queued' | 'running' | 'success' | 'failed' | 'cancelled' | 'paused'
+```
+
+**WorkflowStatus** (schema.prisma):
+```
+'initiated' | 'running' | 'paused' | 'completed' | 'failed' | 'cancelled'
+```
+
+**Problem**: Pipeline uses `'success'` but Workflow requires `'completed'`
+- Type safety violation
+- Runtime errors on status update attempts
+- Cannot map Pipeline completion to Workflow completion
+
+---
+
+## 7 Critical Issues Identified
+
+### **BLOCKER #1: STATUS ENUM MISMATCH**
+- Files: pipeline.types.ts, schema.prisma
+- Impact: Type checking failures, runtime errors
+- Root cause: Enums evolved separately without alignment
+
+### **BLOCKER #2: trace_id LOST IN EVENT PUBLISHING**
+- Locations: notifyCompletion (Line 401), notifyError (Line 414), notifyCancellation (Line 428), Pipeline executor (Line 630)
+- Current (Wrong): `trace_id: trace-${workflow_id}` (hardcoded)
+- Correct: `trace_id: context.trace_id` (propagated from RequestContext)
+- Impact: Dashboard shows multiple trace_ids for single operation, audit trails broken
+
+### **BLOCKER #3: TERMINAL STATES NOT PERSISTED**
+- File: workflow-state-machine.ts
+- Problem: notifyError() and notifyCancellation() publish events but don't call `repository.update()`
+- Impact: Event published but DB still shows old status, eventual consistency not achieved
+
+### **BLOCKER #4: PIPELINE PAUSE/RESUME NOT PERSISTED**
+- File: pipeline-executor.service.ts (Lines 565, 578)
+- Problem: Only updates in-memory Map, no DB persistence
+- Impact: State lost on service restart, no audit trail
+
+### **HIGH #5: MISLEADING FUNCTION NAME**
+- File: workflow-state-machine.ts (Line 215)
+- Problem: `updateWorkflowStatus()` only updates current_stage, NOT status field
+- Impact: Developer confusion about what's persisted
+
+### **MEDIUM #6: INCOMPLETE TERMINAL STATUS CHECK**
+- File: workflow-state-machine.ts (Line 890)
+- Problem: Array `['completed', 'failed', 'cancelled']` missing 'paused' and no null checks
+- Impact: Edge cases not handled, paused workflows incorrectly treated as non-terminal
+
+### **MEDIUM #7: NO LOGGING IN CRITICAL SECTIONS**
+- Files: workflow-state-machine.ts
+- Problem: markComplete(), error handlers lack logging and error handling
+- Impact: No audit trail, observability gaps
+
+---
+
+## Architectural Patterns Review
+
+### ✅ GOOD: Compare-And-Swap (CAS) with Retry
+- Location: workflow.repository.ts (Lines 150-211)
+- Purpose: Optimistic locking prevents lost updates in concurrent scenarios
+- Strength: Prevents race conditions in distributed system
+- Weakness: trace_id not included in update operations
+
+### ✅ GOOD: Automatic RequestContext Injection
+- Location: logger.ts - Pino mixin integration
+- Purpose: Auto-inject trace_id into all logs from AsyncLocalStorage
+- Strength: Zero boilerplate, consistent across all logs
+- Weakness: Doesn't apply to async event publishing (events bypass context)
+
+### ❌ BROKEN: Manual trace_id in Events
+- Location: workflow-state-machine.ts notification functions
+- Problem: Hardcodes trace_id instead of propagating from RequestContext
+- Impact: Breaks distributed tracing correlation
+
+### ❌ BROKEN: In-Memory State Storage
+- Location: pipeline-executor.service.ts (Line 35)
+- Problem: Map assumes it survives service lifetime
+- Impact: Lost on restart, no persistence, single-process only
+
+---
+
+## Integration Points Affected
+
+**Message Bus** (redis-bus.adapter.ts)
+- Events with wrong trace_id propagate to all subscribers
+- Impact spreads across all downstream services
+
+**Prisma Repository** (workflow.repository.ts)
+- CAS pattern requires version field synchronization
+- Terminal state updates missing entirely
+
+**AsyncLocalStorage / RequestContext** (logger.ts)
+- Not available in async event callbacks
+- Must capture before async call
+
+**Workflow State Machine** (workflow-state-machine.ts)
+- Broken trace_id affects all downstream services
+- Terminal state persistence failure cascades
+
+---
+
+## Fix Strategy (5 Phases)
+
+### **Phase 1: Unify Status Enums** (BLOCKER - Foundation)
+- Update PipelineStatus enum to match WorkflowStatus
+- Create unified status: `'initiated' | 'running' | 'paused' | 'completed' | 'failed' | 'cancelled'`
+- Run Prisma migration
+- Create migration script for existing 'success' → 'completed' data
+
+### **Phase 2: Fix Terminal State Persistence** (BLOCKER - High Impact)
+- Add `repository.update({ status: 'failed' })` to notifyError()
+- Add `repository.update({ status: 'cancelled' })` to notifyCancellation()
+- Add error handling and logging
+
+### **Phase 3: Fix trace_id Propagation** (BLOCKER - High Impact)
+- Capture RequestContext before async call
+- Pass context.trace_id to eventBus.publish()
+- Remove hardcoded trace_id generation
+- Update pipeline executor to propagate trace_id
+
+### **Phase 4: Fix Pipeline Pause/Resume Persistence** (BLOCKER - Feature Complete)
+- Create PipelineExecution Prisma model
+- Add pause/resume/cancel persistence to DB
+- Use CAS pattern for concurrent safety
+- Add error handling
+
+### **Phase 5: Improve Logging & Naming** (MEDIUM - Polish)
+- Rename updateWorkflowStatus() → updateWorkflowStage()
+- Add comprehensive logging with trace_id
+- Fix terminal status check to include 'paused'
+- Add defensive null/undefined checks
+
+**Total Estimated Effort**: 8-10 hours
+**Can Parallelize**: Phases 2-3 after Phase 1, Phase 5 independently
+
+---
+
+## Constraints & Risks
+
+### **Technical Constraints**
+1. Prisma ORM with PostgreSQL - CAS pattern requires version field
+2. Redis Streams - Events must include metadata before publishing
+3. RequestContext lost in async callbacks - must capture before async
+4. TypeScript strict mode - Status enum mismatch causes build errors
+
+### **Business Constraints**
+1. Platform is 98% production ready - changes must be low-risk
+2. Existing workflows may use old 'success' status - migration needed
+3. No downtime requirement - changes must support live data
+
+### **Risks**
+- HIGH: Enum migration could break existing data
+- HIGH: trace_id format change may affect observability systems
+- MEDIUM: Adding PipelineExecution table requires schema coordination
+- MEDIUM: Database migration timing during live operations
+
+---
+
+## Testing Recommendations
+
+### **Unit Tests** (5 critical tests)
+- notifyError() persists status AND publishes event
+- notifyCancellation() persists status AND publishes event
+- trace_id propagates from RequestContext through event
+- Terminal status check handles null/undefined
+- pauseExecution/resumeExecution persist to DB
+
+### **Integration Tests** (4 scenarios)
+- Complete workflow: initiate → run → complete → verify DB
+- Error scenario: error → verify DB shows 'failed'
+- Pause scenario: pause → restart → verify still paused
+- Trace scenario: same trace_id across workflow-state-machine and event logs
+
+### **Chaos Tests** (3 scenarios)
+- Concurrent status updates (CAS prevents lost writes)
+- Service restart during pause (recovery from DB)
+- Database migration (existing status values converted)
+
+---
+
+## Summary Table
+
+| Issue | Type | Severity | Impact | Phase |
+|-------|------|----------|--------|-------|
+| Status enum mismatch | Type Safety | BLOCKER | Type errors, runtime failures | 1 |
+| trace_id loss | Observability | BLOCKER | Broken distributed tracing | 3 |
+| Terminal state not persisted | Data Loss | BLOCKER | Inconsistent DB status | 2 |
+| Pause/resume not persisted | Data Loss | BLOCKER | State lost on restart | 4 |
+| Misleading function name | Code Quality | HIGH | Developer confusion | 5 |
+| Incomplete terminal check | Robustness | MEDIUM | Edge cases not handled | 5 |
+| No logging in critical sections | Observability | MEDIUM | Audit trail gaps | 5 |
+
+---
+
+## Exploration Completion Checklist
+
+- ✅ All 6 affected files reviewed with line numbers
+- ✅ 7 critical issues identified with root causes
+- ✅ 4 blockers requiring Phases 1-4 fixes
+- ✅ Architectural patterns documented (good and broken)
+- ✅ Integration points mapped
+- ✅ 5-phase implementation strategy designed
+- ✅ Testing recommendations provided
+- ✅ Risk assessment completed
+- ✅ Backward compatibility strategy identified
+- ✅ Parallelizable execution paths identified
+
+**Ready for PLAN phase**: Yes ✅
+
+---
+
+**Next**: See EPCC_PLAN.md for detailed step-by-step implementation strategy for each of the 5 phases.

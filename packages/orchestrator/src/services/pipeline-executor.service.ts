@@ -150,8 +150,8 @@ export class PipelineExecutorService {
         await this.executeStagesSequential(definition, execution, _graph, traceId);
       }
 
-      // Mark execution as complete
-      execution.status = 'success';
+      // Mark execution as complete (Session #78: Changed 'success' to 'completed')
+      execution.status = 'completed';
       execution.completed_at = new Date().toISOString();
       execution.duration_ms = Date.now() - startTime;
 

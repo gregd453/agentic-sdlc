@@ -25,12 +25,14 @@ export const StageStatusSchema = z.enum([
 
 /**
  * Pipeline status
+ * IMPORTANT: Must match Prisma schema WorkflowStatus enum
+ * Session #78: Changed 'success' to 'completed' for consistency
  */
 export const PipelineStatusSchema = z.enum([
   'created',
   'queued',
   'running',
-  'success',
+  'completed',
   'failed',
   'cancelled',
   'paused'
@@ -66,7 +68,7 @@ export const StageArtifactSchema = z.object({
 export const StageDependencySchema = z.object({
   stage_id: z.string(),
   required: z.boolean().default(true),
-  condition: z.enum(['success', 'completed', 'always']).default('success')
+  condition: z.enum(['success', 'completed', 'always']).default('completed')  // Session #78: Changed default from 'success' to 'completed'
 });
 
 /**
