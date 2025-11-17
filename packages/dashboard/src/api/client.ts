@@ -17,8 +17,14 @@ const getAPIBase = (): string => {
     return apiUrl
   }
 
-  // Default to relative path - Vite dev server will proxy to VITE_API_URL (localhost:3051)
-  // In production, this will be relative to the domain
+  // In development, use the actual orchestrator API directly
+  // The dashboard is served from localhost:3050, orchestrator is at localhost:3051
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return 'http://localhost:3051/api/v1'
+  }
+
+  // Default to relative path for production
+  // In production, this will be relative to the domain or proxied by reverse proxy
   return '/api/v1'
 }
 

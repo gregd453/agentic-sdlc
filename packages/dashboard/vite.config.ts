@@ -5,13 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: parseInt(process.env.VITE_DASHBOARD_PORT || '3050', 10),
-    host: process.env.VITE_HOST || '0.0.0.0',
-    proxy: {
-      '/api': {
-        target: process.env.VITE_PROXY_TARGET || process.env.VITE_API_URL || 'http://localhost:3051',
-        changeOrigin: true,
-        secure: false
-      }
-    }
+    host: process.env.VITE_HOST || '0.0.0.0'
+    // Removed proxy configuration - client code now makes direct calls to localhost:3051/api/v1
   }
 })
