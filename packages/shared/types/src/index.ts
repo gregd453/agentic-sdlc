@@ -39,6 +39,28 @@ export {
 // Keep TaskResult schema (unchanged, working correctly)
 export { TaskResultSchema, TaskResult } from './messages/task-contracts';
 
+// ===== Agent Behavior Metadata (Metadata-driven test scenarios) =====
+export {
+  AgentBehaviorModeEnum,
+  AgentBehaviorMetadataSchema,
+  AgentErrorMetadataSchema,
+  PartialResultMetadataSchema,
+  CustomOutputMetadataSchema,
+  TimingMetadataSchema,
+  MetricsMetadataSchema,
+  BEHAVIOR_SAMPLES,
+  validateAgentBehaviorMetadata
+} from './messages/agent-behavior';
+export type {
+  AgentBehaviorMode,
+  AgentBehaviorMetadata,
+  AgentErrorMetadata,
+  PartialResultMetadata,
+  CustomOutputMetadata,
+  TimingMetadata,
+  MetricsMetadata
+} from './messages/agent-behavior';
+
 // ===== Phase 5: Schema Registry & Contract Validator =====
 // Note: Explicitly export to avoid naming conflicts
 export { SchemaRegistry } from './core/schema-registry';

@@ -1,7 +1,7 @@
 import { BaseAgent } from '@agentic-sdlc/base-agent';
 import { AgentEnvelope, TaskResult } from '@agentic-sdlc/base-agent';
 import { AGENT_TYPES } from '@agentic-sdlc/shared-types';
-import { randomUUID } from 'crypto';
+import { BehaviorExecutor } from './behavior-executor.js';
 
 /**
  * Generic Mock Agent - Flexible agent for testing and multi-platform scenarios
@@ -11,15 +11,17 @@ import { randomUUID } from 'crypto';
  * - Platform IDs (web-app-platform, data-pipeline-platform, etc.)
  *
  * Features:
- * - Simulates successful task completion
+ * - Metadata-driven behavior for test scenarios (success, failure, timeout, partial, crash)
  * - Generates realistic mock outputs
  * - Supports arbitrary platform/stage combinations
  * - Configurable delay for testing timing
+ * - Failure injection via behavior_metadata in task payload
  */
 export class GenericMockAgent extends BaseAgent {
   private readonly mockDelay: number; // Configurable delay in ms for testing timing
   private readonly agentType: string; // Override agent type for flexibility
   private readonly enableDebug: boolean; // Enable detailed logging
+  private readonly behaviorExecutor: BehaviorExecutor; // Executes behaviors based on metadata
 
   constructor(
     messageBus: any,
@@ -35,7 +37,9 @@ export class GenericMockAgent extends BaseAgent {
         capabilities: [
           'mock-task-completion',
           'test-stage-progression',
-          'platform-aware-execution'
+          'platform-aware-execution',
+          'metadata-driven-behavior',
+          'failure-injection'
         ]
       },
       messageBus,
@@ -48,19 +52,46 @@ export class GenericMockAgent extends BaseAgent {
     this.agentType = agentType;
     this.mockDelay = mockDelay;
     this.enableDebug = enableDebug;
+    this.behaviorExecutor = new BehaviorExecutor({ enableDebug, logger: this.logger });
 
     if (this.enableDebug) {
       this.logger.info('[GenericMockAgent] Initialized', {
         agentType,
         platformId: platformId || 'global',
         mockDelay,
-        capabilities: ['mock-task-completion', 'test-stage-progression', 'platform-aware-execution']
+        capabilities: [
+          'mock-task-completion',
+          'test-stage-progression',
+          'platform-aware-execution',
+          'metadata-driven-behavior',
+          'failure-injection'
+        ]
       });
     }
   }
 
   /**
-   * Execute mock task - simulates successful completion
+   * Execute mock task with metadata-driven behavior
+   *
+   * Supports behavior metadata in task.payload.behavior_metadata:
+   * - mode: 'success' | 'failure' | 'timeout' | 'partial' | 'crash'
+   * - error: { code, message, retryable }
+   * - partial: { total_items, successful_items, failed_items }
+   * - output: { custom output overrides }
+   * - timing: { execution_delay_ms, variance_ms }
+   * - metrics: { custom metrics overrides }
+   *
+   * Example:
+   * ```
+   * task.payload.behavior_metadata = {
+   *   mode: 'failure',
+   *   error: {
+   *     code: 'VALIDATION_ERROR',
+   *     message: 'TypeScript errors',
+   *     retryable: true
+   *   }
+   * }
+   * ```
    */
   async execute(task: AgentEnvelope): Promise<TaskResult> {
     const startTime = Date.now();
@@ -76,47 +107,47 @@ export class GenericMockAgent extends BaseAgent {
         trace_id: traceId,
         stage: currentStage,
         platformId,
-        agentType: this.agentType
+        agentType: this.agentType,
+        has_behavior_metadata: !!(task.payload as any)?.behavior_metadata
       });
     }
 
     try {
-      // Apply configurable delay for testing timing scenarios
-      if (this.mockDelay > 0) {
-        await new Promise(resolve => setTimeout(resolve, this.mockDelay));
-      }
-
-      // Generate mock output based on agent type and stage
-      const mockOutput = this.generateMockOutput(this.agentType, currentStage, task);
-      const executionTimeMs = Date.now() - startTime;
-
-      const result: TaskResult = {
-        message_id: randomUUID(),
-        task_id: task.task_id as any,
-        workflow_id: task.workflow_id as any,
-        agent_id: this.agentId,
-        status: 'success',
-        result: {
-          data: mockOutput,
-          metrics: {
-            duration_ms: executionTimeMs,
-            resource_usage: {
-              memory_mb: 50,
-              cpu_percent: 10
-            }
-          }
-        },
-        metadata: {
-          completed_at: new Date().toISOString(),
-          trace_id: traceId,
-          confidence_score: 95
+      // Generate baseline mock output
+      const baselineOutput = this.generateMockOutput(this.agentType, currentStage, task);
+      const baselineMetrics = {
+        duration_ms: 0,
+        resource_usage: {
+          memory_mb: 50,
+          cpu_percent: 10
         }
       };
 
+      // Apply configurable default delay if no behavior metadata
+      let delayMs = this.mockDelay;
+      const behaviorMetadata = (task.payload as any)?.behavior_metadata;
+      if (behaviorMetadata?.timing?.execution_delay_ms !== undefined) {
+        delayMs = behaviorMetadata.timing.execution_delay_ms;
+      }
+
+      if (delayMs > 0) {
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+
+      // Use BehaviorExecutor to handle behavior-driven execution
+      const result = await this.behaviorExecutor.execute(
+        task,
+        this.agentType,
+        this.agentId,
+        baselineOutput,
+        baselineMetrics
+      );
+
       if (this.enableDebug) {
-        this.logger.info('[GenericMockAgent] Task completed successfully', {
+        this.logger.info('[GenericMockAgent] Task execution completed', {
           task_id: task.task_id,
-          execution_time_ms: executionTimeMs,
+          status: result.status,
+          execution_time_ms: Date.now() - startTime,
           platformId,
           stage: currentStage
         });
@@ -224,9 +255,32 @@ export class GenericMockAgent extends BaseAgent {
       agentType: this.agentType,
       platformId: this.platformId,
       agentId: this.agentId,
-      capabilities: ['mock-task-completion', 'test-stage-progression', 'platform-aware-execution'],
+      capabilities: [
+        'mock-task-completion',
+        'test-stage-progression',
+        'platform-aware-execution',
+        'metadata-driven-behavior',
+        'failure-injection'
+      ],
       mockDelay: this.mockDelay,
-      isGenericMockAgent: true
+      isGenericMockAgent: true,
+      availableBehaviors: this.getAvailableBehaviors()
     };
+  }
+
+  /**
+   * Get available behavior presets for testing
+   * Useful for test discovery and documentation
+   */
+  getAvailableBehaviors(): string[] {
+    return this.behaviorExecutor.getAvailablePresets();
+  }
+
+  /**
+   * Get a specific behavior preset by name
+   * Useful for tests to reference predefined behaviors
+   */
+  getBehaviorPreset(name: string): any {
+    return this.behaviorExecutor.getPreset(name);
   }
 }
