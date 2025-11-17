@@ -41,13 +41,25 @@
 
 ## ✅ Current Status
 
-**Phase 7B COMPLETE (45 hours, ON TIME)**
+**Phase 7B COMPLETE (45 hours, ON TIME) + Session #79 Critical Fixes**
 - ✅ 27+ CLI commands fully implemented
 - ✅ 7 core services (API, DB, Config, Test, Deploy, Metrics, Advanced)
 - ✅ 2,050+ lines of production code
 - ✅ 121+ test cases, 0 TypeScript errors
 - ✅ All 21 packages building successfully
 - ✅ 99%+ production ready
+
+**Session #79: Critical Status Consistency Audit (COMPLETE)**
+- ✅ **Phase 1:** Unified Status Enums - PipelineStatus 'success'→'completed', added PAUSED state
+- ✅ **Phase 2:** Fixed Terminal State Persistence - notifyError/notifyCancellation now persist to DB before publishing
+- ✅ **Phase 3:** Restored Distributed Tracing - Propagate trace_id from RequestContext in all events
+- ✅ **Phase 5:** Improved Code Quality - Renamed updateWorkflowStatus→updateWorkflowStage, enhanced logging
+- ⏳ **Phase 4:** Deferred - Pipeline pause/resume persistence (requires Prisma schema migration, low priority)
+
+**Build & Test Validation (Session #79):**
+- ✅ Full TypeScript compilation: 21 packages, 0 errors
+- ✅ Unit tests: 10 test suites passing
+- ℹ️ analytics-service test failure pre-existing (no test files)
 
 **Recent Additions (Session #77):**
 - ✅ Mock Agent Behavior Metadata System - Flexible test scenario creation
@@ -62,6 +74,9 @@
 - ✅ 130+ integration tests
 - ✅ Dashboard platform-aware
 - ✅ Structured logging (Pino) integrated
+- ✅ Status enum consistency (Session #79)
+- ✅ Terminal state persistence (Session #79)
+- ✅ Distributed tracing restoration (Session #79)
 
 ---
 
