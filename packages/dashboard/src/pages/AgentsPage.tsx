@@ -5,12 +5,7 @@ import ErrorDisplay from '../components/Common/ErrorDisplay'
 import ChartContainer from '../components/Common/ChartContainer'
 import ProgressBar from '../components/Common/ProgressBar'
 import { formatDuration } from '../utils/numberFormatters'
-
-const agentHealthColors = {
-  healthy: '#10b981',
-  degraded: '#f59e0b',
-  unhealthy: '#ef4444'
-}
+import { getAgentHealthStatus, AGENT_HEALTH_COLORS } from '../utils/agentHealth'
 
 interface AgentMetrics {
   name: string
@@ -37,7 +32,7 @@ export default function AgentsPage() {
   // Transform agent stats
   const agents: AgentMetrics[] = (agentStats || []).map((agent: any) => ({
     name: agent.agent_type || 'Unknown',
-    status: agent.avg_duration_ms && agent.avg_duration_ms < 5000 ? 'healthy' : agent.avg_duration_ms && agent.avg_duration_ms < 15000 ? 'degraded' : 'unhealthy',
+    status: getAgentHealthStatus(agent.avg_duration_ms),
     tasks_completed: agent.tasks_completed || 0,
     tasks_failed: agent.tasks_failed || 0,
     avg_duration_ms: agent.avg_duration_ms || 0,
@@ -73,12 +68,12 @@ export default function AgentsPage() {
       {/* Agent Health Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {agents.map((agent) => (
-          <div key={agent.name} className="bg-white rounded-lg shadow p-4 border-l-4" style={{ borderColor: agentHealthColors[agent.status] }}>
+          <div key={agent.name} className="bg-white rounded-lg shadow p-4 border-l-4" style={{ borderColor: AGENT_HEALTH_COLORS[agent.status] }}>
             <div className="flex items-start justify-between mb-3">
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 capitalize">{agent.name}</h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  <span className={`inline-block w-2 h-2 rounded-full mr-1`} style={{ backgroundColor: agentHealthColors[agent.status] }}></span>
+                  <span className={`inline-block w-2 h-2 rounded-full mr-1`} style={{ backgroundColor: AGENT_HEALTH_COLORS[agent.status] }}></span>
                   {agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}
                 </p>
               </div>
@@ -191,8 +186,8 @@ export default function AgentsPage() {
                       {agent.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: `${agentHealthColors[agent.status]}20`, color: agentHealthColors[agent.status] }}>
-                        <span className="w-1.5 h-1.5 rounded-full mr-1" style={{ backgroundColor: agentHealthColors[agent.status] }}></span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: `${AGENT_HEALTH_COLORS[agent.status]}20`, color: AGENT_HEALTH_COLORS[agent.status] }}>
+                        <span className="w-1.5 h-1.5 rounded-full mr-1" style={{ backgroundColor: AGENT_HEALTH_COLORS[agent.status] }}></span>
                         {agent.status}
                       </span>
                     </td>

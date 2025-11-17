@@ -37,6 +37,11 @@ export function useWorkflowTasks(id: string | undefined) {
   })
 }
 
+/**
+ * Fetch workflow timeline (tasks and events)
+ * @note Currently disabled - backend timeline endpoint not yet implemented
+ * When available, enable by setting enabled: true or add conditional logic
+ */
 export function useWorkflowTimeline(id: string | undefined) {
   return useQuery({
     queryKey: ['workflow', id, 'timeline'],
@@ -44,7 +49,7 @@ export function useWorkflowTimeline(id: string | undefined) {
       if (!id) throw new Error('Workflow ID is required')
       return fetchWorkflowTimeline(id)
     },
-    enabled: false, // TODO: Timeline endpoint not implemented yet
+    enabled: false, // Disabled until backend timeline endpoint is implemented
     refetchInterval: false,
   })
 }

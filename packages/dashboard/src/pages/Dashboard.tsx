@@ -6,8 +6,10 @@ import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import ChartContainer from '../components/Common/ChartContainer'
+import MetricCard from '../components/Dashboard/MetricCard'
 import { formatRelativeTime } from '../utils/formatters'
 import { statusColors } from '../utils/chartColorMap'
+import { transformStatusDistribution, transformThroughputData } from '../utils/dashboardTransformers'
 
 export default function Dashboard() {
   const { data: stats, isLoading: statsLoading, error: statsError } = useStats()
@@ -25,18 +27,10 @@ export default function Dashboard() {
   const overview = stats?.overview
 
   // Prepare status distribution data for pie chart
-  const statusDistributionData = overview ? [
-    { name: 'Completed', value: overview.completed_workflows },
-    { name: 'Running', value: overview.running_workflows },
-    { name: 'Failed', value: overview.failed_workflows },
-    { name: 'Paused', value: overview.paused_workflows || 0 },
-  ].filter(item => item.value > 0) : []
+  const statusDistributionData = overview ? transformStatusDistribution(overview) : []
 
   // Prepare throughput data for area chart
-  const throughputData = timeSeriesData ? timeSeriesData.map((point: any) => ({
-    timestamp: new Date(point.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-    count: point.count || 0
-  })) : []
+  const throughputData = timeSeriesData ? transformThroughputData(timeSeriesData) : []
 
   return (
     <div>
@@ -196,43 +190,6 @@ export default function Dashboard() {
               </tbody>
             </table>
           )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-interface MetricCardProps {
-  title: string
-  value: number
-  color: 'blue' | 'green' | 'red' | 'yellow'
-}
-
-function MetricCard({ title, value, color }: MetricCardProps) {
-  const colorClasses = {
-    blue: 'bg-blue-500',
-    green: 'bg-green-500',
-    red: 'bg-red-500',
-    yellow: 'bg-yellow-500',
-  }
-
-  return (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
-      <div className="p-5">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <div className={`rounded-md p-3 ${colorClasses[color]}`}>
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-          </div>
-          <div className="ml-5 w-0 flex-1">
-            <dl>
-              <dt className="text-sm font-medium text-gray-500 truncate">{title}</dt>
-              <dd className="text-3xl font-semibold text-gray-900">{value}</dd>
-            </dl>
-          </div>
         </div>
       </div>
     </div>

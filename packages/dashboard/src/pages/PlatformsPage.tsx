@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { fetchPlatforms, fetchPlatformAnalytics } from '../api/client'
+import { formatDate, formatDuration } from '../utils/formatters'
+import { getPlatformLayerColor, formatLayerName } from '../utils/platformColors'
 import type { PlatformAnalytics } from '../types'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
@@ -53,31 +55,20 @@ export const PlatformsPage: React.FC = () => {
           try {
             const analytics = await fetchPlatformAnalytics(platform.id, selectedPeriod)
             return { ...platform, analytics }
-          } catch {
+          } catch (err) {
+            // Silently fail for individual platform analytics
+            // This allows other platforms to load even if one fails
             return platform
           }
         })
       )
       setPlatforms(updatedPlatforms)
     } catch (err) {
-      console.error('Failed to load platform analytics:', err)
+      // Analytics load error is not critical - platforms still display
+      // Error is silently handled as we have graceful fallback in map
     }
   }
 
-  const getLayerColor = (layer: string): string => {
-    switch (layer) {
-      case 'APPLICATION':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'DATA':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-      case 'INFRASTRUCTURE':
-        return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-      case 'ENTERPRISE':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-    }
-  }
 
   if (isLoading) {
     return <LoadingSpinner />
@@ -144,8 +135,8 @@ export const PlatformsPage: React.FC = () => {
                       {platform.description || 'No description'}
                     </p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getLayerColor(platform.layer)}`}>
-                    {platform.layer.charAt(0) + platform.layer.slice(1).toLowerCase()}
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPlatformLayerColor(platform.layer)}`}>
+                    {formatLayerName(platform.layer)}
                   </span>
                 </div>
 
@@ -207,23 +198,4 @@ export const PlatformsPage: React.FC = () => {
       </div>
     </PageTransition>
   )
-}
-
-// Helper functions
-function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
-
-function formatDuration(ms: number): string {
-  if (ms < 1000) {
-    return `${Math.round(ms)}ms`
-  }
-  if (ms < 60000) {
-    return `${(ms / 1000).toFixed(1)}s`
-  }
-  if (ms < 3600000) {
-    return `${(ms / 60000).toFixed(1)}m`
-  }
-  return `${(ms / 3600000).toFixed(1)}h`
 }

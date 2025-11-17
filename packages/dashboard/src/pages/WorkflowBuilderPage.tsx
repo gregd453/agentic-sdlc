@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { fetchPlatforms } from '../api/client'
+import { useWorkflowCreation } from '../hooks/useWorkflowCreation'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import PageTransition from '../components/Animations/PageTransition'
@@ -15,26 +15,10 @@ interface Platform {
   updated_at?: string
 }
 
-interface WorkflowFormData {
-  name: string
-  description: string
-  type: 'app' | 'feature' | 'bugfix'
-  priority: 'low' | 'medium' | 'high' | 'critical'
-  platformId?: string
-}
-
 export const WorkflowBuilderPage: React.FC = () => {
-  const navigate = useNavigate()
   const [platforms, setPlatforms] = useState<Platform[]>([])
   const [isLoadingPlatforms, setIsLoadingPlatforms] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [formData, setFormData] = useState<WorkflowFormData>({
-    name: '',
-    description: '',
-    type: 'feature',
-    priority: 'medium'
-  })
+  const { formData, isSubmitting, error, handleInputChange, handleSubmit, setError } = useWorkflowCreation()
 
   React.useEffect(() => {
     loadPlatforms()
@@ -50,59 +34,6 @@ export const WorkflowBuilderPage: React.FC = () => {
       setError(err instanceof Error ? err.message : 'Failed to load platforms')
     } finally {
       setIsLoadingPlatforms(false)
-    }
-  }
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // Validate form
-    if (!formData.name.trim()) {
-      setError('Workflow name is required')
-      return
-    }
-
-    try {
-      setIsSubmitting(true)
-      setError(null)
-
-      // Create workflow via API
-      const response = await fetch('http://localhost:3000/api/v1/workflows', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          type: formData.type,
-          priority: formData.priority,
-          platform_id: formData.platformId || null
-        })
-      })
-
-      if (!response.ok) {
-        throw new Error(`Failed to create workflow: ${response.statusText}`)
-      }
-
-      const result = await response.json()
-
-      // Navigate to the new workflow
-      navigate(`/workflows/${result.id || result.workflow_id}`)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create workflow')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -236,7 +167,7 @@ export const WorkflowBuilderPage: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/workflows')}
+              onClick={() => window.history.back()}
               className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors"
             >
               Cancel

@@ -4,6 +4,7 @@ import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import ProgressBar from '../components/Common/ProgressBar'
+import MetadataCard from '../components/Common/MetadataCard'
 import { SurfaceIndicator } from '../components/Common/SurfaceIndicator'
 import { formatDate, formatRelativeTime, truncateId } from '../utils/formatters'
 
@@ -157,22 +158,6 @@ export default function WorkflowPage() {
             <div className="text-center text-sm text-gray-500">No events yet</div>
           )}
         </div>
-      </div>
-    </div>
-  )
-}
-
-interface MetadataCardProps {
-  label: string
-  value: React.ReactNode
-}
-
-function MetadataCard({ label, value }: MetadataCardProps) {
-  return (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
-      <div className="px-4 py-5 sm:p-6">
-        <dt className="text-sm font-medium text-gray-500 truncate">{label}</dt>
-        <dd className="mt-1 text-sm text-gray-900">{value}</dd>
       </div>
     </div>
   )
