@@ -17,9 +17,11 @@ export async function statsRoutes(
         200: zodToJsonSchema(z.object({
           overview: z.object({
             total_workflows: z.number(),
+            initiated_workflows: z.number(),
             running_workflows: z.number(),
             completed_workflows: z.number(),
             failed_workflows: z.number(),
+            cancelled_workflows: z.number(),
             paused_workflows: z.number()
           }),
           recent_workflows_count: z.number(),
