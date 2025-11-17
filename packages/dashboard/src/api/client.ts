@@ -107,6 +107,20 @@ export async function fetchWorkflowStats() {
 }
 
 // Trace API
+export async function fetchTraces(options?: {
+  limit?: number
+  offset?: number
+  status?: string
+}): Promise<{ traces: TraceDetails[]; total: number }> {
+  const params = new URLSearchParams()
+  if (options?.limit) params.append('limit', options.limit.toString())
+  if (options?.offset) params.append('offset', options.offset.toString())
+  if (options?.status) params.append('status', options.status)
+
+  const url = `${API_BASE}/traces${params.toString() ? `?${params}` : ''}`
+  return fetchJSON<{ traces: TraceDetails[]; total: number }>(url)
+}
+
 export async function fetchTrace(traceId: string): Promise<TraceDetails> {
   return fetchJSON<TraceDetails>(`${API_BASE}/traces/${traceId}`)
 }

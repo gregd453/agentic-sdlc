@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useTraces } from '../hooks/useTraces'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
@@ -23,22 +23,9 @@ export default function TracesPage() {
   const [pageSize, setPageSize] = useState(20)
 
   // Fetch traces from the API endpoint
-  const { data: tracesData, isLoading, error } = useQuery({
-    queryKey: ['traces', statusFilter, pageSize],
-    queryFn: async () => {
-      try {
-        const params = new URLSearchParams()
-        if (statusFilter) params.append('status', statusFilter)
-        params.append('limit', pageSize.toString())
-        const url = `/api/v1/traces?${params}`
-        const response = await fetch(url)
-        if (!response.ok) return { traces: [], total: 0 }
-        return response.json()
-      } catch {
-        return { traces: [], total: 0 }
-      }
-    },
-    refetchInterval: 15000,
+  const { data: tracesData, isLoading, error } = useTraces({
+    limit: pageSize,
+    status: statusFilter || undefined,
   })
 
   const traces = tracesData?.traces || []
