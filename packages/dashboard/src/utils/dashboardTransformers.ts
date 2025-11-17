@@ -9,14 +9,16 @@
  * @returns Array of status distribution data points
  */
 export function transformStatusDistribution(overview: {
+  initiated_workflows?: number
   completed_workflows: number
   running_workflows: number
   failed_workflows: number
   paused_workflows?: number
 }) {
   return [
-    { name: 'Completed', value: overview.completed_workflows },
+    { name: 'Initiated', value: overview.initiated_workflows || 0 },
     { name: 'Running', value: overview.running_workflows },
+    { name: 'Completed', value: overview.completed_workflows },
     { name: 'Failed', value: overview.failed_workflows },
     { name: 'Paused', value: overview.paused_workflows || 0 },
   ].filter(item => item.value > 0)

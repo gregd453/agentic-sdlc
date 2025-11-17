@@ -87,6 +87,7 @@ export interface TraceTreeNode {
 // Stats Types
 export interface OverviewStats {
   total_workflows: number
+  initiated_workflows: number
   running_workflows: number
   completed_workflows: number
   failed_workflows: number

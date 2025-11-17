@@ -3,6 +3,7 @@ import { logger } from '../utils/logger';
 
 export interface OverviewStats {
   total_workflows: number;
+  initiated_workflows: number;
   running_workflows: number;
   completed_workflows: number;
   failed_workflows: number;
@@ -43,6 +44,7 @@ export class StatsRepository {
 
       const stats: OverviewStats = {
         total_workflows: 0,
+        initiated_workflows: 0,
         running_workflows: 0,
         completed_workflows: 0,
         failed_workflows: 0,
@@ -55,6 +57,9 @@ export class StatsRepository {
         stats.total_workflows += count;
 
         switch (row.status) {
+          case 'initiated':
+            stats.initiated_workflows = count;
+            break;
           case 'running':
             stats.running_workflows = count;
             break;

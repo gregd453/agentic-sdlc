@@ -37,11 +37,16 @@ export default function Dashboard() {
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard Overview</h2>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5 mb-8">
         <MetricCard
           title="Total Workflows"
           value={overview?.total_workflows || 0}
           color="blue"
+        />
+        <MetricCard
+          title="Initiated"
+          value={overview?.initiated_workflows || 0}
+          color="gray"
         />
         <MetricCard
           title="Running"

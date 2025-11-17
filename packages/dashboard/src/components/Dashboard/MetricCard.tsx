@@ -3,7 +3,7 @@ import ChartBarIcon from '../Common/Icons/ChartBarIcon'
 interface MetricCardProps {
   title: string
   value: number
-  color: 'blue' | 'green' | 'red' | 'yellow'
+  color: 'blue' | 'green' | 'red' | 'yellow' | 'gray'
 }
 
 const colorClasses = {
@@ -11,6 +11,7 @@ const colorClasses = {
   green: 'bg-green-500',
   red: 'bg-red-500',
   yellow: 'bg-yellow-500',
+  gray: 'bg-gray-500',
 }
 
 export default function MetricCard({ title, value, color }: MetricCardProps) {
