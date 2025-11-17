@@ -93,7 +93,7 @@ services:
       dockerfile: Dockerfile
     container_name: agentic-sdlc-dashboard
     ports:
-      - "3001:3001"
+      - "3050:3050"
     environment:
       - NODE_ENV=development
     extra_hosts:
