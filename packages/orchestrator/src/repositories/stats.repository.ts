@@ -100,7 +100,7 @@ export class StatsRepository {
         cancelled_tasks: bigint;
         avg_duration_ms: number | null;
         avg_retries: number | null;
-      }>>`
+      }>`
         SELECT
           agent_type,
           COUNT(*) as total_tasks,
@@ -114,6 +114,7 @@ export class StatsRepository {
         GROUP BY agent_type
         ORDER BY total_tasks DESC
       `;
+
 
       const agentStats: AgentStats[] = result.map(row => {
         const totalTasks = Number(row.total_tasks);
