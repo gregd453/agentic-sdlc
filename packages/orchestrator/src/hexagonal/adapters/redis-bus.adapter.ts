@@ -110,16 +110,16 @@ export function makeRedisBus(
         const consumerName = `consumer-${Date.now()}`;
 
         // Create consumer group if it doesn't exist (ignore error if exists)
-        // SESSION #67 FIX: Use '$' to start from END of stream (only new messages)
-        // Using '0' would immediately process all existing messages on restart
+        // SESSION #82 FIX: Use '0' to start from BEGINNING of stream to pick up existing tasks
+        // This allows agents to process queued tasks on restart (important for reliability)
         try {
-          await pub.xGroupCreate(streamKey, consumerGroup, '$', { MKSTREAM: true });
-          console.log('[DEBUG-STREAM-INIT] Created NEW consumer group starting from END of stream', {
+          await pub.xGroupCreate(streamKey, consumerGroup, '0', { MKSTREAM: true });
+          console.log('[DEBUG-STREAM-INIT] Created NEW consumer group starting from BEGINNING of stream', {
             streamKey,
             consumerGroup,
-            startPosition: '$'
+            startPosition: '0'
           });
-          log.info('[PHASE-3] Created consumer group for stream', { streamKey, consumerGroup, startPosition: '$' });
+          log.info('[PHASE-3] Created consumer group for stream', { streamKey, consumerGroup, startPosition: '0' });
         } catch (error: any) {
           if (error.message?.includes('BUSYGROUP')) {
             console.log('[DEBUG-STREAM-INIT] Consumer group already exists (good - will continue from last position)', {
