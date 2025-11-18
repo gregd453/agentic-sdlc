@@ -44,8 +44,8 @@ describe('Phase 6: Testing Infrastructure - Multi-Platform Scenarios', () => {
           url: '/api/v1/workflows',
           payload: {
             name: `Multi-Platform Test Workflow - ${platform.name}`,
-            type: 'feature',
-            priority: 'high',
+            type: WORKFLOW_TYPES.FEATURE,
+            priority: TASK_PRIORITY.HIGH,
             platform_id: platform.id
           }
         })
@@ -79,8 +79,8 @@ describe('Phase 6: Testing Infrastructure - Multi-Platform Scenarios', () => {
           url: '/api/v1/workflows',
           payload: {
             name: `Trace ID Test Workflow ${i}`,
-            type: 'app',
-            priority: 'medium'
+            type: WORKFLOW_TYPES.APP,
+            priority: TASK_PRIORITY.MEDIUM
           }
         })
 
@@ -112,8 +112,8 @@ describe('Phase 6: Testing Infrastructure - Multi-Platform Scenarios', () => {
         url: '/api/v1/workflows',
         payload: {
           name: `Platform-Scoped Agent Test - ${platform.name}`,
-          type: 'feature',
-          priority: 'high',
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.HIGH,
           platform_id: platform.id
         }
       })
@@ -140,8 +140,8 @@ describe('Phase 6: Testing Infrastructure - Multi-Platform Scenarios', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Definition-Driven Routing Test',
-          type: 'feature',
-          priority: 'medium'
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.MEDIUM
         }
       })
 
@@ -150,16 +150,16 @@ describe('Phase 6: Testing Infrastructure - Multi-Platform Scenarios', () => {
 
       // Workflow should have platform-aware stage sequencing
       expect(workflow.current_stage).toBeDefined()
-      expect(['scaffold', 'validation', 'e2e_test', 'integration', 'deployment']).toContain(
+      expect([AGENT_TYPES.SCAFFOLD, AGENT_TYPES.VALIDATION, AGENT_TYPES.E2E_TEST, AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT]).toContain(
         workflow.current_stage
       )
     })
 
     it('should handle different workflow types with correct stage counts', async () => {
       const workflowTypes = [
-        { type: 'app', expectedStages: 8 },
-        { type: 'feature', expectedStages: 5 },
-        { type: 'bugfix', expectedStages: 3 }
+        { type: WORKFLOW_TYPES.APP, expectedStages: 8 },
+        { type: WORKFLOW_TYPES.FEATURE, expectedStages: 5 },
+        { type: WORKFLOW_TYPES.BUGFIX, expectedStages: 3 }
       ]
 
       for (const { type, expectedStages } of workflowTypes) {
@@ -169,7 +169,7 @@ describe('Phase 6: Testing Infrastructure - Multi-Platform Scenarios', () => {
           payload: {
             name: `${type} workflow test`,
             type: type as any,
-            priority: 'medium'
+            priority: TASK_PRIORITY.MEDIUM
           }
         })
 
@@ -293,8 +293,8 @@ describe('Phase 6: Testing Infrastructure - Multi-Platform Scenarios', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'GenericMockAgent Test Workflow',
-          type: 'feature',
-          priority: 'medium'
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.MEDIUM
         }
       })
 
@@ -315,8 +315,8 @@ describe('Phase 6: Testing Infrastructure - Multi-Platform Scenarios', () => {
           url: '/api/v1/workflows',
           payload: {
             name: `Stress Test Workflow ${i}`,
-            type: ['app', 'feature', 'bugfix'][i % 3],
-            priority: 'medium'
+            type: [WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX][i % 3],
+            priority: TASK_PRIORITY.MEDIUM
           }
         })
         workflowPromises.push(promise)

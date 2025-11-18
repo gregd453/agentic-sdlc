@@ -210,7 +210,7 @@ export class IntegrationTestRunnerService {
         resolve(result);
       });
 
-      child.on('error', (error) => {
+      child.on(LOG_LEVEL.ERROR, (error) => {
         if (timeoutId) {
           clearTimeout(timeoutId);
         }

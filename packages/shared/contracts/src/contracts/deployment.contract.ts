@@ -95,9 +95,9 @@ export const DEPLOYMENT_CONTRACT_CHANGELOG = {
  * const taskData = {
  *   task_id: 'task_123',
  *   workflow_id: 'workflow_456',
- *   agent_type: 'deployment',
+ *   agent_type: AGENT_TYPES.DEPLOYMENT,
  *   action: 'build_docker_image',
- *   status: 'pending',
+ *   status: TASK_STATUS.PENDING,
  *   priority: 50,
  *   payload: {
  *     dockerfile_path: './Dockerfile',

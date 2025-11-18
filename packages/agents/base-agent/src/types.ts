@@ -16,7 +16,7 @@ export { AgentEnvelopeSchema, AgentEnvelope, validateAgentEnvelope, TaskResultSc
 // Agent message types for communication
 export const AgentMessageSchema = z.object({
   id: z.string(),
-  type: z.enum(['task', 'result', 'error', 'heartbeat']),
+  type: z.enum(['task', 'result', LOG_LEVEL.ERROR, 'heartbeat']),
   agent_id: z.string(),
   workflow_id: z.string(),
   stage: z.string(),

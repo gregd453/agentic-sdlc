@@ -90,7 +90,7 @@ export class PipelineWebSocketHandler {
         });
 
         // Handle errors
-        socket.on('error', (error: Error) => {
+        socket.on(LOG_LEVEL.ERROR, (error: Error) => {
           logger.error('WebSocket error', {
             client_id: clientId,
             error: error.message
@@ -149,7 +149,7 @@ export class PipelineWebSocketHandler {
             message_type: message.type
           });
           this.sendMessage(connection.ws, {
-            type: 'error',
+            type: LOG_LEVEL.ERROR,
             message: `Unknown message type: ${message.type}`
           });
       }

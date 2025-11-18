@@ -24,11 +24,11 @@ export const ValidationTypeEnum = z.enum([
   'dependencies'
 ]);
 
-export const ErrorSeverityEnum = z.enum(['error', 'warning', 'info']);
+export const ErrorSeverityEnum = z.enum([LOG_LEVEL.ERROR, 'warning', LOG_LEVEL.INFO]);
 
 // ===== Validation Task Schema =====
 export const ValidationTaskSchema = AgentTaskSchema.extend({
-  agent_type: z.literal('validation'),
+  agent_type: z.literal(AGENT_TYPES.VALIDATION),
   action: ValidationActionEnum,
   payload: z.object({
     // Files to validate
@@ -111,7 +111,7 @@ export const QualityGateResultSchema = z.object({
 
 // ===== Validation Result Schema =====
 export const ValidationResultSchema = AgentResultSchema.extend({
-  agent_type: z.literal('validation'),
+  agent_type: z.literal(AGENT_TYPES.VALIDATION),
   action: ValidationActionEnum,
   result: z.object({
     // Overall validation status
@@ -185,11 +185,11 @@ export const ValidationResultSchema = AgentResultSchema.extend({
     // Recommendations
     recommendations: z.array(z.object({
       type: z.enum(['fix', 'refactor', 'optimize', 'security', 'best-practice']),
-      priority: z.enum(['low', 'medium', 'high', 'critical']),
+      priority: z.enum([TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, TASK_PRIORITY.CRITICAL]),
       message: z.string(),
       file: z.string().optional(),
       line: z.number().optional(),
-      effort: z.enum(['quick', 'medium', 'complex']).optional(),
+      effort: z.enum(['quick', TASK_PRIORITY.MEDIUM, 'complex']).optional(),
     })).optional(),
 
     // Summary
@@ -232,9 +232,9 @@ export function createValidationTask(
   return {
     task_id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as any,
     workflow_id: workflowId as any,
-    agent_type: 'validation',
+    agent_type: AGENT_TYPES.VALIDATION,
     action: 'validate_code',
-    status: 'pending',
+    status: TASK_STATUS.PENDING,
     priority: 50,
     payload: {
       file_paths: filePaths,

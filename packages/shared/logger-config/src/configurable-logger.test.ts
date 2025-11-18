@@ -10,7 +10,7 @@ describe('Configurable Logger Factory', () => {
     it('should create a pino logger with configured level', () => {
       const logger = createConfigurableLogger({
         name: 'test-logger',
-        level: 'debug'
+        level: LOG_LEVEL.DEBUG
       });
 
       expect(logger).toBeDefined();
@@ -20,12 +20,12 @@ describe('Configurable Logger Factory', () => {
     it('should respect different log levels', () => {
       const infoLogger = createConfigurableLogger({
         name: 'info-logger',
-        level: 'info'
+        level: LOG_LEVEL.INFO
       });
 
       const errorLogger = createConfigurableLogger({
         name: 'error-logger',
-        level: 'error'
+        level: LOG_LEVEL.ERROR
       });
 
       expect(infoLogger.level).toBe(30); // info
@@ -53,7 +53,7 @@ describe('Configurable Logger Factory', () => {
     it('should accept pretty print option', () => {
       const logger = createConfigurableLogger({
         name: 'pretty-logger',
-        level: 'info',
+        level: LOG_LEVEL.INFO,
         prettyPrint: true
       });
 
@@ -63,8 +63,8 @@ describe('Configurable Logger Factory', () => {
     it('should accept module level option', () => {
       const logger = createConfigurableLogger({
         name: 'module-logger',
-        level: 'info',
-        moduleLevel: 'scaffold'
+        level: LOG_LEVEL.INFO,
+        moduleLevel: AGENT_TYPES.SCAFFOLD
       });
 
       expect(logger).toBeDefined();
@@ -76,7 +76,7 @@ describe('Configurable Logger Factory', () => {
       const logger = createLoggerWithTraceContext(
         {
           name: 'trace-context-logger',
-          level: 'info'
+          level: LOG_LEVEL.INFO
         },
         {
           trace_id: 'trace-123',
@@ -91,7 +91,7 @@ describe('Configurable Logger Factory', () => {
       const logger = createLoggerWithTraceContext(
         {
           name: 'no-trace-logger',
-          level: 'debug'
+          level: LOG_LEVEL.DEBUG
         }
       );
 
@@ -103,7 +103,7 @@ describe('Configurable Logger Factory', () => {
       const logger = createLoggerWithTraceContext(
         {
           name: 'parent-span-logger',
-          level: 'info'
+          level: LOG_LEVEL.INFO
         },
         {
           trace_id: 'trace-789',
@@ -117,12 +117,12 @@ describe('Configurable Logger Factory', () => {
 
     it('should support partial trace context', () => {
       const logger1 = createLoggerWithTraceContext(
-        { name: 'logger1', level: 'info' },
+        { name: 'logger1', level: LOG_LEVEL.INFO },
         { trace_id: 'trace-only' }
       );
 
       const logger2 = createLoggerWithTraceContext(
-        { name: 'logger2', level: 'info' },
+        { name: 'logger2', level: LOG_LEVEL.INFO },
         { span_id: 'span-only' }
       );
 
@@ -134,15 +134,15 @@ describe('Configurable Logger Factory', () => {
   describe('createModuleLevelLogger', () => {
     it('should create logger that respects module level', () => {
       const getModuleLevel = (moduleName: string) => {
-        if (moduleName === 'scaffold') return 'debug';
-        return 'info';
+        if (moduleName === AGENT_TYPES.SCAFFOLD) return LOG_LEVEL.DEBUG;
+        return LOG_LEVEL.INFO;
       };
 
       const logger = createModuleLevelLogger(
         {
           name: 'scaffold-logger',
-          level: 'info',
-          moduleLevel: 'scaffold'
+          level: LOG_LEVEL.INFO,
+          moduleLevel: AGENT_TYPES.SCAFFOLD
         },
         getModuleLevel
       );
@@ -152,12 +152,12 @@ describe('Configurable Logger Factory', () => {
     });
 
     it('should use global level when module level not defined', () => {
-      const getModuleLevel = () => 'info';
+      const getModuleLevel = () => LOG_LEVEL.INFO;
 
       const logger = createModuleLevelLogger(
         {
           name: 'default-logger',
-          level: 'warn'
+          level: LOG_LEVEL.WARN
         },
         getModuleLevel
       );
@@ -168,18 +168,18 @@ describe('Configurable Logger Factory', () => {
     it('should override with module-specific level', () => {
       const getModuleLevel = (moduleName: string) => {
         const levels: Record<string, any> = {
-          'validation': 'trace',
-          'deployment': 'error',
-          'integration': 'debug'
+          AGENT_TYPES.VALIDATION: 'trace',
+          AGENT_TYPES.DEPLOYMENT: LOG_LEVEL.ERROR,
+          AGENT_TYPES.INTEGRATION: LOG_LEVEL.DEBUG
         };
-        return levels[moduleName] || 'info';
+        return levels[moduleName] || LOG_LEVEL.INFO;
       };
 
       const validationLogger = createModuleLevelLogger(
         {
           name: 'validation-logger',
-          level: 'info',
-          moduleLevel: 'validation'
+          level: LOG_LEVEL.INFO,
+          moduleLevel: AGENT_TYPES.VALIDATION
         },
         getModuleLevel
       );
@@ -187,8 +187,8 @@ describe('Configurable Logger Factory', () => {
       const deploymentLogger = createModuleLevelLogger(
         {
           name: 'deployment-logger',
-          level: 'info',
-          moduleLevel: 'deployment'
+          level: LOG_LEVEL.INFO,
+          moduleLevel: AGENT_TYPES.DEPLOYMENT
         },
         getModuleLevel
       );
@@ -198,14 +198,14 @@ describe('Configurable Logger Factory', () => {
     });
 
     it('should handle dynamic level changes', () => {
-      let currentLevel = 'info';
+      let currentLevel = LOG_LEVEL.INFO;
 
       const getModuleLevel = () => currentLevel as any;
 
       const logger = createModuleLevelLogger(
         {
           name: 'dynamic-logger',
-          level: 'info'
+          level: LOG_LEVEL.INFO
         },
         getModuleLevel
       );
@@ -213,11 +213,11 @@ describe('Configurable Logger Factory', () => {
       expect(logger.level).toBe(30); // info
 
       // Simulate level change
-      currentLevel = 'debug';
+      currentLevel = LOG_LEVEL.DEBUG;
       const updatedLogger = createModuleLevelLogger(
         {
           name: 'dynamic-logger',
-          level: 'info'
+          level: LOG_LEVEL.INFO
         },
         getModuleLevel
       );
@@ -230,7 +230,7 @@ describe('Configurable Logger Factory', () => {
     it('should be injectable into services', () => {
       const logger = createConfigurableLogger({
         name: 'service-logger',
-        level: 'info'
+        level: LOG_LEVEL.INFO
       });
 
       // Simulate service receiving logger
@@ -249,12 +249,12 @@ describe('Configurable Logger Factory', () => {
     it('should support multiple loggers with different configurations', () => {
       const scaffoldLogger = createConfigurableLogger({
         name: 'scaffold-service',
-        level: 'debug'
+        level: LOG_LEVEL.DEBUG
       });
 
       const deploymentLogger = createConfigurableLogger({
         name: 'deployment-service',
-        level: 'error'
+        level: LOG_LEVEL.ERROR
       });
 
       expect(scaffoldLogger.level).toBe(20); // debug
@@ -263,9 +263,9 @@ describe('Configurable Logger Factory', () => {
 
     it('should allow logger configuration per service', () => {
       const config = {
-        scaffold: { level: 'debug' as const },
+        scaffold: { level: LOG_LEVEL.DEBUG as const },
         validation: { level: 'trace' as const },
-        deployment: { level: 'error' as const }
+        deployment: { level: LOG_LEVEL.ERROR as const }
       };
 
       const loggers: Record<string, any> = {};

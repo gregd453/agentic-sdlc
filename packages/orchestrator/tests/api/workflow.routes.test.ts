@@ -14,7 +14,7 @@ describe('Workflow API Routes', () => {
     mockWorkflowService = {
       createWorkflow: vi.fn().mockResolvedValue({
         workflow_id: 'test-workflow-id',
-        status: 'initiated',
+        status: WORKFLOW_STATUS.INITIATED,
         current_stage: 'initialization',
         progress_percentage: 0,
         created_at: new Date().toISOString(),
@@ -37,7 +37,7 @@ describe('Workflow API Routes', () => {
         method: 'POST',
         url: '/api/v1/workflows',
         payload: {
-          type: 'app',
+          type: WORKFLOW_TYPES.APP,
           name: 'Test App',
           description: 'Test Description',
           priority: 'normal'
@@ -47,11 +47,11 @@ describe('Workflow API Routes', () => {
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.workflow_id).toBe('test-workflow-id');
-      expect(body.status).toBe('initiated');
+      expect(body.status).toBe(WORKFLOW_STATUS.INITIATED);
 
       expect(mockWorkflowService.createWorkflow).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: 'app',
+          type: WORKFLOW_TYPES.APP,
           name: 'Test App'
         })
       );
@@ -79,7 +79,7 @@ describe('Workflow API Routes', () => {
         method: 'POST',
         url: '/api/v1/workflows',
         payload: {
-          type: 'app',
+          type: WORKFLOW_TYPES.APP,
           name: 'Test App',
           priority: 'normal'
         }
@@ -95,8 +95,8 @@ describe('Workflow API Routes', () => {
     it('should return workflow when found', async () => {
       mockWorkflowService.getWorkflow.mockResolvedValue({
         workflow_id: 'test-id',
-        status: 'running',
-        current_stage: 'validation',
+        status: WORKFLOW_STATUS.RUNNING,
+        current_stage: AGENT_TYPES.VALIDATION,
         progress_percentage: 50,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -110,7 +110,7 @@ describe('Workflow API Routes', () => {
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.workflow_id).toBe('test-id');
-      expect(body.status).toBe('running');
+      expect(body.status).toBe(WORKFLOW_STATUS.RUNNING);
     });
 
     it('should return 404 when workflow not found', async () => {
@@ -141,16 +141,16 @@ describe('Workflow API Routes', () => {
       mockWorkflowService.listWorkflows.mockResolvedValue([
         {
           workflow_id: 'workflow-1',
-          status: 'running',
-          current_stage: 'validation',
+          status: WORKFLOW_STATUS.RUNNING,
+          current_stage: AGENT_TYPES.VALIDATION,
           progress_percentage: 50,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         },
         {
           workflow_id: 'workflow-2',
-          status: 'completed',
-          current_stage: 'deployment',
+          status: WORKFLOW_STATUS.COMPLETED,
+          current_stage: AGENT_TYPES.DEPLOYMENT,
           progress_percentage: 100,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
@@ -177,7 +177,7 @@ describe('Workflow API Routes', () => {
 
       expect(response.statusCode).toBe(200);
       expect(mockWorkflowService.listWorkflows).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'running' })
+        expect.objectContaining({ status: WORKFLOW_STATUS.RUNNING })
       );
     });
   });
@@ -218,7 +218,7 @@ describe('Workflow API Routes', () => {
         method: 'POST',
         url: '/api/v1/workflows/123e4567-e89b-12d3-a456-426614174000/retry',
         payload: {
-          from_stage: 'validation'
+          from_stage: AGENT_TYPES.VALIDATION
         }
       });
 
@@ -228,7 +228,7 @@ describe('Workflow API Routes', () => {
 
       expect(mockWorkflowService.retryWorkflow).toHaveBeenCalledWith(
         '123e4567-e89b-12d3-a456-426614174000',
-        'validation'
+        AGENT_TYPES.VALIDATION
       );
     });
 

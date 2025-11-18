@@ -131,7 +131,7 @@ export class EnvironmentService implements IEnvironmentService {
         `docker ps --filter "name=${service}" --format "{{.Status}}"`,
         { ignoreErrors: true }
       )
-      services[name] = result.stdout ? 'running' : 'stopped'
+      services[name] = result.stdout ? WORKFLOW_STATUS.RUNNING : 'stopped'
     }
 
     // Check PM2 processes

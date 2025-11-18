@@ -17,7 +17,7 @@ export const TaskResultSchema = z.object({
   task_id: z.string().uuid(),
   workflow_id: z.string().uuid(),
   agent_id: z.string(),
-  status: z.enum(['success', 'failure', 'partial', 'blocked']),
+  status: z.enum([WORKFLOW_STATUS.SUCCESS, 'failure', 'partial', 'blocked']),
   result: z.object({
     data: z.record(z.unknown()),
     artifacts: z.array(z.object({

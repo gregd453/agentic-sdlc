@@ -102,7 +102,7 @@ export class PipelineExecutionRepository {
           pipeline_id: input.pipeline_id,
           workflow_id: input.workflow_id,
           current_stage: input.current_stage,
-          status: 'initiated',
+          status: WORKFLOW_STATUS.INITIATED,
           started_at: new Date()
         }
       });
@@ -279,11 +279,11 @@ export class PipelineExecutionRepository {
 
       if (status === 'paused' && !current.paused_at) {
         updates.paused_at = new Date();
-      } else if (status === 'running' && current.paused_at && !current.resumed_at) {
+      } else if (status === WORKFLOW_STATUS.RUNNING && current.paused_at && !current.resumed_at) {
         updates.resumed_at = new Date();
-      } else if (status === 'completed' && !current.completed_at) {
+      } else if (status === WORKFLOW_STATUS.COMPLETED && !current.completed_at) {
         updates.completed_at = new Date();
-      } else if (status === 'failed' && !current.failed_at) {
+      } else if (status === WORKFLOW_STATUS.FAILED && !current.failed_at) {
         updates.failed_at = new Date();
       }
 
@@ -331,7 +331,7 @@ export class PipelineExecutionRepository {
       const updated = await this.updateWithCAS(
         id,
         {
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           error_message,
           failed_at: new Date()
         },

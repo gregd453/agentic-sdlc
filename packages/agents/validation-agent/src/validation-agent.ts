@@ -33,7 +33,7 @@ export class ValidationAgent extends BaseAgent {
   ) {
     super(
       {
-        type: 'validation',
+        type: AGENT_TYPES.VALIDATION,
         version: '1.0.0',
         capabilities: [
           'typescript-compilation',
@@ -94,9 +94,9 @@ export class ValidationAgent extends BaseAgent {
       });
 
       // Validate agent type routing
-      if (task.agent_type !== 'validation') {
+      if (task.agent_type !== AGENT_TYPES.VALIDATION) {
         this.logger.warn('[SESSION #67] Wrong agent type routed to validation agent', {
-          expected: 'validation',
+          expected: AGENT_TYPES.VALIDATION,
           actual: task.agent_type,
           task_id: task.task_id
         });
@@ -207,7 +207,7 @@ export class ValidationAgent extends BaseAgent {
       this.logger.info('Validation Report:\n' + formattedReport);
 
       // Determine task status
-      const taskStatus = report.overall_status === 'passed' ? 'success' :
+      const taskStatus = report.overall_status === 'passed' ? WORKFLOW_STATUS.SUCCESS :
                          report.overall_status === 'warning' ? 'partial' : 'failure';
 
       // Prepare output
@@ -219,7 +219,7 @@ export class ValidationAgent extends BaseAgent {
 
       // SESSION #65: Collect errors in proper format (TaskResult schema)
       const errorList: Array<{code: string; message: string; recoverable: boolean; details?: Record<string, unknown>}> = [];
-      if (report.overall_status === 'failed') {
+      if (report.overall_status === WORKFLOW_STATUS.FAILED) {
         if (report.quality_gates.blocking_failures.length > 0) {
           report.quality_gates.blocking_failures.forEach(failure => {
             errorList.push({
@@ -231,7 +231,7 @@ export class ValidationAgent extends BaseAgent {
         }
 
         validationChecks
-          .filter(c => c.status === 'failed' && c.errors)
+          .filter(c => c.status === WORKFLOW_STATUS.FAILED && c.errors)
           .forEach(c => {
             (c.errors || []).forEach(error => {
               errorList.push({
@@ -260,10 +260,10 @@ export class ValidationAgent extends BaseAgent {
           }
         },
         errors: errorList.length > 0 ? errorList : undefined,
-        next_actions: taskStatus === 'success' ? [{
+        next_actions: taskStatus === WORKFLOW_STATUS.SUCCESS ? [{
           action: 'test',
-          agent_type: 'e2e_test',
-          priority: 'high'
+          agent_type: AGENT_TYPES.E2E_TEST,
+          priority: TASK_PRIORITY.HIGH
         }] : undefined,
         metadata: {
           completed_at: new Date().toISOString(),
@@ -414,7 +414,7 @@ export class ValidationAgent extends BaseAgent {
     this.logger.info('[SESSION #32] All validation checks completed', {
       total_checks: checks.length,
       passed: checks.filter(c => c.status === 'passed').length,
-      failed: checks.filter(c => c.status === 'failed').length,
+      failed: checks.filter(c => c.status === WORKFLOW_STATUS.FAILED).length,
       skipped: checks.filter(c => c.status === 'skipped').length
     });
 

@@ -18,7 +18,7 @@ export const TemplateTypeEnum = z.enum([
   'app-ui',
   'service-bff',
   'capability',
-  'feature',
+  WORKFLOW_TYPES.FEATURE,
   'microservice',
   'library',
   'cli-tool'
@@ -31,18 +31,18 @@ export const FileTypeEnum = z.enum([
   'doc',
   'template',
   'build',
-  'deployment'
+  AGENT_TYPES.DEPLOYMENT
 ]);
 
-export const ComplexityEnum = z.enum(['low', 'medium', 'high', 'very-high']);
+export const ComplexityEnum = z.enum([TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, 'very-high']);
 
 // ===== Scaffold Task Schema =====
 export const ScaffoldTaskSchema = AgentTaskSchema.extend({
-  agent_type: z.literal('scaffold'),
+  agent_type: z.literal(AGENT_TYPES.SCAFFOLD),
   action: ScaffoldActionEnum,
   payload: z.object({
     // Project information
-    project_type: z.enum(['app', 'service', 'feature', 'capability']),
+    project_type: z.enum([WORKFLOW_TYPES.APP, 'service', WORKFLOW_TYPES.FEATURE, 'capability']),
     name: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, {
       message: 'Name must be lowercase alphanumeric with hyphens',
     }),
@@ -94,7 +94,7 @@ export const ScaffoldTaskSchema = AgentTaskSchema.extend({
 
 // ===== Scaffold Result Schema =====
 export const ScaffoldResultSchema = AgentResultSchema.extend({
-  agent_type: z.literal('scaffold'),
+  agent_type: z.literal(AGENT_TYPES.SCAFFOLD),
   action: ScaffoldActionEnum,
   result: z.object({
     // Generated files
@@ -128,10 +128,10 @@ export const ScaffoldResultSchema = AgentResultSchema.extend({
     analysis: z.object({
       estimated_complexity: ComplexityEnum,
       recommended_agents: z.array(z.enum([
-        'validation',
+        AGENT_TYPES.VALIDATION,
         'e2e',
-        'integration',
-        'deployment',
+        AGENT_TYPES.INTEGRATION,
+        AGENT_TYPES.DEPLOYMENT,
       ])),
       dependencies_identified: z.array(z.object({
         name: z.string(),
@@ -139,7 +139,7 @@ export const ScaffoldResultSchema = AgentResultSchema.extend({
         reason: z.string(),
       })),
       potential_issues: z.array(z.object({
-        type: z.enum(['warning', 'info', 'suggestion']),
+        type: z.enum(['warning', LOG_LEVEL.INFO, 'suggestion']),
         message: z.string(),
         file: z.string().optional(),
       })).optional(),
@@ -188,7 +188,7 @@ export const RequirementsAnalysisSchema = z.object({
     non_functional: z.array(z.object({
       requirement: z.string(),
       type: z.enum(['performance', 'security', 'scalability', 'usability', 'reliability']),
-      impact: z.enum(['low', 'medium', 'high']),
+      impact: z.enum([TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH]),
     })),
     technical: z.object({
       recommended_stack: z.record(z.string()),
@@ -219,7 +219,7 @@ export function isScaffoldResult(result: unknown): result is ScaffoldResult {
 // ===== Factory Functions =====
 export function createScaffoldTask(
   workflowId: string,
-  projectType: 'app' | 'service' | 'feature' | 'capability',
+  projectType: WORKFLOW_TYPES.APP | 'service' | WORKFLOW_TYPES.FEATURE | 'capability',
   name: string,
   requirements: string[]
 ): ScaffoldTask {
@@ -227,9 +227,9 @@ export function createScaffoldTask(
   return {
     task_id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as any,
     workflow_id: workflowId as any,
-    agent_type: 'scaffold',
+    agent_type: AGENT_TYPES.SCAFFOLD,
     action: 'generate_structure',
-    status: 'pending',
+    status: TASK_STATUS.PENDING,
     priority: 50,
     payload: {
       project_type: projectType,

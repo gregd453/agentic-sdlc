@@ -50,7 +50,7 @@ export function adaptToValidationTask(input: AgentEnvelope): AdapterResult {
     const validationTask = {
       task_id: input.task_id,
       workflow_id: input.workflow_id,
-      agent_type: 'validation',
+      agent_type: AGENT_TYPES.VALIDATION,
       action: 'run_all_checks',
       payload: {
         file_paths,
@@ -78,10 +78,10 @@ export function adaptToValidationTask(input: AgentEnvelope): AdapterResult {
  * SESSION #65: Updated for AgentEnvelope v2.0.0
  */
 export function validateAgentType(input: AgentEnvelope, logger: any): boolean {
-  if (input.agent_type !== 'validation') {
+  if (input.agent_type !== AGENT_TYPES.VALIDATION) {
     logger.warn({
       task_id: input.task_id,
-      expected_type: 'validation',
+      expected_type: AGENT_TYPES.VALIDATION,
       actual_type: input.agent_type
     }, 'Non-validation task routed to validation agent');
     return false;

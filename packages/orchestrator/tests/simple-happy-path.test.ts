@@ -16,27 +16,27 @@ describe('Milestone 1: Simple Happy Path Validation', () => {
     } = sharedTypes;
 
     // Test 1: Create a workflow
-    const workflow = createWorkflow('app', 'test-app', 'Test application');
+    const workflow = createWorkflow(WORKFLOW_TYPES.APP, 'test-app', 'Test application');
 
     expect(workflow.workflow_id).toBeDefined();
-    expect(workflow.type).toBe('app');
+    expect(workflow.type).toBe(WORKFLOW_TYPES.APP);
     expect(workflow.name).toBe('test-app');
-    expect(workflow.current_stage).toBe('initiated');
+    expect(workflow.current_stage).toBe(WORKFLOW_STATUS.INITIATED);
     expect(workflow.progress).toBe(0);
     expect(workflow.version).toBe(VERSION);
 
     // Test 2: Create a scaffold task
-    const task = createTask(workflow, 'scaffold', 'generate_structure', {
-      project_type: 'app',
+    const task = createTask(workflow, AGENT_TYPES.SCAFFOLD, 'generate_structure', {
+      project_type: WORKFLOW_TYPES.APP,
       name: 'test-app',
       requirements: ['Authentication', 'Dashboard']
     });
 
     expect(task.task_id).toBeDefined();
     expect(task.workflow_id).toBe(workflow.workflow_id);
-    expect(task.agent_type).toBe('scaffold');
+    expect(task.agent_type).toBe(AGENT_TYPES.SCAFFOLD);
     expect(task.action).toBe('generate_structure');
-    expect(task.status).toBe('pending');
+    expect(task.status).toBe(TASK_STATUS.PENDING);
 
     // Test 3: Validate with Schema Registry
     const validatedWorkflow = SchemaRegistry.validate('workflow', workflow);
@@ -67,12 +67,12 @@ describe('Milestone 1: Simple Happy Path Validation', () => {
     const scaffoldTask = {
       task_id: `task_${Date.now()}`,
       workflow_id: `wf_${Date.now()}`,
-      agent_type: 'scaffold',
+      agent_type: AGENT_TYPES.SCAFFOLD,
       action: 'generate_structure',
-      status: 'pending',
+      status: TASK_STATUS.PENDING,
       priority: 50,
       payload: {
-        project_type: 'app',
+        project_type: WORKFLOW_TYPES.APP,
         name: 'test-app',
         description: 'Test application',
         tech_stack: {
@@ -136,15 +136,15 @@ describe('Milestone 1: Simple Happy Path Validation', () => {
 
     // Valid state transitions
     const validStates = [
-      'initiated',
+      WORKFLOW_STATUS.INITIATED,
       'scaffolding',
       'validating',
       'testing',
       'integrating',
       'deploying',
-      'completed',
-      'failed',
-      'cancelled'
+      WORKFLOW_STATUS.COMPLETED,
+      WORKFLOW_STATUS.FAILED,
+      WORKFLOW_STATUS.CANCELLED
     ];
 
     for (const state of validStates) {

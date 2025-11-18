@@ -182,8 +182,8 @@ describe('HealthService', () => {
     it('should query agent registry', async () => {
       ;(shell.exec as any).mockResolvedValue({
         stdout: JSON.stringify([
-          { name: 'agent1', status: 'running' },
-          { name: 'agent2', status: 'running' },
+          { name: 'agent1', status: WORKFLOW_STATUS.RUNNING },
+          { name: 'agent2', status: WORKFLOW_STATUS.RUNNING },
         ]),
         success: true,
       })

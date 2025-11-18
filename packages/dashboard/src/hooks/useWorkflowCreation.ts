@@ -1,11 +1,12 @@
+import { WORKFLOW_TYPES, TASK_PRIORITY } from "@agentic-sdlc/shared-types"
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface WorkflowFormData {
   name: string
   description: string
-  type: 'app' | 'feature' | 'bugfix'
-  priority: 'low' | 'medium' | 'high' | 'critical'
+  type: WORKFLOW_TYPES.APP | WORKFLOW_TYPES.FEATURE | WORKFLOW_TYPES.BUGFIX
+  priority: TASK_PRIORITY.LOW | TASK_PRIORITY.MEDIUM | TASK_PRIORITY.HIGH | TASK_PRIORITY.CRITICAL
   platformId?: string
 }
 
@@ -22,8 +23,8 @@ export function useWorkflowCreation() {
   const [formData, setFormData] = useState<WorkflowFormData>({
     name: '',
     description: '',
-    type: 'feature',
-    priority: 'medium'
+    type: WORKFLOW_TYPES.FEATURE,
+    priority: TASK_PRIORITY.MEDIUM
   })
 
   const handleInputChange = (
@@ -88,8 +89,8 @@ export function useWorkflowCreation() {
     setFormData({
       name: '',
       description: '',
-      type: 'feature',
-      priority: 'medium'
+      type: WORKFLOW_TYPES.FEATURE,
+      priority: TASK_PRIORITY.MEDIUM
     })
     setError(null)
   }

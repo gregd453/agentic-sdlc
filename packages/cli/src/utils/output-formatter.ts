@@ -205,7 +205,7 @@ export class OutputFormatter {
 
     for (const item of items) {
       const statusIcon =
-        item.status === 'running'
+        item.status === WORKFLOW_STATUS.RUNNING
           ? this.colors ? chalk.green('✓') : '✓'
           : item.status === 'stopped'
             ? this.colors ? chalk.red('✗') : '✗'

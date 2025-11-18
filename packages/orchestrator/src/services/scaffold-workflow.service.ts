@@ -36,7 +36,7 @@ export class ScaffoldWorkflowService {
   async createScaffoldWorkflow(request: {
     name: string;
     description: string;
-    project_type: 'app' | 'service' | 'feature' | 'capability';
+    project_type: WORKFLOW_TYPES.APP | 'service' | WORKFLOW_TYPES.FEATURE | 'capability';
     requirements: string[];
     tech_stack?: any;
     options?: any;
@@ -58,11 +58,11 @@ export class ScaffoldWorkflowService {
 
       // Save to database
       await this.repository.create({
-        type: workflow.type as 'app' | 'feature' | 'bugfix',
+        type: workflow.type as WORKFLOW_TYPES.APP | WORKFLOW_TYPES.FEATURE | WORKFLOW_TYPES.BUGFIX,
         name: workflow.name,
         description: workflow.description || '',
         requirements: JSON.stringify(request.requirements),
-        priority: 'medium',
+        priority: TASK_PRIORITY.MEDIUM,
         created_by: 'system'
       });
 
@@ -112,12 +112,12 @@ export class ScaffoldWorkflowService {
     const task: ScaffoldTask = {
       task_id: toTaskId(`task_${Date.now()}_${randomUUID().substring(0, 8)}`),
       workflow_id: workflow.workflow_id,
-      agent_type: 'scaffold',
+      agent_type: AGENT_TYPES.SCAFFOLD,
       action: 'generate_structure',
-      status: 'pending',
+      status: TASK_STATUS.PENDING,
       priority: 50,
       payload: {
-        project_type: workflow.type as 'app' | 'service' | 'feature' | 'capability',
+        project_type: workflow.type as WORKFLOW_TYPES.APP | 'service' | WORKFLOW_TYPES.FEATURE | 'capability',
         name: workflow.name,
         description: workflow.description || '',
         tech_stack: tech_stack || {
@@ -128,9 +128,9 @@ export class ScaffoldWorkflowService {
         },
         requirements: requirements,
         template: {
-          type: workflow.type === 'app' ? 'app-ui' :
+          type: workflow.type === WORKFLOW_TYPES.APP ? 'app-ui' :
                 workflow.type === 'service' ? 'service-bff' :
-                workflow.type === 'feature' ? 'feature' : 'capability',
+                workflow.type === WORKFLOW_TYPES.FEATURE ? WORKFLOW_TYPES.FEATURE : 'capability',
           include_examples: true,
           include_tests: true,
           include_docs: true
@@ -162,8 +162,8 @@ export class ScaffoldWorkflowService {
       message_id: randomUUID(),
       task_id: task.task_id,
       workflow_id: task.workflow_id,
-      agent_type: 'scaffold' as const,
-      priority: 'medium' as const,
+      agent_type: AGENT_TYPES.SCAFFOLD as const,
+      priority: TASK_PRIORITY.MEDIUM as const,
       payload: {
         action: task.action,
         target: task.payload.name,
@@ -193,7 +193,7 @@ export class ScaffoldWorkflowService {
     logger.info('Scaffold task dispatched to agent', {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
-      agent_type: 'scaffold'
+      agent_type: AGENT_TYPES.SCAFFOLD
     });
     */
   }
@@ -205,7 +205,7 @@ export class ScaffoldWorkflowService {
   async handleScaffoldResult(result: any): Promise<void> {
     // Extract actual result from agent message wrapper
     const taskResult = result.payload;
-    const success = taskResult?.status === 'success';
+    const success = taskResult?.status === WORKFLOW_STATUS.SUCCESS;
 
     logger.info('💾 HANDLING SCAFFOLD RESULT', {
       workflow_id: result.workflow_id,
@@ -216,7 +216,7 @@ export class ScaffoldWorkflowService {
     try {
       // Update workflow state
       const updated = await this.repository.updateState(result.workflow_id, {
-        current_stage: success ? 'validating' : 'failed',
+        current_stage: success ? 'validating' : WORKFLOW_STATUS.FAILED,
         progress: success ? 25 : 0,
         completed_at: success ? null : new Date(),
         metadata: {
@@ -231,7 +231,7 @@ export class ScaffoldWorkflowService {
       });
 
       // If successful, trigger next stage (validation)
-      if (success && taskResult?.next_stage === 'validation') {
+      if (success && taskResult?.next_stage === AGENT_TYPES.VALIDATION) {
         logger.info('Scaffold successful, triggering validation', {
           workflow_id: result.workflow_id
         });

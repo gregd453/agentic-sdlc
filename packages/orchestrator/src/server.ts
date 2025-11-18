@@ -211,7 +211,7 @@ export async function createServer() {
   // Root endpoint
   fastify.get('/', {
     schema: {
-      tags: ['info'],
+      tags: [LOG_LEVEL.INFO],
       summary: 'API Information',
       description: 'Returns API information and available endpoints',
       response: {

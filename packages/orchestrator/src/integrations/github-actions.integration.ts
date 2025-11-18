@@ -11,7 +11,7 @@ export type GitHubEvent =
   | 'pull_request'
   | 'workflow_dispatch'
   | 'release'
-  | 'deployment';
+  | AGENT_TYPES.DEPLOYMENT;
 
 /**
  * GitHub webhook payload
@@ -144,7 +144,7 @@ export class GitHubActionsIntegration {
         const releaseAction = (payload as any).action;
         return releaseAction === 'published';
 
-      case 'deployment':
+      case AGENT_TYPES.DEPLOYMENT:
         // Trigger on deployment created
         const deploymentAction = (payload as any).action;
         return deploymentAction === 'created';
@@ -200,7 +200,7 @@ export class GitHubActionsIntegration {
         id: 'build',
         name: 'Build',
         description: 'Compile and build artifacts',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         action: 'build',
         parameters: {},
         dependencies: [],
@@ -213,12 +213,12 @@ export class GitHubActionsIntegration {
         id: 'unit_test',
         name: 'Unit Tests',
         description: 'Run unit tests',
-        agent_type: 'validation',
+        agent_type: AGENT_TYPES.VALIDATION,
         action: 'test',
         parameters: {
           test_type: 'unit'
         },
-        dependencies: [{ stage_id: 'build', required: true, condition: 'success' }],
+        dependencies: [{ stage_id: 'build', required: true, condition: WORKFLOW_STATUS.SUCCESS }],
         quality_gates: [
           {
             name: 'coverage',
@@ -237,10 +237,10 @@ export class GitHubActionsIntegration {
         id: 'lint',
         name: 'Linting',
         description: 'Run code quality checks',
-        agent_type: 'validation',
+        agent_type: AGENT_TYPES.VALIDATION,
         action: 'lint',
         parameters: {},
-        dependencies: [{ stage_id: 'build', required: true, condition: 'success' }],
+        dependencies: [{ stage_id: 'build', required: true, condition: WORKFLOW_STATUS.SUCCESS }],
         quality_gates: [],
         timeout_ms: 120000,
         artifacts: [],
@@ -254,13 +254,13 @@ export class GitHubActionsIntegration {
         id: 'integration_test',
         name: 'Integration Tests',
         description: 'Run integration tests',
-        agent_type: 'integration',
+        agent_type: AGENT_TYPES.INTEGRATION,
         action: 'test',
         parameters: {
-          test_type: 'integration'
+          test_type: AGENT_TYPES.INTEGRATION
         },
         dependencies: [
-          { stage_id: 'unit_test', required: true, condition: 'success' }
+          { stage_id: 'unit_test', required: true, condition: WORKFLOW_STATUS.SUCCESS }
         ],
         quality_gates: [],
         timeout_ms: 600000,
@@ -272,16 +272,16 @@ export class GitHubActionsIntegration {
     // Add E2E tests for production
     if (isProduction) {
       stages.push({
-        id: 'e2e_test',
+        id: AGENT_TYPES.E2E_TEST,
         name: 'E2E Tests',
         description: 'Run end-to-end tests',
-        agent_type: 'e2e_test',
+        agent_type: AGENT_TYPES.E2E_TEST,
         action: 'test',
         parameters: {
           browsers: ['chromium', 'firefox']
         } as Record<string, unknown>,
         dependencies: [
-          { stage_id: 'integration_test', required: true, condition: 'success' }
+          { stage_id: 'integration_test', required: true, condition: WORKFLOW_STATUS.SUCCESS }
         ],
         quality_gates: [],
         timeout_ms: 900000,
@@ -294,11 +294,11 @@ export class GitHubActionsIntegration {
         id: 'security_scan',
         name: 'Security Scan',
         description: 'Run security vulnerability scan',
-        agent_type: 'validation',
+        agent_type: AGENT_TYPES.VALIDATION,
         action: 'security_scan',
         parameters: {} as Record<string, unknown>,
         dependencies: [
-          { stage_id: 'build', required: true, condition: 'success' }
+          { stage_id: 'build', required: true, condition: WORKFLOW_STATUS.SUCCESS }
         ],
         quality_gates: [
           {
@@ -320,15 +320,15 @@ export class GitHubActionsIntegration {
         id: 'deploy',
         name: 'Deploy to Production',
         description: 'Deploy to production environment',
-        agent_type: 'deployment',
+        agent_type: AGENT_TYPES.DEPLOYMENT,
         action: 'deploy',
         parameters: {
           environment: 'production',
           strategy: 'blue-green'
         } as Record<string, unknown>,
         dependencies: [
-          { stage_id: 'e2e_test', required: true, condition: 'success' },
-          { stage_id: 'security_scan', required: true, condition: 'success' }
+          { stage_id: AGENT_TYPES.E2E_TEST, required: true, condition: WORKFLOW_STATUS.SUCCESS },
+          { stage_id: 'security_scan', required: true, condition: WORKFLOW_STATUS.SUCCESS }
         ],
         quality_gates: [],
         timeout_ms: 1200000,

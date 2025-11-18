@@ -16,26 +16,26 @@ test.describe('Workflows Page', () => {
     await page.goto('/workflows')
 
     // Select "Running" status filter
-    await page.getByLabel('Status').selectOption('running')
+    await page.getByLabel('Status').selectOption(WORKFLOW_STATUS.RUNNING)
 
     // Wait for potential data refresh
     await page.waitForTimeout(500)
 
     // Verify filter is applied
-    await expect(page.getByLabel('Status')).toHaveValue('running')
+    await expect(page.getByLabel('Status')).toHaveValue(WORKFLOW_STATUS.RUNNING)
   })
 
   test('should filter workflows by type', async ({ page }) => {
     await page.goto('/workflows')
 
     // Select "Feature" type filter
-    await page.getByLabel('Type').selectOption('feature')
+    await page.getByLabel('Type').selectOption(WORKFLOW_TYPES.FEATURE)
 
     // Wait for potential data refresh
     await page.waitForTimeout(500)
 
     // Verify filter is applied
-    await expect(page.getByLabel('Type')).toHaveValue('feature')
+    await expect(page.getByLabel('Type')).toHaveValue(WORKFLOW_TYPES.FEATURE)
   })
 
   test('should display workflows table with correct columns', async ({ page }) => {

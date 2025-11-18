@@ -1,3 +1,5 @@
+import { AGENT_TYPES } from '@agentic-sdlc/shared-types';
+import { WORKFLOW_STATUS, TASK_STATUS } from '@agentic-sdlc/shared-types';
 /**
  * WorkflowDefinitionAdapter Service - Bridges state machine with definition-driven logic
  *
@@ -205,17 +207,17 @@ export class WorkflowDefinitionAdapter {
    */
   private mapStageToAgentLegacy(stage: string): string {
     const mapping: Record<string, string> = {
-      initialization: 'scaffold',
-      scaffolding: 'scaffold',
-      dependency_installation: 'scaffold',
-      validation: 'validation',
-      e2e_testing: 'e2e_test',
-      integration: 'integration',
-      deployment: 'deployment',
+      initialization: AGENT_TYPES.SCAFFOLD,
+      scaffolding: AGENT_TYPES.SCAFFOLD,
+      dependency_installation: AGENT_TYPES.SCAFFOLD,
+      validation: AGENT_TYPES.VALIDATION,
+      e2e_testing: AGENT_TYPES.E2E_TEST,
+      integration: AGENT_TYPES.INTEGRATION,
+      deployment: AGENT_TYPES.DEPLOYMENT,
       monitoring: 'monitoring'
     }
 
-    return mapping[stage] || 'scaffold'
+    return mapping[stage] || AGENT_TYPES.SCAFFOLD
   }
 
   /**

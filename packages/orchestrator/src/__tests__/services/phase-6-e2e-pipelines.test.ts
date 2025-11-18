@@ -38,8 +38,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Feature: Add Dark Mode',
-          type: 'feature',
-          priority: 'high',
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.HIGH,
           description: 'Implement dark theme support'
         }
       })
@@ -70,7 +70,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
       expect(updatedWorkflow.trace_id).toBe(initialTraceId)
 
       // Validate workflow type configuration
-      expect(updatedWorkflow.type).toBe('feature')
+      expect(updatedWorkflow.type).toBe(WORKFLOW_TYPES.FEATURE)
     })
 
     it('should track stage progression through scaffold → validation → e2e', async () => {
@@ -79,8 +79,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Feature: Enhanced Search',
-          type: 'feature',
-          priority: 'medium'
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.MEDIUM
         }
       })
 
@@ -119,8 +119,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Feature: Import/Export',
-          type: 'feature',
-          priority: 'low'
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.LOW
         }
       })
 
@@ -150,8 +150,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'App: Customer Portal v2.0',
-          type: 'app',
-          priority: 'critical',
+          type: WORKFLOW_TYPES.APP,
+          priority: TASK_PRIORITY.CRITICAL,
           description: 'Complete redesign of customer-facing portal'
         }
       })
@@ -160,7 +160,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
       const workflow = JSON.parse(createResponse.payload)
 
       // App type should support 8 stages
-      expect(workflow.type).toBe('app')
+      expect(workflow.type).toBe(WORKFLOW_TYPES.APP)
       expect(workflow.stage).toBe('scaffold:started')
 
       // Validate workflow is progressing
@@ -181,8 +181,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'App: Analytics Dashboard',
-          type: 'app',
-          priority: 'high'
+          type: WORKFLOW_TYPES.APP,
+          priority: TASK_PRIORITY.HIGH
         }
       })
 
@@ -215,7 +215,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
       }
 
       expect(finalWorkflow.id).toBe(workflowId)
-      expect(finalWorkflow.type).toBe('app')
+      expect(finalWorkflow.type).toBe(WORKFLOW_TYPES.APP)
     })
   })
 
@@ -226,8 +226,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Bugfix: Null pointer in auth module',
-          type: 'bugfix',
-          priority: 'critical'
+          type: WORKFLOW_TYPES.BUGFIX,
+          priority: TASK_PRIORITY.CRITICAL
         }
       })
 
@@ -235,7 +235,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
       const workflow = JSON.parse(createResponse.payload)
 
       // Bugfix should have 3 stages
-      expect(workflow.type).toBe('bugfix')
+      expect(workflow.type).toBe(WORKFLOW_TYPES.BUGFIX)
       expect(workflow.stage).toBe('scaffold:started')
 
       // Verify workflow is created
@@ -251,8 +251,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Bugfix: Connection timeout',
-          type: 'bugfix',
-          priority: 'high'
+          type: WORKFLOW_TYPES.BUGFIX,
+          priority: TASK_PRIORITY.HIGH
         }
       })
 
@@ -264,7 +264,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
 
       // Verify workflow state
       expect(workflow.stage).toBe('scaffold:started')
-      expect(workflow.type).toBe('bugfix')
+      expect(workflow.type).toBe(WORKFLOW_TYPES.BUGFIX)
     })
   })
 
@@ -287,8 +287,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: `Platform Test: ${platform.name}`,
-          type: 'feature',
-          priority: 'medium',
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.MEDIUM,
           platform_id: platform.id
         }
       })
@@ -316,7 +316,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: `Multi-Stage: ${platform.name}`,
-          type: 'feature',
+          type: WORKFLOW_TYPES.FEATURE,
           platform_id: platform.id
         }
       })
@@ -348,8 +348,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'GenericMockAgent Test',
-          type: 'feature',
-          priority: 'low'
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.LOW
         }
       })
 
@@ -373,8 +373,8 @@ describe('Phase 6: E2E Pipeline Tests', () => {
             url: '/api/v1/workflows',
             payload: {
               name: `Concurrent Test ${i + 1}`,
-              type: 'feature',
-              priority: 'low'
+              type: WORKFLOW_TYPES.FEATURE,
+              priority: TASK_PRIORITY.LOW
             }
           })
         )
@@ -404,7 +404,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Task Result Propagation',
-          type: 'feature'
+          type: WORKFLOW_TYPES.FEATURE
         }
       })
 
@@ -435,7 +435,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Trace Propagation Test',
-          type: 'feature'
+          type: WORKFLOW_TYPES.FEATURE
         }
       })
 
@@ -459,13 +459,13 @@ describe('Phase 6: E2E Pipeline Tests', () => {
       const response1 = await app.inject({
         method: 'POST' as const,
         url: '/api/v1/workflows',
-        payload: { name: 'Workflow 1', type: 'feature' }
+        payload: { name: 'Workflow 1', type: WORKFLOW_TYPES.FEATURE }
       })
 
       const response2 = await app.inject({
         method: 'POST' as const,
         url: '/api/v1/workflows',
-        payload: { name: 'Workflow 2', type: 'feature' }
+        payload: { name: 'Workflow 2', type: WORKFLOW_TYPES.FEATURE }
       })
 
       const workflow1 = JSON.parse(response1.payload)
@@ -488,7 +488,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         payload: {
           name: 'Invalid Type Test',
           type: 'invalid-type',
-          priority: 'high'
+          priority: TASK_PRIORITY.HIGH
         }
       })
 
@@ -503,7 +503,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           // Missing name
-          type: 'feature'
+          type: WORKFLOW_TYPES.FEATURE
         }
       })
 
@@ -517,7 +517,7 @@ describe('Phase 6: E2E Pipeline Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Error Recovery Test',
-          type: 'feature'
+          type: WORKFLOW_TYPES.FEATURE
         }
       })
 

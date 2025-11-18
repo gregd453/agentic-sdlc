@@ -58,7 +58,7 @@ export async function fetchWorkflows(filters?: {
     progress: w.progress_percentage ?? w.progress ?? 0,
     name: w.name || 'Unnamed Workflow',
     description: w.description || null,
-    priority: w.priority || 'medium',
+    priority: w.priority || TASK_PRIORITY.MEDIUM,
     created_by: w.created_by || 'system'
   }))
 }
@@ -72,7 +72,7 @@ export async function fetchWorkflow(id: string): Promise<Workflow> {
     progress: workflow.progress_percentage ?? workflow.progress ?? 0,
     name: workflow.name || 'Unnamed Workflow',
     description: workflow.description || null,
-    priority: workflow.priority || 'medium',
+    priority: workflow.priority || TASK_PRIORITY.MEDIUM,
     created_by: workflow.created_by || 'system'
   }
 }
@@ -262,7 +262,7 @@ export async function fetchSLOMetrics(thresholdMs: number = 300000): Promise<SLO
   } catch {
     // Fallback: calculate SLO from workflows
     const all = await fetchWorkflows()
-    const completed = all.filter(w => w.status === 'completed')
+    const completed = all.filter(w => w.status === WORKFLOW_STATUS.COMPLETED)
 
     const compliant = completed.filter(w => {
       const duration = w.completed_at
@@ -337,7 +337,7 @@ function transformWorkflow(w: any): Workflow {
     progress: w.progress_percentage ?? w.progress ?? 0,
     name: w.name || 'Unnamed Workflow',
     description: w.description || null,
-    priority: w.priority || 'medium',
+    priority: w.priority || TASK_PRIORITY.MEDIUM,
     created_by: w.created_by || 'system',
   }
 }

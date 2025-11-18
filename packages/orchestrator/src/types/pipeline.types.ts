@@ -15,10 +15,10 @@ export const StageExecutionModeSchema = z.enum(['sequential', 'parallel']);
  * Stage status
  */
 export const StageStatusSchema = z.enum([
-  'pending',
-  'running',
-  'success',
-  'failed',
+  TASK_STATUS.PENDING,
+  WORKFLOW_STATUS.RUNNING,
+  WORKFLOW_STATUS.SUCCESS,
+  WORKFLOW_STATUS.FAILED,
   'skipped',
   'blocked'
 ]);
@@ -26,15 +26,15 @@ export const StageStatusSchema = z.enum([
 /**
  * Pipeline status
  * IMPORTANT: Must match Prisma schema WorkflowStatus enum
- * Session #78: Changed 'success' to 'completed' for consistency
+ * Session #78: Changed WORKFLOW_STATUS.SUCCESS to WORKFLOW_STATUS.COMPLETED for consistency
  */
 export const PipelineStatusSchema = z.enum([
   'created',
   'queued',
-  'running',
-  'completed',
-  'failed',
-  'cancelled',
+  WORKFLOW_STATUS.RUNNING,
+  WORKFLOW_STATUS.COMPLETED,
+  WORKFLOW_STATUS.FAILED,
+  WORKFLOW_STATUS.CANCELLED,
   'paused'
 ]);
 
@@ -68,7 +68,7 @@ export const StageArtifactSchema = z.object({
 export const StageDependencySchema = z.object({
   stage_id: z.string(),
   required: z.boolean().default(true),
-  condition: z.enum(['success', 'completed', 'always']).default('completed')  // Session #78: Changed default from 'success' to 'completed'
+  condition: z.enum([WORKFLOW_STATUS.SUCCESS, WORKFLOW_STATUS.COMPLETED, 'always']).default(WORKFLOW_STATUS.COMPLETED)  // Session #78: Changed default from WORKFLOW_STATUS.SUCCESS to WORKFLOW_STATUS.COMPLETED
 });
 
 /**
@@ -79,13 +79,13 @@ export const PipelineStageSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   agent_type: z.enum([
-    'scaffold',
-    'validation',
-    'e2e_test',
-    'integration',
-    'deployment',
+    AGENT_TYPES.SCAFFOLD,
+    AGENT_TYPES.VALIDATION,
+    AGENT_TYPES.E2E_TEST,
+    AGENT_TYPES.INTEGRATION,
+    AGENT_TYPES.DEPLOYMENT,
     'monitoring',
-    'debug',
+    LOG_LEVEL.DEBUG,
     'recovery'
   ]),
   action: z.string(),

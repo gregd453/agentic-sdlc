@@ -59,7 +59,7 @@ export function getDefaultPolicy(): PolicyConfig {
     },
     observability: {
       logging: {
-        level: 'info',
+        level: LOG_LEVEL.INFO,
         structured: true
       }
     }

@@ -1,7 +1,9 @@
+import { WORKFLOW_STATUS, WORKFLOW_TYPES, TASK_PRIORITY, TASK_STATUS, AGENT_TYPES } from '@agentic-sdlc/shared-types';
+
 // Workflow Types
-export type WorkflowStatus = 'initiated' | 'running' | 'completed' | 'failed' | 'cancelled' | 'paused'
-export type WorkflowType = 'app' | 'feature' | 'bugfix'
-export type Priority = 'low' | 'medium' | 'high' | 'critical'
+export type WorkflowStatus = WORKFLOW_STATUS.INITIATED | WORKFLOW_STATUS.RUNNING | WORKFLOW_STATUS.COMPLETED | WORKFLOW_STATUS.FAILED | WORKFLOW_STATUS.CANCELLED | 'paused'
+export type WorkflowType = WORKFLOW_TYPES.APP | WORKFLOW_TYPES.FEATURE | WORKFLOW_TYPES.BUGFIX
+export type Priority = TASK_PRIORITY.LOW | TASK_PRIORITY.MEDIUM | TASK_PRIORITY.HIGH | TASK_PRIORITY.CRITICAL
 
 export interface Workflow {
   id: string
@@ -22,8 +24,8 @@ export interface Workflow {
 }
 
 // Task Types
-export type TaskStatus = 'pending' | 'assigned' | 'running' | 'completed' | 'failed' | 'cancelled'
-export type AgentType = 'scaffold' | 'validation' | 'e2e' | 'integration' | 'deployment'
+export type TaskStatus = TASK_STATUS.PENDING | 'assigned' | WORKFLOW_STATUS.RUNNING | WORKFLOW_STATUS.COMPLETED | WORKFLOW_STATUS.FAILED | WORKFLOW_STATUS.CANCELLED
+export type AgentType = AGENT_TYPES.SCAFFOLD | AGENT_TYPES.VALIDATION | 'e2e' | AGENT_TYPES.INTEGRATION | AGENT_TYPES.DEPLOYMENT
 
 export interface AgentTask {
   task_id: string

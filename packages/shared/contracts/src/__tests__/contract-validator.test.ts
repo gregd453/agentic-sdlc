@@ -11,7 +11,7 @@ const TestInputSchema = z.object({
 });
 
 const TestOutputSchema = z.object({
-  status: z.enum(['success', 'failure']),
+  status: z.enum([WORKFLOW_STATUS.SUCCESS, 'failure']),
   result: z.string(),
   metadata: z.record(z.unknown()).optional()
 });
@@ -87,7 +87,7 @@ describe('ContractValidator', () => {
   describe('validateOutput', () => {
     it('should validate correct output data', () => {
       const validOutput = {
-        status: 'success' as const,
+        status: WORKFLOW_STATUS.SUCCESS as const,
         result: 'Task completed',
         metadata: { duration: 1000 }
       };
@@ -239,7 +239,7 @@ describe('ContractValidator', () => {
       };
 
       const sampleOutput = {
-        status: 'success' as const,
+        status: WORKFLOW_STATUS.SUCCESS as const,
         result: 'Completed'
       };
 
@@ -256,7 +256,7 @@ describe('ContractValidator', () => {
       };
 
       const validOutput = {
-        status: 'success' as const,
+        status: WORKFLOW_STATUS.SUCCESS as const,
         result: 'Completed'
       };
 

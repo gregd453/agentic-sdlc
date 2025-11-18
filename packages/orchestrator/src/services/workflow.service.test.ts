@@ -63,9 +63,9 @@ describe('WorkflowService - Phase 3 Verification Tests', () => {
       (mockRepository.findById as any).mockResolvedValue({
         id: workflowId,
         current_stage: stage,
-        status: 'initiated',
+        status: WORKFLOW_STATUS.INITIATED,
         progress: 0,
-        type: 'app'
+        type: WORKFLOW_TYPES.APP
       });
 
       // Create 3x identical events (simulating Redis triple-fire)
@@ -157,9 +157,9 @@ describe('WorkflowService - Phase 3 Verification Tests', () => {
       (mockRepository.findById as any).mockResolvedValue({
         id: workflowId,
         current_stage: databaseStage,
-        status: 'initiated',
+        status: WORKFLOW_STATUS.INITIATED,
         progress: 0,
-        type: 'app'
+        type: WORKFLOW_TYPES.APP
       });
 
       const event = {
@@ -268,7 +268,7 @@ describe('WorkflowService - Phase 3 Verification Tests', () => {
 
       // Worker 2 tries CAS: initialization -> validation (based on stale read)
       const worker2_oldStage = 'initialization';
-      const worker2_newStage = 'validation';
+      const worker2_newStage = AGENT_TYPES.VALIDATION;
       const worker2_cas = dbState.current_stage === worker2_oldStage;
 
       expect(worker2_cas).toBe(false); // CAS would FAIL (stage changed)
@@ -285,7 +285,7 @@ describe('WorkflowService - Phase 3 Verification Tests', () => {
 
       // CAS update
       const oldStage = 'scaffolding';
-      const newStage = 'validation';
+      const newStage = AGENT_TYPES.VALIDATION;
       const oldVersion = workflow.version;
 
       if (workflow.current_stage === oldStage) {
@@ -295,7 +295,7 @@ describe('WorkflowService - Phase 3 Verification Tests', () => {
       }
 
       expect(workflow.version).toBe(2);
-      expect(workflow.current_stage).toBe('validation');
+      expect(workflow.current_stage).toBe(AGENT_TYPES.VALIDATION);
     });
   });
 
@@ -310,7 +310,7 @@ describe('WorkflowService - Phase 3 Verification Tests', () => {
       const workerId = 'worker-1';
       const eventStage = 'initialization';
       const dbStage = 'initialization';
-      const dbStatus = 'initiated';
+      const dbStatus = WORKFLOW_STATUS.INITIATED;
       const dbProgress = 0;
 
       // Truth table entry
@@ -366,9 +366,9 @@ describe('WorkflowService - Phase 3 Verification Tests', () => {
       const workflow = {
         id: workflowId,
         current_stage: stage,
-        status: 'initiated',
+        status: WORKFLOW_STATUS.INITIATED,
         progress: 0,
-        type: 'app',
+        type: WORKFLOW_TYPES.APP,
         version: 1
       };
 

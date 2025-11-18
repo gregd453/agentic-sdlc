@@ -70,7 +70,7 @@ describe('quality-gates', () => {
       const checks: ValidationCheckResult[] = [
         {
           type: 'coverage',
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           duration_ms: 1000,
           details: {
             line_coverage: 75,
@@ -107,7 +107,7 @@ describe('quality-gates', () => {
       const checks: ValidationCheckResult[] = [
         {
           type: 'security',
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           duration_ms: 500,
           details: {
             critical_vulnerabilities: 2,

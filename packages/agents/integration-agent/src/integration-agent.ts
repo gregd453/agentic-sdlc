@@ -38,7 +38,7 @@ export class IntegrationAgent extends BaseAgent {
   ) {
     super(
       {
-        type: 'integration',
+        type: AGENT_TYPES.INTEGRATION,
         version: '1.0.0',
         capabilities: [
           'branch_merging',
@@ -110,9 +110,9 @@ export class IntegrationAgent extends BaseAgent {
       return IntegrationResultSchema.parse({
         task_id: validatedTask.task_id,
         workflow_id: validatedTask.workflow_id,
-        agent_type: 'integration',
+        agent_type: AGENT_TYPES.INTEGRATION,
         action: validatedTask.action,
-        status: 'completed',
+        status: WORKFLOW_STATUS.COMPLETED,
         result,
         timestamp: new Date().toISOString(),
         duration_ms: duration
@@ -421,12 +421,12 @@ export class IntegrationAgent extends BaseAgent {
     const integrationTask: IntegrationTask = {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
-      agent_type: 'integration',
+      agent_type: AGENT_TYPES.INTEGRATION,
       action: task.payload.action,
-      status: 'pending',
-      priority: task.priority === 'critical' ? 90 :
-                task.priority === 'high' ? 70 :
-                task.priority === 'medium' ? 50 : 30,
+      status: TASK_STATUS.PENDING,
+      priority: task.priority === TASK_PRIORITY.CRITICAL ? 90 :
+                task.priority === TASK_PRIORITY.HIGH ? 70 :
+                task.priority === TASK_PRIORITY.MEDIUM ? 50 : 30,
       payload: task.payload,
       version: '1.0.0',
       timeout_ms: task.constraints?.timeout_ms || 120000,
@@ -439,7 +439,7 @@ export class IntegrationAgent extends BaseAgent {
     return {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
-      status: result.result.success ? 'success' : 'failure',
+      status: result.result.success ? WORKFLOW_STATUS.SUCCESS : 'failure',
       output: result,
       errors: result.result.success ? [] : ['Task execution failed']
     };

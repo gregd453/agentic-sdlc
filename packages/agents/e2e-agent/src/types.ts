@@ -32,7 +32,7 @@ export const TestScenarioSchema = z.object({
     value: z.string().optional(),
     assertion: z.string().optional()
   })),
-  priority: z.enum(['critical', 'high', 'medium', 'low']).default('medium')
+  priority: z.enum([TASK_PRIORITY.CRITICAL, TASK_PRIORITY.HIGH, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.LOW]).default(TASK_PRIORITY.MEDIUM)
 });
 
 export type TestScenario = z.infer<typeof TestScenarioSchema>;
@@ -93,7 +93,7 @@ export const E2ETestReportSchema = z.object({
   task_id: z.string(),
   workflow_id: z.string(),
   project_path: z.string(),
-  overall_status: z.enum(['passed', 'failed', 'partial']),
+  overall_status: z.enum(['passed', WORKFLOW_STATUS.FAILED, 'partial']),
   generation: z.object({
     scenarios_generated: z.number(),
     test_files_created: z.number(),

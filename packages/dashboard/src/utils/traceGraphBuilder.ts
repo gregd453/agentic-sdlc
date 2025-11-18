@@ -1,6 +1,7 @@
 /**
  * Utilities for building React Flow graph data from trace spans
  */
+import { WORKFLOW_STATUS } from '@agentic-sdlc/shared-types'
 
 export interface TraceSpan {
   span_id: string
@@ -50,11 +51,11 @@ export interface FlowEdge {
  */
 function getStatusColor(status: string): { bg: string; border: string; text: string } {
   switch (status) {
-    case 'completed':
+    case WORKFLOW_STATUS.COMPLETED:
       return { bg: '#dcfce7', border: '#16a34a', text: '#15803d' } // green
-    case 'failed':
+    case WORKFLOW_STATUS.FAILED:
       return { bg: '#fee2e2', border: '#dc2626', text: '#991b1b' } // red
-    case 'running':
+    case WORKFLOW_STATUS.RUNNING:
       return { bg: '#dbeafe', border: '#2563eb', text: '#1e40af' } // blue
     default:
       return { bg: '#f3f4f6', border: '#9ca3af', text: '#374151' } // gray
@@ -137,7 +138,7 @@ export function buildTraceGraph(
         id: `${span.span_id}-${child.span_id}`,
         source: span.span_id,
         target: child.span_id,
-        animated: child.status === 'running',
+        animated: child.status === WORKFLOW_STATUS.RUNNING,
         style: {
           stroke: color.border,
           strokeWidth: 2,

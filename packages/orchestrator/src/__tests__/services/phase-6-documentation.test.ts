@@ -50,7 +50,7 @@ describe('Phase 6: Documentation Tests', () => {
         const schema = JSON.parse(response.payload)
 
         expect(schema).toHaveProperty('openapi')
-        expect(schema).toHaveProperty('info')
+        expect(schema).toHaveProperty(LOG_LEVEL.INFO)
         expect(schema).toHaveProperty('paths')
       }
     })
@@ -63,7 +63,7 @@ describe('Phase 6: Documentation Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Documentation Test',
-          type: 'feature'
+          type: WORKFLOW_TYPES.FEATURE
         }
       })
 
@@ -110,7 +110,7 @@ describe('Phase 6: Documentation Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Get Workflow Test',
-          type: 'feature'
+          type: WORKFLOW_TYPES.FEATURE
         }
       })
 
@@ -231,7 +231,7 @@ describe('Phase 6: Documentation Tests', () => {
       const error = JSON.parse(response.payload)
 
       // Error should have consistent structure
-      expect(error).toHaveProperty('error')
+      expect(error).toHaveProperty(LOG_LEVEL.ERROR)
       expect(error).toHaveProperty('statusCode')
       expect(error.statusCode).toBe(404)
     })
@@ -242,7 +242,7 @@ describe('Phase 6: Documentation Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           // Missing required name field
-          type: 'feature'
+          type: WORKFLOW_TYPES.FEATURE
         }
       })
 
@@ -250,7 +250,7 @@ describe('Phase 6: Documentation Tests', () => {
 
       const error = JSON.parse(response.payload)
 
-      expect(error).toHaveProperty('error')
+      expect(error).toHaveProperty(LOG_LEVEL.ERROR)
       expect(error).toHaveProperty('statusCode')
       expect(error.statusCode).toBe(400)
     })
@@ -270,7 +270,7 @@ describe('Phase 6: Documentation Tests', () => {
       if (response.statusCode === 500) {
         const error = JSON.parse(response.payload)
 
-        expect(error).toHaveProperty('error')
+        expect(error).toHaveProperty(LOG_LEVEL.ERROR)
         expect(error).toHaveProperty('statusCode')
         expect(error).toHaveProperty('message')
       }
@@ -281,8 +281,8 @@ describe('Phase 6: Documentation Tests', () => {
     it('workflow creation request should match documented schema', async () => {
       const requestPayload = {
         name: 'Schema Test Workflow',
-        type: 'feature',
-        priority: 'high',
+        type: WORKFLOW_TYPES.FEATURE,
+        priority: TASK_PRIORITY.HIGH,
         description: 'Testing schema validation'
       }
 
@@ -309,7 +309,7 @@ describe('Phase 6: Documentation Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Complete Schema Test',
-          type: 'app'
+          type: WORKFLOW_TYPES.APP
         }
       })
 
@@ -383,7 +383,7 @@ describe('Phase 6: Documentation Tests', () => {
       expect(response.headers['content-type']).toContain('application/json')
 
       const body = JSON.parse(response.payload)
-      expect(body).toHaveProperty('error')
+      expect(body).toHaveProperty(LOG_LEVEL.ERROR)
     })
   })
 
@@ -488,7 +488,7 @@ describe('Phase 6: Documentation Tests', () => {
         expect(response.headers['content-type']).toContain('application/json')
 
         const error = JSON.parse(response.payload)
-        expect(error).toHaveProperty('error')
+        expect(error).toHaveProperty(LOG_LEVEL.ERROR)
         expect(error).toHaveProperty('statusCode')
       }
     })

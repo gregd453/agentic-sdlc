@@ -46,7 +46,7 @@ export interface CLIContext {
 
 export interface ServiceStatus {
   name: string
-  status: 'running' | 'stopped' | 'error'
+  status: WORKFLOW_STATUS.RUNNING | 'stopped' | LOG_LEVEL.ERROR
   healthy: boolean
   message?: string
   uptime?: number
@@ -92,7 +92,7 @@ export interface HealthCheckResult {
 export interface AgentStatus {
   name: string
   type: string
-  status: 'running' | 'stopped' | 'error'
+  status: WORKFLOW_STATUS.RUNNING | 'stopped' | LOG_LEVEL.ERROR
   platform?: string
   registered: boolean
   instances: number

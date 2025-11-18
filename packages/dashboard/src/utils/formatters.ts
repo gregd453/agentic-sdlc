@@ -1,4 +1,5 @@
 import { formatDistanceToNow, format } from 'date-fns'
+import { WORKFLOW_TYPES, AGENT_TYPES, WORKFLOW_STATUS } from '@agentic-sdlc/shared-types'
 
 export function formatDate(date: string | Date): string {
   return format(new Date(date), 'MMM d, yyyy HH:mm')
@@ -38,28 +39,28 @@ export function truncateId(id: string, length: number = 8): string {
  */
 export function calculateProgressFromStage(
   stage: string,
-  workflowType: string = 'app'
+  workflowType: string = WORKFLOW_TYPES.APP
 ): number {
   // Define stage sequences for each workflow type
   const stageSequences: Record<string, string[]> = {
     app: [
       'initialization',
       'scaffolding',
-      'validation',
+      AGENT_TYPES.VALIDATION,
       'e2e_testing',
-      'integration',
-      'deployment',
+      AGENT_TYPES.INTEGRATION,
+      AGENT_TYPES.DEPLOYMENT,
       'monitoring',
     ],
     feature: [
       'initialization',
       'scaffolding',
-      'validation',
+      AGENT_TYPES.VALIDATION,
       'e2e_testing',
     ],
     bugfix: [
       'initialization',
-      'validation',
+      AGENT_TYPES.VALIDATION,
       'e2e_testing',
     ],
   }

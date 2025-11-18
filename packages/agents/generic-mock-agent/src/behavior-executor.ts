@@ -82,7 +82,7 @@ export class BehaviorExecutor {
     const executionTimeMs = Date.now() - startTime
 
     switch (behavior.mode) {
-      case 'success':
+      case WORKFLOW_STATUS.SUCCESS:
         return this.generateSuccessResult(
           task,
           _agentType,
@@ -147,27 +147,26 @@ export class BehaviorExecutor {
 
   /**
    * Apply timing behavior: delay and timeout simulation
+   * Default: 10 second delay if timing is specified or no timing provided
    */
   private async applyTiming(behavior: AgentBehaviorMetadata, task: AgentEnvelope): Promise<void> {
     const timing = behavior.timing
 
-    if (!timing) {
-      return
-    }
+    // Default to 10 second delay if timing not specified
+    const delayMs = timing?.execution_delay_ms ?? 10000
 
     // Apply execution delay
-    if (timing.execution_delay_ms !== undefined) {
-      const delay = this.getVarianceAdjustedDelay(timing.execution_delay_ms, timing.variance_ms)
+    const delay = this.getVarianceAdjustedDelay(delayMs, timing?.variance_ms)
 
-      if (this.enableDebug) {
-        this.logger.info('[BehaviorExecutor] Applying delay', {
-          task_id: task.task_id,
-          delay_ms: delay
-        })
-      }
-
-      await new Promise(resolve => setTimeout(resolve, delay))
+    if (this.enableDebug) {
+      this.logger.info('[BehaviorExecutor] Applying delay', {
+        task_id: task.task_id,
+        delay_ms: delay,
+        is_default: !timing?.execution_delay_ms
+      })
     }
+
+    await new Promise(resolve => setTimeout(resolve, delay))
   }
 
   /**
@@ -212,7 +211,7 @@ export class BehaviorExecutor {
       task_id: task.task_id as any,
       workflow_id: task.workflow_id as any,
       agent_id: agentId,
-      status: 'success',
+      status: WORKFLOW_STATUS.SUCCESS,
       result: {
         data: output,
         metrics

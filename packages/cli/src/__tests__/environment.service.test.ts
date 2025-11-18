@@ -74,7 +74,7 @@ describe('EnvironmentService', () => {
       const { shell } = await import('../utils/shell.js')
       ;(shell.exec as any).mockResolvedValue({
         success: true,
-        stdout: 'running',
+        stdout: WORKFLOW_STATUS.RUNNING,
         stderr: '',
         code: 0,
       })
@@ -389,7 +389,7 @@ describe('EnvironmentService', () => {
 
       ;(shell.exec as any).mockResolvedValue({
         success: true,
-        stdout: 'running',
+        stdout: WORKFLOW_STATUS.RUNNING,
         stderr: '',
         code: 0,
       })

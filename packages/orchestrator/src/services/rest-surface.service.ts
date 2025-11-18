@@ -374,7 +374,7 @@ export class RestSurfaceService {
                     properties: {
                       type: {
                         type: 'string',
-                        enum: ['app', 'feature', 'bugfix']
+                        enum: [WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX]
                       },
                       name: {
                         type: 'string'
@@ -384,8 +384,8 @@ export class RestSurfaceService {
                       },
                       priority: {
                         type: 'string',
-                        enum: ['low', 'medium', 'high', 'critical'],
-                        default: 'medium'
+                        enum: [TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, TASK_PRIORITY.CRITICAL],
+                        default: TASK_PRIORITY.MEDIUM
                       }
                     }
                   }
@@ -448,7 +448,7 @@ export class RestSurfaceService {
 
     if (!payload.type) {
       errors.push('type is required')
-    } else if (!['app', 'feature', 'bugfix'].includes(payload.type)) {
+    } else if (![WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX].includes(payload.type)) {
       errors.push(`invalid type: ${payload.type}`)
     }
 
@@ -458,7 +458,7 @@ export class RestSurfaceService {
       errors.push('name must be a non-empty string')
     }
 
-    if (payload.priority && !['low', 'medium', 'high', 'critical'].includes(payload.priority)) {
+    if (payload.priority && ![TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, TASK_PRIORITY.CRITICAL].includes(payload.priority)) {
       errors.push(`invalid priority: ${payload.priority}`)
     }
 
@@ -477,7 +477,7 @@ export class RestSurfaceService {
       headers: { 'Content-Type': 'application/json' },
       body: {
         error: message,
-        status: 'error',
+        status: LOG_LEVEL.ERROR,
         timestamp: new Date().toISOString()
       }
     }

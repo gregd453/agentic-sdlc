@@ -53,7 +53,7 @@ export class HealthService implements IHealthService {
         },
         services: Object.entries(services).map(([name, info]) => ({
           name,
-          status: ((info as any).status === 'ok' ? 'running' : 'stopped') as 'running' | 'stopped' | 'error',
+          status: ((info as any).status === 'ok' ? WORKFLOW_STATUS.RUNNING : 'stopped') as WORKFLOW_STATUS.RUNNING | 'stopped' | LOG_LEVEL.ERROR,
           healthy: (info as any).status === 'ok',
           port: (info as any).port,
         })),
@@ -100,7 +100,7 @@ export class HealthService implements IHealthService {
         { ignoreErrors: true }
       )
 
-      const status = result.stdout.includes('accepting') ? 'ok' : 'error'
+      const status = result.stdout.includes('accepting') ? 'ok' : LOG_LEVEL.ERROR
       spin.succeed(chalk.green(`✓ PostgreSQL: ${status}`))
 
       return {
@@ -111,7 +111,7 @@ export class HealthService implements IHealthService {
       spin.fail('PostgreSQL check failed')
       return {
         healthy: false,
-        postgres: { status: 'error', port: 5433, error: String(error) },
+        postgres: { status: LOG_LEVEL.ERROR, port: 5433, error: String(error) },
       }
     }
   }
@@ -129,7 +129,7 @@ export class HealthService implements IHealthService {
         { ignoreErrors: true }
       )
 
-      const status = result.stdout.includes('PONG') ? 'ok' : 'error'
+      const status = result.stdout.includes('PONG') ? 'ok' : LOG_LEVEL.ERROR
       spin.succeed(chalk.green(`✓ Redis: ${status}`))
 
       return {
@@ -140,7 +140,7 @@ export class HealthService implements IHealthService {
       spin.fail('Redis check failed')
       return {
         healthy: false,
-        redis: { status: 'error', port: 6380, error: String(error) },
+        redis: { status: LOG_LEVEL.ERROR, port: 6380, error: String(error) },
       }
     }
   }
@@ -163,7 +163,7 @@ export class HealthService implements IHealthService {
       })
 
       checks[name] = {
-        status: result.success && result.stdout ? 'ok' : 'error',
+        status: result.success && result.stdout ? 'ok' : LOG_LEVEL.ERROR,
         port: config.port,
         url: config.url,
       }
@@ -186,7 +186,7 @@ export class HealthService implements IHealthService {
       if (!result.success || !result.stdout) {
         return {
           healthy: false,
-          agents: { status: 'error', count: 0 },
+          agents: { status: LOG_LEVEL.ERROR, count: 0 },
         }
       }
 
@@ -200,13 +200,13 @@ export class HealthService implements IHealthService {
       } catch {
         return {
           healthy: false,
-          agents: { status: 'error', count: 0 },
+          agents: { status: LOG_LEVEL.ERROR, count: 0 },
         }
       }
     } catch (error) {
       return {
         healthy: false,
-        agents: { status: 'error', count: 0, error: String(error) },
+        agents: { status: LOG_LEVEL.ERROR, count: 0, error: String(error) },
       }
     }
   }
@@ -218,7 +218,7 @@ export class HealthService implements IHealthService {
   private async checkDocker() {
     const result = await shell.exec('docker --version', { ignoreErrors: true })
     return {
-      status: result.success ? 'ok' : 'error',
+      status: result.success ? 'ok' : LOG_LEVEL.ERROR,
       version: result.stdout.trim(),
     }
   }
@@ -244,7 +244,7 @@ export class HealthService implements IHealthService {
   private async checkDisk() {
     const result = await shell.exec('df -h / | tail -1', { ignoreErrors: true })
     return {
-      status: result.success ? 'ok' : 'error',
+      status: result.success ? 'ok' : LOG_LEVEL.ERROR,
       usage: result.stdout.trim(),
     }
   }

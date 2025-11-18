@@ -73,7 +73,7 @@ Format your response as JSON.`;
         task_id: task.task_id,
         workflow_id: task.workflow_id,
         agent_id: this.agentId,
-        status: 'success',
+        status: WORKFLOW_STATUS.SUCCESS,
         result: {
           data: {
             analysis: analysisResult,

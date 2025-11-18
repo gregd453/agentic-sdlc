@@ -1,3 +1,7 @@
+import { TASK_PRIORITY } from '@agentic-sdlc/shared-types';
+import { WORKFLOW_TYPES } from '@agentic-sdlc/shared-types';
+import { AGENT_TYPES } from '@agentic-sdlc/shared-types';
+import { WORKFLOW_STATUS, TASK_STATUS } from '@agentic-sdlc/shared-types';
 import { randomUUID, createHash } from 'crypto';
 import Redis from 'ioredis';
 import { getAgentTypeForStage, WORKFLOW_STAGES, AgentEnvelope } from '@agentic-sdlc/shared-types';
@@ -448,7 +452,7 @@ export class WorkflowService {
     }
 
     await this.repository.update(workflowId, {
-      status: 'cancelled'
+      status: WORKFLOW_STATUS.CANCELLED
     });
 
     logger.info('Workflow cancelled', { workflow_id: workflowId });
@@ -519,8 +523,8 @@ export class WorkflowService {
       task_id: taskId,
       workflow_id: workflowId,
       agent_type: agentType as any,
-      status: 'pending',
-      priority: 'medium',
+      status: TASK_STATUS.PENDING,
+      priority: TASK_PRIORITY.MEDIUM,
       payload: envelope as any, // Store envelope in database
       retry_count: 0,
       max_retries: 3,
@@ -554,6 +558,19 @@ export class WorkflowService {
     if (this.messageBus) {
       const taskChannel = `agent:${agentType}:tasks`;
 
+      // SESSION #80 FIX: Verify envelope agent_type matches the channel being used
+      const envelopeAgentType = envelope.agent_type;
+      if (envelopeAgentType !== agentType) {
+        logger.warn('[SESSION #80 DEBUG] Agent type mismatch detected!', {
+          task_id: taskId,
+          workflow_id: workflowId,
+          stage,
+          expected_agent_type: agentType,
+          envelope_agent_type: envelopeAgentType,
+          severity: 'CRITICAL'
+        });
+      }
+
       try {
         await this.messageBus.publish(
           taskChannel,
@@ -569,8 +586,10 @@ export class WorkflowService {
           workflow_id: workflowId,
           stage,
           agent_type: agentType,
+          envelope_agent_type: envelopeAgentType,
           channel: taskChannel,
-          stream_mirrored: true
+          stream_mirrored: true,
+          note: 'SESSION #80 FIX: Verified agent_type mapping for e2e_testing'
         });
 
         // 🔍 WORKFLOW TRACE: Task created and published
@@ -881,7 +900,7 @@ export class WorkflowService {
 
       // Update task status
       await this.repository.updateTask(task_id, {
-        status: 'completed',
+        status: WORKFLOW_STATUS.COMPLETED,
         completed_at: new Date()
       });
 
@@ -944,13 +963,13 @@ export class WorkflowService {
           console.log('[DEBUG-TASK-3] 🔍 Checking if should create task', {
             workflow_id,
             status: updatedWorkflow.status,
-            isNotCompleted: updatedWorkflow.status !== 'completed',
-            isNotFailed: updatedWorkflow.status !== 'failed',
-            isNotCancelled: updatedWorkflow.status !== 'cancelled',
-            shouldCreateTask: updatedWorkflow.status !== 'completed' && updatedWorkflow.status !== 'failed' && updatedWorkflow.status !== 'cancelled'
+            isNotCompleted: updatedWorkflow.status !== WORKFLOW_STATUS.COMPLETED,
+            isNotFailed: updatedWorkflow.status !== WORKFLOW_STATUS.FAILED,
+            isNotCancelled: updatedWorkflow.status !== WORKFLOW_STATUS.CANCELLED,
+            shouldCreateTask: updatedWorkflow.status !== WORKFLOW_STATUS.COMPLETED && updatedWorkflow.status !== WORKFLOW_STATUS.FAILED && updatedWorkflow.status !== WORKFLOW_STATUS.CANCELLED
           });
 
-          if (updatedWorkflow.status !== 'completed' && updatedWorkflow.status !== 'failed' && updatedWorkflow.status !== 'cancelled') {
+          if (updatedWorkflow.status !== WORKFLOW_STATUS.COMPLETED && updatedWorkflow.status !== WORKFLOW_STATUS.FAILED && updatedWorkflow.status !== WORKFLOW_STATUS.CANCELLED) {
             console.log('[DEBUG-TASK-4] ✅ Creating task for next stage', {
               workflow_id,
               next_stage: updatedWorkflow.current_stage
@@ -1049,7 +1068,7 @@ export class WorkflowService {
 
     // Update task status
     await this.repository.updateTask(task_id, {
-      status: 'failed'
+      status: WORKFLOW_STATUS.FAILED
     });
 
     // Check retry count
@@ -1059,7 +1078,7 @@ export class WorkflowService {
     if (failedTask && failedTask.retry_count < failedTask.max_retries) {
       // Retry the task
       await this.repository.updateTask(task_id, {
-        status: 'pending',
+        status: TASK_STATUS.PENDING,
         retry_count: failedTask.retry_count + 1
       });
 
@@ -1165,20 +1184,20 @@ export class WorkflowService {
     // Map agent type to enum value
     let agentTypeEnum: string;
     switch (agentType) {
-      case 'scaffold':
-        agentTypeEnum = 'scaffold';
+      case AGENT_TYPES.SCAFFOLD:
+        agentTypeEnum = AGENT_TYPES.SCAFFOLD;
         break;
-      case 'validation':
-        agentTypeEnum = 'validation';
+      case AGENT_TYPES.VALIDATION:
+        agentTypeEnum = AGENT_TYPES.VALIDATION;
         break;
       case 'e2e':
-        agentTypeEnum = 'e2e_test';  // Note: enum uses e2e_test
+        agentTypeEnum = AGENT_TYPES.E2E_TEST;  // Note: enum uses e2e_test
         break;
-      case 'integration':
-        agentTypeEnum = 'integration';
+      case AGENT_TYPES.INTEGRATION:
+        agentTypeEnum = AGENT_TYPES.INTEGRATION;
         break;
-      case 'deployment':
-        agentTypeEnum = 'deployment';
+      case AGENT_TYPES.DEPLOYMENT:
+        agentTypeEnum = AGENT_TYPES.DEPLOYMENT;
         break;
       default:
         throw new Error(`Unknown agent type: ${agentType}`);
@@ -1195,8 +1214,8 @@ export class WorkflowService {
       agent_type: agentTypeEnum,
 
       // Execution Control
-      priority: 'medium' as const,
-      status: 'pending' as const,
+      priority: TASK_PRIORITY.MEDIUM as const,
+      status: TASK_STATUS.PENDING as const,
       constraints: {
         timeout_ms: 300000,
         max_retries: 3,
@@ -1231,10 +1250,10 @@ export class WorkflowService {
 
     // Build agent-specific envelope based on type
     switch (agentType) {
-      case 'scaffold': {
+      case AGENT_TYPES.SCAFFOLD: {
         return {
           ...envelopeBase,
-          agent_type: 'scaffold' as const,
+          agent_type: AGENT_TYPES.SCAFFOLD as const,
           payload: {
             project_type: workflow.type,
             name: workflow.name,
@@ -1252,7 +1271,7 @@ export class WorkflowService {
         };
       }
 
-      case 'validation': {
+      case AGENT_TYPES.VALIDATION: {
         const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
         const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
         const projectPath = scaffoldOutput.output_path ||
@@ -1282,7 +1301,7 @@ export class WorkflowService {
 
         return {
           ...envelopeBase,
-          agent_type: 'validation' as const,
+          agent_type: AGENT_TYPES.VALIDATION as const,
           payload: {
             file_paths: filePaths,
             working_directory: projectPath,
@@ -1304,9 +1323,17 @@ export class WorkflowService {
         const projectPath = scaffoldOutput.output_path ||
                            `${projectRoot}/${workflow.id}/${scaffoldOutput.project_name || workflow.name}`;
 
+        logger.info('[SESSION #80 FIX] Building e2e_testing envelope - agent type mapping', {
+          input_agent_type: agentType,
+          mapped_agent_type_enum: agentTypeEnum,
+          final_agent_type_in_return: agentTypeEnum,  // Use mapped value, not hardcoded
+          issue_resolved: 'Using agentTypeEnum instead of hardcoded e2e'
+        });
+
+        // SESSION #80 FIX: envelopeBase already has agent_type set from agentTypeEnum
+        // Don't override it - just add the payload
         return {
           ...envelopeBase,
-          agent_type: 'e2e' as const,
           payload: {
             working_directory: projectPath,
             entry_points: scaffoldOutput.entry_points || [],
@@ -1318,7 +1345,7 @@ export class WorkflowService {
         };
       }
 
-      case 'integration': {
+      case AGENT_TYPES.INTEGRATION: {
         const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
         const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
         const projectPath = scaffoldOutput.output_path ||
@@ -1326,7 +1353,7 @@ export class WorkflowService {
 
         return {
           ...envelopeBase,
-          agent_type: 'integration' as const,
+          agent_type: AGENT_TYPES.INTEGRATION as const,
           payload: {
             working_directory: projectPath,
             api_endpoints: [],
@@ -1336,7 +1363,7 @@ export class WorkflowService {
         };
       }
 
-      case 'deployment': {
+      case AGENT_TYPES.DEPLOYMENT: {
         const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
         const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
         const projectPath = scaffoldOutput.output_path ||
@@ -1344,7 +1371,7 @@ export class WorkflowService {
 
         return {
           ...envelopeBase,
-          agent_type: 'deployment' as const,
+          agent_type: AGENT_TYPES.DEPLOYMENT as const,
           payload: {
             working_directory: projectPath,
             deployment_target: 'docker' as const,
@@ -1379,7 +1406,7 @@ export class WorkflowService {
           ...workflowData
         };
 
-      case 'validation': {
+      case AGENT_TYPES.VALIDATION: {
         // Validation needs paths from scaffolding
         const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
         const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
@@ -1441,7 +1468,7 @@ export class WorkflowService {
         };
       }
 
-      case 'integration': {
+      case AGENT_TYPES.INTEGRATION: {
         // Integration needs all previous context
         const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
         const e2eOutput = stageOutputs.e2e_testing || {};
@@ -1457,7 +1484,7 @@ export class WorkflowService {
         };
       }
 
-      case 'deployment': {
+      case AGENT_TYPES.DEPLOYMENT: {
         // Deployment needs everything
         const scaffoldOutput = stageOutputs.scaffolding || stageOutputs.initialization || {};
         const projectRoot = process.env.OUTPUT_DIR || '/Users/Greg/Projects/apps/zyp/agent-sdlc/ai.output';
@@ -1500,7 +1527,7 @@ export class WorkflowService {
         };
       }
 
-      case 'validation':
+      case AGENT_TYPES.VALIDATION:
         return {
           overall_status: output.overall_status,
           passed_checks: output.summary?.passed_checks,
@@ -1516,13 +1543,13 @@ export class WorkflowService {
           videos: output.videos
         };
 
-      case 'integration':
+      case AGENT_TYPES.INTEGRATION:
         return {
           integration_results: output.integration_results,
           api_tests: output.api_tests
         };
 
-      case 'deployment':
+      case AGENT_TYPES.DEPLOYMENT:
         return {
           deployment_url: output.deployment_url,
           container_id: output.container_id,

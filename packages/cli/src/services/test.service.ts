@@ -14,7 +14,7 @@ const execAsync = promisify(exec)
 export interface TestResult {
   name: string
   tier: 1 | 2 | 3 | 4
-  status: 'passed' | 'failed' | 'skipped'
+  status: 'passed' | WORKFLOW_STATUS.FAILED | 'skipped'
   duration: number
   output?: string
   error?: string
@@ -175,7 +175,7 @@ export class TestService {
         return {
           name: scriptName,
           tier,
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           duration,
           error: `Test timed out after ${timeout}ms`,
         }
@@ -186,7 +186,7 @@ export class TestService {
       return {
         name: scriptName,
         tier,
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         duration,
         error: errorMsg,
       }
@@ -257,7 +257,7 @@ export class TestService {
           {
             name: 'vitest',
             tier: 1,
-            status: 'failed',
+            status: WORKFLOW_STATUS.FAILED,
             duration,
             error: errorMsg,
           },
@@ -325,7 +325,7 @@ export class TestService {
 
       // Aggregate results
       const passed = results.filter((r) => r.status === 'passed').length
-      const failed = results.filter((r) => r.status === 'failed').length
+      const failed = results.filter((r) => r.status === WORKFLOW_STATUS.FAILED).length
       const skipped = results.filter((r) => r.status === 'skipped').length
       const totalDuration = Date.now() - startTime
 
@@ -359,7 +359,7 @@ export class TestService {
           {
             name: 'test-runner',
             tier: 1,
-            status: 'failed',
+            status: WORKFLOW_STATUS.FAILED,
             duration,
             error: (error as Error).message,
           },

@@ -55,16 +55,16 @@ export class StatsRepository {
         stats.total_workflows += count
 
         switch (row.status) {
-          case 'running':
+          case WORKFLOW_STATUS.RUNNING:
             stats.running_workflows = count
             break
-          case 'completed':
+          case WORKFLOW_STATUS.COMPLETED:
             stats.completed_workflows = count
             break
-          case 'failed':
+          case WORKFLOW_STATUS.FAILED:
             stats.failed_workflows = count
             break
-          case 'cancelled':
+          case WORKFLOW_STATUS.CANCELLED:
             stats.cancelled_workflows = count
             break
           case 'paused':
@@ -122,9 +122,9 @@ export class StatsRepository {
             AND completed_at IS NOT NULL
         `
 
-        const completedTasks = statusBreakdown.find((s: any) => s.status === 'completed')?._count.id || 0
-        const failedTasks = statusBreakdown.find((s: any) => s.status === 'failed')?._count.id || 0
-        const cancelledTasks = statusBreakdown.find((s: any) => s.status === 'cancelled')?._count.id || 0
+        const completedTasks = statusBreakdown.find((s: any) => s.status === WORKFLOW_STATUS.COMPLETED)?._count.id || 0
+        const failedTasks = statusBreakdown.find((s: any) => s.status === WORKFLOW_STATUS.FAILED)?._count.id || 0
+        const cancelledTasks = statusBreakdown.find((s: any) => s.status === WORKFLOW_STATUS.CANCELLED)?._count.id || 0
         const totalTasks = row._count.id
 
         agentStats.push({
@@ -226,9 +226,9 @@ export class StatsRepository {
         const count = row._count.id
         statsByType[type].total += count
 
-        if (row.status === 'completed') {
+        if (row.status === WORKFLOW_STATUS.COMPLETED) {
           statsByType[type].completed += count
-        } else if (row.status === 'failed') {
+        } else if (row.status === WORKFLOW_STATUS.FAILED) {
           statsByType[type].failed += count
         }
       })

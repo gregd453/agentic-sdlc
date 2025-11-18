@@ -11,8 +11,8 @@ import { AgentFactoryEntry, AgentFactoryError } from './agent-factory';
  *   const registry = new AgentRegistry();
  *   registry.registerAgent(scaffoldMetadata, scaffoldFactory);                    // Global agent
  *   registry.registerAgent(platformMetadata, platformFactory, 'web-app-platform'); // Platform-scoped agent
- *   const agent = await registry.createAgent('scaffold', messageBus);             // Lookup any agent
- *   const agent = await registry.createAgent('scaffold', messageBus, {}, 'web-app-platform'); // Platform-specific
+ *   const agent = await registry.createAgent(AGENT_TYPES.SCAFFOLD, messageBus);             // Lookup any agent
+ *   const agent = await registry.createAgent(AGENT_TYPES.SCAFFOLD, messageBus, {}, 'web-app-platform'); // Platform-specific
  */
 export class AgentRegistry {
   // Key format: 'agentType' for global, 'agentType:platformId' for platform-scoped

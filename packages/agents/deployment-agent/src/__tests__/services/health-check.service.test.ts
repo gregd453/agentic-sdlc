@@ -73,7 +73,7 @@ describe('HealthCheckService', () => {
       let callCount = 0;
       const mockRequest = {
         on: vi.fn((event, callback) => {
-          if (event === 'error') {
+          if (event === LOG_LEVEL.ERROR) {
             callCount++;
             callback(new Error('Connection refused'));
           }

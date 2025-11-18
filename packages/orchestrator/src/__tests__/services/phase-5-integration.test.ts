@@ -256,8 +256,8 @@ describe('Phase 5: Dashboard & Monitoring - Integration Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Test Workflow for Phase 5',
-          type: 'feature',
-          priority: 'medium'
+          type: WORKFLOW_TYPES.FEATURE,
+          priority: TASK_PRIORITY.MEDIUM
         }
       })
 

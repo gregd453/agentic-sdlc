@@ -26,7 +26,7 @@ describe.skip('PipelineExecutorService', () => {
     agentDispatcher = {
       dispatchTask: vi.fn().mockResolvedValue({
         agent_id: 'agent-1',
-        status: 'success',
+        status: WORKFLOW_STATUS.SUCCESS,
         result: {
           data: {
             line_coverage: 90,
@@ -80,7 +80,7 @@ describe.skip('PipelineExecutorService', () => {
           {
             id: 'build',
             name: 'Build',
-            agent_type: 'scaffold',
+            agent_type: AGENT_TYPES.SCAFFOLD,
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -168,7 +168,7 @@ describe.skip('PipelineExecutorService', () => {
           {
             id: 'test-stage',
             name: 'Test Stage',
-            agent_type: 'validation',
+            agent_type: AGENT_TYPES.VALIDATION,
             action: 'test',
             parameters: { test_type: 'unit' },
             dependencies: [],
@@ -195,7 +195,7 @@ describe.skip('PipelineExecutorService', () => {
       // Verify agent was called
       expect(agentDispatcher.dispatchTask).toHaveBeenCalledWith(
         expect.objectContaining({
-          agent_type: 'validation',
+          agent_type: AGENT_TYPES.VALIDATION,
           payload: expect.objectContaining({
             action: 'test',
             parameters: { test_type: 'unit' }
@@ -215,7 +215,7 @@ describe.skip('PipelineExecutorService', () => {
           {
             id: 'test-stage',
             name: 'Test Stage',
-            agent_type: 'validation',
+            agent_type: AGENT_TYPES.VALIDATION,
             action: 'test',
             parameters: {},
             dependencies: [],
@@ -249,7 +249,7 @@ describe.skip('PipelineExecutorService', () => {
 
       // Stage should pass since mock returns 90% coverage
       expect(currentExecution?.stage_results).toHaveLength(1);
-      expect(currentExecution?.stage_results[0].status).toBe('success');
+      expect(currentExecution?.stage_results[0].status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(currentExecution?.stage_results[0].quality_gate_results).toHaveLength(1);
       expect(currentExecution?.stage_results[0].quality_gate_results[0].passed).toBe(true);
     });
@@ -260,7 +260,7 @@ describe.skip('PipelineExecutorService', () => {
       // Mock agent to return low coverage
       vi.mocked(agentDispatcher.dispatchTask).mockResolvedValueOnce({
         agent_id: 'agent-1',
-        status: 'success',
+        status: WORKFLOW_STATUS.SUCCESS,
         result: {
           data: {
             line_coverage: 50 // Below threshold
@@ -282,7 +282,7 @@ describe.skip('PipelineExecutorService', () => {
           {
             id: 'test-stage',
             name: 'Test Stage',
-            agent_type: 'validation',
+            agent_type: AGENT_TYPES.VALIDATION,
             action: 'test',
             parameters: {},
             dependencies: [],
@@ -315,7 +315,7 @@ describe.skip('PipelineExecutorService', () => {
       const currentExecution = await executor.getExecution(execution.id);
 
       // Stage should fail
-      expect(currentExecution?.stage_results[0].status).toBe('failed');
+      expect(currentExecution?.stage_results[0].status).toBe(WORKFLOW_STATUS.FAILED);
       expect(currentExecution?.stage_results[0].error?.code).toBe('QUALITY_GATE_FAILED');
       */
     });
@@ -330,7 +330,7 @@ describe.skip('PipelineExecutorService', () => {
           {
             id: 'build',
             name: 'Build',
-            agent_type: 'scaffold',
+            agent_type: AGENT_TYPES.SCAFFOLD,
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -342,11 +342,11 @@ describe.skip('PipelineExecutorService', () => {
           {
             id: 'test',
             name: 'Test',
-            agent_type: 'validation',
+            agent_type: AGENT_TYPES.VALIDATION,
             action: 'test',
             parameters: {},
             dependencies: [
-              { stage_id: 'build', required: true, condition: 'success' }
+              { stage_id: 'build', required: true, condition: WORKFLOW_STATUS.SUCCESS }
             ],
             quality_gates: [],
             timeout_ms: 300000,
@@ -444,7 +444,7 @@ describe.skip('PipelineExecutorService', () => {
       await executor.resumeExecution(execution.id);
 
       const retrieved = await executor.getExecution(execution.id);
-      expect(retrieved?.status).toBe('running');
+      expect(retrieved?.status).toBe(WORKFLOW_STATUS.RUNNING);
     });
 
     it('should cancel pipeline execution', async () => {

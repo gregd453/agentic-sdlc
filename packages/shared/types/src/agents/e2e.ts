@@ -17,7 +17,7 @@ export const E2EActionEnum = z.enum([
 export const TestTypeEnum = z.enum([
   'ui',
   'api',
-  'integration',
+  AGENT_TYPES.INTEGRATION,
   'smoke',
   'regression',
   'accessibility'
@@ -33,9 +33,9 @@ export const BrowserEnum = z.enum([
 
 export const TestStatusEnum = z.enum([
   'passed',
-  'failed',
+  WORKFLOW_STATUS.FAILED,
   'skipped',
-  'pending',
+  TASK_STATUS.PENDING,
   'flaky'
 ]);
 
@@ -117,7 +117,7 @@ export const TestScenarioSchema = z.object({
   name: z.string(),
   description: z.string(),
   type: TestTypeEnum,
-  priority: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+  priority: z.enum([TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, TASK_PRIORITY.CRITICAL]).default(TASK_PRIORITY.MEDIUM),
   steps: z.array(z.object({
     step_number: z.number(),
     action: z.string(),
@@ -219,7 +219,7 @@ export const E2EResultSchema = AgentResultSchema.extend({
       maintainability: z.number().min(0).max(100),
       suggestions: z.array(z.object({
         type: z.enum(['missing-test', 'improve-assertion', 'add-wait', 'refactor', 'data-driven']),
-        priority: z.enum(['low', 'medium', 'high']),
+        priority: z.enum([TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH]),
         message: z.string(),
         target_test: z.string().optional(),
       })),
@@ -279,7 +279,7 @@ export function createE2ETask(
     workflow_id: workflowId as any,
     agent_type: 'e2e',
     action: 'generate_tests',
-    status: 'pending',
+    status: TASK_STATUS.PENDING,
     priority: 50,
     payload: {
       requirements,

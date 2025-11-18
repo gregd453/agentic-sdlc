@@ -36,9 +36,9 @@ function createTestTask(filePaths: string[], validationTypes?: string[], overrid
   return {
     task_id: 'task_test-123',
     workflow_id: 'wf_test-123',
-    agent_type: 'validation' as const,
+    agent_type: AGENT_TYPES.VALIDATION as const,
     action: 'validate_code' as const,
-    status: 'pending' as const,
+    status: TASK_STATUS.PENDING as const,
     priority: 50,
     payload: {
       file_paths: filePaths,
@@ -116,7 +116,7 @@ describe('ValidationAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(result.task_id).toBe(task.task_id);
       expect(result.workflow_id).toBe(task.workflow_id);
       expect(result.result).toBeDefined();
@@ -138,7 +138,7 @@ describe('ValidationAgent', () => {
     it('should return failure status when validation fails', async () => {
       vi.mocked(tsValidator.validateTypeScript).mockResolvedValue({
         type: 'typescript',
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         duration_ms: 1000,
         errors: ['Type error in file.ts']
       } as ValidationCheckResult);
@@ -147,7 +147,7 @@ describe('ValidationAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('failed');
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED);
       expect(result.error).toBeDefined();
     });
 
@@ -163,7 +163,7 @@ describe('ValidationAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
     });
 
     it('should throw error for invalid context', async () => {
@@ -197,14 +197,14 @@ describe('ValidationAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       // next_stage is determined by orchestrator, not agent
     });
 
     it('should not include next_stage in failed results', async () => {
       vi.mocked(tsValidator.validateTypeScript).mockResolvedValue({
         type: 'typescript',
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         duration_ms: 1000,
         errors: ['Type error']
       } as ValidationCheckResult);
@@ -213,7 +213,7 @@ describe('ValidationAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('failed');
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED);
     });
   });
 });

@@ -16,7 +16,7 @@ export type ValidationTaskContext = z.infer<typeof ValidationTaskContextSchema>;
 // Individual validation result
 export const ValidationCheckResultSchema = z.object({
   type: z.enum(['typescript', 'eslint', 'coverage', 'security']),
-  status: z.enum(['passed', 'failed', 'warning', 'skipped']),
+  status: z.enum(['passed', WORKFLOW_STATUS.FAILED, 'warning', 'skipped']),
   duration_ms: z.number(),
   errors: z.array(z.string()).optional(),
   warnings: z.array(z.string()).optional(),
@@ -52,7 +52,7 @@ export const ESLintValidationDetailsSchema = z.object({
     file: z.string(),
     line: z.number(),
     column: z.number(),
-    severity: z.enum(['error', 'warning']),
+    severity: z.enum([LOG_LEVEL.ERROR, 'warning']),
     message: z.string(),
     rule_id: z.string().optional()
   })).optional()
@@ -85,7 +85,7 @@ export const SecurityValidationDetailsSchema = z.object({
   total_vulnerabilities: z.number(),
   vulnerabilities: z.array(z.object({
     id: z.string(),
-    severity: z.enum(['critical', 'high', 'medium', 'low']),
+    severity: z.enum([TASK_PRIORITY.CRITICAL, TASK_PRIORITY.HIGH, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.LOW]),
     package: z.string(),
     title: z.string(),
     description: z.string().optional(),
@@ -123,7 +123,7 @@ export const ValidationReportSchema = z.object({
   workflow_id: z.string().uuid(),
   timestamp: z.string(),
   project_path: z.string(),
-  overall_status: z.enum(['passed', 'failed', 'warning']),
+  overall_status: z.enum(['passed', WORKFLOW_STATUS.FAILED, 'warning']),
   validation_checks: z.array(ValidationCheckResultSchema),
   quality_gates: QualityGateResultSchema,
   summary: z.object({

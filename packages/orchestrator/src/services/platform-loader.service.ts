@@ -1,3 +1,4 @@
+import { WORKFLOW_TYPES } from '@agentic-sdlc/shared-types';
 /**
  * PlatformLoader Service - Loads and caches platform definitions
  *
@@ -113,8 +114,8 @@ export class PlatformLoaderService {
           layer: PlatformLayer.APPLICATION,
           description: 'Legacy platform for backward compatibility',
           config: {
-            legacyWorkflowTypes: ['app', 'feature', 'bugfix'],
-            legacyStages: ['scaffold', 'validation', 'e2e_testing', 'integration']
+            legacyWorkflowTypes: [WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX],
+            legacyStages: [AGENT_TYPES.SCAFFOLD, AGENT_TYPES.VALIDATION, 'e2e_testing', AGENT_TYPES.INTEGRATION]
           },
           enabled: true
         }

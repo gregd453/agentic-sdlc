@@ -40,7 +40,7 @@ describe('ScaffoldAgent', () => {
     });
 
     it('should have scaffold agent type', () => {
-      // The agent type is 'scaffold' as defined in constructor
+      // The agent type is AGENT_TYPES.SCAFFOLD as defined in constructor
       expect(agent).toBeInstanceOf(ScaffoldAgent);
     });
   });
@@ -78,11 +78,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-123',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-service',
         description: 'A test microservice for testing',
         requirements: 'Create a simple REST API service',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service',
           output_path: testOutputDir,
@@ -93,7 +93,7 @@ describe('ScaffoldAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(result.task_id).toBe(task.task_id);
       expect(result.workflow_id).toBe(task.workflow_id);
       expect((result.output as any).files_generated).toBeDefined();
@@ -104,11 +104,11 @@ describe('ScaffoldAgent', () => {
       const invalidTask: any = {
         task_id: 'task_test-456',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: '',
         description: '',
         requirements: '',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service'
         }
@@ -130,11 +130,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-789',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-service',
         description: 'Test',
         requirements: 'Test requirements',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service',
           output_path: testOutputDir
@@ -154,11 +154,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-101',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-service',
         description: 'Test',
         requirements: 'Test requirements',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service',
           output_path: testOutputDir
@@ -191,11 +191,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-202',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-service',
         description: 'Test service',
         requirements: 'Create service',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service',
           output_path: testOutputDir
@@ -204,13 +204,13 @@ describe('ScaffoldAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
     });
 
     it('should generate correct structure for app type', async () => {
       const mockResponse = JSON.stringify({
         project_name: 'test-app',
-        project_type: 'app',
+        project_type: WORKFLOW_TYPES.APP,
         summary: 'Test app',
         components: [
           { name: 'HomePage', type: 'component', description: 'Home page' }
@@ -225,26 +225,26 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-303',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-app',
         description: 'Test app',
         requirements: 'Create app',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
-          project_type: 'app',
+          project_type: WORKFLOW_TYPES.APP,
           output_path: testOutputDir
         }
       };
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
     });
 
     it('should generate correct structure for feature type', async () => {
       const mockResponse = JSON.stringify({
         project_name: 'test-feature',
-        project_type: 'feature',
+        project_type: WORKFLOW_TYPES.FEATURE,
         summary: 'Test feature',
         components: [
           { name: 'FeatureComponent', type: 'component', description: 'Feature' }
@@ -259,20 +259,20 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-404',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-feature',
         description: 'Test feature',
         requirements: 'Create feature',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
-          project_type: 'feature',
+          project_type: WORKFLOW_TYPES.FEATURE,
           output_path: testOutputDir
         }
       };
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
     });
 
     it('should generate correct structure for capability type', async () => {
@@ -293,11 +293,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-505',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-capability',
         description: 'Test capability',
         requirements: 'Create capability',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'capability',
           output_path: testOutputDir
@@ -306,7 +306,7 @@ describe('ScaffoldAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
     });
   });
 
@@ -336,11 +336,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-606',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-service',
         description: 'Test',
         requirements: 'Test',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service',
           output_path: testOutputDir
@@ -349,7 +349,7 @@ describe('ScaffoldAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect((result.output as any).structure.files.some(
         (f: any) => f.path.includes('types')
       )).toBe(true);
@@ -375,11 +375,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-707',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-service',
         description: 'Test',
         requirements: 'Test',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service',
           output_path: testOutputDir,
@@ -389,7 +389,7 @@ describe('ScaffoldAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect((result.output as any).structure.files.some(
         (f: any) => f.type === 'test'
       )).toBe(true);
@@ -413,11 +413,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-808',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-service',
         description: 'Test',
         requirements: 'Test',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service',
           output_path: testOutputDir,
@@ -427,7 +427,7 @@ describe('ScaffoldAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect((result.output as any).structure.files.every(
         (f: any) => f.type !== 'test'
       )).toBe(true);
@@ -451,11 +451,11 @@ describe('ScaffoldAgent', () => {
       const task: TaskAssignment = {
         task_id: 'task_test-909',
         workflow_id: 'wf_test-123',
-        type: 'scaffold',
+        type: AGENT_TYPES.SCAFFOLD,
         name: 'test-service',
         description: 'Test',
         requirements: 'Test',
-        priority: 'high',
+        priority: TASK_PRIORITY.HIGH,
         payload: {
           project_type: 'service',
           output_path: testOutputDir
@@ -464,7 +464,7 @@ describe('ScaffoldAgent', () => {
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(result.metrics).toBeDefined();
       expect(result.metrics!.duration_ms).toBeGreaterThan(0);
     });

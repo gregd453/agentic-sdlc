@@ -74,7 +74,7 @@ export class GenericMockAgent extends BaseAgent {
    * Execute mock task with metadata-driven behavior
    *
    * Supports behavior metadata in task.payload.behavior_metadata:
-   * - mode: 'success' | 'failure' | 'timeout' | 'partial' | 'crash'
+   * - mode: WORKFLOW_STATUS.SUCCESS | 'failure' | 'timeout' | 'partial' | 'crash'
    * - error: { code, message, retryable }
    * - partial: { total_items, successful_items, failed_items }
    * - output: { custom output overrides }
@@ -180,7 +180,7 @@ export class GenericMockAgent extends BaseAgent {
     switch (agentType) {
       case AGENT_TYPES.SCAFFOLD:
         return {
-          status: 'success',
+          status: WORKFLOW_STATUS.SUCCESS,
           project_name: projectName,
           output_path: `/mock/output/${projectName}`,
           files_generated: [
@@ -188,14 +188,14 @@ export class GenericMockAgent extends BaseAgent {
             { path: 'package.json', lines: 30 },
             { path: 'README.md', lines: 20 }
           ],
-          structure_type: (task.payload as any)?.project_type || 'app',
+          structure_type: (task.payload as any)?.project_type || WORKFLOW_TYPES.APP,
           platform_id: platformId,
           message: `Mock scaffold agent successfully generated structure for ${projectName}`
         };
 
       case AGENT_TYPES.VALIDATION:
         return {
-          status: 'success',
+          status: WORKFLOW_STATUS.SUCCESS,
           validation_result: 'passed',
           errors: [],
           warnings: [],
@@ -206,7 +206,7 @@ export class GenericMockAgent extends BaseAgent {
 
       case AGENT_TYPES.E2E:
         return {
-          status: 'success',
+          status: WORKFLOW_STATUS.SUCCESS,
           tests_run: 25,
           tests_passed: 25,
           tests_failed: 0,
@@ -217,7 +217,7 @@ export class GenericMockAgent extends BaseAgent {
 
       case AGENT_TYPES.INTEGRATION:
         return {
-          status: 'success',
+          status: WORKFLOW_STATUS.SUCCESS,
           tests_run: 15,
           tests_passed: 15,
           tests_failed: 0,
@@ -228,7 +228,7 @@ export class GenericMockAgent extends BaseAgent {
 
       case AGENT_TYPES.DEPLOYMENT:
         return {
-          status: 'success',
+          status: WORKFLOW_STATUS.SUCCESS,
           deployment_status: 'deployed',
           endpoint: `https://mock-${projectName}.example.com`,
           deployment_time_ms: 30000,
@@ -238,7 +238,7 @@ export class GenericMockAgent extends BaseAgent {
 
       default:
         return {
-          status: 'success',
+          status: WORKFLOW_STATUS.SUCCESS,
           agent_type: agentType,
           stage,
           platform_id: platformId,

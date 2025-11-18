@@ -61,7 +61,7 @@ export async function validateTypeScript(
 
       return {
         type: 'typescript',
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         duration_ms: Date.now() - startTime,
         errors: errors.map(e => `${e.file}:${e.line}:${e.column} - ${e.message}`),
         details: {
@@ -75,7 +75,7 @@ export async function validateTypeScript(
   } catch (error) {
     return {
       type: 'typescript',
-      status: 'failed',
+      status: WORKFLOW_STATUS.FAILED,
       duration_ms: Date.now() - startTime,
       errors: [`TypeScript validation failed: ${error instanceof Error ? error.message : String(error)}`]
     };

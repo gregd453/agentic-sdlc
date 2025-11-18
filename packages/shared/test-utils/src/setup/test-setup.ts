@@ -193,16 +193,16 @@ export function createTestLogger() {
 
   return {
     info: vi.fn((message: string, meta?: any) => {
-      logs.push({ level: 'info', message, meta });
+      logs.push({ level: LOG_LEVEL.INFO, message, meta });
     }),
     error: vi.fn((message: string, meta?: any) => {
-      logs.push({ level: 'error', message, meta });
+      logs.push({ level: LOG_LEVEL.ERROR, message, meta });
     }),
     warn: vi.fn((message: string, meta?: any) => {
-      logs.push({ level: 'warn', message, meta });
+      logs.push({ level: LOG_LEVEL.WARN, message, meta });
     }),
     debug: vi.fn((message: string, meta?: any) => {
-      logs.push({ level: 'debug', message, meta });
+      logs.push({ level: LOG_LEVEL.DEBUG, message, meta });
     }),
     getLogs: () => [...logs],
     clearLogs: () => {

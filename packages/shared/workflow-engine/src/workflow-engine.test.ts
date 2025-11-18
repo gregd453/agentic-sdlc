@@ -18,25 +18,25 @@ describe('WorkflowEngine', () => {
       name: 'test-workflow',
       version: '1.0.0',
       description: 'Test workflow',
-      start_stage: 'scaffold',
+      start_stage: AGENT_TYPES.SCAFFOLD,
       stages: {
         scaffold: {
           name: 'Scaffold Stage',
-          agent_type: 'scaffold',
+          agent_type: AGENT_TYPES.SCAFFOLD,
           timeout_ms: 60000,
           max_retries: 3,
           on_success: 'validate'
         },
         validate: {
           name: 'Validation Stage',
-          agent_type: 'validation',
+          agent_type: AGENT_TYPES.VALIDATION,
           timeout_ms: 60000,
           max_retries: 2,
           on_success: 'deploy'
         },
         deploy: {
           name: 'Deployment Stage',
-          agent_type: 'deployment',
+          agent_type: AGENT_TYPES.DEPLOYMENT,
           timeout_ms: 120000,
           max_retries: 1
         }
@@ -118,7 +118,7 @@ describe('WorkflowEngine', () => {
   describe('getStartStage', () => {
     it('should return start stage name', () => {
       const engine = new WorkflowEngine(basicWorkflow);
-      expect(engine.getStartStage()).toBe('scaffold');
+      expect(engine.getStartStage()).toBe(AGENT_TYPES.SCAFFOLD);
     });
   });
 
@@ -127,7 +127,7 @@ describe('WorkflowEngine', () => {
       const engine = new WorkflowEngine(basicWorkflow);
       const stages = engine.getStages();
 
-      expect(stages).toContain('scaffold');
+      expect(stages).toContain(AGENT_TYPES.SCAFFOLD);
       expect(stages).toContain('validate');
       expect(stages).toContain('deploy');
       expect(stages).toHaveLength(3);
@@ -137,10 +137,10 @@ describe('WorkflowEngine', () => {
   describe('getStageConfig', () => {
     it('should return stage configuration', () => {
       const engine = new WorkflowEngine(basicWorkflow);
-      const config = engine.getStageConfig('scaffold');
+      const config = engine.getStageConfig(AGENT_TYPES.SCAFFOLD);
 
       expect(config.name).toBe('Scaffold Stage');
-      expect(config.agent_type).toBe('scaffold');
+      expect(config.agent_type).toBe(AGENT_TYPES.SCAFFOLD);
       expect(config.timeout_ms).toBe(60000);
     });
 
@@ -156,7 +156,7 @@ describe('WorkflowEngine', () => {
   describe('getNextStage', () => {
     it('should return on_success stage', () => {
       const engine = new WorkflowEngine(basicWorkflow);
-      const next = engine.getNextStage('scaffold', 'success');
+      const next = engine.getNextStage(AGENT_TYPES.SCAFFOLD, WORKFLOW_STATUS.SUCCESS);
 
       expect(next).toBe('validate');
     });
@@ -167,14 +167,14 @@ describe('WorkflowEngine', () => {
       scaffold.on_failure = 'validate';
 
       const engine2 = new WorkflowEngine(basicWorkflow);
-      const next = engine2.getNextStage('scaffold', 'failure');
+      const next = engine2.getNextStage(AGENT_TYPES.SCAFFOLD, 'failure');
 
       expect(next).toBe('validate');
     });
 
     it('should return null if no on_success defined', () => {
       const engine = new WorkflowEngine(basicWorkflow);
-      const next = engine.getNextStage('deploy', 'success');
+      const next = engine.getNextStage('deploy', WORKFLOW_STATUS.SUCCESS);
 
       expect(next).toBeNull();
     });
@@ -191,7 +191,7 @@ describe('WorkflowEngine', () => {
       basicWorkflow.stages.scaffold.on_failure = 'deploy';
       const engine2 = new WorkflowEngine(basicWorkflow);
 
-      const next = engine2.getNextStage('scaffold', 'timeout');
+      const next = engine2.getNextStage(AGENT_TYPES.SCAFFOLD, 'timeout');
       expect(next).toBe('deploy');
     });
   });
@@ -269,7 +269,7 @@ describe('WorkflowEngine', () => {
       const context = engine.createInitialContext('wf-123');
 
       expect(context.workflow_id).toBe('wf-123');
-      expect(context.current_stage).toBe('scaffold');
+      expect(context.current_stage).toBe(AGENT_TYPES.SCAFFOLD);
       expect(context.stage_results).toEqual({});
       expect(context.input_data).toEqual({});
     });
@@ -299,17 +299,17 @@ describe('WorkflowEngine', () => {
       const context = engine.createInitialContext('wf-123');
 
       engine.recordStageResult(context, {
-        stage_name: 'scaffold',
-        outcome: 'success',
+        stage_name: AGENT_TYPES.SCAFFOLD,
+        outcome: WORKFLOW_STATUS.SUCCESS,
         output: { app_id: 'app-123' },
         attempts: 1,
         duration_ms: 5000,
         timestamp: Date.now()
       });
 
-      expect(context.stage_results['scaffold']).toBeDefined();
-      expect(context.stage_results['scaffold'].outcome).toBe('success');
-      expect(context.stage_results['scaffold'].output).toEqual({ app_id: 'app-123' });
+      expect(context.stage_results[AGENT_TYPES.SCAFFOLD]).toBeDefined();
+      expect(context.stage_results[AGENT_TYPES.SCAFFOLD].outcome).toBe(WORKFLOW_STATUS.SUCCESS);
+      expect(context.stage_results[AGENT_TYPES.SCAFFOLD].output).toEqual({ app_id: 'app-123' });
     });
 
     it('should record error on failure', () => {
@@ -317,7 +317,7 @@ describe('WorkflowEngine', () => {
       const context = engine.createInitialContext('wf-123');
 
       engine.recordStageResult(context, {
-        stage_name: 'scaffold',
+        stage_name: AGENT_TYPES.SCAFFOLD,
         outcome: 'failure',
         error: 'Scaffold failed: template not found',
         attempts: 1,
@@ -325,7 +325,7 @@ describe('WorkflowEngine', () => {
         timestamp: Date.now()
       });
 
-      expect(context.stage_results['scaffold'].error).toBe('Scaffold failed: template not found');
+      expect(context.stage_results[AGENT_TYPES.SCAFFOLD].error).toBe('Scaffold failed: template not found');
     });
   });
 
@@ -335,8 +335,8 @@ describe('WorkflowEngine', () => {
       const context = engine.createInitialContext('wf-123');
 
       engine.recordStageResult(context, {
-        stage_name: 'scaffold',
-        outcome: 'success',
+        stage_name: AGENT_TYPES.SCAFFOLD,
+        outcome: WORKFLOW_STATUS.SUCCESS,
         output: { app_id: 'app-123' },
         attempts: 1,
         duration_ms: 5000,
@@ -344,9 +344,9 @@ describe('WorkflowEngine', () => {
       });
 
       context.current_stage = 'validate';
-      const result = engine.buildWorkflowResult(context, 'success');
+      const result = engine.buildWorkflowResult(context, WORKFLOW_STATUS.SUCCESS);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(result.workflow_id).toBe('wf-123');
       expect(result.final_stage).toBe('validate');
       expect(result.stage_results).toHaveLength(1);
@@ -358,7 +358,7 @@ describe('WorkflowEngine', () => {
       const context = engine.createInitialContext('wf-123');
 
       engine.recordStageResult(context, {
-        stage_name: 'scaffold',
+        stage_name: AGENT_TYPES.SCAFFOLD,
         outcome: 'failure',
         error: 'Failed',
         attempts: 1,
@@ -376,7 +376,7 @@ describe('WorkflowEngine', () => {
       const engine = new WorkflowEngine(basicWorkflow);
       const context = engine.createInitialContext('wf-123');
 
-      const result = engine.buildWorkflowResult(context, 'success');
+      const result = engine.buildWorkflowResult(context, WORKFLOW_STATUS.SUCCESS);
 
       expect(result.started_at).toBeDefined();
       expect(result.completed_at).toBeDefined();
@@ -427,7 +427,7 @@ describe('WorkflowEngine', () => {
       const engine = createWorkflowEngine(basicWorkflow);
 
       expect(engine).toBeInstanceOf(WorkflowEngine);
-      expect(engine.getStartStage()).toBe('scaffold');
+      expect(engine.getStartStage()).toBe(AGENT_TYPES.SCAFFOLD);
     });
   });
 

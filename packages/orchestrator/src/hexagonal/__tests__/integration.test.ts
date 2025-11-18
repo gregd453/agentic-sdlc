@@ -313,12 +313,12 @@ describe('Hexagonal Architecture Integration Tests', () => {
       const result = await retry(
         async () => {
           attempts++;
-          return 'success';
+          return WORKFLOW_STATUS.SUCCESS;
         },
         { maxAttempts: 3 }
       );
 
-      expect(result).toBe('success');
+      expect(result).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(attempts).toBe(1);
     });
 
@@ -331,12 +331,12 @@ describe('Hexagonal Architecture Integration Tests', () => {
           if (attempts < 3) {
             throw new Error('Transient failure');
           }
-          return 'success';
+          return WORKFLOW_STATUS.SUCCESS;
         },
         { maxAttempts: 5, baseDelayMs: 10 }
       );
 
-      expect(result).toBe('success');
+      expect(result).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(attempts).toBe(3);
     });
 

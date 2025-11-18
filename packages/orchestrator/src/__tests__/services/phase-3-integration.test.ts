@@ -32,7 +32,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
       const validated = validateWorkflowDefinition(definition)
 
       expect(validated).toBeDefined()
-      expect(validated.name).toBe('app')
+      expect(validated.name).toBe(WORKFLOW_TYPES.APP)
       expect(validated.stages.length).toBeGreaterThan(0)
     })
 
@@ -40,7 +40,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
       const definition = SAMPLE_DEFINITIONS.feature
       const validated = validateWorkflowDefinition(definition)
 
-      expect(validated.workflow_types).toContain('feature')
+      expect(validated.workflow_types).toContain(WORKFLOW_TYPES.FEATURE)
       expect(validated.stages.length).toBeLessThan(SAMPLE_DEFINITIONS.app.stages.length)
     })
 
@@ -48,7 +48,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
       const definition = SAMPLE_DEFINITIONS.bugfix
       const validated = validateWorkflowDefinition(definition)
 
-      expect(validated.workflow_types).toContain('bugfix')
+      expect(validated.workflow_types).toContain(WORKFLOW_TYPES.BUGFIX)
       expect(validated.stages.length).toBeLessThan(SAMPLE_DEFINITIONS.feature.stages.length)
     })
 
@@ -107,7 +107,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
           total_stages: 8,
           progress_weight: 15,
           expected_progress: 20,
-          agent_type: 'scaffold',
+          agent_type: AGENT_TYPES.SCAFFOLD,
           timeout_ms: 300000,
           should_skip: false
         }),
@@ -133,7 +133,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
     it('should get next stage from definition', async () => {
       const context = {
         workflow_id: 'test-1',
-        workflow_type: 'app',
+        workflow_type: WORKFLOW_TYPES.APP,
         current_stage: 'initialization',
         platform_id: undefined,
         progress: 5
@@ -142,14 +142,14 @@ describe('Phase 3: Workflow Engine Integration', () => {
       const transition = await adapter.getNextStageWithFallback(context)
 
       expect(transition.next_stage).toBe('scaffolding')
-      expect(transition.agent_type).toBe('scaffold')
+      expect(transition.agent_type).toBe(AGENT_TYPES.SCAFFOLD)
       expect(transition.is_fallback).toBe(false)
     })
 
     it('should calculate progress from definition', async () => {
       const context = {
         workflow_id: 'test-1',
-        workflow_type: 'app',
+        workflow_type: WORKFLOW_TYPES.APP,
         current_stage: 'initialization',
         platform_id: undefined,
         progress: 0
@@ -162,7 +162,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
     })
 
     it('should validate workflow definition exists', async () => {
-      const validation = await adapter.validateWorkflowDefinition('app', undefined)
+      const validation = await adapter.validateWorkflowDefinition(WORKFLOW_TYPES.APP, undefined)
 
       expect(validation.valid).toBe(true)
       expect(validation.message).toBeDefined()
@@ -196,7 +196,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
     })
 
     it('should calculate weighted progress', async () => {
-      const metrics = await calculator.calculateProgress('wf-1', undefined, 'app', 'scaffolding')
+      const metrics = await calculator.calculateProgress('wf-1', undefined, WORKFLOW_TYPES.APP, 'scaffolding')
 
       expect(metrics.current_progress).toBeGreaterThanOrEqual(0)
       expect(metrics.current_progress).toBeLessThanOrEqual(100)
@@ -227,7 +227,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
 
     it('should get calculator statistics', () => {
       calculator.recordStageCompletion('wf-1', 'scaffolding', 100000)
-      calculator.recordStageCompletion('wf-2', 'validation', 120000)
+      calculator.recordStageCompletion('wf-2', AGENT_TYPES.VALIDATION, 120000)
 
       const stats = calculator.getStats()
       expect(stats.tracked_stages).toBe(2)
@@ -245,20 +245,20 @@ describe('Phase 3: Workflow Engine Integration', () => {
   describe('Multi-Platform Definition Support', () => {
     it('should support app workflow definition', () => {
       const definition = SAMPLE_DEFINITIONS.app
-      expect(definition.workflow_types).toContain('app')
+      expect(definition.workflow_types).toContain(WORKFLOW_TYPES.APP)
       expect(definition.stages.length).toBe(8)
       expect(definition.progress_calculation).toBe('weighted')
     })
 
     it('should support feature workflow definition', () => {
       const definition = SAMPLE_DEFINITIONS.feature
-      expect(definition.workflow_types).toContain('feature')
+      expect(definition.workflow_types).toContain(WORKFLOW_TYPES.FEATURE)
       expect(definition.stages.length).toBe(5)
     })
 
     it('should support bugfix workflow definition', () => {
       const definition = SAMPLE_DEFINITIONS.bugfix
-      expect(definition.workflow_types).toContain('bugfix')
+      expect(definition.workflow_types).toContain(WORKFLOW_TYPES.BUGFIX)
       expect(definition.stages.length).toBe(3)
     })
 
@@ -281,23 +281,23 @@ describe('Phase 3: Workflow Engine Integration', () => {
           total_stages: 8,
           progress_weight: 15,
           expected_progress: 20,
-          agent_type: 'scaffold',
+          agent_type: AGENT_TYPES.SCAFFOLD,
           timeout_ms: 300000,
           should_skip: false
         })
       } as any
 
-      const result = await mockEngine.getNextStage(undefined, 'app', 'initialization')
+      const result = await mockEngine.getNextStage(undefined, WORKFLOW_TYPES.APP, 'initialization')
 
       expect(result.next_stage).toBe('scaffolding')
-      expect(result.agent_type).toBe('scaffold')
+      expect(result.agent_type).toBe(AGENT_TYPES.SCAFFOLD)
       expect(result.stage_index).toBe(1)
     })
 
     it('should calculate progress for app workflow', async () => {
       const mockEngine = {
         calculateProgress: async () => ({
-          current_stage: 'validation',
+          current_stage: AGENT_TYPES.VALIDATION,
           stage_index: 3,
           total_stages: 8,
           progress_percentage: 60,
@@ -306,9 +306,9 @@ describe('Phase 3: Workflow Engine Integration', () => {
         })
       } as any
 
-      const result = await mockEngine.calculateProgress(undefined, 'app', 'validation')
+      const result = await mockEngine.calculateProgress(undefined, WORKFLOW_TYPES.APP, AGENT_TYPES.VALIDATION)
 
-      expect(result.current_stage).toBe('validation')
+      expect(result.current_stage).toBe(AGENT_TYPES.VALIDATION)
       expect(result.progress_percentage).toBe(60)
       expect(result.stage_index).toBe(3)
     })
@@ -320,7 +320,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
         calculateProgress: async () => {
           throw new Error('Definition not found')
         },
-        getWorkflowStages: async () => ['initialization', 'validation', 'e2e_testing']
+        getWorkflowStages: async () => ['initialization', AGENT_TYPES.VALIDATION, 'e2e_testing']
       } as any
 
       const adapter = new WorkflowDefinitionAdapter(mockEngine)
@@ -332,7 +332,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
 
     it('should provide backward compatibility', () => {
       // Legacy workflows should still work without definitions
-      const legacyStages = ['initialization', 'scaffolding', 'validation', 'e2e_testing']
+      const legacyStages = ['initialization', 'scaffolding', AGENT_TYPES.VALIDATION, 'e2e_testing']
 
       expect(legacyStages).toContain('initialization')
       expect(legacyStages).toContain('e2e_testing')
@@ -403,7 +403,7 @@ describe('Phase 3: Workflow Engine Integration', () => {
       expect(scaffold?.percentage).toBe(20)
 
       // Validation: 20 + 15 = 35%
-      const validation = weightMap.get('validation')
+      const validation = weightMap.get(AGENT_TYPES.VALIDATION)
       expect(validation?.percentage).toBe(35)
 
       // E2E Testing: 35 + 20 = 55%

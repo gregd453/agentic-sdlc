@@ -107,7 +107,7 @@ export class HealthCheckService {
         });
       });
 
-      req.on('error', (error) => {
+      req.on(LOG_LEVEL.ERROR, (error) => {
         reject(error);
       });
 

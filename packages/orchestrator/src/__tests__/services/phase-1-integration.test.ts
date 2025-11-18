@@ -60,11 +60,11 @@ describe('Phase 1: Platform Infrastructure Integration', () => {
       // Create a test workflow to verify fields exist
       const testWorkflow = await prisma.workflow.create({
         data: {
-          type: 'app',
+          type: WORKFLOW_TYPES.APP,
           name: 'Test Platform Awareness',
-          status: 'initiated',
+          status: WORKFLOW_STATUS.INITIATED,
           current_stage: 'initialization',
-          priority: 'medium',
+          priority: TASK_PRIORITY.MEDIUM,
           created_by: 'test',
           platform_id: undefined, // Should accept null
           surface_id: undefined,
@@ -86,7 +86,7 @@ describe('Phase 1: Platform Infrastructure Integration', () => {
       const testAgent = await prisma.agent.create({
         data: {
           agent_id: `test-agent-${Date.now()}`,
-          type: 'scaffold',
+          type: AGENT_TYPES.SCAFFOLD,
           status: 'online',
           version: '1.0.0',
           capabilities: [],
@@ -331,11 +331,11 @@ describe('Phase 1: Platform Infrastructure Integration', () => {
       // This is the legacy workflow creation path
       const workflow = await prisma.workflow.create({
         data: {
-          type: 'feature',
+          type: WORKFLOW_TYPES.FEATURE,
           name: 'Legacy Workflow',
-          status: 'initiated',
+          status: WORKFLOW_STATUS.INITIATED,
           current_stage: 'initialization',
-          priority: 'medium',
+          priority: TASK_PRIORITY.MEDIUM,
           created_by: 'test'
           // No platform_id - backward compatible
         }
@@ -361,11 +361,11 @@ describe('Phase 1: Platform Infrastructure Integration', () => {
       // Create workflow with platform_id
       const workflow = await prisma.workflow.create({
         data: {
-          type: 'app',
+          type: WORKFLOW_TYPES.APP,
           name: 'Platform-Aware Workflow',
-          status: 'initiated',
+          status: WORKFLOW_STATUS.INITIATED,
           current_stage: 'initialization',
-          priority: 'medium',
+          priority: TASK_PRIORITY.MEDIUM,
           created_by: 'test',
           platform_id: platform.id
         }
@@ -419,11 +419,11 @@ describe('Phase 1: Platform Infrastructure Integration', () => {
       // Check 6: Backward compatibility
       const legacyWorkflow = await prisma.workflow.create({
         data: {
-          type: 'feature',
+          type: WORKFLOW_TYPES.FEATURE,
           name: 'Compat Test',
-          status: 'initiated',
+          status: WORKFLOW_STATUS.INITIATED,
           current_stage: 'initialization',
-          priority: 'medium',
+          priority: TASK_PRIORITY.MEDIUM,
           created_by: 'test'
         }
       })

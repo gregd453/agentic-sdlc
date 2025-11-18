@@ -1,0 +1,1302 @@
+
+> @agentic-sdlc/generic-mock-agent@1.0.0 start /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/generic-mock-agent
+> node dist/run-agent.js
+
+🚀 Starting Generic Mock Agent [global]...
+   Agent Type: scaffold
+   Mock Delay: 100ms
+   Debug: disabled
+
+[PHASE-4] Initializing OrchestratorContainer for mock agent...
+{"ts":"2025-11-18T00:11:10.483Z","scope":"bootstrap","msg":"Initializing container","level":"INFO","redisUrl":"redis://localhost:6380","redisNamespace":"agent-mock-scaffold"}
+{"ts":"2025-11-18T00:11:10.484Z","scope":"redis-suite","msg":"Creating Redis suite","level":"INFO","url":"redis://localhost:6380"}
+{"ts":"2025-11-18T00:11:10.500Z","scope":"redis-suite","msg":"base-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-18T00:11:10.500Z","scope":"redis-suite","msg":"pub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-18T00:11:10.500Z","scope":"redis-suite","msg":"sub-client connected","level":"INFO","status":"ready"}
+{"ts":"2025-11-18T00:11:10.501Z","scope":"redis-suite","msg":"base-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-18T00:11:10.501Z","scope":"redis-suite","msg":"sub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-18T00:11:10.501Z","scope":"redis-suite","msg":"pub-client health check passed","level":"INFO","pong":"PONG"}
+{"ts":"2025-11-18T00:11:10.501Z","scope":"redis-suite","msg":"Redis suite created successfully","level":"INFO"}
+{"ts":"2025-11-18T00:11:10.501Z","scope":"redis-bus","msg":"Bus initialized with node-redis v4","level":"INFO"}
+{"ts":"2025-11-18T00:11:10.501Z","scope":"redis-bus","msg":"Starting pSubscribe listener for all patterns","level":"INFO"}
+{"ts":"2025-11-18T00:11:10.501Z","scope":"redis-kv","msg":"KV store initialized","level":"INFO","namespace":"agent-mock-scaffold"}
+{"ts":"2025-11-18T00:11:10.503Z","scope":"bootstrap","msg":"Container initialized successfully","level":"INFO","busHealth":{"ok":true,"latencyMs":1,"details":{"pubConnected":true,"subConnected":true,"subscriptions":0}},"kvHealth":true}
+[PHASE-4] OrchestratorContainer initialized successfully
+
+{"ts":"2025-11-18T00:11:10.510Z","scope":"redis-bus","msg":"Subscribed","level":"INFO","topic":"agent:scaffold:tasks"}
+[DEBUG-STREAM-INIT] Consumer group already exists (good - will continue from last position) {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group'
+}
+[DEBUG-STREAM-INIT] Stream consumer loop STARTED {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510',
+  topic: 'agent:scaffold:tasks'
+}
+{"ts":"2025-11-18T00:11:10.511Z","scope":"redis-bus","msg":"[PHASE-3] Starting stream consumer","level":"INFO","streamKey":"stream:agent:scaffold:tasks","consumerGroup":"agent-scaffold-group","consumerName":"consumer-1763424670510"}
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+{"ts":"2025-11-18T00:11:10.511Z","scope":"redis-bus","msg":"Handler registered","level":"INFO","topic":"agent:scaffold:tasks","count":1}
+[DEBUG-AGENT-INIT] Subscription completed, handler registered {
+  taskChannel: 'agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  agent_type: 'scaffold',
+  platformId: 'global'
+}
+✅ Generic Mock Agent [global] running and listening for tasks
+📡 Connected to Redis: redis://localhost:6379
+🔑 Using Anthropic API key: sk-mock-test...
+
+Agent is ready to simulate scaffold tasks [global]
+Press Ctrl+C to stop
+
+[2025-11-18 00:11:10] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Initializing agent with message bus[39m
+[2025-11-18 00:11:10] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Subscribing to message bus for tasks[39m
+[2025-11-18 00:11:10] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent subscribed to message bus for tasks[39m
+[2025-11-18 00:11:10] [32mINFO[39m (scaffold-fb881bdb): [36mRegistered with orchestrator[39m
+[2025-11-18 00:11:10] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent initialized successfully with message bus[39m
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:11:31.261Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763424691255-0","unwrapPath":"messageData.payload.msg","workflow_id":"25fae2ad-8d6d-49e3-bf2a-77ff31aa8505","task_id":"049c61d5-f0da-4d1b-ae12-6ebe2dfdcd38","trace_id":"cc62aeeb-135d-426c-b0a8-a534ae1f016d","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:11:31] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:11:31] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:11:31] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:11:31] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:11:31] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: '049c61d5-f0da-4d1b-ae12-6ebe2dfdcd38',
+  workflow_id: '25fae2ad-8d6d-49e3-bf2a-77ff31aa8505',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:11:41.368Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"049c61d5-f0da-4d1b-ae12-6ebe2dfdcd38","workflow_id":"25fae2ad-8d6d-49e3-bf2a-77ff31aa8505","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"final-completion-test","output_path":"/mock/output/final-completion-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platfor'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:11:41.372Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:11:41.372Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763424691255-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:11:41.488Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763424701487-0","unwrapPath":"messageData.payload.msg","workflow_id":"25fae2ad-8d6d-49e3-bf2a-77ff31aa8505","task_id":"04e7cda1-5410-4956-bad2-ba3b26b11c33","trace_id":"cc62aeeb-135d-426c-b0a8-a534ae1f016d","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:11:41] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:11:41] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:11:41] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[2025-11-18 00:11:41] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:11:41] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:11:41] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:11:41] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:11:41] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: '04e7cda1-5410-4956-bad2-ba3b26b11c33',
+  workflow_id: '25fae2ad-8d6d-49e3-bf2a-77ff31aa8505',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:11:51.591Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"04e7cda1-5410-4956-bad2-ba3b26b11c33","workflow_id":"25fae2ad-8d6d-49e3-bf2a-77ff31aa8505","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"final-completion-test","output_path":"/mock/output/final-completion-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platfor'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:11:51.595Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:11:51.596Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763424701487-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:11:51.722Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763424711721-0","unwrapPath":"messageData.payload.msg","workflow_id":"25fae2ad-8d6d-49e3-bf2a-77ff31aa8505","task_id":"6142541b-de2e-483a-9260-abf587444cd0","trace_id":"cc62aeeb-135d-426c-b0a8-a534ae1f016d","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:11:51] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:11:51] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:11:51] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[2025-11-18 00:11:51] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:11:51] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:11:51] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:11:51] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:11:51] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: '6142541b-de2e-483a-9260-abf587444cd0',
+  workflow_id: '25fae2ad-8d6d-49e3-bf2a-77ff31aa8505',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:12:01.826Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"6142541b-de2e-483a-9260-abf587444cd0","workflow_id":"25fae2ad-8d6d-49e3-bf2a-77ff31aa8505","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"final-completion-test","output_path":"/mock/output/final-completion-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platfor'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:12:01.830Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:12:01.830Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763424711721-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[2025-11-18 00:12:01] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:12:01] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:12:01] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:20:22.805Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763425222802-0","unwrapPath":"messageData.payload.msg","workflow_id":"2af61467-1348-4c7f-9c8a-4516fd0c6af6","task_id":"12368f4a-dcb6-476f-862b-a5d517fde00e","trace_id":"3fdd12df-ca42-43a6-8592-826103998fc4","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:20:22] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:20:22] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:20:22] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:20:22] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:20:22] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: '12368f4a-dcb6-476f-862b-a5d517fde00e',
+  workflow_id: '2af61467-1348-4c7f-9c8a-4516fd0c6af6',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:20:32.908Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"12368f4a-dcb6-476f-862b-a5d517fde00e","workflow_id":"2af61467-1348-4c7f-9c8a-4516fd0c6af6","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"complete-workflow-test","output_path":"/mock/output/complete-workflow-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platf'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:20:32.912Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:20:32.912Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763425222802-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:20:32.913Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763425232904-0","unwrapPath":"messageData.payload.msg","workflow_id":"5c42767e-353b-42d8-9e32-467b40a78774","task_id":"eeb8216a-2bbd-4ab9-810d-8a51119869d7","trace_id":"2229c643-09aa-43a3-8f31-9e14a7843173","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:20:32] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:20:32] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:20:32] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[2025-11-18 00:20:32] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:20:32] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:20:32] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:20:32] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:20:32] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: 'eeb8216a-2bbd-4ab9-810d-8a51119869d7',
+  workflow_id: '5c42767e-353b-42d8-9e32-467b40a78774',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:20:43.016Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"eeb8216a-2bbd-4ab9-810d-8a51119869d7","workflow_id":"5c42767e-353b-42d8-9e32-467b40a78774","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"complete-workflow-test","output_path":"/mock/output/complete-workflow-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platf'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:20:43.021Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:20:43.021Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763425232904-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:20:43.025Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763425233025-0","unwrapPath":"messageData.payload.msg","workflow_id":"2af61467-1348-4c7f-9c8a-4516fd0c6af6","task_id":"3f61feeb-c50b-46b2-9159-4909b78d911a","trace_id":"3fdd12df-ca42-43a6-8592-826103998fc4","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:20:43] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:20:43] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:20:43] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[2025-11-18 00:20:43] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:20:43] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:20:43] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:20:43] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:20:43] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: '3f61feeb-c50b-46b2-9159-4909b78d911a',
+  workflow_id: '2af61467-1348-4c7f-9c8a-4516fd0c6af6',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:20:53.128Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"3f61feeb-c50b-46b2-9159-4909b78d911a","workflow_id":"2af61467-1348-4c7f-9c8a-4516fd0c6af6","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"complete-workflow-test","output_path":"/mock/output/complete-workflow-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platf'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:20:53.133Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:20:53.134Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763425233025-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:20:53.138Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763425243154-0","unwrapPath":"messageData.payload.msg","workflow_id":"5c42767e-353b-42d8-9e32-467b40a78774","task_id":"fdbef1d6-9098-45b4-a415-ee6ea4b68c6b","trace_id":"2229c643-09aa-43a3-8f31-9e14a7843173","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:20:53] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:20:53] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:20:53] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[2025-11-18 00:20:53] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:20:53] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:20:53] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:20:53] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:20:53] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: 'fdbef1d6-9098-45b4-a415-ee6ea4b68c6b',
+  workflow_id: '5c42767e-353b-42d8-9e32-467b40a78774',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:21:03.241Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"fdbef1d6-9098-45b4-a415-ee6ea4b68c6b","workflow_id":"5c42767e-353b-42d8-9e32-467b40a78774","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"complete-workflow-test","output_path":"/mock/output/complete-workflow-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platf'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:21:03.246Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:21:03.246Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763425243154-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:21:03.252Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763425253269-0","unwrapPath":"messageData.payload.msg","workflow_id":"2af61467-1348-4c7f-9c8a-4516fd0c6af6","task_id":"dba0eea0-05d5-4838-9033-47005664eb9f","trace_id":"3fdd12df-ca42-43a6-8592-826103998fc4","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:21:03] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:21:03] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:21:03] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[2025-11-18 00:21:03] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:21:03] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:21:03] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:21:03] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:21:03] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: 'dba0eea0-05d5-4838-9033-47005664eb9f',
+  workflow_id: '2af61467-1348-4c7f-9c8a-4516fd0c6af6',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:21:13.354Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"dba0eea0-05d5-4838-9033-47005664eb9f","workflow_id":"2af61467-1348-4c7f-9c8a-4516fd0c6af6","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"complete-workflow-test","output_path":"/mock/output/complete-workflow-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platf'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:21:13.356Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:21:13.357Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763425253269-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: true, resultsLength: 1, resultsType: 'object' }
+[DEBUG-STREAM] Processing results { count: 1 }
+{"ts":"2025-11-18T00:21:13.359Z","scope":"redis-bus","msg":"[PHASE-3] Processing message from stream","level":"INFO","streamKey":"stream:agent:scaffold:tasks","messageId":"1763425263382-0","unwrapPath":"messageData.payload.msg","workflow_id":"5c42767e-353b-42d8-9e32-467b40a78774","task_id":"92ec1fda-960f-42ad-b1bb-9ed57ce18c8e","trace_id":"2229c643-09aa-43a3-8f31-9e14a7843173","messageKeys":"message_id,task_id,workflow_id,agent_type,priority,status,constraints,retry_count,metadata,trace,workflow_context,payload"}
+[DEBUG-STREAM] Checking handlers {
+  topic: 'agent:scaffold:tasks',
+  hasHandlers: true,
+  handlerCount: 1,
+  subscriptionsKeys: 'agent:scaffold:tasks'
+}
+[DEBUG-STREAM] About to invoke handlers { count: 1 }
+[2025-11-18 00:21:13] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:21:13] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:21:13] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[2025-11-18 00:21:13] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-4] Agent received task from message bus[39m
+[2025-11-18 00:21:13] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:21:13] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Task received[39m
+[2025-11-18 00:21:13] [32mINFO[39m (scaffold-fb881bdb): [36m✅ [VALIDATION] Task validated against AgentEnvelopeSchema v2.0.0[39m
+[2025-11-18 00:21:13] [32mINFO[39m (scaffold-fb881bdb): [36m[SESSION #37 DEBUG] Stage extraction[39m
+[DEBUG-RESULT] Built agentResult object (BEFORE validation) {
+  keys: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  task_id: '92ec1fda-960f-42ad-b1bb-9ed57ce18c8e',
+  workflow_id: '5c42767e-353b-42d8-9e32-467b40a78774',
+  agent_id: 'scaffold-fb881bdb',
+  agent_type: 'scaffold',
+  success: true,
+  status: 'success',
+  action: 'execute_scaffold',
+  has_result: true,
+  result_keys: 'data,metrics',
+  has_metrics: true,
+  has_error: false,
+  timestamp: '2025-11-18T00:21:23.461Z',
+  version: '1.0.0',
+  full_object_sample: '{"task_id":"92ec1fda-960f-42ad-b1bb-9ed57ce18c8e","workflow_id":"5c42767e-353b-42d8-9e32-467b40a78774","agent_id":"scaffold-fb881bdb","agent_type":"scaffold","success":true,"status":"success","action":"execute_scaffold","result":{"data":{"status":"success","project_name":"complete-workflow-test","output_path":"/mock/output/complete-workflow-test","files_generated":[{"path":"src/index.ts","lines":50},{"path":"package.json","lines":30},{"path":"README.md","lines":20}],"structure_type":"app","platf'
+}
+[DEBUG-RESULT] AgentResultSchema REQUIRED fields: {
+  required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
+  optional_fields: 'artifacts, error, warnings',
+  what_we_have: 'task_id,workflow_id,agent_id,agent_type,success,status,action,result,metrics,error,timestamp,version',
+  missing_required: 'none'
+}
+[DEBUG-RESULT] ✅ Validation PASSED
+{"ts":"2025-11-18T00:21:23.463Z","scope":"redis-bus","msg":"Mirrored to stream","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+{"ts":"2025-11-18T00:21:23.463Z","scope":"redis-bus","msg":"[SESSION #63] Published to stream only (pub/sub disabled)","level":"INFO","topic":"orchestrator:results","stream":"stream:orchestrator:results"}
+[DEBUG-STREAM] Handlers completed successfully
+[DEBUG-STREAM] Message ACKed { messageId: '1763425263382-0' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[2025-11-18 00:21:23] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result via IMessageBus[39m
+[2025-11-18 00:21:23] [32mINFO[39m (scaffold-fb881bdb): [36m[PHASE-3] Result published successfully via IMessageBus[39m
+[2025-11-18 00:21:23] [32mINFO[39m (scaffold-fb881bdb): [36m🔍 [AGENT-TRACE] Publishing result[39m
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+[DEBUG-STREAM] About to call XREADGROUP {
+  streamKey: 'stream:agent:scaffold:tasks',
+  consumerGroup: 'agent-scaffold-group',
+  consumerName: 'consumer-1763424670510'
+}
+
+
+🛑 Shutting down Generic Mock Agent...
+{"ts":"2025-11-18T00:23:31.820Z","scope":"bootstrap","msg":"Shutting down container","level":"INFO"}
+{"ts":"2025-11-18T00:23:31.820Z","scope":"redis-bus","msg":"Bus disconnected (clients managed by suite)","level":"INFO"}
+{"ts":"2025-11-18T00:23:31.820Z","scope":"redis-kv","msg":"KV disconnected (client managed by suite)","level":"INFO"}
+{"ts":"2025-11-18T00:23:31.820Z","scope":"redis-suite","msg":"Disconnecting Redis suite","level":"INFO"}
+[2025-11-18 00:23:31] [32mINFO[39m (scaffold-fb881bdb): [36mCleaning up agent[39m
+[2025-11-18 00:23:31] [32mINFO[39m (scaffold-fb881bdb): [36mDeregistered from orchestrator[39m
+[2025-11-18 00:23:31] [32mINFO[39m (scaffold-fb881bdb): [36mAgent cleanup completed[39m
+[DEBUG-STREAM] XREADGROUP returned { hasResults: false, resultsLength: 0, resultsType: 'object' }
+{"ts":"2025-11-18T00:23:34.031Z","scope":"redis-bus","msg":"[PHASE-3] Stream consumer stopped","level":"INFO","streamKey":"stream:agent:scaffold:tasks"}
+{"ts":"2025-11-18T00:23:34.031Z","scope":"redis-suite","msg":"Redis suite disconnected","level":"INFO"}
+{"ts":"2025-11-18T00:23:34.031Z","scope":"bootstrap","msg":"Container shutdown complete","level":"INFO"}

@@ -17,7 +17,7 @@ import { z } from 'zod'
  * Execution mode for the agent behavior
  */
 export const AgentBehaviorModeEnum = z.enum([
-  'success',      // Normal successful completion
+  WORKFLOW_STATUS.SUCCESS,      // Normal successful completion
   'failure',      // Agent reports failure
   'timeout',      // Simulate timeout (execution takes longer than allowed)
   'partial',      // Partial success (e.g., 2/5 tests pass)
@@ -65,7 +65,7 @@ export const CustomOutputMetadataSchema = z.object({
   bytes_written: z.number().optional(),
 
   // VALIDATION agent output
-  validation_result: z.enum(['passed', 'failed', 'warning']).optional(),
+  validation_result: z.enum(['passed', WORKFLOW_STATUS.FAILED, 'warning']).optional(),
   errors: z.array(z.record(z.unknown())).optional(),
   warnings: z.array(z.string()).optional(),
   files_checked: z.number().optional(),
@@ -80,7 +80,7 @@ export const CustomOutputMetadataSchema = z.object({
   duration_ms: z.number().optional(),
 
   // DEPLOYMENT agent output
-  deployment_status: z.enum(['success', 'failed', 'rollback']).optional(),
+  deployment_status: z.enum([WORKFLOW_STATUS.SUCCESS, WORKFLOW_STATUS.FAILED, 'rollback']).optional(),
   endpoint: z.string().optional(),
   deployment_time_ms: z.number().optional(),
 
@@ -94,7 +94,7 @@ export type CustomOutputMetadata = z.infer<typeof CustomOutputMetadataSchema>
  * Timing control metadata
  */
 export const TimingMetadataSchema = z.object({
-  execution_delay_ms: z.number().int().min(0).optional().describe('Add delay to execution (simulates slow agents)'),
+  execution_delay_ms: z.number().int().min(0).default(10000).describe('Add delay to execution in milliseconds (default: 10000ms/10s)'),
   timeout_at_ms: z.number().int().min(0).optional().describe('Trigger timeout after N ms of execution'),
   variance_ms: z.number().int().min(0).optional().describe('Random variance in delay (0-variance_ms)')
 })
@@ -119,7 +119,7 @@ export type MetricsMetadata = z.infer<typeof MetricsMetadataSchema>
  */
 export const AgentBehaviorMetadataSchema = z.object({
   // Execution mode
-  mode: AgentBehaviorModeEnum.default('success').describe('How agent should execute'),
+  mode: AgentBehaviorModeEnum.default(WORKFLOW_STATUS.SUCCESS).describe('How agent should execute'),
 
   // Error details (required if mode is 'failure' or 'crash')
   error: AgentErrorMetadataSchema.optional().describe('Error details when mode is failure/crash'),
@@ -158,18 +158,18 @@ export function validateAgentBehaviorMetadata(data: unknown): AgentBehaviorMetad
 export const BEHAVIOR_SAMPLES = {
   // Success scenarios
   success: {
-    mode: 'success' as const,
+    mode: WORKFLOW_STATUS.SUCCESS as const,
     label: 'Normal successful completion'
   } as AgentBehaviorMetadata,
 
   fast_success: {
-    mode: 'success' as const,
+    mode: WORKFLOW_STATUS.SUCCESS as const,
     timing: { execution_delay_ms: 10 },
     label: 'Quick successful completion (10ms)'
   } as AgentBehaviorMetadata,
 
   slow_success: {
-    mode: 'success' as const,
+    mode: WORKFLOW_STATUS.SUCCESS as const,
     timing: { execution_delay_ms: 5000 },
     label: 'Slow successful completion (5s)'
   } as AgentBehaviorMetadata,
@@ -240,7 +240,7 @@ export const BEHAVIOR_SAMPLES = {
 
   // Custom metrics
   high_resource_usage: {
-    mode: 'success' as const,
+    mode: WORKFLOW_STATUS.SUCCESS as const,
     metrics: {
       duration_ms: 30000,
       memory_mb: 500,
@@ -258,5 +258,42 @@ export const BEHAVIOR_SAMPLES = {
       retryable: true
     },
     label: 'Agent crashes during execution'
+  } as AgentBehaviorMetadata,
+
+  // Delay scenarios
+  default_delay: {
+    mode: WORKFLOW_STATUS.SUCCESS as const,
+    timing: { execution_delay_ms: 10000 },
+    label: 'Success with default 10-second delay'
+  } as AgentBehaviorMetadata,
+
+  no_delay: {
+    mode: WORKFLOW_STATUS.SUCCESS as const,
+    timing: { execution_delay_ms: 0 },
+    label: 'Instant success with no delay'
+  } as AgentBehaviorMetadata,
+
+  custom_delay_3s: {
+    mode: WORKFLOW_STATUS.SUCCESS as const,
+    timing: { execution_delay_ms: 3000 },
+    label: 'Success with custom 3-second delay'
+  } as AgentBehaviorMetadata,
+
+  custom_delay_5s: {
+    mode: WORKFLOW_STATUS.SUCCESS as const,
+    timing: { execution_delay_ms: 5000 },
+    label: 'Success with custom 5-second delay'
+  } as AgentBehaviorMetadata,
+
+  custom_delay_30s: {
+    mode: WORKFLOW_STATUS.SUCCESS as const,
+    timing: { execution_delay_ms: 30000 },
+    label: 'Success with custom 30-second delay'
+  } as AgentBehaviorMetadata,
+
+  delay_with_variance: {
+    mode: WORKFLOW_STATUS.SUCCESS as const,
+    timing: { execution_delay_ms: 10000, variance_ms: 2000 },
+    label: 'Success with 10-second delay ± 2 seconds variance'
   } as AgentBehaviorMetadata
 }

@@ -26,7 +26,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
         name: 'global-scaffold',
         type: AGENT_TYPES.SCAFFOLD,
         version: '1.0.0',
-        capabilities: ['scaffold']
+        capabilities: [AGENT_TYPES.SCAFFOLD]
       };
 
       registry.registerAgent(metadata, async () => ({}));
@@ -70,7 +70,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
         name: 'web-app-scaffold',
         type: AGENT_TYPES.SCAFFOLD,
         version: '1.0.0',
-        capabilities: ['scaffold']
+        capabilities: [AGENT_TYPES.SCAFFOLD]
       };
 
       registry.registerAgent(metadata, async () => ({}), 'web-app-platform');
@@ -85,7 +85,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
         name: AGENT_TYPES.SCAFFOLD,
         type: AGENT_TYPES.SCAFFOLD,
         version: '1.0.0',
-        capabilities: ['scaffold']
+        capabilities: [AGENT_TYPES.SCAFFOLD]
       };
 
       for (const platform of platforms) {
@@ -125,7 +125,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
         name: 'web-app-scaffold',
         type: AGENT_TYPES.SCAFFOLD,
         version: '1.0.0',
-        capabilities: ['scaffold']
+        capabilities: [AGENT_TYPES.SCAFFOLD]
       };
 
       registry.registerAgent(metadata, async () => ({}), 'web-app-platform');
@@ -144,7 +144,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
           name: 'global-scaffold',
           type: AGENT_TYPES.SCAFFOLD,
           version: '1.0.0',
-          capabilities: ['scaffold']
+          capabilities: [AGENT_TYPES.SCAFFOLD]
         },
         async () => ({})
       );
@@ -155,7 +155,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
           name: 'web-app-scaffold',
           type: AGENT_TYPES.SCAFFOLD,
           version: '2.0.0',
-          capabilities: ['scaffold']
+          capabilities: [AGENT_TYPES.SCAFFOLD]
         },
         async () => ({}),
         'web-app-platform'
@@ -177,7 +177,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
           name: 'global-scaffold',
           type: AGENT_TYPES.SCAFFOLD,
           version: '1.0.0',
-          capabilities: ['scaffold']
+          capabilities: [AGENT_TYPES.SCAFFOLD]
         },
         async () => ({})
       );
@@ -230,7 +230,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
           name: 'global-scaffold',
           type: AGENT_TYPES.SCAFFOLD,
           version: '1.0.0',
-          capabilities: ['scaffold']
+          capabilities: [AGENT_TYPES.SCAFFOLD]
         },
         async () => ({})
       );
@@ -241,7 +241,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
           name: 'web-app-validation',
           type: AGENT_TYPES.VALIDATION,
           version: '1.0.0',
-          capabilities: ['validation']
+          capabilities: [AGENT_TYPES.VALIDATION]
         },
         async () => ({}),
         'web-app-platform'
@@ -291,7 +291,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
           name: 'data-pipeline-deployment',
           type: AGENT_TYPES.DEPLOYMENT,
           version: '1.0.0',
-          capabilities: ['deployment']
+          capabilities: [AGENT_TYPES.DEPLOYMENT]
         },
         async () => ({}),
         'data-pipeline-platform'
@@ -315,7 +315,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
           name: 'global-scaffold',
           type: AGENT_TYPES.SCAFFOLD,
           version: '1.0.0',
-          capabilities: ['scaffold']
+          capabilities: [AGENT_TYPES.SCAFFOLD]
         },
         async () => ({})
       );
@@ -334,7 +334,7 @@ describe('Phase 4: Platform Registry Scoping', () => {
           name: 'web-app-scaffold',
           type: AGENT_TYPES.SCAFFOLD,
           version: '1.0.0',
-          capabilities: ['scaffold']
+          capabilities: [AGENT_TYPES.SCAFFOLD]
         },
         async () => ({}),
         'web-app-platform'

@@ -92,11 +92,11 @@ describe('Five-Agent Pipeline E2E', () => {
   describe('Contract Framework Validation', () => {
     it('should validate all 5 agent contracts', () => {
       const contracts = [
-        { name: 'scaffold', contract: scaffoldContract },
-        { name: 'validation', contract: validationContract },
+        { name: AGENT_TYPES.SCAFFOLD, contract: scaffoldContract },
+        { name: AGENT_TYPES.VALIDATION, contract: validationContract },
         { name: 'e2e', contract: e2eContract },
-        { name: 'integration', contract: integrationContract },
-        { name: 'deployment', contract: deploymentContract }
+        { name: AGENT_TYPES.INTEGRATION, contract: integrationContract },
+        { name: AGENT_TYPES.DEPLOYMENT, contract: deploymentContract }
       ];
 
       for (const { name, contract } of contracts) {
@@ -185,16 +185,16 @@ describe('Five-Agent Pipeline E2E', () => {
     it('should create valid scaffold task', () => {
       const task = createScaffoldTask(
         WORKFLOW_ID,
-        'app',
+        WORKFLOW_TYPES.APP,
         'test-app',
         ['Create a REST API', 'Add authentication']
       );
 
       expect(task.workflow_id).toBe(WORKFLOW_ID);
-      expect(task.agent_type).toBe('scaffold');
+      expect(task.agent_type).toBe(AGENT_TYPES.SCAFFOLD);
       expect(task.action).toBe('generate_structure');
-      expect(task.status).toBe('pending');
-      expect(task.payload.project_type).toBe('app');
+      expect(task.status).toBe(TASK_STATUS.PENDING);
+      expect(task.payload.project_type).toBe(WORKFLOW_TYPES.APP);
       expect(task.payload.name).toBe('test-app');
       expect(task.payload.requirements).toHaveLength(2);
 
@@ -216,7 +216,7 @@ describe('Five-Agent Pipeline E2E', () => {
       );
 
       expect(task.workflow_id).toBe(WORKFLOW_ID);
-      expect(task.agent_type).toBe('integration');
+      expect(task.agent_type).toBe(AGENT_TYPES.INTEGRATION);
       expect(task.action).toBe('merge_branch');
       expect(task.payload.source_branch).toBe('feature/new-feature');
       expect(task.payload.target_branch).toBe('main');
@@ -239,7 +239,7 @@ describe('Five-Agent Pipeline E2E', () => {
       );
 
       expect(task.workflow_id).toBe(WORKFLOW_ID);
-      expect(task.agent_type).toBe('deployment');
+      expect(task.agent_type).toBe(AGENT_TYPES.DEPLOYMENT);
       expect(task.action).toBe('build_docker_image');
       expect(task.payload.image_name).toBe('my-app');
       expect(task.payload.image_tag).toBe('v1.0.0');
@@ -257,7 +257,7 @@ describe('Five-Agent Pipeline E2E', () => {
       const scaffoldStart = Date.now();
       const scaffoldTask = createScaffoldTask(
         WORKFLOW_ID,
-        'app',
+        WORKFLOW_TYPES.APP,
         'test-app',
         ['Create a simple app']
       );
@@ -269,7 +269,7 @@ describe('Five-Agent Pipeline E2E', () => {
 
       // Note: We're not validating the full result structure in this test
       // Just tracking that we can create tasks and they pass contract validation
-      metrics.stageTimings['scaffold'] = Date.now() - scaffoldStart;
+      metrics.stageTimings[AGENT_TYPES.SCAFFOLD] = Date.now() - scaffoldStart;
 
       // Stage 2: Integration Agent
       const integrationStart = Date.now();
@@ -283,7 +283,7 @@ describe('Five-Agent Pipeline E2E', () => {
       expect(integrationTaskValidation.valid, `Integration task validation should pass`).toBe(true);
 
       await redisPublisher.publish('agent:integration:tasks', JSON.stringify(integrationTask));
-      metrics.stageTimings['integration'] = Date.now() - integrationStart;
+      metrics.stageTimings[AGENT_TYPES.INTEGRATION] = Date.now() - integrationStart;
 
       // Stage 3: Deployment Agent
       const deploymentStart = Date.now();
@@ -297,7 +297,7 @@ describe('Five-Agent Pipeline E2E', () => {
       expect(deploymentTaskValidation.valid, `Deployment task validation should pass`).toBe(true);
 
       await redisPublisher.publish('agent:deployment:tasks', JSON.stringify(deploymentTask));
-      metrics.stageTimings['deployment'] = Date.now() - deploymentStart;
+      metrics.stageTimings[AGENT_TYPES.DEPLOYMENT] = Date.now() - deploymentStart;
 
       // Verify all tasks were created and published
       expect(Object.keys(metrics.stageTimings)).toHaveLength(3);
@@ -309,13 +309,13 @@ describe('Five-Agent Pipeline E2E', () => {
       const start = Date.now();
 
       // Create and validate tasks
-      const scaffoldTask = createScaffoldTask(WORKFLOW_ID, 'app', 'test', ['req']);
+      const scaffoldTask = createScaffoldTask(WORKFLOW_ID, WORKFLOW_TYPES.APP, 'test', ['req']);
       contractValidator.validateInput(scaffoldContract, scaffoldTask);
 
-      const integrationTask = createMergeBranchTask(WORKFLOW_ID, 'feature', 'main');
+      const integrationTask = createMergeBranchTask(WORKFLOW_ID, WORKFLOW_TYPES.FEATURE, 'main');
       contractValidator.validateInput(integrationContract, integrationTask);
 
-      const deploymentTask = createBuildDockerImageTask(WORKFLOW_ID, 'app', 'v1');
+      const deploymentTask = createBuildDockerImageTask(WORKFLOW_ID, WORKFLOW_TYPES.APP, 'v1');
       contractValidator.validateInput(deploymentContract, deploymentTask);
 
       const duration = Date.now() - start;
@@ -362,7 +362,7 @@ describe('Five-Agent Pipeline E2E', () => {
       const invalidTask = {
         task_id: 'invalid',
         // Missing required fields
-        agent_type: 'scaffold'
+        agent_type: AGENT_TYPES.SCAFFOLD
       };
 
       const result = contractValidator.validateInput(scaffoldContract, invalidTask as any);
@@ -373,7 +373,7 @@ describe('Five-Agent Pipeline E2E', () => {
     it('should detect schema validation errors', () => {
       const invalidTask = createScaffoldTask(
         WORKFLOW_ID,
-        'app',
+        WORKFLOW_TYPES.APP,
         'test-app',
         []  // Empty requirements - should fail validation
       );
@@ -401,22 +401,22 @@ describe('Five-Agent Pipeline E2E', () => {
       // This test verifies TypeScript compile-time type safety
       // If this compiles, the types are consistent
 
-      const scaffoldTask: ScaffoldTask = createScaffoldTask(WORKFLOW_ID, 'app', 'test', ['req']);
-      const integrationTask: IntegrationTask = createMergeBranchTask(WORKFLOW_ID, 'feature', 'main');
-      const deploymentTask: DeploymentTask = createBuildDockerImageTask(WORKFLOW_ID, 'app', 'v1');
+      const scaffoldTask: ScaffoldTask = createScaffoldTask(WORKFLOW_ID, WORKFLOW_TYPES.APP, 'test', ['req']);
+      const integrationTask: IntegrationTask = createMergeBranchTask(WORKFLOW_ID, WORKFLOW_TYPES.FEATURE, 'main');
+      const deploymentTask: DeploymentTask = createBuildDockerImageTask(WORKFLOW_ID, WORKFLOW_TYPES.APP, 'v1');
 
       // All should have common AgentTask fields
       expect(scaffoldTask.task_id).toBeDefined();
       expect(scaffoldTask.workflow_id).toBe(WORKFLOW_ID);
-      expect(scaffoldTask.agent_type).toBe('scaffold');
+      expect(scaffoldTask.agent_type).toBe(AGENT_TYPES.SCAFFOLD);
 
       expect(integrationTask.task_id).toBeDefined();
       expect(integrationTask.workflow_id).toBe(WORKFLOW_ID);
-      expect(integrationTask.agent_type).toBe('integration');
+      expect(integrationTask.agent_type).toBe(AGENT_TYPES.INTEGRATION);
 
       expect(deploymentTask.task_id).toBeDefined();
       expect(deploymentTask.workflow_id).toBe(WORKFLOW_ID);
-      expect(deploymentTask.agent_type).toBe('deployment');
+      expect(deploymentTask.agent_type).toBe(AGENT_TYPES.DEPLOYMENT);
     });
 
     it('should have consistent contract structure', () => {

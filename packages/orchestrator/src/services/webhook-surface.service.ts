@@ -47,12 +47,12 @@ export class WebhookSurfaceService {
       max_payload_size_mb: 25,
       event_mapping: {
         // GitHub events → workflow type
-        'push': 'feature', // Code push = feature/bugfix
-        'pull_request': 'feature', // PR = feature
-        'release': 'app', // Release = app deployment
-        'workflow_dispatch': 'app', // Manual workflow = app
-        'repository.created': 'app', // New repo = app setup
-        'issues': 'bugfix' // Issue opened = bugfix
+        'push': WORKFLOW_TYPES.FEATURE, // Code push = feature/bugfix
+        'pull_request': WORKFLOW_TYPES.FEATURE, // PR = feature
+        'release': WORKFLOW_TYPES.APP, // Release = app deployment
+        'workflow_dispatch': WORKFLOW_TYPES.APP, // Manual workflow = app
+        'repository.created': WORKFLOW_TYPES.APP, // New repo = app setup
+        'issues': WORKFLOW_TYPES.BUGFIX // Issue opened = bugfix
       },
       ...config
     }
@@ -141,7 +141,7 @@ export class WebhookSurfaceService {
           name: metadata.name,
           description: metadata.description,
           requirements: metadata.requirements,
-          priority: metadata.priority || 'high', // Webhooks default to high priority
+          priority: metadata.priority || TASK_PRIORITY.HIGH, // Webhooks default to high priority
           webhook_metadata: {
             event: payload.event,
             delivery_id: deliveryId,

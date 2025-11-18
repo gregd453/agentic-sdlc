@@ -57,7 +57,7 @@ describe('HealthCheckService', () => {
       vi.mocked(prisma.$queryRaw).mockResolvedValue([{ result: 1 }]);
       vi.mocked(eventBus.ping).mockResolvedValue(true);
       vi.mocked(agentDispatcher.getRegisteredAgents).mockResolvedValue([
-        { agent_id: 'agent-1', type: 'scaffold' }
+        { agent_id: 'agent-1', type: AGENT_TYPES.SCAFFOLD }
       ]);
 
       const result = await healthCheckService.checkReadiness();
@@ -110,7 +110,7 @@ describe('HealthCheckService', () => {
       vi.mocked(prisma.$queryRaw).mockResolvedValue([{ result: 1 }]);
       vi.mocked(eventBus.ping).mockResolvedValue(true);
       vi.mocked(agentDispatcher.getRegisteredAgents).mockResolvedValue([
-        { agent_id: 'agent-1', type: 'scaffold' }
+        { agent_id: 'agent-1', type: AGENT_TYPES.SCAFFOLD }
       ]);
 
       const result = await healthCheckService.checkReadiness();
@@ -219,8 +219,8 @@ describe('HealthCheckService', () => {
       vi.mocked(prisma.$queryRaw).mockResolvedValue([{ result: 1 }]);
       vi.mocked(eventBus.ping).mockResolvedValue(true);
       vi.mocked(agentDispatcher.getRegisteredAgents).mockResolvedValue([
-        { agent_id: 'agent-1', type: 'scaffold' },
-        { agent_id: 'agent-2', type: 'validation' }
+        { agent_id: 'agent-1', type: AGENT_TYPES.SCAFFOLD },
+        { agent_id: 'agent-2', type: AGENT_TYPES.VALIDATION }
       ]);
 
       const result = await healthCheckService.checkReadiness();
@@ -231,8 +231,8 @@ describe('HealthCheckService', () => {
 
     it('should include agent list in details', async () => {
       const agents = [
-        { agent_id: 'agent-1', type: 'scaffold' },
-        { agent_id: 'agent-2', type: 'validation' }
+        { agent_id: 'agent-1', type: AGENT_TYPES.SCAFFOLD },
+        { agent_id: 'agent-2', type: AGENT_TYPES.VALIDATION }
       ];
 
       vi.mocked(prisma.$queryRaw).mockResolvedValue([{ result: 1 }]);

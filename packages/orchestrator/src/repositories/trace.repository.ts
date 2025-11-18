@@ -192,7 +192,7 @@ export class TraceRepository {
       const hierarchy = await this.getSpanHierarchy(traceId);
 
       const errorCount = hierarchy.spans.filter(s =>
-        s.status === 'failed' || s.status === 'cancelled'
+        s.status === WORKFLOW_STATUS.FAILED || s.status === WORKFLOW_STATUS.CANCELLED
       ).length;
 
       const startTime = hierarchy.spans.length > 0

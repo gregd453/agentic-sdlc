@@ -67,7 +67,7 @@ export async function validateCoverage(
     if (!hasCoverageReport) {
       return {
         type: 'coverage',
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         duration_ms: Date.now() - startTime,
         errors: ['No coverage report generated. Ensure tests run successfully.']
       };
@@ -82,7 +82,7 @@ export async function validateCoverage(
     if (!total) {
       return {
         type: 'coverage',
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         duration_ms: Date.now() - startTime,
         errors: ['Invalid coverage report format']
       };
@@ -121,7 +121,7 @@ export async function validateCoverage(
       uncovered_files: uncoveredFiles.slice(0, 20) // Limit to 20 files
     };
 
-    const status = passed ? 'passed' : 'failed';
+    const status = passed ? 'passed' : WORKFLOW_STATUS.FAILED;
 
     const errors = !passed
       ? [`Coverage ${lineCoverage.toFixed(2)}% is below threshold ${threshold}%`]
@@ -142,7 +142,7 @@ export async function validateCoverage(
   } catch (error) {
     return {
       type: 'coverage',
-      status: 'failed',
+      status: WORKFLOW_STATUS.FAILED,
       duration_ms: Date.now() - startTime,
       errors: [`Coverage validation failed: ${error instanceof Error ? error.message : String(error)}`]
     };

@@ -35,7 +35,7 @@ describe('Behavior Metadata Examples', () => {
 
   beforeEach(() => {
     messageBus = new MockMessageBus()
-    agent = new GenericMockAgent(messageBus, 'scaffold', undefined, 0) // No delay for tests
+    agent = new GenericMockAgent(messageBus, AGENT_TYPES.SCAFFOLD, undefined, 0) // No delay for tests
   })
 
   // ============================================================================
@@ -45,26 +45,26 @@ describe('Behavior Metadata Examples', () => {
   describe('Example 1: Happy Path Workflow', () => {
     it('should complete workflow with all stages succeeding', async () => {
       // Stage 1: Initialization (success)
-      const initTask = createMockTask('initialization', 'app', {
+      const initTask = createMockTask('initialization', WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.success
       })
       const initResult = await agent.execute(initTask)
-      expect(initResult.status).toBe('success')
+      expect(initResult.status).toBe(WORKFLOW_STATUS.SUCCESS)
       expect(initResult.errors).toBeUndefined()
 
       // Stage 2: Scaffolding (success)
-      const scaffoldTask = createMockTask('scaffolding', 'app', {
+      const scaffoldTask = createMockTask('scaffolding', WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.success
       })
       const scaffoldResult = await agent.execute(scaffoldTask)
-      expect(scaffoldResult.status).toBe('success')
+      expect(scaffoldResult.status).toBe(WORKFLOW_STATUS.SUCCESS)
 
       // Stage 3: Validation (success)
-      const validationTask = createMockTask('validation', 'app', {
+      const validationTask = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.success
       })
       const validationResult = await agent.execute(validationTask)
-      expect(validationResult.status).toBe('success')
+      expect(validationResult.status).toBe(WORKFLOW_STATUS.SUCCESS)
 
       // ... continue through all 8 stages
     })
@@ -77,39 +77,39 @@ describe('Behavior Metadata Examples', () => {
   describe('Example 2: Failure Injection', () => {
     it('should fail at validation stage, allowing earlier stages to succeed', async () => {
       // Stage 1: Scaffolding succeeds
-      const scaffoldTask = createMockTask('scaffolding', 'app', {
+      const scaffoldTask = createMockTask('scaffolding', WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.success
       })
       const scaffoldResult = await agent.execute(scaffoldTask)
-      expect(scaffoldResult.status).toBe('success')
+      expect(scaffoldResult.status).toBe(WORKFLOW_STATUS.SUCCESS)
 
       // Stage 2: Validation FAILS (inject failure)
-      const validationTask = createMockTask('validation', 'app', {
+      const validationTask = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.validation_error
       })
       const validationResult = await agent.execute(validationTask)
 
       // Verify failure
-      expect(validationResult.status).toBe('failed')
+      expect(validationResult.status).toBe(WORKFLOW_STATUS.FAILED)
       expect(validationResult.errors).toBeDefined()
       expect(validationResult.errors?.[0].code).toBe('VALIDATION_ERROR')
       expect(validationResult.errors?.[0].recoverable).toBe(true)
 
       // State machine would handle this - try retry
-      const retryTask = createMockTask('validation', 'app', {
+      const retryTask = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.success // Retry succeeds
       })
       const retryResult = await agent.execute(retryTask)
-      expect(retryResult.status).toBe('success')
+      expect(retryResult.status).toBe(WORKFLOW_STATUS.SUCCESS)
     })
 
     it('should fail with unrecoverable error', async () => {
-      const task = createMockTask('deployment', 'app', {
+      const task = createMockTask(AGENT_TYPES.DEPLOYMENT, WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.unrecoverable_error
       })
       const result = await agent.execute(task)
 
-      expect(result.status).toBe('failed')
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED)
       expect(result.errors?.[0].code).toBe('FATAL_ERROR')
       expect(result.errors?.[0].recoverable).toBe(false)
       // State machine would not retry this
@@ -122,7 +122,7 @@ describe('Behavior Metadata Examples', () => {
 
   describe('Example 3: Custom Error Messages', () => {
     it('should support custom error details', async () => {
-      const task = createMockTask('validation', 'app', {
+      const task = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
         behavior_metadata: {
           mode: 'failure',
           error: {
@@ -143,7 +143,7 @@ describe('Behavior Metadata Examples', () => {
 
       const result = await agent.execute(task)
 
-      expect(result.status).toBe('failed')
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED)
       expect(result.errors?.[0].code).toBe('TYPE_CHECK_FAILED')
       expect(result.errors?.[0].details?.file).toBe('src/components/Button.tsx')
     })
@@ -155,14 +155,14 @@ describe('Behavior Metadata Examples', () => {
 
   describe('Example 4: Partial Success', () => {
     it('should report partial success when some tests fail', async () => {
-      const task = createMockTask('e2e_testing', 'app', {
+      const task = createMockTask('e2e_testing', WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.tests_partial_pass // 8/10 tests passed
       })
 
       const result = await agent.execute(task)
 
       // Partial success is still a failure
-      expect(result.status).toBe('failed')
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED)
 
       // But we have output data
       expect(result.result.data).toBeDefined()
@@ -179,7 +179,7 @@ describe('Behavior Metadata Examples', () => {
     })
 
     it('should allow custom partial success metrics', async () => {
-      const task = createMockTask('integration', 'app', {
+      const task = createMockTask(AGENT_TYPES.INTEGRATION, WORKFLOW_TYPES.APP, {
         behavior_metadata: {
           mode: 'partial',
           partial: {
@@ -204,7 +204,7 @@ describe('Behavior Metadata Examples', () => {
 
       const result = await agent.execute(task)
 
-      expect(result.status).toBe('failed')
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED)
       expect(result.result.data.failed_tests).toHaveLength(2)
       expect(result.result.data.duration_ms).toBe(15000)
     })
@@ -216,20 +216,20 @@ describe('Behavior Metadata Examples', () => {
 
   describe('Example 5: Timeout Handling', () => {
     it('should simulate stage timeout', async () => {
-      const task = createMockTask('e2e_testing', 'app', {
+      const task = createMockTask('e2e_testing', WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.timeout
       })
 
       const result = await agent.execute(task)
 
-      expect(result.status).toBe('failed')
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED)
       expect(result.errors?.[0].code).toBe('TIMEOUT')
       expect(result.errors?.[0].message).toBe('Agent execution exceeded timeout')
       expect(result.errors?.[0].recoverable).toBe(true)
     })
 
     it('should support custom timeout details', async () => {
-      const task = createMockTask('deployment', 'app', {
+      const task = createMockTask(AGENT_TYPES.DEPLOYMENT, WORKFLOW_TYPES.APP, {
         behavior_metadata: {
           mode: 'timeout',
           timing: { timeout_at_ms: 3000 },
@@ -249,7 +249,7 @@ describe('Behavior Metadata Examples', () => {
 
       const result = await agent.execute(task)
 
-      expect(result.status).toBe('failed')
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED)
       expect(result.errors?.[0].details?.stage).toBe('waiting-for-health-check')
     })
   })
@@ -260,9 +260,9 @@ describe('Behavior Metadata Examples', () => {
 
   describe('Example 6: Custom Output & Metrics', () => {
     it('should override metrics with custom values', async () => {
-      const task = createMockTask('scaffolding', 'app', {
+      const task = createMockTask('scaffolding', WORKFLOW_TYPES.APP, {
         behavior_metadata: {
-          mode: 'success',
+          mode: WORKFLOW_STATUS.SUCCESS,
           output: {
             project_name: 'my-custom-project',
             files_generated: 127,
@@ -283,7 +283,7 @@ describe('Behavior Metadata Examples', () => {
 
       const result = await agent.execute(task)
 
-      expect(result.status).toBe('success')
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
       expect(result.result.data.project_name).toBe('my-custom-project')
       expect(result.result.data.files_generated).toBe(127)
       expect(result.result.metrics.duration_ms).toBe(8500)
@@ -296,7 +296,7 @@ describe('Behavior Metadata Examples', () => {
 
   describe('Example 7: Timing Control', () => {
     it('should execute quickly when configured', async () => {
-      const task = createMockTask('validation', 'app', {
+      const task = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.fast_success
       })
 
@@ -304,12 +304,12 @@ describe('Behavior Metadata Examples', () => {
       const result = await agent.execute(task)
       const duration = Date.now() - startTime
 
-      expect(result.status).toBe('success')
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
       expect(duration).toBeLessThan(100) // Should be quick
     })
 
     it('should execute slowly when configured', async () => {
-      const task = createMockTask('validation', 'app', {
+      const task = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
         behavior_metadata: BEHAVIOR_SAMPLES.slow_success
       })
 
@@ -317,14 +317,14 @@ describe('Behavior Metadata Examples', () => {
       const result = await agent.execute(task)
       const duration = Date.now() - startTime
 
-      expect(result.status).toBe('success')
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
       expect(duration).toBeGreaterThan(4900) // Should be ~5000ms
     })
 
     it('should add variance to delays', async () => {
-      const task = createMockTask('scaffolding', 'app', {
+      const task = createMockTask('scaffolding', WORKFLOW_TYPES.APP, {
         behavior_metadata: {
-          mode: 'success',
+          mode: WORKFLOW_STATUS.SUCCESS,
           timing: {
             execution_delay_ms: 1000,
             variance_ms: 500 // +/- 500ms
@@ -354,60 +354,60 @@ describe('Behavior Metadata Examples', () => {
     it('should execute complex workflow with mixed behaviors', async () => {
       // Stage 1: Initialization (success)
       const stage1 = await agent.execute(
-        createMockTask('initialization', 'app', {
+        createMockTask('initialization', WORKFLOW_TYPES.APP, {
           behavior_metadata: BEHAVIOR_SAMPLES.success
         })
       )
-      expect(stage1.status).toBe('success')
+      expect(stage1.status).toBe(WORKFLOW_STATUS.SUCCESS)
 
       // Stage 2: Scaffolding (slow success)
       const stage2 = await agent.execute(
-        createMockTask('scaffolding', 'app', {
+        createMockTask('scaffolding', WORKFLOW_TYPES.APP, {
           behavior_metadata: BEHAVIOR_SAMPLES.slow_success
         })
       )
-      expect(stage2.status).toBe('success')
+      expect(stage2.status).toBe(WORKFLOW_STATUS.SUCCESS)
 
       // Stage 3: Dependency installation (success)
       const stage3 = await agent.execute(
-        createMockTask('dependency_installation', 'app', {
+        createMockTask('dependency_installation', WORKFLOW_TYPES.APP, {
           behavior_metadata: BEHAVIOR_SAMPLES.success
         })
       )
-      expect(stage3.status).toBe('success')
+      expect(stage3.status).toBe(WORKFLOW_STATUS.SUCCESS)
 
       // Stage 4: Validation (FAIL - inject failure)
       const stage4 = await agent.execute(
-        createMockTask('validation', 'app', {
+        createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
           behavior_metadata: BEHAVIOR_SAMPLES.validation_error
         })
       )
-      expect(stage4.status).toBe('failed')
+      expect(stage4.status).toBe(WORKFLOW_STATUS.FAILED)
 
       // RETRY: Validation (success on retry)
       const stage4Retry = await agent.execute(
-        createMockTask('validation', 'app', {
+        createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
           behavior_metadata: BEHAVIOR_SAMPLES.success
         })
       )
-      expect(stage4Retry.status).toBe('success')
+      expect(stage4Retry.status).toBe(WORKFLOW_STATUS.SUCCESS)
 
       // Stage 5: E2E Testing (partial success)
       const stage5 = await agent.execute(
-        createMockTask('e2e_testing', 'app', {
+        createMockTask('e2e_testing', WORKFLOW_TYPES.APP, {
           behavior_metadata: BEHAVIOR_SAMPLES.tests_partial_pass
         })
       )
-      expect(stage5.status).toBe('failed')
+      expect(stage5.status).toBe(WORKFLOW_STATUS.FAILED)
       expect(stage5.errors?.[0].code).toBe('PARTIAL_SUCCESS')
 
       // RETRY: E2E Testing (success on retry)
       const stage5Retry = await agent.execute(
-        createMockTask('e2e_testing', 'app', {
+        createMockTask('e2e_testing', WORKFLOW_TYPES.APP, {
           behavior_metadata: BEHAVIOR_SAMPLES.success
         })
       )
-      expect(stage5Retry.status).toBe('success')
+      expect(stage5Retry.status).toBe(WORKFLOW_STATUS.SUCCESS)
 
       // Continue with remaining stages...
     })
@@ -420,10 +420,10 @@ describe('Behavior Metadata Examples', () => {
   describe('Example 9: Platform-Specific Behaviors', () => {
     it('should support different behaviors per platform', async () => {
       // Web app: deployment succeeds quickly
-      const webAgent = new GenericMockAgent(messageBus, 'deployment', 'web-app-platform', 0)
-      const webDeployTask = createMockTask('deployment', 'app', {
+      const webAgent = new GenericMockAgent(messageBus, AGENT_TYPES.DEPLOYMENT, 'web-app-platform', 0)
+      const webDeployTask = createMockTask(AGENT_TYPES.DEPLOYMENT, WORKFLOW_TYPES.APP, {
         behavior_metadata: {
-          mode: 'success',
+          mode: WORKFLOW_STATUS.SUCCESS,
           timing: { execution_delay_ms: 500 },
           output: { endpoint: 'https://my-app.vercel.app' }
         }
@@ -432,15 +432,15 @@ describe('Behavior Metadata Examples', () => {
       expect(webResult.result.data.endpoint).toBe('https://my-app.vercel.app')
 
       // Data pipeline: deployment times out
-      const pipelineAgent = new GenericMockAgent(messageBus, 'deployment', 'data-pipeline-platform', 0)
-      const pipelineDeployTask = createMockTask('deployment', 'app', {
+      const pipelineAgent = new GenericMockAgent(messageBus, AGENT_TYPES.DEPLOYMENT, 'data-pipeline-platform', 0)
+      const pipelineDeployTask = createMockTask(AGENT_TYPES.DEPLOYMENT, WORKFLOW_TYPES.APP, {
         behavior_metadata: {
           mode: 'timeout',
           error: { code: 'PIPELINE_DEPLOYMENT_TIMEOUT' }
         }
       })
       const pipelineResult = await pipelineAgent.execute(pipelineDeployTask)
-      expect(pipelineResult.status).toBe('failed')
+      expect(pipelineResult.status).toBe(WORKFLOW_STATUS.FAILED)
     })
   })
 
@@ -452,7 +452,7 @@ describe('Behavior Metadata Examples', () => {
     it('should expose available presets', () => {
       const presets = agent.getAvailableBehaviors()
 
-      expect(presets).toContain('success')
+      expect(presets).toContain(WORKFLOW_STATUS.SUCCESS)
       expect(presets).toContain('fast_success')
       expect(presets).toContain('slow_success')
       expect(presets).toContain('validation_error')
@@ -460,6 +460,13 @@ describe('Behavior Metadata Examples', () => {
       expect(presets).toContain('timeout')
       expect(presets).toContain('tests_partial_pass')
       expect(presets).toContain('crash')
+      // New delay presets
+      expect(presets).toContain('default_delay')
+      expect(presets).toContain('no_delay')
+      expect(presets).toContain('custom_delay_3s')
+      expect(presets).toContain('custom_delay_5s')
+      expect(presets).toContain('custom_delay_30s')
+      expect(presets).toContain('delay_with_variance')
     })
 
     it('should retrieve preset by name', () => {
@@ -473,9 +480,185 @@ describe('Behavior Metadata Examples', () => {
     it('should show agent capabilities including behaviors', () => {
       const info = agent.getAgentInfo()
 
-      expect(info.availableBehaviors).toContain('success')
+      expect(info.availableBehaviors).toContain(WORKFLOW_STATUS.SUCCESS)
       expect(info.capabilities).toContain('failure-injection')
       expect(info.capabilities).toContain('metadata-driven-behavior')
+    })
+  })
+
+  // ============================================================================
+  // EXAMPLE 11: Delay Configuration & Timing Control
+  // ============================================================================
+
+  describe('Example 11: Delay Configuration', () => {
+    let delayAgent: GenericMockAgent
+
+    beforeEach(() => {
+      // Create agent with timing enabled to measure delays
+      delayAgent = new GenericMockAgent(messageBus, AGENT_TYPES.SCAFFOLD, undefined, 0)
+    })
+
+    it('should apply default 10-second delay when no timing specified', async () => {
+      const startTime = Date.now()
+      const task = createMockTask('scaffolding', WORKFLOW_TYPES.APP, {
+        behavior_metadata: {
+          mode: WORKFLOW_STATUS.SUCCESS
+          // No timing specified - should use default 10s
+        }
+      })
+      const result = await delayAgent.execute(task)
+      const elapsedMs = Date.now() - startTime
+
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
+      // Should have delayed approximately 10 seconds (allow some variance)
+      expect(elapsedMs).toBeGreaterThanOrEqual(9500)
+      expect(elapsedMs).toBeLessThan(15000)
+    })
+
+    it('should respect custom execution delay via timing.execution_delay_ms', async () => {
+      const startTime = Date.now()
+      const task = createMockTask('scaffolding', WORKFLOW_TYPES.APP, {
+        behavior_metadata: {
+          mode: WORKFLOW_STATUS.SUCCESS,
+          timing: { execution_delay_ms: 1000 } // 1 second custom delay
+        }
+      })
+      const result = await delayAgent.execute(task)
+      const elapsedMs = Date.now() - startTime
+
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
+      expect(elapsedMs).toBeGreaterThanOrEqual(900)
+      expect(elapsedMs).toBeLessThan(2000)
+    })
+
+    it('should execute instantly with zero delay', async () => {
+      const startTime = Date.now()
+      const task = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
+        behavior_metadata: {
+          mode: WORKFLOW_STATUS.SUCCESS,
+          timing: { execution_delay_ms: 0 } // No delay
+        }
+      })
+      const result = await delayAgent.execute(task)
+      const elapsedMs = Date.now() - startTime
+
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
+      expect(elapsedMs).toBeLessThan(500) // Should complete almost instantly
+    })
+
+    it('should use no_delay preset for instant execution', async () => {
+      const startTime = Date.now()
+      const task = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
+        behavior_metadata: BEHAVIOR_SAMPLES.no_delay
+      })
+      const result = await delayAgent.execute(task)
+      const elapsedMs = Date.now() - startTime
+
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
+      expect(elapsedMs).toBeLessThan(500)
+    })
+
+    it('should use custom_delay_3s preset for 3-second delay', async () => {
+      const startTime = Date.now()
+      const task = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
+        behavior_metadata: BEHAVIOR_SAMPLES.custom_delay_3s
+      })
+      const result = await delayAgent.execute(task)
+      const elapsedMs = Date.now() - startTime
+
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
+      expect(elapsedMs).toBeGreaterThanOrEqual(2900)
+      expect(elapsedMs).toBeLessThan(4000)
+    })
+
+    it('should apply variance to delay', async () => {
+      // Run multiple times to verify variance is applied
+      const delays: number[] = []
+
+      for (let i = 0; i < 3; i++) {
+        const startTime = Date.now()
+        const task = createMockTask('scaffolding', WORKFLOW_TYPES.APP, {
+          behavior_metadata: {
+            mode: WORKFLOW_STATUS.SUCCESS,
+            timing: { execution_delay_ms: 1000, variance_ms: 500 } // 1s ± 500ms
+          }
+        })
+        const result = await delayAgent.execute(task)
+        const elapsedMs = Date.now() - startTime
+
+        expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
+        expect(elapsedMs).toBeGreaterThanOrEqual(800)
+        expect(elapsedMs).toBeLessThan(2000)
+        delays.push(elapsedMs)
+      }
+
+      // With variance, at least some runs should have different delays
+      const minDelay = Math.min(...delays)
+      const maxDelay = Math.max(...delays)
+      expect(maxDelay - minDelay).toBeGreaterThan(100) // Variance should be visible
+    })
+
+    it('should use delay_with_variance preset for 10s ± 2s delay', async () => {
+      const delays: number[] = []
+
+      for (let i = 0; i < 2; i++) {
+        const startTime = Date.now()
+        const task = createMockTask(AGENT_TYPES.DEPLOYMENT, WORKFLOW_TYPES.APP, {
+          behavior_metadata: BEHAVIOR_SAMPLES.delay_with_variance
+        })
+        const result = await delayAgent.execute(task)
+        const elapsedMs = Date.now() - startTime
+
+        expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS)
+        delays.push(elapsedMs)
+      }
+
+      // All runs should be between 8-12 seconds (10 ± 2)
+      delays.forEach(delay => {
+        expect(delay).toBeGreaterThanOrEqual(7800)
+        expect(delay).toBeLessThan(13000)
+      })
+    })
+
+    it('should combine delay with failure behavior', async () => {
+      const startTime = Date.now()
+      const task = createMockTask(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP, {
+        behavior_metadata: {
+          mode: 'failure',
+          timing: { execution_delay_ms: 2000 }, // Fail after 2 seconds
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Validation failed after delay'
+          }
+        }
+      })
+      const result = await delayAgent.execute(task)
+      const elapsedMs = Date.now() - startTime
+
+      expect(result.status).toBe(WORKFLOW_STATUS.FAILED)
+      expect(result.errors?.[0].code).toBe('VALIDATION_ERROR')
+      expect(elapsedMs).toBeGreaterThanOrEqual(1900)
+    })
+
+    it('should handle timing in all behavior modes', async () => {
+      const modes = [
+        { mode: WORKFLOW_STATUS.SUCCESS as const, expectedStatus: WORKFLOW_STATUS.SUCCESS },
+        { mode: 'failure' as const, expectedStatus: WORKFLOW_STATUS.FAILED },
+        { mode: 'crash' as const, expectedStatus: WORKFLOW_STATUS.FAILED }
+      ]
+
+      for (const { mode, expectedStatus } of modes) {
+        const task = createMockTask('test', WORKFLOW_TYPES.APP, {
+          behavior_metadata: {
+            mode,
+            timing: { execution_delay_ms: 100 },
+            error: mode !== WORKFLOW_STATUS.SUCCESS ? { code: 'TEST_ERROR' } : undefined
+          }
+        })
+        const result = await delayAgent.execute(task)
+
+        expect(result.status).toBe(expectedStatus)
+      }
     })
   })
 })
@@ -493,9 +676,9 @@ function createMockTask(
     message_id: 'msg-' + Math.random().toString(36).substr(2, 9),
     task_id: 'task-' + Math.random().toString(36).substr(2, 9),
     workflow_id: 'wf-' + Math.random().toString(36).substr(2, 9),
-    agent_type: 'scaffold',
-    priority: 'medium',
-    status: 'pending',
+    agent_type: AGENT_TYPES.SCAFFOLD,
+    priority: TASK_PRIORITY.MEDIUM,
+    status: TASK_STATUS.PENDING,
     constraints: {
       timeout_ms: 300000,
       max_retries: 3,

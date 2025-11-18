@@ -13,7 +13,7 @@ import { z } from 'zod';
 const CreateScaffoldRequestSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().max(500),
-  project_type: z.enum(['app', 'service', 'feature', 'capability']),
+  project_type: z.enum([WORKFLOW_TYPES.APP, 'service', WORKFLOW_TYPES.FEATURE, 'capability']),
   requirements: z.array(z.string()).min(1),
   tech_stack: z.object({
     language: z.enum(['typescript', 'javascript']).default('typescript'),
@@ -45,14 +45,14 @@ export const scaffoldRoutes: FastifyPluginAsync<any> = async (fastify, options: 
     {
       schema: {
         description: 'Create a new scaffold workflow',
-        tags: ['scaffold'],
+        tags: [AGENT_TYPES.SCAFFOLD],
         body: {
           type: 'object',
           required: ['name', 'description', 'project_type', 'requirements'],
           properties: {
             name: { type: 'string' },
             description: { type: 'string' },
-            project_type: { type: 'string', enum: ['app', 'service', 'feature', 'capability'] },
+            project_type: { type: 'string', enum: [WORKFLOW_TYPES.APP, 'service', WORKFLOW_TYPES.FEATURE, 'capability'] },
             requirements: { type: 'array', items: { type: 'string' } },
             tech_stack: { type: 'object' },
             options: { type: 'object' }
@@ -139,7 +139,7 @@ export const scaffoldRoutes: FastifyPluginAsync<any> = async (fastify, options: 
     {
       schema: {
         description: 'Get scaffold workflow status',
-        tags: ['scaffold'],
+        tags: [AGENT_TYPES.SCAFFOLD],
         params: {
           type: 'object',
           properties: {

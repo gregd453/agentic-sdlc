@@ -19,18 +19,18 @@ describe('WorkflowLoader', () => {
     name: 'test-workflow',
     version: '1.0.0',
     description: 'Sample test workflow',
-    start_stage: 'scaffold',
+    start_stage: AGENT_TYPES.SCAFFOLD,
     stages: {
       scaffold: {
         name: 'Scaffold',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         timeout_ms: 60000,
         max_retries: 3,
         on_success: 'validate'
       },
       validate: {
         name: 'Validate',
-        agent_type: 'validation',
+        agent_type: AGENT_TYPES.VALIDATION,
         timeout_ms: 30000,
         max_retries: 2
       }
@@ -88,7 +88,7 @@ stages:
 
       expect(workflow.name).toBe('test-workflow');
       expect(workflow.version).toBe('1.0.0');
-      expect(workflow.start_stage).toBe('scaffold');
+      expect(workflow.start_stage).toBe(AGENT_TYPES.SCAFFOLD);
       expect(workflow.stages.scaffold).toBeDefined();
     });
 
@@ -170,7 +170,7 @@ stages:
       const workflow = loader.loadFromYamlString(yaml);
 
       expect(workflow.name).toBe('test-workflow');
-      expect(workflow.start_stage).toBe('scaffold');
+      expect(workflow.start_stage).toBe(AGENT_TYPES.SCAFFOLD);
     });
 
     it('should throw on invalid YAML', () => {

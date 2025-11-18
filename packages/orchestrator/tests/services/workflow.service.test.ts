@@ -16,10 +16,10 @@ describe('WorkflowService', () => {
     mockRepository = {
       create: vi.fn().mockResolvedValue({
         id: 'test-workflow-id',
-        type: 'app',
+        type: WORKFLOW_TYPES.APP,
         name: 'Test Workflow',
         description: 'Test Description',
-        status: 'initiated',
+        status: WORKFLOW_STATUS.INITIATED,
         current_stage: 'initialization',
         progress: 0,
         priority: 'normal',
@@ -63,7 +63,7 @@ describe('WorkflowService', () => {
   describe('createWorkflow', () => {
     it('should successfully create a workflow', async () => {
       const request: CreateWorkflowRequest = {
-        type: 'app',
+        type: WORKFLOW_TYPES.APP,
         name: 'Test App',
         description: 'Test Description',
         requirements: 'Test Requirements',
@@ -74,14 +74,14 @@ describe('WorkflowService', () => {
 
       expect(result).toBeDefined();
       expect(result.workflow_id).toBe('test-workflow-id');
-      expect(result.status).toBe('initiated');
+      expect(result.status).toBe(WORKFLOW_STATUS.INITIATED);
       expect(result.current_stage).toBe('initialization');
       expect(result.progress_percentage).toBe(0);
 
       // Verify repository was called
       expect(mockRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: 'app',
+          type: WORKFLOW_TYPES.APP,
           name: 'Test App',
           created_by: 'system'
         })
@@ -90,7 +90,7 @@ describe('WorkflowService', () => {
       // Verify state machine was created
       expect(mockStateMachineService.createStateMachine).toHaveBeenCalledWith(
         'test-workflow-id',
-        'app'
+        WORKFLOW_TYPES.APP
       );
 
       // Verify event was published
@@ -101,7 +101,7 @@ describe('WorkflowService', () => {
       mockRepository.create.mockRejectedValue(new Error('Database error'));
 
       const request: CreateWorkflowRequest = {
-        type: 'app',
+        type: WORKFLOW_TYPES.APP,
         name: 'Test App',
         priority: 'normal'
       };
@@ -114,8 +114,8 @@ describe('WorkflowService', () => {
     it('should return workflow when found', async () => {
       const mockWorkflow = {
         id: 'test-id',
-        status: 'running',
-        current_stage: 'validation',
+        status: WORKFLOW_STATUS.RUNNING,
+        current_stage: AGENT_TYPES.VALIDATION,
         progress: 50,
         created_at: new Date(),
         updated_at: new Date()
@@ -127,7 +127,7 @@ describe('WorkflowService', () => {
 
       expect(result).toBeDefined();
       expect(result?.workflow_id).toBe('test-id');
-      expect(result?.status).toBe('running');
+      expect(result?.status).toBe(WORKFLOW_STATUS.RUNNING);
       expect(result?.progress_percentage).toBe(50);
     });
 
@@ -145,16 +145,16 @@ describe('WorkflowService', () => {
       const mockWorkflows = [
         {
           id: 'workflow-1',
-          status: 'running',
-          current_stage: 'validation',
+          status: WORKFLOW_STATUS.RUNNING,
+          current_stage: AGENT_TYPES.VALIDATION,
           progress: 50,
           created_at: new Date(),
           updated_at: new Date()
         },
         {
           id: 'workflow-2',
-          status: 'completed',
-          current_stage: 'deployment',
+          status: WORKFLOW_STATUS.COMPLETED,
+          current_stage: AGENT_TYPES.DEPLOYMENT,
           progress: 100,
           created_at: new Date(),
           updated_at: new Date()
@@ -171,10 +171,10 @@ describe('WorkflowService', () => {
     });
 
     it('should filter workflows by status', async () => {
-      await workflowService.listWorkflows({ status: 'running' });
+      await workflowService.listWorkflows({ status: WORKFLOW_STATUS.RUNNING });
 
       expect(mockRepository.findAll).toHaveBeenCalledWith({
-        status: 'running'
+        status: WORKFLOW_STATUS.RUNNING
       });
     });
   });
@@ -183,14 +183,14 @@ describe('WorkflowService', () => {
     it('should cancel an existing workflow', async () => {
       mockRepository.findById.mockResolvedValue({
         id: 'test-id',
-        status: 'running'
+        status: WORKFLOW_STATUS.RUNNING
       });
 
       await workflowService.cancelWorkflow('test-id');
 
       expect(mockStateMachineService.getStateMachine).toHaveBeenCalledWith('test-id');
       expect(mockRepository.update).toHaveBeenCalledWith('test-id', {
-        status: 'cancelled'
+        status: WORKFLOW_STATUS.CANCELLED
       });
     });
 
@@ -206,8 +206,8 @@ describe('WorkflowService', () => {
     it('should retry a failed workflow', async () => {
       mockRepository.findById.mockResolvedValue({
         id: 'test-id',
-        status: 'failed',
-        current_stage: 'validation'
+        status: WORKFLOW_STATUS.FAILED,
+        current_stage: AGENT_TYPES.VALIDATION
       });
 
       await workflowService.retryWorkflow('test-id');
@@ -219,11 +219,11 @@ describe('WorkflowService', () => {
     it('should retry from specific stage', async () => {
       mockRepository.findById.mockResolvedValue({
         id: 'test-id',
-        status: 'failed',
-        current_stage: 'deployment'
+        status: WORKFLOW_STATUS.FAILED,
+        current_stage: AGENT_TYPES.DEPLOYMENT
       });
 
-      await workflowService.retryWorkflow('test-id', 'validation');
+      await workflowService.retryWorkflow('test-id', AGENT_TYPES.VALIDATION);
 
       expect(mockRepository.createTask).toHaveBeenCalledWith(
         expect.objectContaining({

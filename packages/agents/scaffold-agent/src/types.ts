@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 // Project types supported by scaffold agent
-export const ProjectTypeSchema = z.enum(['app', 'service', 'feature', 'capability']);
+export const ProjectTypeSchema = z.enum([WORKFLOW_TYPES.APP, 'service', WORKFLOW_TYPES.FEATURE, 'capability']);
 export type ProjectType = z.infer<typeof ProjectTypeSchema>;
 
 // Scaffold task input schema
 export const ScaffoldTaskSchema = z.object({
   task_id: z.string().uuid(),
   workflow_id: z.string().uuid(),
-  type: z.literal('scaffold'),
+  type: z.literal(AGENT_TYPES.SCAFFOLD),
   name: z.string().min(1).max(100),
   description: z.string(),
   requirements: z.string(),
@@ -77,7 +77,7 @@ export type RequirementsAnalysis = z.infer<typeof RequirementsAnalysisSchema>;
 export const ScaffoldResultSchema = z.object({
   task_id: z.string().uuid(),
   workflow_id: z.string().uuid(),
-  status: z.enum(['success', 'failure', 'partial']),
+  status: z.enum([WORKFLOW_STATUS.SUCCESS, 'failure', 'partial']),
   output: z.object({
     analysis: RequirementsAnalysisSchema.optional(),
     structure: ProjectStructureSchema.optional(),

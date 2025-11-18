@@ -23,7 +23,7 @@ vi.mock('fs', () => {
         return JSON.stringify({ environment: 'production' })
       }
       if (filePath.includes('project')) {
-        return JSON.stringify({ logLevel: 'debug' })
+        return JSON.stringify({ logLevel: LOG_LEVEL.DEBUG })
       }
       if (filePath.includes('.env')) {
         return 'ORCHESTRATOR_URL=http://api.example.com\nVERBOSE=true'
@@ -72,7 +72,7 @@ describe('ConfigService', () => {
 
     it('should load default configuration', () => {
       expect(service.get('orchestratorUrl')).toBeDefined()
-      expect(service.get('logLevel')).toBe('info')
+      expect(service.get('logLevel')).toBe(LOG_LEVEL.INFO)
     })
 
     it('should have all expected default keys', () => {
@@ -88,7 +88,7 @@ describe('ConfigService', () => {
   describe('get()', () => {
     it('should get configuration value', () => {
       const value = service.get('logLevel')
-      expect(value).toBe('info')
+      expect(value).toBe(LOG_LEVEL.INFO)
     })
 
     it('should return undefined for non-existent key', () => {
@@ -107,7 +107,7 @@ describe('ConfigService', () => {
       const result = service.getWithSource('logLevel')
 
       expect(result).toBeDefined()
-      expect(result?.value).toBe('info')
+      expect(result?.value).toBe(LOG_LEVEL.INFO)
       expect(result?.source).toBe('default')
     })
 
@@ -131,8 +131,8 @@ describe('ConfigService', () => {
     })
 
     it('should override default value', () => {
-      service.set('logLevel', 'debug')
-      expect(service.get('logLevel')).toBe('debug')
+      service.set('logLevel', LOG_LEVEL.DEBUG)
+      expect(service.get('logLevel')).toBe(LOG_LEVEL.DEBUG)
     })
 
     it('should mark source as cli', () => {
@@ -263,10 +263,10 @@ describe('ConfigService', () => {
 
   describe('resetToDefaults()', () => {
     it('should reset all values to defaults', () => {
-      service.set('logLevel', 'debug')
+      service.set('logLevel', LOG_LEVEL.DEBUG)
       service.resetToDefaults()
 
-      expect(service.get('logLevel')).toBe('info')
+      expect(service.get('logLevel')).toBe(LOG_LEVEL.INFO)
     })
 
     it('should reset source to default', () => {
@@ -287,11 +287,11 @@ describe('ConfigService', () => {
 
   describe('resetKeys()', () => {
     it('should reset specific keys to defaults', () => {
-      service.set('logLevel', 'debug')
+      service.set('logLevel', LOG_LEVEL.DEBUG)
       service.set('verbose', true)
       service.resetKeys(['logLevel'])
 
-      expect(service.get('logLevel')).toBe('info')
+      expect(service.get('logLevel')).toBe(LOG_LEVEL.INFO)
       expect(service.get('verbose')).toBe(true)
     })
 
@@ -399,7 +399,7 @@ describe('ConfigService', () => {
       expect(value?.source).toBe('default')
 
       // Override with CLI
-      service.set('logLevel', 'debug')
+      service.set('logLevel', LOG_LEVEL.DEBUG)
       value = service.getWithSource('logLevel')
       expect(value?.source).toBe('cli')
     })

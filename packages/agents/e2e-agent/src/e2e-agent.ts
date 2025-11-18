@@ -30,7 +30,7 @@ export class E2EAgent extends BaseAgent {
   ) {
     super(
       {
-        type: 'e2e',
+        type: AGENT_TYPES.E2E_TEST,
         version: '1.0.0',
         capabilities: [
           'test-generation',
@@ -186,8 +186,8 @@ export class E2EAgent extends BaseAgent {
 
       // Determine next stage
       const nextStage = report.overall_status === 'passed'
-        ? 'deployment'
-        : 'validation';
+        ? AGENT_TYPES.DEPLOYMENT
+        : AGENT_TYPES.VALIDATION;
 
       // SESSION #65: Return TaskResult conforming to canonical schema
       return {
@@ -195,7 +195,7 @@ export class E2EAgent extends BaseAgent {
         task_id: task.task_id,
         workflow_id: task.workflow_id,
         agent_id: this.agentId,
-        status: report.overall_status === 'failed' ? 'failure' : 'success',
+        status: report.overall_status === WORKFLOW_STATUS.FAILED ? 'failure' : WORKFLOW_STATUS.SUCCESS,
         result: {
           data: {
             report: formattedReport,
@@ -220,7 +220,7 @@ export class E2EAgent extends BaseAgent {
         next_actions: nextStage ? [{
           action: 'deploy',
           agent_type: nextStage as any,
-          priority: 'high'
+          priority: TASK_PRIORITY.HIGH
         }] : undefined,
         metadata: {
           completed_at: new Date().toISOString(),

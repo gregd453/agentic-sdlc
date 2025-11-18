@@ -24,14 +24,14 @@ export interface DeploymentValidation {
 
 export interface ValidationCheck {
   name: string
-  status: 'passed' | 'failed' | 'warning'
+  status: 'passed' | WORKFLOW_STATUS.FAILED | 'warning'
   message: string
   duration: number
 }
 
 export interface DeploymentStatus {
   environment: string
-  status: 'pending' | 'in-progress' | 'completed' | 'failed' | 'rolled-back'
+  status: TASK_STATUS.PENDING | 'in-progress' | WORKFLOW_STATUS.COMPLETED | WORKFLOW_STATUS.FAILED | 'rolled-back'
   version: string
   timestamp: Date
   duration?: number
@@ -93,11 +93,11 @@ export class DeployService {
     checks.push(await this.checkSecurityConfig())
 
     const duration = Date.now() - startTime
-    const errors = checks.filter((c) => c.status === 'failed').map((c) => c.message)
+    const errors = checks.filter((c) => c.status === WORKFLOW_STATUS.FAILED).map((c) => c.message)
     const valid = errors.length === 0
 
     const passed = checks.filter((c) => c.status === 'passed').length
-    const failed = checks.filter((c) => c.status === 'failed').length
+    const failed = checks.filter((c) => c.status === WORKFLOW_STATUS.FAILED).length
     const warnings = checks.filter((c) => c.status === 'warning').length
     logger.info(
       `Deployment validation completed: valid=${valid}, passed=${passed}, failed=${failed}, warnings=${warnings}, duration=${duration}ms`
@@ -129,7 +129,7 @@ export class DeployService {
 
           const status: DeploymentStatus = {
             environment: config.environment,
-            status: 'failed',
+            status: WORKFLOW_STATUS.FAILED,
             version: this.getCurrentVersion(),
             timestamp: new Date(),
             changes: [],
@@ -146,7 +146,7 @@ export class DeployService {
 
         return {
           environment: config.environment,
-          status: 'completed',
+          status: WORKFLOW_STATUS.COMPLETED,
           version: this.getCurrentVersion(),
           timestamp: new Date(),
           duration: Date.now() - startTime,
@@ -161,7 +161,7 @@ export class DeployService {
 
       const status: DeploymentStatus = {
         environment: config.environment,
-        status: 'completed',
+        status: WORKFLOW_STATUS.COMPLETED,
         version: this.getCurrentVersion(),
         timestamp: new Date(),
         duration,
@@ -182,7 +182,7 @@ export class DeployService {
 
       const status: DeploymentStatus = {
         environment: config.environment,
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         version: this.getCurrentVersion(),
         timestamp: new Date(),
         duration,
@@ -280,7 +280,7 @@ export class DeployService {
       if (!fs.existsSync(envFile)) {
         return {
           name: checkName,
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           message: `Environment file not found: ${envFile}`,
           duration: 0,
         }
@@ -295,7 +295,7 @@ export class DeployService {
       if (missing.length > 0) {
         return {
           name: checkName,
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           message: `Missing required environment variables: ${missing.join(', ')}`,
           duration: 0,
         }
@@ -310,7 +310,7 @@ export class DeployService {
     } catch (error) {
       return {
         name: checkName,
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         message: `Failed to validate environment: ${(error as Error).message}`,
         duration: 0,
       }
@@ -329,7 +329,7 @@ export class DeployService {
       if (!fs.existsSync(distDir)) {
         return {
           name: checkName,
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           message: 'Build artifacts not found - run build first',
           duration: 0,
         }
@@ -342,7 +342,7 @@ export class DeployService {
       if (missing.length > 0) {
         return {
           name: checkName,
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           message: `Missing build files: ${missing.join(', ')}`,
           duration: 0,
         }
@@ -357,7 +357,7 @@ export class DeployService {
     } catch (error) {
       return {
         name: checkName,
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         message: `Failed to check build artifacts: ${(error as Error).message}`,
         duration: 0,
       }
@@ -481,7 +481,7 @@ export class DeployService {
     } catch (error) {
       return {
         name: checkName,
-        status: 'failed',
+        status: WORKFLOW_STATUS.FAILED,
         message: `Database connectivity check failed: ${(error as Error).message}`,
         duration: 0,
       }

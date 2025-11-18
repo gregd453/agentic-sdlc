@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AGENT_TYPES } from '@agentic-sdlc/shared-types';
 
 /**
  * Single source of truth for workflow stages
@@ -12,10 +13,10 @@ export const StageEnum = z.enum([
   'initialization',
   'scaffolding',
   'dependency_installation',
-  'validation',
+  AGENT_TYPES.VALIDATION,
   'e2e_testing',
-  'integration',
-  'deployment',
+  AGENT_TYPES.INTEGRATION,
+  AGENT_TYPES.DEPLOYMENT,
   'monitoring'
 ]);
 
@@ -38,11 +39,11 @@ export function validateStage(stage: unknown): Stage {
  */
 export function getStagesForType(workflowType: string): Stage[] {
   const stages: Record<string, Stage[]> = {
-    app: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring'],
-    feature: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'e2e_testing'],
-    bugfix: ['initialization', 'validation', 'e2e_testing'],
-    service: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'integration', 'deployment'],
-    default: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring']
+    app: ['initialization', 'scaffolding', 'dependency_installation', AGENT_TYPES.VALIDATION, 'e2e_testing', AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT, 'monitoring'],
+    feature: ['initialization', 'scaffolding', 'dependency_installation', AGENT_TYPES.VALIDATION, 'e2e_testing'],
+    bugfix: ['initialization', AGENT_TYPES.VALIDATION, 'e2e_testing'],
+    service: ['initialization', 'scaffolding', 'dependency_installation', AGENT_TYPES.VALIDATION, AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT],
+    default: ['initialization', 'scaffolding', 'dependency_installation', AGENT_TYPES.VALIDATION, 'e2e_testing', AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT, 'monitoring']
   };
 
   return stages[workflowType] || stages.default;

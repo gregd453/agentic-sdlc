@@ -54,7 +54,7 @@ export const WorkflowDefinitionFullSchema = z.object({
   platform_id: z.string().optional().describe('Platform UUID (optional, can be set at seeding time)'),
   description: z.string().optional().describe('Definition description'),
   workflow_types: z
-    .array(z.enum(['app', 'feature', 'bugfix', 'service', 'pipeline', 'terraform', 'docker']))
+    .array(z.enum([WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX, 'service', 'pipeline', 'terraform', 'docker']))
     .describe('Workflow types this definition applies to'),
   platforms: z
     .array(z.string())
@@ -186,17 +186,17 @@ export function buildStageWeightMap(
  */
 export const SAMPLE_DEFINITIONS = {
   app: {
-    name: 'app',
+    name: WORKFLOW_TYPES.APP,
     version: '1.0.0',
     description: 'Full application development workflow',
-    workflow_types: ['app'],
+    workflow_types: [WORKFLOW_TYPES.APP],
     platforms: ['legacy', 'web-apps'],
     enabled: true,
     stages: [
       {
         name: 'initialization',
         display_name: 'Initialize Project',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         required: true,
         progress_weight: 5,
         timeout_ms: 60000
@@ -204,7 +204,7 @@ export const SAMPLE_DEFINITIONS = {
       {
         name: 'scaffolding',
         display_name: 'Scaffold Application',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         required: true,
         progress_weight: 15,
         timeout_ms: 300000
@@ -212,15 +212,15 @@ export const SAMPLE_DEFINITIONS = {
       {
         name: 'dependency_installation',
         display_name: 'Install Dependencies',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         required: true,
         progress_weight: 10,
         timeout_ms: 300000
       },
       {
-        name: 'validation',
+        name: AGENT_TYPES.VALIDATION,
         display_name: 'Validate Code',
-        agent_type: 'validation',
+        agent_type: AGENT_TYPES.VALIDATION,
         required: true,
         progress_weight: 15,
         timeout_ms: 300000
@@ -228,23 +228,23 @@ export const SAMPLE_DEFINITIONS = {
       {
         name: 'e2e_testing',
         display_name: 'E2E Testing',
-        agent_type: 'e2e_test',
+        agent_type: AGENT_TYPES.E2E_TEST,
         required: true,
         progress_weight: 20,
         timeout_ms: 600000
       },
       {
-        name: 'integration',
+        name: AGENT_TYPES.INTEGRATION,
         display_name: 'Integration Testing',
-        agent_type: 'integration',
+        agent_type: AGENT_TYPES.INTEGRATION,
         required: true,
         progress_weight: 15,
         timeout_ms: 600000
       },
       {
-        name: 'deployment',
+        name: AGENT_TYPES.DEPLOYMENT,
         display_name: 'Deploy Application',
-        agent_type: 'deployment',
+        agent_type: AGENT_TYPES.DEPLOYMENT,
         required: true,
         progress_weight: 15,
         timeout_ms: 300000
@@ -261,44 +261,44 @@ export const SAMPLE_DEFINITIONS = {
     progress_calculation: 'weighted'
   },
   feature: {
-    name: 'feature',
+    name: WORKFLOW_TYPES.FEATURE,
     version: '1.0.0',
     description: 'Feature development workflow',
-    workflow_types: ['feature'],
+    workflow_types: [WORKFLOW_TYPES.FEATURE],
     platforms: ['legacy', 'web-apps'],
     enabled: true,
     stages: [
       {
         name: 'initialization',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         required: true,
         progress_weight: 10,
         timeout_ms: 60000
       },
       {
         name: 'scaffolding',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         required: true,
         progress_weight: 20,
         timeout_ms: 300000
       },
       {
         name: 'dependency_installation',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         required: true,
         progress_weight: 10,
         timeout_ms: 300000
       },
       {
-        name: 'validation',
-        agent_type: 'validation',
+        name: AGENT_TYPES.VALIDATION,
+        agent_type: AGENT_TYPES.VALIDATION,
         required: true,
         progress_weight: 20,
         timeout_ms: 300000
       },
       {
         name: 'e2e_testing',
-        agent_type: 'e2e_test',
+        agent_type: AGENT_TYPES.E2E_TEST,
         required: true,
         progress_weight: 40,
         timeout_ms: 600000
@@ -307,30 +307,30 @@ export const SAMPLE_DEFINITIONS = {
     progress_calculation: 'weighted'
   },
   bugfix: {
-    name: 'bugfix',
+    name: WORKFLOW_TYPES.BUGFIX,
     version: '1.0.0',
     description: 'Bug fix workflow',
-    workflow_types: ['bugfix'],
+    workflow_types: [WORKFLOW_TYPES.BUGFIX],
     platforms: ['legacy'],
     enabled: true,
     stages: [
       {
         name: 'initialization',
-        agent_type: 'scaffold',
+        agent_type: AGENT_TYPES.SCAFFOLD,
         required: true,
         progress_weight: 15,
         timeout_ms: 60000
       },
       {
-        name: 'validation',
-        agent_type: 'validation',
+        name: AGENT_TYPES.VALIDATION,
+        agent_type: AGENT_TYPES.VALIDATION,
         required: true,
         progress_weight: 35,
         timeout_ms: 300000
       },
       {
         name: 'e2e_testing',
-        agent_type: 'e2e_test',
+        agent_type: AGENT_TYPES.E2E_TEST,
         required: true,
         progress_weight: 50,
         timeout_ms: 600000

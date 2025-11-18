@@ -294,7 +294,7 @@ describe('GitHubActionsIntegration', () => {
       expect(pipeline.stages.some(s => s.id === 'build')).toBe(true);
       expect(pipeline.stages.some(s => s.id === 'unit_test')).toBe(true);
       expect(pipeline.stages.some(s => s.id === 'integration_test')).toBe(true);
-      expect(pipeline.stages.some(s => s.id === 'e2e_test')).toBe(true);
+      expect(pipeline.stages.some(s => s.id === AGENT_TYPES.E2E_TEST)).toBe(true);
       expect(pipeline.stages.some(s => s.id === 'security_scan')).toBe(true);
       expect(pipeline.stages.some(s => s.id === 'deploy')).toBe(true);
     });
@@ -338,7 +338,7 @@ describe('GitHubActionsIntegration', () => {
       expect(unitTest?.dependencies).toContainEqual({
         stage_id: 'build',
         required: true,
-        condition: 'success'
+        condition: WORKFLOW_STATUS.SUCCESS
       });
 
       // Deploy should depend on E2E and security

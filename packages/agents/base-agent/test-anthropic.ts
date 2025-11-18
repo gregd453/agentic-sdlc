@@ -34,7 +34,7 @@ async function testAnthropicIntegration() {
       5. User profile management
       6. Activity logging and audit trail
     `,
-    priority: 'high'
+    priority: TASK_PRIORITY.HIGH
   };
 
   console.log('📋 Test Task:', {
@@ -48,7 +48,7 @@ async function testAnthropicIntegration() {
     // Execute the task
     const result = await agent.execute(testTask);
 
-    if (result.status === 'success') {
+    if (result.status === WORKFLOW_STATUS.SUCCESS) {
       console.log('✅ Claude API call successful!\n');
       console.log('📊 Analysis Result:');
       console.log(JSON.stringify(result.output, null, 2));

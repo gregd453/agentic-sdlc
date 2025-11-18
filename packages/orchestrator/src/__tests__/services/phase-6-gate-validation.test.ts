@@ -48,8 +48,8 @@ describe('Phase 6: Gate Validation Tests', () => {
             url: '/api/v1/workflows',
             payload: {
               name: `Agent Capacity Test ${i}`,
-              type: 'feature',
-              priority: 'low'
+              type: WORKFLOW_TYPES.FEATURE,
+              priority: TASK_PRIORITY.LOW
             }
           })
         )
@@ -71,8 +71,8 @@ describe('Phase 6: Gate Validation Tests', () => {
       for (let i = 0; i < 20; i++) {
         testScenarios.push({
           name: `Scenario ${i}`,
-          type: ['feature', 'app', 'bugfix'][i % 3],
-          priority: ['low', 'medium', 'high'][i % 3]
+          type: [WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.APP, WORKFLOW_TYPES.BUGFIX][i % 3],
+          priority: [TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH][i % 3]
         })
       }
 
@@ -108,7 +108,7 @@ describe('Phase 6: Gate Validation Tests', () => {
       // Verify key service endpoints are operational
       const healthChecks = [
         { name: 'workflows-list', url: '/api/v1/workflows', method: 'GET' as const },
-        { name: 'workflows-create', url: '/api/v1/workflows', method: 'POST' as const, payload: { name: 'Health Check', type: 'feature' } },
+        { name: 'workflows-create', url: '/api/v1/workflows', method: 'POST' as const, payload: { name: 'Health Check', type: WORKFLOW_TYPES.FEATURE } },
         { name: 'platforms-list', url: '/api/v1/platforms', method: 'GET' as const }
       ]
 
@@ -151,7 +151,7 @@ describe('Phase 6: Gate Validation Tests', () => {
           url: '/api/v1/workflows',
           payload: {
             name: `Multi-Platform Test - ${platform.name}`,
-            type: 'feature',
+            type: WORKFLOW_TYPES.FEATURE,
             platform_id: platform.id
           }
         })
@@ -183,7 +183,7 @@ describe('Phase 6: Gate Validation Tests', () => {
           url: '/api/v1/workflows',
           payload: {
             name: `Trace Isolation Test ${i}`,
-            type: 'feature'
+            type: WORKFLOW_TYPES.FEATURE
           }
         })
 
@@ -220,7 +220,7 @@ describe('Phase 6: Gate Validation Tests', () => {
           url: '/api/v1/workflows',
           payload: {
             name: `Platform Context Test - ${platform.name}`,
-            type: 'feature',
+            type: WORKFLOW_TYPES.FEATURE,
             platform_id: platform.id
           }
         })
@@ -241,7 +241,7 @@ describe('Phase 6: Gate Validation Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Phase 1 Test - Core Infrastructure',
-          type: 'app'
+          type: WORKFLOW_TYPES.APP
         }
       })
 
@@ -255,7 +255,7 @@ describe('Phase 6: Gate Validation Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Phase 2 Test - REST Surface',
-          type: 'feature'
+          type: WORKFLOW_TYPES.FEATURE
         }
       })
 
@@ -273,7 +273,7 @@ describe('Phase 6: Gate Validation Tests', () => {
         url: '/api/v1/workflows',
         payload: {
           name: 'Phase 3 Test - Definition-Driven Routing',
-          type: 'feature' // Should route through feature definition (5 stages)
+          type: WORKFLOW_TYPES.FEATURE // Should route through feature definition (5 stages)
         }
       })
 
@@ -299,7 +299,7 @@ describe('Phase 6: Gate Validation Tests', () => {
           url: '/api/v1/workflows',
           payload: {
             name: 'Phase 4 Test - Platform-Scoped Agents',
-            type: 'feature',
+            type: WORKFLOW_TYPES.FEATURE,
             platform_id: platforms[0].id
           }
         })
@@ -351,7 +351,7 @@ describe('Phase 6: Gate Validation Tests', () => {
           url: '/api/v1/workflows',
           payload: {
             name: `Phase 6 Test - ${p.name}`,
-            type: 'feature',
+            type: WORKFLOW_TYPES.FEATURE,
             platform_id: p.id
           }
         })
@@ -377,7 +377,7 @@ describe('Phase 6: Gate Validation Tests', () => {
             url: '/api/v1/workflows',
             payload: {
               name: `Error Test ${i}`,
-              type: 'feature'
+              type: WORKFLOW_TYPES.FEATURE
             }
           })
         )
@@ -464,7 +464,7 @@ describe('Phase 6: Gate Validation Tests', () => {
     it('should have all endpoints operational', async () => {
       const endpoints = [
         { method: 'GET' as const, url: '/api/v1/workflows' },
-        { method: 'POST' as const, url: '/api/v1/workflows', payload: { name: 'Gate Test', type: 'feature' } },
+        { method: 'POST' as const, url: '/api/v1/workflows', payload: { name: 'Gate Test', type: WORKFLOW_TYPES.FEATURE } },
         { method: 'GET' as const, url: '/api/v1/platforms' }
       ]
 

@@ -88,15 +88,15 @@ describe('Phase 4: Platform-Scoped Agents', () => {
         },
         payload: {
           name: 'test-project',
-          project_type: 'app'
+          project_type: WORKFLOW_TYPES.APP
         }
       } as any;
 
       const result = await agent.execute(mockTask);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(result.result.data).toMatchObject({
-        status: 'success',
+        status: WORKFLOW_STATUS.SUCCESS,
         project_name: 'test-project',
         files_generated: expect.arrayContaining([
           expect.objectContaining({ path: 'src/index.ts' }),
@@ -116,7 +116,7 @@ describe('Phase 4: Platform-Scoped Agents', () => {
         workflow_id: 'wf-1',
         trace: { trace_id: 'trace-2', span_id: 'span-2' },
         workflow_context: {
-          current_stage: 'validation',
+          current_stage: AGENT_TYPES.VALIDATION,
           platform_id: undefined
         },
         payload: { working_directory: '/test/path' }
@@ -124,9 +124,9 @@ describe('Phase 4: Platform-Scoped Agents', () => {
 
       const result = await agent.execute(mockTask);
 
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
       expect(result.result.data).toMatchObject({
-        status: 'success',
+        status: WORKFLOW_STATUS.SUCCESS,
         validation_result: 'passed',
         errors: [],
         warnings: []
@@ -164,7 +164,7 @@ describe('Phase 4: Platform-Scoped Agents', () => {
         name: 'global-scaffold',
         type: AGENT_TYPES.SCAFFOLD,
         version: '1.0.0',
-        capabilities: ['scaffold']
+        capabilities: [AGENT_TYPES.SCAFFOLD]
       };
 
       registry.registerAgent(metadata, async () => new GenericMockAgent(messageBus));
@@ -178,7 +178,7 @@ describe('Phase 4: Platform-Scoped Agents', () => {
         name: 'web-app-scaffold',
         type: AGENT_TYPES.SCAFFOLD,
         version: '1.0.0',
-        capabilities: ['scaffold']
+        capabilities: [AGENT_TYPES.SCAFFOLD]
       };
 
       registry.registerAgent(
@@ -198,7 +198,7 @@ describe('Phase 4: Platform-Scoped Agents', () => {
           name: 'global-scaffold',
           type: AGENT_TYPES.SCAFFOLD,
           version: '1.0.0',
-          capabilities: ['scaffold']
+          capabilities: [AGENT_TYPES.SCAFFOLD]
         },
         async () => new GenericMockAgent(messageBus, AGENT_TYPES.SCAFFOLD)
       );
@@ -209,7 +209,7 @@ describe('Phase 4: Platform-Scoped Agents', () => {
           name: 'web-app-scaffold',
           type: AGENT_TYPES.SCAFFOLD,
           version: '2.0.0',
-          capabilities: ['scaffold']
+          capabilities: [AGENT_TYPES.SCAFFOLD]
         },
         async () => new GenericMockAgent(messageBus, AGENT_TYPES.SCAFFOLD, 'web-app-platform'),
         'web-app-platform'
@@ -231,7 +231,7 @@ describe('Phase 4: Platform-Scoped Agents', () => {
             name: `${platform}-scaffold`,
             type: AGENT_TYPES.SCAFFOLD,
             version: '1.0.0',
-            capabilities: ['scaffold']
+            capabilities: [AGENT_TYPES.SCAFFOLD]
           },
           async () => new GenericMockAgent(messageBus, AGENT_TYPES.SCAFFOLD, platform),
           platform

@@ -1,3 +1,4 @@
+import { WORKFLOW_STATUS, TASK_STATUS } from '@agentic-sdlc/shared-types';
 import { createMachine, interpret, fromPromise, assign } from 'xstate';
 import { logger, getRequestContext } from '../utils/logger';
 import { WorkflowRepository } from '../repositories/workflow.repository';
@@ -44,14 +45,14 @@ export const createWorkflowStateMachine = (
   // TODO: Update xstate type arguments for newer version compatibility
   return createMachine({
     id: 'workflow',
-    initial: 'initiated',
+    initial: WORKFLOW_STATUS.INITIATED,
     context,
     states: {
       initiated: {
         on: {
           START: {
-            target: 'running',
-            actions: ['logTransition', 'updateWorkflowStage']
+            target: WORKFLOW_STATUS.RUNNING,
+            actions: ['logTransition', 'updateWorkflowStatusToRunning', 'updateWorkflowStage']
           }
         }
       },
@@ -79,7 +80,7 @@ export const createWorkflowStateMachine = (
             }
           ],
           STAGE_FAILED: {
-            target: 'failed',
+            target: WORKFLOW_STATUS.FAILED,
             actions: ['logError', 'updateWorkflowStage']
           },
           DECISION_REQUIRED: {
@@ -95,7 +96,7 @@ export const createWorkflowStateMachine = (
             actions: ['logTransition', 'updateWorkflowStage']
           },
           CANCEL: {
-            target: 'cancelled',
+            target: WORKFLOW_STATUS.CANCELLED,
             actions: ['logTransition', 'updateWorkflowStage']
           }
         }
@@ -103,15 +104,15 @@ export const createWorkflowStateMachine = (
       awaiting_decision: {
         on: {
           DECISION_APPROVED: {
-            target: 'running',
+            target: WORKFLOW_STATUS.RUNNING,
             actions: ['clearDecisionId', 'logDecisionApproved', 'updateWorkflowStage']
           },
           DECISION_REJECTED: {
-            target: 'failed',
+            target: WORKFLOW_STATUS.FAILED,
             actions: ['clearDecisionId', 'logDecisionRejected', 'updateWorkflowStage']
           },
           CANCEL: {
-            target: 'cancelled',
+            target: WORKFLOW_STATUS.CANCELLED,
             actions: ['logTransition', 'updateWorkflowStage']
           }
         }
@@ -119,11 +120,11 @@ export const createWorkflowStateMachine = (
       awaiting_clarification: {
         on: {
           CLARIFICATION_COMPLETE: {
-            target: 'running',
+            target: WORKFLOW_STATUS.RUNNING,
             actions: ['clearClarificationId', 'logClarificationComplete', 'updateWorkflowStage']
           },
           CANCEL: {
-            target: 'cancelled',
+            target: WORKFLOW_STATUS.CANCELLED,
             actions: ['logTransition', 'updateWorkflowStage']
           }
         }
@@ -152,16 +153,16 @@ export const createWorkflowStateMachine = (
           onDone: [
             {
               guard: ({ context }: { context: WorkflowContext }) => context.nextStage === undefined,
-              target: 'completed',
+              target: WORKFLOW_STATUS.COMPLETED,
               actions: ['markComplete']
             },
             {
-              target: 'running',
+              target: WORKFLOW_STATUS.RUNNING,
               actions: ['transitionToNextStageAbsolute']
             }
           ],
           onError: {
-            target: 'error',
+            target: LOG_LEVEL.ERROR,
             actions: ['logStageTransitionError']
           }
         }
@@ -169,11 +170,11 @@ export const createWorkflowStateMachine = (
       paused: {
         on: {
           RESUME: {
-            target: 'running',
+            target: WORKFLOW_STATUS.RUNNING,
             actions: ['logTransition', 'updateWorkflowStage']
           },
           CANCEL: {
-            target: 'cancelled',
+            target: WORKFLOW_STATUS.CANCELLED,
             actions: ['logTransition', 'updateWorkflowStage']
           }
         }
@@ -181,11 +182,11 @@ export const createWorkflowStateMachine = (
       failed: {
         on: {
           RETRY: {
-            target: 'running',
+            target: WORKFLOW_STATUS.RUNNING,
             actions: ['resetError', 'logRetry']
           },
           CANCEL: {
-            target: 'cancelled',
+            target: WORKFLOW_STATUS.CANCELLED,
             actions: ['logTransition', 'updateWorkflowStage']
           }
         }
@@ -212,6 +213,27 @@ export const createWorkflowStateMachine = (
           current_stage: context.current_stage
         });
       },
+      updateWorkflowStatusToRunning: async ({ context }) => {
+        // Session #79: Update status to WORKFLOW_STATUS.RUNNING when workflow starts
+        const requestCtx = getRequestContext();
+        const traceId = requestCtx?.traceId || `trace-${context.workflow_id}`;
+
+        try {
+          await repository.update(context.workflow_id, {
+            status: WORKFLOW_STATUS.RUNNING
+          });
+          logger.info('[SESSION #79] Workflow status updated to running', {
+            workflow_id: context.workflow_id,
+            trace_id: traceId
+          });
+        } catch (error: any) {
+          logger.error('[SESSION #79] Failed to update workflow status to running', {
+            workflow_id: context.workflow_id,
+            error: error.message,
+            trace_id: traceId
+          });
+        }
+      },
       updateWorkflowStage: async ({ context }) => {
         // Session #78: Phase 5 - Renamed to clarify this updates STAGE, not STATUS
         // Status updates are handled by specific actions (markComplete, notifyError, etc.)
@@ -220,11 +242,13 @@ export const createWorkflowStateMachine = (
 
         try {
           await repository.update(context.workflow_id, {
-            current_stage: context.current_stage
+            current_stage: context.current_stage,
+            progress: context.progress
           });
           logger.info('[SESSION #26] Workflow stage updated successfully', {
             workflow_id: context.workflow_id,
             current_stage: context.current_stage,
+            progress: context.progress,
             trace_id: traceId
           });
         } catch (error: any) {
@@ -232,6 +256,7 @@ export const createWorkflowStateMachine = (
             logger.warn('[SESSION #26 CAS] Workflow update rejected due to concurrent modification', {
               workflow_id: context.workflow_id,
               current_stage: context.current_stage,
+              progress: context.progress,
               error: error.message,
               trace_id: traceId
             });
@@ -404,14 +429,14 @@ export const createWorkflowStateMachine = (
           });
 
           await repository.update(context.workflow_id, {
-            status: 'completed',
+            status: WORKFLOW_STATUS.COMPLETED,
             progress: 100,
             completed_at: new Date()
           });
 
           logger.info('Workflow marked complete successfully', {
             workflow_id: context.workflow_id,
-            status: 'completed',
+            status: WORKFLOW_STATUS.COMPLETED,
             trace_id: traceId
           });
         } catch (error) {
@@ -459,7 +484,7 @@ export const createWorkflowStateMachine = (
 
         try {
           await repository.update(context.workflow_id, {
-            status: 'failed'
+            status: WORKFLOW_STATUS.FAILED
           });
 
           logger.info('Workflow status persisted to failed', {
@@ -500,7 +525,7 @@ export const createWorkflowStateMachine = (
 
         try {
           await repository.update(context.workflow_id, {
-            status: 'cancelled'
+            status: WORKFLOW_STATUS.CANCELLED
           });
 
           logger.info('Workflow status persisted to cancelled', {
@@ -772,7 +797,7 @@ export class WorkflowStateMachineService {
     const snapshot: WorkflowStateSnapshot = {
       workflow_id: context.workflow_id,
       current_stage: context.current_stage,
-      status: context.error ? 'failed' : 'running',
+      status: context.error ? WORKFLOW_STATUS.FAILED : WORKFLOW_STATUS.RUNNING,
       progress: context.progress,
       metadata: context.metadata,
       last_updated: new Date().toISOString(),
@@ -811,7 +836,7 @@ export class WorkflowStateMachineService {
     // Recreate state machine with recovered context
     const context: WorkflowContext = {
       workflow_id: snapshot.workflow_id,
-      type: snapshot.state_machine_context?.type || 'app',
+      type: snapshot.state_machine_context?.type || WORKFLOW_TYPES.APP,
       current_stage: snapshot.current_stage,
       progress: snapshot.progress,
       metadata: snapshot.metadata,
@@ -987,7 +1012,7 @@ export class WorkflowStateMachineService {
                   return;
                 }
 
-                const isTerminal = ['completed', 'failed', 'cancelled'].includes(workflow.status);
+                const isTerminal = [WORKFLOW_STATUS.COMPLETED, WORKFLOW_STATUS.FAILED, WORKFLOW_STATUS.CANCELLED].includes(workflow.status);
                 if (!isTerminal) {
                   logger.info('[SESSION #66] Creating task for next stage after STAGE_COMPLETE', {
                     workflow_id: workflowId,

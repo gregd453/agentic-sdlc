@@ -58,7 +58,7 @@ describe('report-generator', () => {
       const checks: ValidationCheckResult[] = [
         {
           type: 'typescript',
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           duration_ms: 1000,
           errors: ['Type error in file.ts']
         },
@@ -88,7 +88,7 @@ describe('report-generator', () => {
         startTime
       );
 
-      expect(report.overall_status).toBe('failed');
+      expect(report.overall_status).toBe(WORKFLOW_STATUS.FAILED);
       expect(report.summary.failed_checks).toBe(1);
       expect(report.recommendations).toBeDefined();
       expect(report.recommendations!.length).toBeGreaterThan(0);
@@ -136,13 +136,13 @@ describe('report-generator', () => {
       const checks: ValidationCheckResult[] = [
         {
           type: 'typescript',
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           duration_ms: 1000,
           errors: ['Type error']
         },
         {
           type: 'coverage',
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           duration_ms: 500,
           errors: ['Coverage too low']
         }
@@ -216,7 +216,7 @@ describe('report-generator', () => {
       const checks: ValidationCheckResult[] = [
         {
           type: 'typescript',
-          status: 'failed',
+          status: WORKFLOW_STATUS.FAILED,
           duration_ms: 1000,
           errors: ['Type error in file.ts']
         }
