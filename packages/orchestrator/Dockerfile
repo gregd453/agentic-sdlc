@@ -34,11 +34,12 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages ./packages
 
-# Install dependencies and build pnpm's symlink structure
-RUN pnpm install --frozen-lockfile && pnpm install -r
+# Install dependencies (use builder's node_modules structure)
+RUN pnpm install --frozen-lockfile --no-optional
 
-# Copy built application from builder stage
-COPY --from=builder /app/packages/orchestrator/dist ./packages/orchestrator/dist
+# Copy all built packages from builder stage (includes dist folders)
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
