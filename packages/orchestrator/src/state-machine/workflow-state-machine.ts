@@ -215,16 +215,19 @@ export const createWorkflowStateMachine = (
       updateWorkflowStage: async ({ context }) => {
         // Session #78: Phase 5 - Renamed to clarify this updates STAGE, not STATUS
         // Status updates are handled by specific actions (markComplete, notifyError, etc.)
+        // Session #82: Also persist progress to database for dashboard updates
         const requestCtx = getRequestContext();
         const traceId = requestCtx?.traceId || `trace-${context.workflow_id}`;
 
         try {
           await repository.update(context.workflow_id, {
-            current_stage: context.current_stage
+            current_stage: context.current_stage,
+            progress: context.progress || 0  // Session #82: Persist progress to DB
           });
           logger.info('[SESSION #26] Workflow stage updated successfully', {
             workflow_id: context.workflow_id,
             current_stage: context.current_stage,
+            progress: context.progress,
             trace_id: traceId
           });
         } catch (error: any) {
