@@ -75,6 +75,8 @@ module.exports = {
       env: {
         NODE_ENV: 'development',
         REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6380',
+        REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+        REDIS_PORT: process.env.REDIS_PORT || '6380',
         ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
       },
 
@@ -108,6 +110,8 @@ module.exports = {
       env: {
         NODE_ENV: 'development',
         REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6380',
+        REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+        REDIS_PORT: process.env.REDIS_PORT || '6380',
         ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
       },
 
@@ -141,6 +145,8 @@ module.exports = {
       env: {
         NODE_ENV: 'development',
         REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6380',
+        REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+        REDIS_PORT: process.env.REDIS_PORT || '6380',
         ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
       },
 
@@ -174,6 +180,8 @@ module.exports = {
       env: {
         NODE_ENV: 'development',
         REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6380',
+        REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+        REDIS_PORT: process.env.REDIS_PORT || '6380',
         ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
       },
 
@@ -207,6 +215,8 @@ module.exports = {
       env: {
         NODE_ENV: 'development',
         REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6380',
+        REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+        REDIS_PORT: process.env.REDIS_PORT || '6380',
         ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
       },
 
