@@ -159,10 +159,10 @@ else
 fi
 
 # Wait for orchestrator to be ready
-echo "  Waiting for Orchestrator on :3000..."
+echo "  Waiting for Orchestrator on :3051..."
 for i in {1..30}; do
-  if curl -s http://localhost:3000/api/v1/health | grep -q "healthy" 2>/dev/null; then
-    echo -e "  ${GREEN}✓${NC} Orchestrator ready on http://localhost:3000"
+  if curl -s http://localhost:3051/api/v1/health | grep -q "healthy" 2>/dev/null; then
+    echo -e "  ${GREEN}✓${NC} Orchestrator ready on http://localhost:3051"
     break
   fi
   if [ $i -eq 30 ]; then
@@ -176,10 +176,10 @@ done
 # Dashboard is now managed by Docker, not removed
 
 # Wait for dashboard to be ready (Docker manages it)
-echo "  Waiting for Dashboard on :3001..."
+echo "  Waiting for Dashboard on :3050..."
 for i in {1..30}; do
-  if curl -s http://localhost:3001 2>/dev/null | grep -q "<!doctype html"; then
-    echo -e "  ${GREEN}✓${NC} Dashboard ready on http://localhost:3001"
+  if curl -s http://localhost:3050 2>/dev/null | grep -q "<!doctype html"; then
+    echo -e "  ${GREEN}✓${NC} Dashboard ready on http://localhost:3050"
     break
   fi
   if [ $i -eq 30 ]; then
@@ -228,8 +228,8 @@ echo ""
 echo "Services running (managed by PM2):"
 echo -e "  ${BLUE}PostgreSQL${NC}       → localhost:5433"
 echo -e "  ${BLUE}Redis${NC}            → localhost:6380"
-echo -e "  ${BLUE}Orchestrator${NC}     → http://localhost:3000"
-echo -e "  ${BLUE}Dashboard${NC}        → http://localhost:3001"
+echo -e "  ${BLUE}Orchestrator${NC}     → http://localhost:3051"
+echo -e "  ${BLUE}Dashboard${NC}        → http://localhost:3050"
 echo -e "  ${BLUE}Analytics Service${NC} → http://localhost:3002"
 echo -e "  ${BLUE}Scaffold Agent${NC}   → listening for tasks"
 echo -e "  ${BLUE}Validation Agent${NC} → listening for tasks"
@@ -244,8 +244,8 @@ echo -e "  ${BLUE}pnpm pm2:logs dashboard${NC} → Dashboard logs only"
 echo -e "  ${BLUE}pnpm pm2:monit${NC}   → Live monitoring dashboard"
 echo ""
 echo "Quick Links:"
-echo -e "  ${BLUE}Orchestrator API${NC} → http://localhost:3000/api/v1/health"
-echo -e "  ${BLUE}Dashboard UI${NC}     → http://localhost:3001"
+echo -e "  ${BLUE}Orchestrator API${NC} → http://localhost:3051/api/v1/health"
+echo -e "  ${BLUE}Dashboard UI${NC}     → http://localhost:3050"
 echo -e "  ${BLUE}Analytics API${NC}    → http://localhost:3002/health"
 echo -e "  ${BLUE}Analytics Docs${NC}   → http://localhost:3002/docs"
 echo ""
