@@ -1,18 +1,34 @@
-FROM node:22-alpine
+# ==========================================
+# Development Dockerfile for Dashboard
+# React frontend with Vite dev server
+# ==========================================
+
+FROM node:20.11.0-alpine
 
 WORKDIR /app
 
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy source code (volumes will override in dev)
+# Install concurrently globally
+RUN npm install -g concurrently
+
+# Copy workspace files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Copy source code
 COPY . .
 
-# Install dependencies (will use workspace if available)
-RUN pnpm install --no-frozen-lockfile || true
+# Install dependencies
+RUN pnpm install
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3050
 
-# Start dev server
-CMD ["pnpm", "dev", "--host"]
+# Health check (simple HTTP check)
+HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=15s \
+  CMD wget --quiet --tries=1 --spider http://localhost:3050 || exit 1
+
+# Start Vite dev server on port 3050
+WORKDIR /app/packages/dashboard
+CMD ["pnpm", "run", "dev"]

@@ -5728,3 +5728,483 @@
 2025-11-17 14:04:29 -05:00: (node:36704) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
 2025-11-17 14:04:29 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
 2025-11-17 14:04:29 -05:00: (node:36704) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 11:45:43 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:45:43 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:45:43 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:43 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:43 -05:00: 
+2025-11-18 11:45:43 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:43 -05:00:   76  */
+2025-11-18 11:45:43 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:43 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:43 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:43 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:45:43 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:45:43 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:45:43 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:45:43 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:45:43 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:45:43 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:45:43 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:45:43 -05:00:   code: 'P2021',
+2025-11-18 11:45:43 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:45:43 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:45:43 -05:00: }
+2025-11-18 11:45:43 -05:00: Message: 
+2025-11-18 11:45:43 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:43 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:43 -05:00: 
+2025-11-18 11:45:43 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:43 -05:00:   76  */
+2025-11-18 11:45:43 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:43 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:43 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:43 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:45:43 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:43 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:43 -05:00: 
+2025-11-18 11:45:43 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:43 -05:00:   76  */
+2025-11-18 11:45:43 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:43 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:43 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:43 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:45:43 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:45:43 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:45:43 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:45:43 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:45:43 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:45:43 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:45:43 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:45:43 -05:00: ==========================================================
+2025-11-18 11:45:48 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:45:48 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:45:48 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:48 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:48 -05:00: 
+2025-11-18 11:45:48 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:48 -05:00:   76  */
+2025-11-18 11:45:48 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:48 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:48 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:48 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:45:48 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:45:48 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:45:48 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:45:48 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:45:48 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:45:48 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:45:48 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:45:48 -05:00:   code: 'P2021',
+2025-11-18 11:45:48 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:45:48 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:45:48 -05:00: }
+2025-11-18 11:45:48 -05:00: Message: 
+2025-11-18 11:45:48 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:48 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:48 -05:00: 
+2025-11-18 11:45:48 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:48 -05:00:   76  */
+2025-11-18 11:45:48 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:48 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:48 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:48 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:45:48 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:48 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:48 -05:00: 
+2025-11-18 11:45:48 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:48 -05:00:   76  */
+2025-11-18 11:45:48 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:48 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:48 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:48 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:45:48 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:45:48 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:45:48 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:45:48 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:45:48 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:45:48 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:45:48 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:45:48 -05:00: ==========================================================
+2025-11-18 11:45:52 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:45:52 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:45:52 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:52 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:52 -05:00: 
+2025-11-18 11:45:52 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:52 -05:00:   76  */
+2025-11-18 11:45:52 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:52 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:52 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:52 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:45:52 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:45:52 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:45:52 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:45:52 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:45:52 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:45:52 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:45:52 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:45:52 -05:00:   code: 'P2021',
+2025-11-18 11:45:52 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:45:52 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:45:52 -05:00: }
+2025-11-18 11:45:52 -05:00: Message: 
+2025-11-18 11:45:52 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:52 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:52 -05:00: 
+2025-11-18 11:45:52 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:52 -05:00:   76  */
+2025-11-18 11:45:52 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:52 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:52 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:52 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:45:52 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:52 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:52 -05:00: 
+2025-11-18 11:45:52 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:52 -05:00:   76  */
+2025-11-18 11:45:52 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:52 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:52 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:52 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:45:52 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:45:52 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:45:52 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:45:52 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:45:52 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:45:52 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:45:52 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:45:52 -05:00: ==========================================================
+2025-11-18 11:45:56 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:45:56 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:45:56 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:56 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:56 -05:00: 
+2025-11-18 11:45:56 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:56 -05:00:   76  */
+2025-11-18 11:45:56 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:56 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:56 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:56 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:45:56 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:45:56 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:45:56 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:45:56 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:45:56 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:45:56 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:45:56 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:45:56 -05:00:   code: 'P2021',
+2025-11-18 11:45:56 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:45:56 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:45:56 -05:00: }
+2025-11-18 11:45:56 -05:00: Message: 
+2025-11-18 11:45:56 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:56 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:56 -05:00: 
+2025-11-18 11:45:56 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:56 -05:00:   76  */
+2025-11-18 11:45:56 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:56 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:56 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:56 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:45:56 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:45:56 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:45:56 -05:00: 
+2025-11-18 11:45:56 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:45:56 -05:00:   76  */
+2025-11-18 11:45:56 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:45:56 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:45:56 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:45:56 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:45:56 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:45:56 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:45:56 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:45:56 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:45:56 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:45:56 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:45:56 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:45:56 -05:00: ==========================================================
+2025-11-18 11:46:00 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:46:00 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:46:00 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:00 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:00 -05:00: 
+2025-11-18 11:46:00 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:00 -05:00:   76  */
+2025-11-18 11:46:00 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:00 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:00 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:00 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:00 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:00 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:00 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:00 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:00 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:00 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:00 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:46:00 -05:00:   code: 'P2021',
+2025-11-18 11:46:00 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:46:00 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:46:00 -05:00: }
+2025-11-18 11:46:00 -05:00: Message: 
+2025-11-18 11:46:00 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:00 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:00 -05:00: 
+2025-11-18 11:46:00 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:00 -05:00:   76  */
+2025-11-18 11:46:00 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:00 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:00 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:00 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:46:00 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:00 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:00 -05:00: 
+2025-11-18 11:46:00 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:00 -05:00:   76  */
+2025-11-18 11:46:00 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:00 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:00 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:00 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:00 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:00 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:00 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:00 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:00 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:00 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:00 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:46:00 -05:00: ==========================================================
+2025-11-18 11:46:05 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:46:05 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:46:05 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:05 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:05 -05:00: 
+2025-11-18 11:46:05 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:05 -05:00:   76  */
+2025-11-18 11:46:05 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:05 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:05 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:05 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:05 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:05 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:05 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:05 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:05 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:05 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:05 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:46:05 -05:00:   code: 'P2021',
+2025-11-18 11:46:05 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:46:05 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:46:05 -05:00: }
+2025-11-18 11:46:05 -05:00: Message: 
+2025-11-18 11:46:05 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:05 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:05 -05:00: 
+2025-11-18 11:46:05 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:05 -05:00:   76  */
+2025-11-18 11:46:05 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:05 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:05 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:05 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:46:05 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:05 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:05 -05:00: 
+2025-11-18 11:46:05 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:05 -05:00:   76  */
+2025-11-18 11:46:05 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:05 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:05 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:05 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:05 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:05 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:05 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:05 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:05 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:05 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:05 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:46:05 -05:00: ==========================================================
+2025-11-18 11:46:09 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:46:09 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:46:09 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:09 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:09 -05:00: 
+2025-11-18 11:46:09 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:09 -05:00:   76  */
+2025-11-18 11:46:09 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:09 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:09 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:09 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:09 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:09 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:09 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:09 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:09 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:09 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:09 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:46:09 -05:00:   code: 'P2021',
+2025-11-18 11:46:09 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:46:09 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:46:09 -05:00: }
+2025-11-18 11:46:09 -05:00: Message: 
+2025-11-18 11:46:09 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:09 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:09 -05:00: 
+2025-11-18 11:46:09 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:09 -05:00:   76  */
+2025-11-18 11:46:09 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:09 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:09 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:09 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:46:09 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:09 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:09 -05:00: 
+2025-11-18 11:46:09 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:09 -05:00:   76  */
+2025-11-18 11:46:09 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:09 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:09 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:09 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:09 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:09 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:09 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:09 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:09 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:09 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:09 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:46:09 -05:00: ==========================================================
+2025-11-18 11:46:13 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:46:13 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:46:13 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:13 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:13 -05:00: 
+2025-11-18 11:46:13 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:13 -05:00:   76  */
+2025-11-18 11:46:13 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:13 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:13 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:13 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:13 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:13 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:13 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:13 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:13 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:13 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:13 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:46:13 -05:00:   code: 'P2021',
+2025-11-18 11:46:13 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:46:13 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:46:13 -05:00: }
+2025-11-18 11:46:13 -05:00: Message: 
+2025-11-18 11:46:13 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:13 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:13 -05:00: 
+2025-11-18 11:46:13 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:13 -05:00:   76  */
+2025-11-18 11:46:13 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:13 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:13 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:13 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:46:13 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:13 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:13 -05:00: 
+2025-11-18 11:46:13 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:13 -05:00:   76  */
+2025-11-18 11:46:13 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:13 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:13 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:13 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:13 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:13 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:13 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:13 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:13 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:13 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:13 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:46:13 -05:00: ==========================================================
+2025-11-18 11:46:18 -05:00: =================== SERVER START ERROR ===================
+2025-11-18 11:46:18 -05:00: Error: PrismaClientKnownRequestError: 
+2025-11-18 11:46:18 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:18 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:18 -05:00: 
+2025-11-18 11:46:18 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:18 -05:00:   76  */
+2025-11-18 11:46:18 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:18 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:18 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:18 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:18 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:18 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:18 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:18 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:18 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:18 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:18 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20) {
+2025-11-18 11:46:18 -05:00:   code: 'P2021',
+2025-11-18 11:46:18 -05:00:   clientVersion: '5.22.0',
+2025-11-18 11:46:18 -05:00:   meta: { modelName: 'Platform', table: 'public.Platform' }
+2025-11-18 11:46:18 -05:00: }
+2025-11-18 11:46:18 -05:00: Message: 
+2025-11-18 11:46:18 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:18 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:18 -05:00: 
+2025-11-18 11:46:18 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:18 -05:00:   76  */
+2025-11-18 11:46:18 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:18 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:18 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:18 -05:00: Stack: PrismaClientKnownRequestError: 
+2025-11-18 11:46:18 -05:00: Invalid `this.prisma.platform.findMany()` invocation in
+2025-11-18 11:46:18 -05:00: /Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:50
+2025-11-18 11:46:18 -05:00: 
+2025-11-18 11:46:18 -05:00:   75  * Load all platforms with optional filtering
+2025-11-18 11:46:18 -05:00:   76  */
+2025-11-18 11:46:18 -05:00:   77 async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
+2025-11-18 11:46:18 -05:00: → 78   const platforms = await this.prisma.platform.findMany(
+2025-11-18 11:46:18 -05:00: The table `public.Platform` does not exist in the current database.
+2025-11-18 11:46:18 -05:00:     at $n.handleRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7315)
+2025-11-18 11:46:18 -05:00:     at $n.handleAndLogRequestError (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+2025-11-18 11:46:18 -05:00:     at $n.request (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+2025-11-18 11:46:18 -05:00:     at l (/Users/Greg/Projects/apps/zyp/agent-sdlc/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+2025-11-18 11:46:18 -05:00:     at PlatformLoaderService.loadAllPlatforms (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-loader.service.ts:78:23)
+2025-11-18 11:46:18 -05:00:     at PlatformRegistryService.initialize (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/services/platform-registry.service.ts:30:23)
+2025-11-18 11:46:18 -05:00:     at createServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:165:3)
+2025-11-18 11:46:18 -05:00:     at startServer (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/orchestrator/src/server.ts:355:20)
+2025-11-18 11:46:18 -05:00: ==========================================================
+2025-11-18 11:49:28 -05:00: (node:3189) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 11:49:28 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 11:49:28 -05:00: (node:3189) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 11:49:39 -05:00: (node:4210) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 11:49:39 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 11:49:39 -05:00: (node:4210) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 13:51:17 -05:00: (node:55406) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 13:51:17 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 13:51:17 -05:00: (node:55406) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:02:13 -05:00: (node:83156) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:02:13 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:02:13 -05:00: (node:83156) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:03:24 -05:00: (node:86471) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:03:24 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:03:24 -05:00: (node:86471) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:04:15 -05:00: (node:90204) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:04:15 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:04:15 -05:00: (node:90204) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:07:26 -05:00: (node:95912) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:07:26 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:07:26 -05:00: (node:95912) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:14:58 -05:00: (node:6020) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:14:58 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:14:58 -05:00: (node:6020) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:20:11 -05:00: (node:22228) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:20:11 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:20:11 -05:00: (node:22228) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:20:22 -05:00: (node:23497) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:20:22 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:20:22 -05:00: (node:23497) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:22:31 -05:00: (node:32050) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:22:31 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:22:31 -05:00: (node:32050) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:22:37 -05:00: (node:32371) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:22:37 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:22:37 -05:00: (node:32371) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.
+2025-11-18 14:23:45 -05:00: (node:34122) [FSTDEP017] DeprecationWarning: You are accessing the deprecated "request.routerPath" property. Use "request.routeOptions.url" instead. Property "req.routerPath" will be removed in `fastify@5`.
+2025-11-18 14:23:45 -05:00: (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-11-18 14:23:45 -05:00: (node:34122) [FSTDEP020] DeprecationWarning: You are using the deprecated "reply.getResponseTime()" method. Use the "reply.elapsedTime" property instead. Method "reply.getResponseTime()" will be removed in `fastify@5`.

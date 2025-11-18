@@ -1,24 +1,29 @@
 #!/bin/bash
 
-# Simple developer commands - no "agentic-sdlc" prefix needed
+# Unified infrastructure management
+# Delegates to new orchestration system in infrastructure/local/
 
 PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
-cd "$PROJECT_ROOT"
+INFRA_DIR="$PROJECT_ROOT/infrastructure/local"
 
 case "$1" in
   start)
-    echo "Starting dev environment..."
-    ./scripts/env/start-dev.sh "$@"
+    echo "Starting unified infrastructure..."
+    "$INFRA_DIR/start-infra.sh"
     ;;
   stop)
-    echo "Stopping dev environment..."
-    ./scripts/env/stop-dev.sh "$@"
+    echo "Stopping infrastructure..."
+    "$INFRA_DIR/stop-infra.sh"
     ;;
   restart)
-    echo "Restarting dev environment..."
-    ./scripts/env/stop-dev.sh > /dev/null 2>&1
+    echo "Restarting infrastructure..."
+    "$INFRA_DIR/stop-infra.sh" > /dev/null 2>&1
     sleep 2
-    ./scripts/env/start-dev.sh --skip-build "$@"
+    "$INFRA_DIR/start-infra.sh"
+    ;;
+  watch)
+    echo "Starting watch & auto-redeploy..."
+    "$INFRA_DIR/watch-and-redeploy.sh"
     ;;
   status)
     node packages/cli/dist/index.js status "$@"
@@ -105,12 +110,13 @@ case "$1" in
     pnpm pm2:restart agent-scaffold agent-validation agent-e2e agent-integration agent-deployment 2>/dev/null || echo "Agents restarted"
     ;;
   *)
-    echo "Available commands:"
+    echo "Agentic SDLC - Unified Infrastructure"
     echo ""
-    echo "MANAGEMENT:"
-    echo "  dev start              Start everything"
-    echo "  dev stop               Stop everything"
+    echo "CORE COMMANDS:"
+    echo "  dev start              Start all services (Docker + PM2 + health checks)"
+    echo "  dev stop               Stop all services gracefully"
     echo "  dev restart            Restart everything"
+    echo "  dev watch              Enable auto-redeploy on code changes"
     echo ""
     echo "MONITORING:"
     echo "  dev status             Check what's running"
@@ -128,17 +134,21 @@ case "$1" in
     echo "  dev restart-agents     Restart just agents"
     echo ""
     echo "ACCESS SERVICES:"
-    echo "  dev dashboard          Open dashboard UI (http://localhost:3001)"
-    echo "  dev api                Open orchestrator API (http://localhost:3000)"
+    echo "  dev dashboard          Open dashboard UI (http://localhost:3050)"
+    echo "  dev api                Open orchestrator API (http://localhost:3051)"
     echo "  dev db                 Database connection info"
     echo "  dev cache              Cache connection info"
     echo ""
     echo "Examples:"
     echo "  ./dev start"
+    echo "  ./dev watch                # In another terminal for auto-rebuild"
     echo "  ./dev dashboard"
-    echo "  ./dev status"
-    echo "  ./dev restart-orchestrator"
-    echo "  ./dev agents-only"
+    echo "  ./dev stop"
+    echo ""
+    echo "Infrastructure files:"
+    echo "  ./infrastructure/local/start-infra.sh       Main startup orchestrator"
+    echo "  ./infrastructure/local/stop-infra.sh        Graceful shutdown"
+    echo "  ./infrastructure/local/watch-and-redeploy.sh Auto-rebuild on changes"
     echo ""
     exit 1
     ;;

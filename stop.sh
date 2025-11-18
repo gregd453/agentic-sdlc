@@ -1,8 +1,20 @@
 #!/bin/bash
 
+################################################################################
+# DEPRECATED: Use ./dev stop instead
+################################################################################
+# This script is deprecated and maintained for backward compatibility only.
+# Please use the modern ./dev command:
+#   ./dev stop               # Stop all services gracefully
+#   ./dev restart            # Restart all services
+#   ./dev status             # Check service status
+#
+# This legacy script will be removed in a future version.
+################################################################################
+
 # Agentic SDLC System Shutdown Script
 # Version: 1.1
-# Description: Gracefully stops the Agentic SDLC system
+# Description: Gracefully stops the Agentic SDLC system (DEPRECATED)
 
 set -euo pipefail
 

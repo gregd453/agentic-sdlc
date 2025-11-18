@@ -84,7 +84,7 @@ services:
       - ./logs:/app/logs
       - ./runs:/app/runs
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/v1/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -109,12 +109,11 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    command: ["node", "packages/agents/scaffold-agent/dist/index.js"]
     environment:
       NODE_ENV: production
+      SERVICE_TYPE: scaffold-agent
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      AGENT_TYPE: scaffold
       LOG_LEVEL: ${LOG_LEVEL:-info}
     volumes:
       - ./logs:/app/logs
@@ -137,12 +136,11 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    command: ["node", "packages/agents/validation-agent/dist/index.js"]
     environment:
       NODE_ENV: production
+      SERVICE_TYPE: validation-agent
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      AGENT_TYPE: validation
       LOG_LEVEL: ${LOG_LEVEL:-info}
     volumes:
       - ./logs:/app/logs
@@ -165,12 +163,11 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    command: ["node", "packages/agents/e2e-agent/dist/index.js"]
     environment:
       NODE_ENV: production
+      SERVICE_TYPE: e2e-agent
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      AGENT_TYPE: e2e
       LOG_LEVEL: ${LOG_LEVEL:-info}
     volumes:
       - ./logs:/app/logs
@@ -193,12 +190,11 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    command: ["node", "packages/agents/integration-agent/dist/index.js"]
     environment:
       NODE_ENV: production
+      SERVICE_TYPE: integration-agent
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      AGENT_TYPE: integration
       LOG_LEVEL: ${LOG_LEVEL:-info}
       GITHUB_TOKEN: ${GITHUB_TOKEN}
     volumes:
@@ -222,12 +218,11 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    command: ["node", "packages/agents/deployment-agent/dist/index.js"]
     environment:
       NODE_ENV: production
+      SERVICE_TYPE: deployment-agent
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      AGENT_TYPE: deployment
       LOG_LEVEL: ${LOG_LEVEL:-info}
       AWS_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
@@ -256,9 +251,14 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      VITE_API_URL: http://orchestrator:3000
     ports:
       - "3001:3001"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     deploy:
       resources:
         limits:

@@ -11,11 +11,11 @@ services:
       POSTGRES_PASSWORD: agentic_password_test
       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U agentic"]
+      test: ["CMD-SHELL", "pg_isready -U agentic -d agentic_sdlc_test"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,11 +33,11 @@ services:
       --maxmemory-policy allkeys-lru
       --requirepass agentic_redis_test
     ports:
-      - "6380:6379"
+      - "6381:6379"
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ["CMD", "redis-cli", "-a", "agentic_redis_test", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -54,11 +54,13 @@ services:
       redis:
         condition: service_healthy
     environment:
-      NODE_ENV: production
+      NODE_ENV: test
       DATABASE_URL: postgresql://agentic:agentic_password_test@postgres:5432/agentic_sdlc_test
       REDIS_URL: redis://:agentic_redis_test@redis:6379
       ORCHESTRATOR_PORT: 3000
-      LOG_LEVEL: info
+      LOG_LEVEL: debug
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     ports:
       - "3000:3000"
     healthcheck:
@@ -80,7 +82,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      NODE_ENV: production
+      NODE_ENV: test
     networks:
       - agentic-network
     healthcheck:

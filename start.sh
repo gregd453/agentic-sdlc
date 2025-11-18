@@ -1,8 +1,21 @@
 #!/bin/bash
 
+################################################################################
+# DEPRECATED: Use ./dev start instead
+################################################################################
+# This script is deprecated and maintained for backward compatibility only.
+# Please use the modern ./dev command:
+#   ./dev start              # Start all services
+#   ./dev stop               # Stop all services
+#   ./dev restart            # Restart all services
+#   ./dev status             # Check service status
+#
+# This legacy script will be removed in a future version.
+################################################################################
+
 # Agentic SDLC System Startup Script
 # Version: 1.1
-# Description: Complete startup script for the Agentic SDLC orchestrator
+# Description: Complete startup script for the Agentic SDLC orchestrator (DEPRECATED)
 
 set -euo pipefail
 

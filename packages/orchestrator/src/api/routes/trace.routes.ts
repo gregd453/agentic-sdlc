@@ -31,6 +31,7 @@ export async function traceRoutes(
                   trace_id: { type: 'string' },
                   status: { type: 'string' },
                   workflow_count: { type: 'number' },
+                  workflow_ids: { type: 'array', items: { type: 'string' } },
                   task_count: { type: 'number' },
                   span_count: { type: 'number' },
                   total_duration_ms: { type: ['number', 'null'] },

@@ -255,6 +255,7 @@ export class TraceRepository {
       trace_id: string;
       status: string;
       workflow_count: number;
+      workflow_ids: string[];
       task_count: number;
       span_count: number;
       total_duration_ms: number | null;
@@ -344,6 +345,7 @@ export class TraceRepository {
             trace_id: traceId,
             status: traceInfo.status,
             workflow_count: workflows.length,
+            workflow_ids: workflows.map(w => w.id),
             task_count: tasks.length,
             span_count: spans.length,
             total_duration_ms: totalDuration,

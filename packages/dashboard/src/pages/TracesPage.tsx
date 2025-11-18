@@ -147,7 +147,7 @@ export default function TracesPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredTraces.map((trace: TraceListItem) => {
                     const metadata = trace.metadata || {}
-                    const workflowCount = metadata.workflow_count ?? 0
+                    const workflowIds = metadata.workflow_ids || []
                     const spanCount = metadata.span_count ?? 0
                     const totalDuration = metadata.total_duration_ms
                     const startTime = metadata.start_time
@@ -159,9 +159,14 @@ export default function TracesPage() {
                         <code className="text-xs">{truncateId(trace.trace_id)}</code>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          {workflowCount} workflow{workflowCount !== 1 ? 's' : ''}
-                        </span>
+                        {workflowIds.length > 0 ? (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 font-mono">
+                            {truncateId(workflowIds[0], 8)}
+                            {workflowIds.length > 1 && ` +${workflowIds.length - 1}`}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">N/A</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <StatusBadge status={endTime ? 'completed' : 'running'} />

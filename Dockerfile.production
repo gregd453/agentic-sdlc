@@ -72,8 +72,26 @@ EXPOSE 3000 3001 3002 9090
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
+# Create entrypoint script for multi-service support
+RUN echo '#!/bin/sh\n\
+SERVICE_TYPE=${SERVICE_TYPE:-orchestrator}\n\
+case $SERVICE_TYPE in\n\
+  orchestrator)\n\
+    exec node packages/orchestrator/dist/server.js\n\
+    ;;\n\
+  scaffold-agent|validation-agent|e2e-agent|integration-agent|deployment-agent)\n\
+    AGENT_NAME=$(echo $SERVICE_TYPE | sed "s/-agent//")\n\
+    exec node packages/agents/${AGENT_NAME}-agent/dist/run-agent.js\n\
+    ;;\n\
+  *)\n\
+    echo "Unknown SERVICE_TYPE: $SERVICE_TYPE"\n\
+    exit 1\n\
+    ;;\n\
+esac\n\
+' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
 # Start with dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start orchestrator by default
-CMD ["node", "packages/orchestrator/dist/index.js"]
+# Use entrypoint script with SERVICE_TYPE env var (default: orchestrator)
+CMD ["/app/entrypoint.sh"]

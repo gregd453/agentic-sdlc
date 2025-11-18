@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 
 #############################################################################
+# DEPRECATED: Use ./dev instead (from project root)
+#############################################################################
+# This script is deprecated and maintained for backward compatibility only.
+# Please use the modern ./dev command from the project root:
+#   ./dev start              # Start all services
+#   ./dev stop               # Stop all services
+#   ./dev restart            # Restart all services
+#   ./dev status             # Check service status
+#
+# This legacy script will be removed in a future version.
+#############################################################################
+
+#############################################################################
 # Agentic SDLC Development Environment Manager
-# Main CLI entry point for managing the complete development stack
+# Main CLI entry point for managing the complete development stack (DEPRECATED)
 #############################################################################
 
 set -euo pipefail

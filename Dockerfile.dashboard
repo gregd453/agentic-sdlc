@@ -1,5 +1,6 @@
-# Multi-stage build for Dashboard
-# Stage 1: Build
+# Multi-stage build for Dashboard (production)
+
+# Stage 1: Builder
 FROM node:20.11.0-alpine AS builder
 
 # Install pnpm
@@ -7,42 +8,45 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Copy all package.json files for dependency resolution
+# Copy workspace files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Copy shared packages needed for dashboard
-COPY packages/dashboard/ ./packages/dashboard/
-COPY packages/shared/ ./packages/shared/
+# Copy dashboard package
+COPY packages/dashboard/package.json ./packages/dashboard/
 
-# Install all dependencies (including dev for build)
-RUN pnpm install --no-frozen-lockfile
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
-# Copy remaining source code
+# Copy source code
 COPY . .
 
-# Build dashboard only
+# Build dashboard
 RUN pnpm --filter @agentic-sdlc/dashboard build
 
 # Stage 2: Production image
 FROM node:20.11.0-alpine AS runner
 
-# Install dumb-init and lightweight http server
-RUN apk add --no-cache dumb-init python3
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S dashboard -u 1001
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S agentic -u 1001
 
 WORKDIR /app
 
-# Copy built dashboard from builder
-COPY --from=builder --chown=dashboard:nodejs /app/packages/dashboard/dist ./dist
+# Copy built dashboard (Vite produces dist folder)
+COPY --from=builder --chown=agentic:nodejs /app/packages/dashboard/dist ./dist
 
-# Switch to non-root user
-USER dashboard
+# Use lightweight HTTP server to serve built files
+# Install a simple HTTP server for serving static files
+RUN npm install -g serve
 
 # Expose port
 EXPOSE 3001
+
+# Switch to non-root user
+USER agentic
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
@@ -51,5 +55,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
 # Start with dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Serve the dashboard static files
-CMD ["python3", "-m", "http.server", "3001", "--directory", "/app/dist"]
+# Serve the built dashboard on port 3001
+CMD ["serve", "-s", "dist", "-l", "3001"]

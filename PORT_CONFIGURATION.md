@@ -1,319 +1,298 @@
 # Port Configuration Guide
 
-## Overview
+This document defines all port assignments across development, testing, and production environments to prevent conflicts and maintain consistency.
 
-All services in the Agentic SDLC platform now **require explicit port configuration** through environment variables. **No default ports are provided** - services will fail immediately if required port environment variables are not set. This ensures clarity and prevents unexpected behavior.
+## Quick Reference Table
 
----
+| Service | Dev (Host) | Dev (Docker) | Test | Staging | Production |
+|---------|-----------|--------------|------|---------|------------|
+| PostgreSQL | 5433 | 5433 | 5434 | 5432 | 5432 (RDS) |
+| Redis | 6380 | 6380 | 6381 | 6379 | 6379 (ElastiCache) |
+| Orchestrator API | 3051 (PM2) | 3000 | 3000 | 3000 | 3000 |
+| Dashboard UI | 3050 | 3050 | 3001 | 3001 | 3001 |
+| Analytics | 3002 | 3002 | - | 3002 | 3002 |
+| Prometheus Metrics | - | - | - | 9090 | 9090 |
 
-## ⚠️ Key Changes
+## Environment Details
 
-### Before (Old Behavior)
-```typescript
-// Before - Had defaults
-const port = parseInt(process.env.ORCHESTRATOR_PORT || '3000', 10);
+### Development Environment
+
+**When using `./dev start` (PM2 + Docker Hybrid):**
+
+```
+Host Machine:
+  - Orchestrator API:  http://localhost:3051  (PM2 process)
+  - PostgreSQL:        localhost:5433         (Docker)
+  - Redis:             localhost:6380         (Docker)
+  - Dashboard:         http://localhost:3050  (Docker)
+  - Analytics:         http://localhost:3002  (Docker)
+
+Dashboard Docker Container:
+  - Proxies to:        http://host.docker.internal:3051
+  - (Reaches host PM2 orchestrator via Docker gateway)
 ```
 
-### After (New Behavior)
-```typescript
-// After - No defaults, must be explicitly set
-if (!process.env.ORCHESTRATOR_PORT) {
-  console.error('❌ ERROR: ORCHESTRATOR_PORT environment variable is not set');
-  console.error('Set ORCHESTRATOR_PORT in your environment or .env file');
-  process.exit(1);
-}
+**Network Architecture:**
+```
+┌─ Host Machine ─────────────────┐
+│  PM2 Processes:                 │
+│  ├─ Orchestrator :3051          │
+│  ├─ Agents (5x)                 │
+│  └─ ...                         │
+└─────────────────────────────────┘
+         ↑                        ↑
+         │                        │
+    Docker Network               host.docker.internal
+         │                        │
+┌─ Docker Containers ────────────┐
+│  ├─ PostgreSQL :5433           │
+│  ├─ Redis :6380                │
+│  ├─ Dashboard :3050            │
+│  │   └─ Proxies to 3051        │
+│  └─ Analytics :3002            │
+└─────────────────────────────────┘
 ```
 
----
+### Test Environment
 
-## 📋 Required Ports
+**When using `docker-compose.test.yml`:**
 
-### Development Environment (.env.development)
+- **PostgreSQL:** `localhost:5434` (avoids conflict with dev on 5433)
+- **Redis:** `localhost:6381` (avoids conflict with dev on 6380)  
+- **Orchestrator API:** `localhost:3000` (Docker container)
+- **Dashboard:** `localhost:3001` (Docker container)
+- **Database:** `agentic_sdlc_test` (isolated from dev)
+- **Redis Auth:** `agentic_redis_test` (password required)
 
-| Service | Port Var | Required | Default Value | Purpose |
-|---------|----------|----------|---------------|---------|
-| **Dashboard** | `VITE_DASHBOARD_PORT` | ✅ Yes | 3050 | React dev server & web UI |
-| **Orchestrator** | `ORCHESTRATOR_PORT` | ✅ Yes | 3051 | Main API & workflow engine |
-| **Analytics** | `ANALYTICS_SERVICE_PORT` | ✅ Yes | 3001 | Metrics & analytics API |
-| **Redis Host** | `REDIS_HOST` | ✅ Yes | localhost | Redis server hostname |
-| **Redis Port** | `REDIS_PORT` | ✅ Yes | 6380 | Redis server port |
+**Important:** Test services run in Docker with isolated ports to allow concurrent dev + test execution.
 
-### Docker Environment (.env.docker)
+### CI/CD Environment (GitHub Actions)
 
-| Service | Port Var | Required | Docker Value | Purpose |
-|---------|----------|----------|--------------|---------|
-| **Dashboard** | `VITE_DASHBOARD_PORT` | ✅ Yes | 3050 | React dev server & web UI |
-| **Orchestrator** | `ORCHESTRATOR_PORT` | ✅ Yes | 3000 | Main API & workflow engine |
-| **Analytics** | `ANALYTICS_SERVICE_PORT` | ✅ Yes | 3001 | Metrics & analytics API |
-| **Redis Host** | `REDIS_HOST` | ✅ Yes | redis | Docker service name |
-| **Redis Port** | `REDIS_PORT` | ✅ Yes | 6379 | Redis port inside Docker |
+- **PostgreSQL:** Service container on standard port
+- **Redis:** Service container on standard port
+- **Database:** `agentic_sdlc_test`
+- **Environment:** Set `NODE_ENV=test`
 
----
+### Production Environment
 
-## 🚀 Getting Started
+**Docker Compose (`docker-compose.production.yml`):**
 
-### 1. Development Setup
+```
+Internal Docker Network (service names):
+  - orchestrator    :3000
+  - postgres        :5432
+  - redis           :6379
+  - dashboard       :3001
+  - agents (5x)     (internal communication via Redis)
 
-Copy the environment template and fill in required values:
+External Access (host ports):
+  - Orchestrator    :3000  → http://orchestrator:3000
+  - Dashboard       :3001  → http://dashboard:3001
+  - Metrics         :9090  → http://metrics:9090
+```
+
+**AWS/Cloud Deployment:**
+
+```
+RDS (Managed PostgreSQL):
+  - Endpoint: rds-endpoint.region.rds.amazonaws.com:5432
+  - Database: agentic_sdlc_prod
+  - Via: VPC Security Groups
+
+ElastiCache (Managed Redis):
+  - Endpoint: elasticache-endpoint.region.cache.amazonaws.com:6379
+  - Via: VPC Security Groups
+
+ECS Services:
+  - Orchestrator Task    → Port 3000
+  - Agent Tasks (5x)     → Port N/A (internal communication)
+  - Dashboard Task       → Port 3001
+  - Load Balancer        → Routes external traffic
+```
+
+## Service Port Assignments
+
+### 3000 - Orchestrator API (Production/Docker)
+
+| Environment | Address | How to Access |
+|-------------|---------|---------------|
+| Dev (Docker) | `localhost:3000` | Direct from host (when using docker-compose.yml) |
+| Dev (PM2) | `localhost:3051` | Direct from host (when using ./dev start) |
+| Test | `localhost:3000` | Docker container |
+| Prod | `orchestrator:3000` | Docker service name (internal) |
+
+### 3050 - Dashboard (Dev Only)
+
+- **Dev:** `localhost:3050` (Docker)
+- **Internal Docker communication:** From dashboard to orchestrator via `host.docker.internal:3051`
+
+### 3001 - Dashboard (Test/Prod)
+
+- **Test:** `localhost:3001`
+- **Production:** Service on port 3001
+- **External access:** Via load balancer or reverse proxy
+
+### 3002 - Analytics Service
+
+- **Dev:** `localhost:3002` (Docker)
+- **Production:** `localhost:3002` (Docker)
+
+### 5433/5434/5432 - PostgreSQL
+
+| Environment | Port | Container | Access |
+|-------------|------|-----------|--------|
+| Dev | 5433 | Docker | localhost:5433 |
+| Test | 5434 | Docker | localhost:5434 (isolated) |
+| Prod | 5432 | RDS | Via VPC (no direct access) |
+| CI/CD | 5432 | Service | localhost:5432 |
+
+**Database Names:**
+- Dev: `agentic_sdlc`
+- Test: `agentic_sdlc_test`
+- Prod: `agentic_sdlc_prod`
+
+### 6380/6381/6379 - Redis
+
+| Environment | Port | Container | Access | Auth |
+|-------------|------|-----------|--------|------|
+| Dev | 6380 | Docker | localhost:6380 | None |
+| Test | 6381 | Docker | localhost:6381 | `agentic_redis_test` |
+| Prod | 6379 | ElastiCache | Via VPC | `${REDIS_PASSWORD}` |
+| CI/CD | 6379 | Service | localhost:6379 | None |
+
+### 9090 - Prometheus Metrics
+
+- **Dev:** Not exposed (optional)
+- **Staging/Prod:** `localhost:9090` or via load balancer
+
+## Configuration Files
+
+### Start Development Environment
 
 ```bash
-# Copy the example file
-cp .env.example .env.development
-
-# Verify these are set:
-cat .env.development | grep -E "ORCHESTRATOR_PORT|VITE_DASHBOARD_PORT|ANALYTICS_SERVICE_PORT|REDIS"
-```
-
-### 2. Starting Services
-
-All these must be set or services will fail:
-
-```bash
-# Make sure .env.development is loaded
-export $(cat .env.development | grep -v '#' | xargs)
-
-# Start all services
 ./dev start
-
-# If a service fails, check error message for missing env var
 ```
 
-### 3. Docker Setup
+This automatically:
+1. Starts Docker containers (PostgreSQL 5433, Redis 6380, Dashboard 3050, Analytics 3002)
+2. Starts PM2 processes (Orchestrator on 3051, 5 agents)
+3. Validates all services are healthy
 
-For Docker deployments, use .env.docker:
+### Stop Development Environment
 
 ```bash
-# Load Docker environment
-export $(cat .env.docker | grep -v '#' | xargs)
-
-# Or use docker-compose (it reads .env file)
-docker-compose up
+./dev stop
 ```
 
----
+### Run Tests with Isolated Ports
 
-## ❌ Error Messages & Solutions
-
-### Error: ORCHESTRATOR_PORT not set
-
-```
-❌ ERROR: ORCHESTRATOR_PORT environment variable is not set
-
-Usage:
-  export ORCHESTRATOR_PORT=3051
-  npm start
-
-Or in .env file:
-  ORCHESTRATOR_PORT=3051
-```
-
-**Solution:**
 ```bash
-# Option 1: Set in environment
-export ORCHESTRATOR_PORT=3051
-npm start
-
-# Option 2: Add to .env file
-echo "ORCHESTRATOR_PORT=3051" >> .env.development
-npm start
+docker-compose -f docker-compose.test.yml up -d
 ```
 
-### Error: VITE_DASHBOARD_PORT not set
+This uses:
+- PostgreSQL: 5434 (dev uses 5433)
+- Redis: 6381 (dev uses 6380)
+- Orchestrator: 3000 (same, but in Docker)
 
-```
-❌ ERROR: VITE_DASHBOARD_PORT environment variable is not set
-```
+### Production Deployment
 
-**Solution:**
 ```bash
-export VITE_DASHBOARD_PORT=3050
-npm run dev --workspace=dashboard
+docker-compose -f docker-compose.production.yml up -d
 ```
 
-### Error: REDIS_PORT invalid (not a number)
+All services communicate via Docker service names (no host ports needed internally).
 
-```
-❌ ERROR: REDIS_PORT must be a valid port number (1-65535), got: invalid
-```
+## Troubleshooting Port Conflicts
 
-**Solution:**
+### Port Already in Use
+
 ```bash
-# Make sure REDIS_PORT is a valid number
-export REDIS_PORT=6380  # ✅ Valid
-# NOT: REDIS_PORT=abc   # ❌ Invalid
+# Find process using port
+lsof -i :PORT_NUMBER
+
+# Or for specific service
+lsof -i :5433  # PostgreSQL
+lsof -i :6380  # Redis
+lsof -i :3051  # Orchestrator (PM2)
 ```
 
----
+### Kill Process on Port
 
-## 📍 Services & Configuration Files
-
-### Dashboard (`packages/dashboard/vite.config.ts`)
-- **Variables:** `VITE_DASHBOARD_PORT`, `VITE_HOST`
-- **Validation:** Checks for missing port, validates 1-65535 range
-- **Fails:** During `npm run dev` if port not set
-- **Example:** `VITE_DASHBOARD_PORT=3050`
-
-### Orchestrator (`packages/orchestrator/src/server.ts`)
-- **Variables:** `ORCHESTRATOR_PORT`, `HOST`
-- **Validation:** Checks for missing port, validates 1-65535 range
-- **Fails:** During startup if port not set
-- **Example:** `ORCHESTRATOR_PORT=3051`
-
-### Analytics Service (`packages/analytics-service/src/index.ts`)
-- **Variables:** `ANALYTICS_SERVICE_PORT`, `HOST`
-- **Validation:** Checks for missing port, validates 1-65535 range
-- **Fails:** During startup if port not set
-- **Example:** `ANALYTICS_SERVICE_PORT=3001`
-
-### Base Agent (`packages/agents/base-agent/src/base-agent.ts`)
-- **Variables:** `REDIS_HOST`, `REDIS_PORT`
-- **Validation:** Checks for missing values, validates port 1-65535
-- **Fails:** During initialization if Redis config not set
-- **Example:** `REDIS_HOST=localhost REDIS_PORT=6380`
-
----
-
-## ✅ Validation Behavior
-
-All services now validate ports with these rules:
-
-1. **Environment variable must exist** - No defaults provided
-2. **Port must be numeric** - `parseInt()` is applied
-3. **Port must be in valid range** - 1-65535 inclusive
-4. **Clear error messages** - Shows exactly what's missing
-
-Example validation flow:
-```typescript
-const portEnv = process.env.ORCHESTRATOR_PORT;
-
-// Check 1: Variable exists
-if (!portEnv) {
-  console.error('❌ ERROR: ORCHESTRATOR_PORT environment variable is not set');
-  process.exit(1);
-}
-
-// Check 2: Valid port number
-const port = parseInt(portEnv, 10);
-if (isNaN(port) || port < 1 || port > 65535) {
-  console.error(`❌ ERROR: ORCHESTRATOR_PORT must be 1-65535, got: ${portEnv}`);
-  process.exit(1);
-}
-```
-
----
-
-## 📊 Port Mapping Summary
-
-### Local Development
-```
-Dashboard         → localhost:3050
-Orchestrator      → localhost:3051
-Analytics         → localhost:3001
-PostgreSQL        → localhost:5433
-Redis             → localhost:6380
-```
-
-### Docker
-```
-Dashboard         → localhost:3050 (external) → 3050 (internal)
-Orchestrator      → localhost:3000 (external) → 3000 (internal)
-Analytics         → localhost:3002 (external) → 3001 (internal)
-PostgreSQL        → localhost:5433 (external) → 5432 (internal)
-Redis             → localhost:6380 (external) → 6379 (internal)
-```
-
----
-
-## 🔍 Debugging Tips
-
-### Check if ports are configured
 ```bash
-# Show all port configuration variables
-env | grep -E "PORT|HOST" | sort
+# Gracefully (recommended)
+./dev stop
 
-# Or from .env file
-grep -E "PORT|HOST" .env.development
+# Force kill (if stuck)
+kill -9 <PID>
 ```
 
-### Check if a port is in use
+### Test Runs While Dev is Running
+
+This is **NOT SUPPORTED**. Tests use port 5434 for PostgreSQL to avoid conflicts, but other services (Redis, Orchestrator) still share ports:
+
+**Solution:** Stop dev environment before running tests
+
 ```bash
-# macOS/Linux
-lsof -i :3050  # Check if port 3050 is in use
-
-# Windows
-netstat -ano | findstr :3050
+./dev stop
+docker-compose -f docker-compose.test.yml up -d
 ```
 
-### Validate environment before starting
+## Health Checks
+
+Each service includes health checks that verify port connectivity:
+
+```yaml
+# Orchestrator health check
+healthcheck:
+  test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/v1/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+
+# PostgreSQL health check
+healthcheck:
+  test: ["CMD-SHELL", "pg_isready -U agentic -d agentic_sdlc"]
+  interval: 10s
+  timeout: 5s
+  retries: 5
+```
+
+## Environment Variables
+
+### Development
+
 ```bash
-# Create validation script
-cat > validate-env.sh << 'EOF'
-#!/bin/bash
-REQUIRED=("ORCHESTRATOR_PORT" "VITE_DASHBOARD_PORT" "ANALYTICS_SERVICE_PORT" "REDIS_PORT" "REDIS_HOST")
-for var in "${REQUIRED[@]}"; do
-  if [ -z "${!var}" ]; then
-    echo "❌ Missing: $var"
-  else
-    echo "✅ Set: $var=${!var}"
-  fi
-done
-EOF
-
-chmod +x validate-env.sh
-./validate-env.sh
+DATABASE_URL=postgresql://agentic:agentic_dev@localhost:5433/agentic_sdlc
+REDIS_URL=redis://localhost:6380
+ORCHESTRATOR_PORT=3051
+VITE_PROXY_TARGET=http://host.docker.internal:3051
 ```
 
----
+### Testing
 
-## 🚨 Migration Guide (If Upgrading)
+```bash
+DATABASE_URL=postgresql://agentic:agentic_password_test@localhost:5434/agentic_sdlc_test
+REDIS_URL=redis://:agentic_redis_test@localhost:6381
+ORCHESTRATOR_PORT=3000
+NODE_ENV=test
+```
 
-If you previously had .env files without port configuration:
+### Production
 
-1. **Update your .env file:**
-   ```bash
-   # Add these lines if not present
-   ORCHESTRATOR_PORT=3051
-   VITE_DASHBOARD_PORT=3050
-   ANALYTICS_SERVICE_PORT=3001
-   REDIS_HOST=localhost
-   REDIS_PORT=6380
-   ```
+```bash
+DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
+ORCHESTRATOR_PORT=3000
+NODE_ENV=production
+LOG_LEVEL=info
+```
 
-2. **Remove any hardcoded ports:**
-   - No more `PORT || 3000` fallbacks
-   - Services will now fail loudly if config missing
+## Related Documentation
 
-3. **Test all services start correctly:**
-   ```bash
-   npm run build
-   ./dev start
-   ```
-
----
-
-## 📚 Related Documentation
-
-- **CLAUDE.md** - Overall architecture and quick start
-- **.env.example** - Template with all available variables
-- **.env.development** - Development configuration
-- **.env.docker** - Docker container configuration
-- **AGENTIC_SDLC_RUNBOOK.md** - Operational guide
-
----
-
-## ❓ FAQ
-
-**Q: Why remove default ports?**
-A: Explicit configuration prevents unexpected behavior. Services fail fast with clear error messages instead of silently using wrong ports.
-
-**Q: Can I use custom ports?**
-A: Yes! Set any valid port number (1-65535) in your environment variables.
-
-**Q: What if I forget to set a port?**
-A: The service will exit immediately with a clear error message showing what's missing and how to fix it.
-
-**Q: Do I need to set all ports?**
-A: Only the services you're running need their ports set. If you're not using Analytics, you don't strictly need `ANALYTICS_SERVICE_PORT`, but it's recommended to set all in your env file.
-
-**Q: How do I run multiple instances?**
-A: Use different ports for each instance. Each must have its own environment with unique port values.
+- `.env.example` - Environment variable templates
+- `.env.production.example` - Production environment template
+- `docker-compose.yml` - Dev environment definition
+- `docker-compose.test.yml` - Test environment definition
+- `docker-compose.production.yml` - Production environment definition
+- `pm2/ecosystem.dev.config.js` - PM2 process configuration

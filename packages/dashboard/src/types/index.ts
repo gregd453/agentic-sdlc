@@ -62,6 +62,7 @@ export interface TraceMetadata {
   span_count: number
   error_count: number
   workflow_count: number
+  workflow_ids?: string[]
   task_count: number
   start_time: string | null
   end_time: string | null

@@ -1766,3 +1766,101 @@
 2025-11-17 12:33:27 -05:00:     at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
 2025-11-17 12:33:27 -05:00: [ioredis] Unhandled error event: Error: read ECONNRESET
 2025-11-17 12:33:27 -05:00:     at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+2025-11-18 11:45:43 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 11:45:43 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 11:45:43 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 11:45:43 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 11:45:43 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 11:45:43 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 11:45:43 -05:00: }
+2025-11-18 11:49:18 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 11:49:18 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 11:49:18 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 11:49:18 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 11:49:18 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 11:49:18 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 11:49:18 -05:00: }
+2025-11-18 11:49:39 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 11:49:39 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 11:49:39 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 11:49:39 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 11:49:39 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 11:49:39 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 11:49:39 -05:00: }
+2025-11-18 11:49:39 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 11:49:39 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 11:49:39 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 11:49:39 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 11:49:39 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 11:49:39 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 11:49:39 -05:00: }
+2025-11-18 13:51:14 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 13:51:14 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 13:51:14 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 13:51:14 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 13:51:14 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 13:51:14 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 13:51:14 -05:00: }
+2025-11-18 13:51:16 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 13:51:16 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 13:51:16 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 13:51:16 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 13:51:16 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 13:51:16 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 13:51:16 -05:00: }
+2025-11-18 14:01:54 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 14:01:54 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 14:01:54 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 14:01:54 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 14:01:54 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 14:01:54 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 14:01:54 -05:00: }
+2025-11-18 14:01:57 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 14:01:57 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 14:01:57 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 14:01:57 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 14:01:57 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 14:01:57 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 14:01:57 -05:00: }
+2025-11-18 14:03:06 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 14:03:06 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 14:03:06 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 14:03:06 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 14:03:06 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 14:03:06 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 14:03:06 -05:00: }
+2025-11-18 14:03:08 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 14:03:08 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 14:03:08 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 14:03:08 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 14:03:08 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 14:03:08 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 14:03:08 -05:00: }
+2025-11-18 14:04:13 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 14:04:13 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 14:04:13 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 14:04:13 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 14:04:13 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 14:04:13 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 14:04:13 -05:00: }
+2025-11-18 14:04:15 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 14:04:15 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 14:04:15 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 14:04:15 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 14:04:15 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 14:04:15 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 14:04:15 -05:00: }
+2025-11-18 14:06:59 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 14:06:59 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 14:06:59 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 14:06:59 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 14:06:59 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 14:06:59 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 14:06:59 -05:00: }
+2025-11-18 14:07:02 -05:00: AgentError: REDIS_HOST environment variable is not set. Required for Redis connection. Set REDIS_HOST in your environment or .env file (e.g., REDIS_HOST=localhost)
+2025-11-18 14:07:02 -05:00:     at new BaseAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/base-agent/src/base-agent.ts:117:13)
+2025-11-18 14:07:02 -05:00:     at new ValidationAgent (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/validation-agent.ts:34:5)
+2025-11-18 14:07:02 -05:00:     at main (/Users/Greg/Projects/apps/zyp/agent-sdlc/packages/agents/validation-agent/src/run-agent.ts:25:17)
+2025-11-18 14:07:02 -05:00:     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+2025-11-18 14:07:02 -05:00:   code: 'CONFIG_ERROR'
+2025-11-18 14:07:02 -05:00: }
