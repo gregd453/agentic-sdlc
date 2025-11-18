@@ -145,29 +145,37 @@ export default function TracesPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredTraces.map((trace: TraceListItem) => (
+                  {filteredTraces.map((trace: TraceListItem) => {
+                    const metadata = trace.metadata || {}
+                    const workflowCount = metadata.workflow_count ?? 0
+                    const spanCount = metadata.span_count ?? 0
+                    const totalDuration = metadata.total_duration_ms
+                    const startTime = metadata.start_time
+                    const endTime = metadata.end_time
+
+                    return (
                     <tr key={trace.trace_id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
                         <code className="text-xs">{truncateId(trace.trace_id)}</code>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          {trace.metadata.workflow_count} workflow{trace.metadata.workflow_count !== 1 ? 's' : ''}
+                          {workflowCount} workflow{workflowCount !== 1 ? 's' : ''}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <StatusBadge status={trace.metadata.end_time ? 'completed' : 'running'} />
+                        <StatusBadge status={endTime ? 'completed' : 'running'} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {trace.metadata.span_count} spans
+                          {spanCount} spans
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
-                        {trace.metadata.total_duration_ms ? `${trace.metadata.total_duration_ms}ms` : 'N/A'}
+                        {totalDuration ? `${totalDuration}ms` : 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {trace.metadata.start_time ? formatRelativeTime(trace.metadata.start_time) : 'N/A'}
+                        {startTime ? formatRelativeTime(startTime) : 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <Link
@@ -178,7 +186,8 @@ export default function TracesPage() {
                         </Link>
                       </td>
                     </tr>
-                  ))}
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

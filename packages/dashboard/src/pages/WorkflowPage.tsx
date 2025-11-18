@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useWorkflow, useWorkflowTimeline } from '../hooks/useWorkflows'
+import { useWorkflow, useWorkflowTasks } from '../hooks/useWorkflows'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
@@ -11,7 +11,7 @@ import { formatDate, formatRelativeTime, truncateId } from '../utils/formatters'
 export default function WorkflowPage() {
   const { id } = useParams<{ id: string }>()
   const { data: workflow, isLoading: workflowLoading, error: workflowError } = useWorkflow(id)
-  const { data: timeline, isLoading: timelineLoading } = useWorkflowTimeline(id)
+  const { data: tasks, isLoading: tasksLoading } = useWorkflowTasks(id)
 
   if (workflowLoading) {
     return <LoadingSpinner size="lg" className="py-12" />
@@ -82,9 +82,9 @@ export default function WorkflowPage() {
           <h3 className="text-lg leading-6 font-medium text-gray-900">Tasks</h3>
         </div>
         <div className="overflow-x-auto">
-          {timelineLoading ? (
+          {tasksLoading ? (
             <LoadingSpinner className="py-8" />
-          ) : timeline?.tasks && timeline.tasks.length > 0 ? (
+          ) : tasks && tasks.length > 0 ? (
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -106,7 +106,7 @@ export default function WorkflowPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {timeline.tasks.map((task) => (
+                {tasks.map((task) => (
                   <tr key={task.task_id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
                       {truncateId(task.task_id)}
@@ -133,30 +133,15 @@ export default function WorkflowPage() {
         </div>
       </div>
 
-      {/* Events Log */}
+      {/* Events Log - Session #82: Events endpoint integration pending */}
       <div className="bg-white shadow rounded-lg">
         <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
           <h3 className="text-lg leading-6 font-medium text-gray-900">Events</h3>
         </div>
         <div className="p-6">
-          {timelineLoading ? (
-            <LoadingSpinner />
-          ) : timeline?.events && timeline.events.length > 0 ? (
-            <div className="space-y-4">
-              {timeline.events.map((event) => (
-                <div key={event.id} className="border-l-2 border-gray-200 pl-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{event.event_type}</p>
-                      <p className="text-xs text-gray-500 mt-1">{formatDate(event.timestamp)}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center text-sm text-gray-500">No events yet</div>
-          )}
+          <div className="text-center text-sm text-gray-500">
+            Event timeline integration coming soon
+          </div>
         </div>
       </div>
     </div>

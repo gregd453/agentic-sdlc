@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import WorkflowsPage from './pages/WorkflowsPage'
 import WorkflowPage from './pages/WorkflowPage'
 import TracesPage from './pages/TracesPage'
+import TraceDetailPage from './pages/TraceDetailPage'
 import AgentsPage from './pages/AgentsPage'
 import { PlatformsPage } from './pages/PlatformsPage'
 import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage'
@@ -41,7 +42,7 @@ function App() {
                 <Route path="/workflows/:id" element={<WorkflowPage />} />
                 <Route path="/platforms" element={<PlatformsPage />} />
                 <Route path="/traces" element={<TracesPage />} />
-                <Route path="/traces/:traceId" element={<TracesPage />} />
+                <Route path="/traces/:traceId" element={<TraceDetailPage />} />
                 <Route path="/agents" element={<AgentsPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>

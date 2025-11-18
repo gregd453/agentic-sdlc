@@ -25,7 +25,7 @@ export function useWorkflow(id: string | undefined, refetchInterval: number = 50
   })
 }
 
-export function useWorkflowTasks(id: string | undefined) {
+export function useWorkflowTasks(id: string | undefined, refetchInterval: number = 5000) {
   return useQuery({
     queryKey: ['workflow', id, 'tasks'],
     queryFn: () => {
@@ -33,7 +33,7 @@ export function useWorkflowTasks(id: string | undefined) {
       return fetchWorkflowTasks(id)
     },
     enabled: !!id,
-    refetchInterval: false,
+    refetchInterval: id ? refetchInterval : false,  // Session #82: Enable polling to detect task changes
   })
 }
 
