@@ -246,7 +246,7 @@ export const HealthCheckPayloadSchema = z.object({
  * Extends the base AgentTaskSchema with deployment-specific fields
  */
 export const DeploymentTaskSchema = AgentTaskSchema.extend({
-  agent_type: z.literal(AGENT_TYPES.DEPLOYMENT),
+  agent_type: z.literal('deployment'),
   action: DeploymentActionEnum,
   payload: z.union([
     BuildDockerImagePayloadSchema,
@@ -324,7 +324,7 @@ export const HealthCheckResultSchema = z.object({
  * Extends the base AgentResultSchema with deployment-specific results
  */
 export const DeploymentResultSchemaExtended = AgentResultSchema.extend({
-  agent_type: z.literal(AGENT_TYPES.DEPLOYMENT),
+  agent_type: z.literal('deployment'),
   action: DeploymentActionEnum,
   result: z.union([
     BuildResultSchema,
@@ -395,9 +395,9 @@ export function createBuildDockerImageTask(
   return {
     task_id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as any,
     workflow_id: workflowId as any,
-    agent_type: AGENT_TYPES.DEPLOYMENT,
+    agent_type: 'deployment',
     action: 'build_docker_image',
-    status: TASK_STATUS.PENDING,
+    status: 'pending',
     priority: 50,
     payload: {
       dockerfile_path: './Dockerfile',
@@ -429,9 +429,9 @@ export function createPushToECRTask(
   return {
     task_id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as any,
     workflow_id: workflowId as any,
-    agent_type: AGENT_TYPES.DEPLOYMENT,
+    agent_type: 'deployment',
     action: 'push_to_ecr',
-    status: TASK_STATUS.PENDING,
+    status: 'pending',
     priority: 50,
     payload: {
       image_name: imageName,
@@ -463,9 +463,9 @@ export function createHealthCheckTask(
   return {
     task_id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as any,
     workflow_id: workflowId as any,
-    agent_type: AGENT_TYPES.DEPLOYMENT,
+    agent_type: 'deployment',
     action: 'health_check',
-    status: TASK_STATUS.PENDING,
+    status: 'pending',
     priority: 50,
     payload: {
       cluster_name: clusterName,

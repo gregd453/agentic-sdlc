@@ -40,7 +40,7 @@ export class DeploymentAgent extends BaseAgent {
   ) {
     super(
       {
-        type: AGENT_TYPES.DEPLOYMENT,
+        type: 'deployment',
         version: '1.0.0',
         capabilities: [
           'docker_build',
@@ -130,9 +130,9 @@ export class DeploymentAgent extends BaseAgent {
       return DeploymentResultSchemaExtended.parse({
         task_id: validatedTask.task_id,
         workflow_id: validatedTask.workflow_id,
-        agent_type: AGENT_TYPES.DEPLOYMENT,
+        agent_type: 'deployment',
         action: validatedTask.action,
-        status: WORKFLOW_STATUS.SUCCESS,
+        status: 'success',
         result,
         timestamp: new Date().toISOString(),
         duration_ms: duration
@@ -472,12 +472,12 @@ export class DeploymentAgent extends BaseAgent {
     const deploymentTask: DeploymentTask = {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
-      agent_type: AGENT_TYPES.DEPLOYMENT,
+      agent_type: 'deployment',
       action: task.payload.action,
-      status: TASK_STATUS.PENDING,
-      priority: task.priority === TASK_PRIORITY.CRITICAL ? 90 :
-                task.priority === TASK_PRIORITY.HIGH ? 70 :
-                task.priority === TASK_PRIORITY.MEDIUM ? 50 : 30,
+      status: 'pending',
+      priority: task.priority === 'critical' ? 90 :
+                task.priority === 'high' ? 70 :
+                task.priority === 'medium' ? 50 : 30,
       payload: task.payload,
       version: '1.0.0',
       timeout_ms: task.constraints?.timeout_ms || 120000,
@@ -488,7 +488,7 @@ export class DeploymentAgent extends BaseAgent {
 
     const result = await this.executeTask(deploymentTask);
     // Determine success based on result type
-    const success = WORKFLOW_STATUS.SUCCESS in result.result
+    const success = 'success' in result.result
       ? result.result.success
       : 'healthy' in result.result
         ? result.result.healthy
@@ -497,7 +497,7 @@ export class DeploymentAgent extends BaseAgent {
     return {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
-      status: success ? WORKFLOW_STATUS.SUCCESS : 'failure',
+      status: success ? 'success' : 'failure',
       output: result,
       errors: success ? [] : ['Task execution failed']
     };

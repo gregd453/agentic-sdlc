@@ -12,7 +12,7 @@
  * Error categories for classification
  */
 export enum ErrorCategory {
-  VALIDATION = AGENT_TYPES.VALIDATION,           // Input validation errors
+  VALIDATION = 'validation',           // Input validation errors
   AUTHENTICATION = 'authentication',   // Auth/authz errors
   NOT_FOUND = 'not_found',            // Resource not found
   CONFLICT = 'conflict',              // State conflicts
@@ -29,10 +29,10 @@ export enum ErrorCategory {
  * Error severity levels
  */
 export enum ErrorSeverity {
-  LOW = TASK_PRIORITY.LOW,         // Informational, no action needed
-  MEDIUM = TASK_PRIORITY.MEDIUM,   // Warning, may need attention
-  HIGH = TASK_PRIORITY.HIGH,       // Error, needs attention
-  CRITICAL = TASK_PRIORITY.CRITICAL // Critical, immediate action required
+  LOW = 'low',         // Informational, no action needed
+  MEDIUM = 'medium',   // Warning, may need attention
+  HIGH = 'high',       // Error, needs attention
+  CRITICAL = 'critical' // Critical, immediate action required
 }
 
 /**

@@ -9,7 +9,7 @@ export interface WorkflowResponse {
   id: string
   name?: string
   type: string
-  status: TASK_STATUS.PENDING | WORKFLOW_STATUS.RUNNING | WORKFLOW_STATUS.COMPLETED | WORKFLOW_STATUS.FAILED | WORKFLOW_STATUS.CANCELLED
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled'
   createdAt: Date
   updatedAt: Date
   progress?: number
@@ -19,7 +19,7 @@ export interface WorkflowResponse {
 
 export interface WorkflowCreateRequest extends Record<string, unknown> {
   name?: string
-  type: WORKFLOW_TYPES.APP | WORKFLOW_TYPES.FEATURE | WORKFLOW_TYPES.BUGFIX | string
+  type: 'app' | 'feature' | 'bugfix' | string
   definition?: string
   platformId?: string
   metadata?: Record<string, unknown>
@@ -29,7 +29,7 @@ export interface Agent {
   id: string
   type: string
   name: string
-  status: 'online' | 'offline' | LOG_LEVEL.ERROR
+  status: 'online' | 'offline' | 'error'
   version: string
   capabilities: string[]
   platform?: string

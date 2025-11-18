@@ -105,7 +105,7 @@ export class WorkflowEngine {
     const stage = this.getStageConfig(currentStageName);
 
     switch (outcome) {
-      case WORKFLOW_STATUS.SUCCESS:
+      case 'success':
         return stage.on_success || null;
       case 'failure':
         return stage.on_failure || null;
@@ -272,7 +272,7 @@ export class WorkflowEngine {
   /**
    * Build workflow result from final context
    */
-  buildWorkflowResult(context: WorkflowContext, finalOutcome: WORKFLOW_STATUS.SUCCESS | 'failure' | 'timeout'): WorkflowResult {
+  buildWorkflowResult(context: WorkflowContext, finalOutcome: 'success' | 'failure' | 'timeout'): WorkflowResult {
     const stageResults = Object.entries(context.stage_results).map(([stageName, result]) => ({
       stage_name: stageName,
       outcome: result.outcome,
@@ -288,7 +288,7 @@ export class WorkflowEngine {
 
     return {
       workflow_id: context.workflow_id,
-      status: finalOutcome === WORKFLOW_STATUS.SUCCESS ? WORKFLOW_STATUS.SUCCESS : finalOutcome === 'timeout' ? 'timeout' : 'failure',
+      status: finalOutcome === 'success' ? 'success' : finalOutcome === 'timeout' ? 'timeout' : 'failure',
       final_stage: context.current_stage,
       stage_results: stageResults,
       output_data: this.extractWorkflowOutput(context),

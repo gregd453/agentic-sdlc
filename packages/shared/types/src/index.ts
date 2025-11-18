@@ -104,7 +104,3 @@ if (process.env.NODE_ENV === 'development') {
   console.log('📦 @agentic-sdlc/shared-types loaded (Phase 5)');
   console.log(`🔖 Version: ${VERSION}`);
 }
-// Session #80: Export centralized constants
-export * from './constants/workflow-status.constants';
-export * from './constants/task-priority.constants';
-export * from './constants/log-level.constants';

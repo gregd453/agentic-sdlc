@@ -193,20 +193,15 @@ output: {
 
 ### Timing (Optional)
 
-Control execution timing. **Note: All agents default to a 10-second delay unless overridden.**
+Control execution timing.
 
 ```typescript
 timing: {
-  execution_delay_ms: 10000,   // Add delay in ms (default: 10000 / 10 seconds)
+  execution_delay_ms: 5000,    // Add delay (optional)
   variance_ms: 500,            // Random variance +/- (optional)
   timeout_at_ms: 5000         // Trigger timeout after N ms (optional)
 }
 ```
-
-**Delay Behavior:**
-- If `timing` object is not provided: **10-second default delay is applied**
-- If `timing` object is provided: Uses specified `execution_delay_ms` value
-- Set `execution_delay_ms: 0` to run instantly with no delay
 
 ### Metrics (Optional)
 
@@ -241,29 +236,12 @@ Use predefined presets for common scenarios:
 ```typescript
 agent.getAvailableBehaviors()
 // Returns: [
-//   // Success scenarios
 //   'success', 'fast_success', 'slow_success',
-//
-//   // Failure scenarios
 //   'validation_error', 'deployment_failed', 'unrecoverable_error',
-//
-//   // Timeout & partial
 //   'timeout',
 //   'tests_partial_pass',
-//
-//   // Metrics
 //   'high_resource_usage',
-//
-//   // Crash scenario
-//   'crash',
-//
-//   // Delay configurations (NEW)
-//   'default_delay',          // 10-second delay (default)
-//   'no_delay',               // Instant (0ms)
-//   'custom_delay_3s',        // 3-second delay
-//   'custom_delay_5s',        // 5-second delay
-//   'custom_delay_30s',       // 30-second delay
-//   'delay_with_variance'     // 10s ± 2s random variance
+//   'crash'
 // ]
 ```
 
@@ -575,32 +553,3 @@ A: Metrics are merged with baseline, ensure you're setting the field names corre
 
 **Q: Timing not working?**
 A: Check `execution_delay_ms` vs `timeout_at_ms` - they have different effects
-
-**Q: Why is my agent taking 10 seconds to complete?**
-A: By default, all mock agents apply a 10-second delay to simulate realistic execution. To override:
-- Use `timing: { execution_delay_ms: 0 }` for instant execution
-- Use `'no_delay'` preset for instant success
-- Use `'custom_delay_3s'`, `'custom_delay_5s'`, etc. for specific durations
-
-**Q: How do I disable the default delay?**
-A: Set `execution_delay_ms: 0` in the timing object:
-```typescript
-{
-  behavior_metadata: {
-    mode: 'success',
-    timing: { execution_delay_ms: 0 }
-  }
-}
-```
-
-**Q: Can I add random variance to the delay?**
-A: Yes! Use the `variance_ms` field:
-```typescript
-{
-  behavior_metadata: {
-    mode: 'success',
-    timing: { execution_delay_ms: 10000, variance_ms: 2000 }  // 10s ± 2s
-  }
-}
-```
-Or use the `'delay_with_variance'` preset.

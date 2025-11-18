@@ -93,8 +93,8 @@ describe('APIClient', () => {
       const mockWorkflows = [
         {
           id: '123',
-          type: WORKFLOW_TYPES.APP,
-          status: WORKFLOW_STATUS.COMPLETED,
+          type: 'app',
+          status: 'completed',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -114,8 +114,8 @@ describe('APIClient', () => {
     it('should get specific workflow', async () => {
       const mockWorkflow = {
         id: '123',
-        type: WORKFLOW_TYPES.FEATURE,
-        status: WORKFLOW_STATUS.RUNNING,
+        type: 'feature',
+        status: 'running',
         progress: 50,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -129,7 +129,7 @@ describe('APIClient', () => {
       const result = await client.getWorkflow('123')
 
       expect(result.id).toBe('123')
-      expect(result.status).toBe(WORKFLOW_STATUS.RUNNING)
+      expect(result.status).toBe('running')
       expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/workflows/123'),
         expect.any(Object)
@@ -139,8 +139,8 @@ describe('APIClient', () => {
     it('should create workflow', async () => {
       const mockWorkflow = {
         id: 'new-id',
-        type: WORKFLOW_TYPES.APP,
-        status: TASK_STATUS.PENDING,
+        type: 'app',
+        status: 'pending',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }
@@ -152,11 +152,11 @@ describe('APIClient', () => {
 
       const result = await client.createWorkflow({
         name: 'My App',
-        type: WORKFLOW_TYPES.APP,
+        type: 'app',
       })
 
       expect(result.id).toBe('new-id')
-      expect(result.status).toBe(TASK_STATUS.PENDING)
+      expect(result.status).toBe('pending')
     })
 
     it('should cancel workflow', async () => {
@@ -173,8 +173,8 @@ describe('APIClient', () => {
     it('should retry workflow', async () => {
       const mockWorkflow = {
         id: '123',
-        type: WORKFLOW_TYPES.FEATURE,
-        status: TASK_STATUS.PENDING,
+        type: 'feature',
+        status: 'pending',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }
@@ -281,7 +281,7 @@ describe('APIClient', () => {
           id: 'task-1',
           workflowId: 'wf-1',
           agentType: 'scaffold-agent',
-          status: WORKFLOW_STATUS.COMPLETED,
+          status: 'completed',
         },
       ]
 
@@ -301,7 +301,7 @@ describe('APIClient', () => {
         id: 'task-1',
         workflowId: 'wf-1',
         agentType: 'scaffold-agent',
-        status: WORKFLOW_STATUS.COMPLETED,
+        status: 'completed',
       }
 
       ;(global.fetch as any).mockResolvedValueOnce({
@@ -322,7 +322,7 @@ describe('APIClient', () => {
         workflowId: 'wf-1',
         agentType: 'scaffold-agent',
         stage: 'scaffold:started',
-        status: WORKFLOW_STATUS.COMPLETED,
+        status: 'completed',
       }
 
       ;(global.fetch as any).mockResolvedValueOnce({
@@ -360,8 +360,8 @@ describe('APIClient', () => {
       const mockWorkflows = [
         {
           id: 'wf-1',
-          type: WORKFLOW_TYPES.APP,
-          status: WORKFLOW_STATUS.COMPLETED,
+          type: 'app',
+          status: 'completed',
         },
       ]
 
@@ -380,7 +380,7 @@ describe('APIClient', () => {
         {
           id: 'task-1',
           workflowId: 'wf-1',
-          status: WORKFLOW_STATUS.COMPLETED,
+          status: 'completed',
         },
       ]
 

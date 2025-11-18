@@ -9,7 +9,7 @@ import { z } from 'zod';
 /**
  * Stage outcome definition for conditional routing
  */
-export const StageOutcomeSchema = z.enum([WORKFLOW_STATUS.SUCCESS, 'failure', 'timeout', 'unknown']);
+export const StageOutcomeSchema = z.enum(['success', 'failure', 'timeout', 'unknown']);
 export type StageOutcome = z.infer<typeof StageOutcomeSchema>;
 
 /**
@@ -98,7 +98,7 @@ export type StageResult = z.infer<typeof StageResultSchema>;
  */
 export const WorkflowResultSchema = z.object({
   workflow_id: z.string().describe('Workflow execution ID'),
-  status: z.enum([WORKFLOW_STATUS.RUNNING, WORKFLOW_STATUS.SUCCESS, 'failure', 'timeout', WORKFLOW_STATUS.CANCELLED]).describe('Workflow status'),
+  status: z.enum(['running', 'success', 'failure', 'timeout', 'cancelled']).describe('Workflow status'),
   final_stage: z.string().optional().describe('Final executed stage'),
   stage_results: z.array(StageResultSchema).describe('All stage execution results'),
   output_data: z.record(z.unknown()).optional().describe('Final workflow output'),

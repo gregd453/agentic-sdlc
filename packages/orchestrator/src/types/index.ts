@@ -10,7 +10,7 @@ export const TaskResultSchema = z.object({
   task_id: z.string().uuid(),
   workflow_id: z.string().uuid(),
   agent_id: z.string(),
-  status: z.enum([WORKFLOW_STATUS.SUCCESS, 'failure', 'partial', 'blocked']),
+  status: z.enum(['success', 'failure', 'partial', 'blocked']),
   result: z.object({
     data: z.record(z.unknown()),
     artifacts: z.array(z.object({
@@ -44,11 +44,11 @@ export const TaskResultSchema = z.object({
 
 // Workflow Schemas
 export const CreateWorkflowSchema = z.object({
-  type: z.enum([WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX]),
+  type: z.enum(['app', 'feature', 'bugfix']),
   name: z.string().min(1).max(100),
   description: z.string().optional(),
   requirements: z.string().optional(),
-  priority: z.enum([TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, TASK_PRIORITY.CRITICAL]),
+  priority: z.enum(['low', 'medium', 'high', 'critical']),
   trace_id: z.string().uuid().optional(), // Phase 3: Accept trace_id from HTTP request
   // Phase 1: Platform awareness (optional for backward compatibility)
   platform_id: z.string().uuid().optional(),
@@ -60,10 +60,10 @@ export const WorkflowResponseSchema = z.object({
   workflow_id: z.string().uuid(),
   name: z.string(),
   description: z.string().nullable().optional(),
-  type: z.enum([WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX]),
+  type: z.enum(['app', 'feature', 'bugfix']),
   status: z.string(),
   current_stage: z.string(),
-  priority: z.enum([TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, TASK_PRIORITY.CRITICAL]),
+  priority: z.enum(['low', 'medium', 'high', 'critical']),
   progress_percentage: z.number(),
   trace_id: z.string().uuid().nullable().optional(),
   estimated_duration_ms: z.number().optional(),

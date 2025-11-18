@@ -16,18 +16,18 @@ import { WorkflowId, TaskId, toWorkflowId, toTaskId } from '../core/brands';
  */
 
 // ===== Priority Enum =====
-export const TaskPriorityEnum = z.enum([TASK_PRIORITY.CRITICAL, TASK_PRIORITY.HIGH, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.LOW]);
+export const TaskPriorityEnum = z.enum(['critical', 'high', 'medium', 'low']);
 
 // ===== Status Enum (use different name to avoid conflict with core/schemas) =====
 export const EnvelopeTaskStatusEnum = z.enum([
-  TASK_STATUS.PENDING,
+  'pending',
   'queued',
-  WORKFLOW_STATUS.RUNNING,
-  WORKFLOW_STATUS.SUCCESS,
+  'running',
+  'success',
   'failure',
   'partial',
   'timeout',
-  WORKFLOW_STATUS.CANCELLED,
+  'cancelled',
   'retrying'
 ]);
 
@@ -38,11 +38,11 @@ export const EnvelopeMetadataSchema = z.object({
   workflow_id: z.string().uuid().transform(toWorkflowId),
 
   // Routing
-  agent_type: z.enum([AGENT_TYPES.SCAFFOLD, AGENT_TYPES.VALIDATION, 'e2e', AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT]),
+  agent_type: z.enum(['scaffold', 'validation', 'e2e', 'integration', 'deployment']),
 
   // Priority and scheduling
-  priority: TaskPriorityEnum.default(TASK_PRIORITY.MEDIUM),
-  status: EnvelopeTaskStatusEnum.default(TASK_STATUS.PENDING),
+  priority: TaskPriorityEnum.default('medium'),
+  status: EnvelopeTaskStatusEnum.default('pending'),
 
   // Retry policy
   retry_count: z.number().int().min(0).default(0),
@@ -64,7 +64,7 @@ export const EnvelopeMetadataSchema = z.object({
 
   // Workflow context (passed between stages)
   workflow_context: z.object({
-    workflow_type: z.enum([WORKFLOW_TYPES.APP, 'service', WORKFLOW_TYPES.FEATURE, 'capability']),
+    workflow_type: z.enum(['app', 'service', 'feature', 'capability']),
     workflow_name: z.string(),
     current_stage: z.string(),
     previous_stage: z.string().optional(),
@@ -78,9 +78,9 @@ export const EnvelopeMetadataSchema = z.object({
  * Scaffold Agent Envelope
  */
 export const ScaffoldEnvelopeSchema = EnvelopeMetadataSchema.extend({
-  agent_type: z.literal(AGENT_TYPES.SCAFFOLD),
+  agent_type: z.literal('scaffold'),
   payload: z.object({
-    project_type: z.enum([WORKFLOW_TYPES.APP, 'service', WORKFLOW_TYPES.FEATURE, 'capability']),
+    project_type: z.enum(['app', 'service', 'feature', 'capability']),
     name: z.string().min(1).max(100),
     description: z.string().max(500),
     requirements: z.array(z.string()),
@@ -105,7 +105,7 @@ export const ScaffoldEnvelopeSchema = EnvelopeMetadataSchema.extend({
  * Validation Agent Envelope
  */
 export const ValidationEnvelopeSchema = EnvelopeMetadataSchema.extend({
-  agent_type: z.literal(AGENT_TYPES.VALIDATION),
+  agent_type: z.literal('validation'),
   payload: z.object({
     // Required: files and directory to validate
     file_paths: z.array(z.string()).min(1),
@@ -160,7 +160,7 @@ export const E2EEnvelopeSchema = EnvelopeMetadataSchema.extend({
  * Integration Testing Agent Envelope
  */
 export const IntegrationEnvelopeSchema = EnvelopeMetadataSchema.extend({
-  agent_type: z.literal(AGENT_TYPES.INTEGRATION),
+  agent_type: z.literal('integration'),
   payload: z.object({
     working_directory: z.string(),
     api_endpoints: z.array(z.object({
@@ -177,7 +177,7 @@ export const IntegrationEnvelopeSchema = EnvelopeMetadataSchema.extend({
  * Deployment Agent Envelope
  */
 export const DeploymentEnvelopeSchema = EnvelopeMetadataSchema.extend({
-  agent_type: z.literal(AGENT_TYPES.DEPLOYMENT),
+  agent_type: z.literal('deployment'),
   payload: z.object({
     working_directory: z.string(),
     deployment_target: z.enum(['docker', 'kubernetes', 'vercel', 'netlify', 'aws']),
@@ -202,9 +202,9 @@ export const TaskErrorSchema = z.object({
   message: z.string(),
 
   // Error classification
-  severity: z.enum(['fatal', LOG_LEVEL.ERROR, 'warning', LOG_LEVEL.INFO]),
+  severity: z.enum(['fatal', 'error', 'warning', 'info']),
   category: z.enum([
-    AGENT_TYPES.VALIDATION,
+    'validation',
     'execution',
     'timeout',
     'resource',
@@ -238,7 +238,7 @@ export const AgentResultEnvelopeSchema = z.object({
   // Identifiers (same as task)
   task_id: z.string().uuid().transform(toTaskId),
   workflow_id: z.string().uuid().transform(toWorkflowId),
-  agent_type: z.enum([AGENT_TYPES.SCAFFOLD, AGENT_TYPES.VALIDATION, 'e2e', AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT]),
+  agent_type: z.enum(['scaffold', 'validation', 'e2e', 'integration', 'deployment']),
 
   // Result status
   status: EnvelopeTaskStatusEnum,
@@ -298,11 +298,11 @@ export type AgentResultEnvelope = z.infer<typeof AgentResultEnvelopeSchema>;
 
 // ===== Type Guards =====
 export function isScaffoldEnvelope(envelope: AgentEnvelope): envelope is ScaffoldEnvelope {
-  return envelope.agent_type === AGENT_TYPES.SCAFFOLD;
+  return envelope.agent_type === 'scaffold';
 }
 
 export function isValidationEnvelope(envelope: AgentEnvelope): envelope is ValidationEnvelope {
-  return envelope.agent_type === AGENT_TYPES.VALIDATION;
+  return envelope.agent_type === 'validation';
 }
 
 export function isE2EEnvelope(envelope: AgentEnvelope): envelope is E2EEnvelope {
@@ -310,11 +310,11 @@ export function isE2EEnvelope(envelope: AgentEnvelope): envelope is E2EEnvelope 
 }
 
 export function isIntegrationEnvelope(envelope: AgentEnvelope): envelope is IntegrationEnvelope {
-  return envelope.agent_type === AGENT_TYPES.INTEGRATION;
+  return envelope.agent_type === 'integration';
 }
 
 export function isDeploymentEnvelope(envelope: AgentEnvelope): envelope is DeploymentEnvelope {
-  return envelope.agent_type === AGENT_TYPES.DEPLOYMENT;
+  return envelope.agent_type === 'deployment';
 }
 
 // ===== Validation Helpers =====
@@ -357,13 +357,13 @@ export function createValidationEnvelope(params: {
     duplications?: number;
   };
   workflow_context?: {
-    workflow_type: WORKFLOW_TYPES.APP | 'service' | WORKFLOW_TYPES.FEATURE | 'capability';
+    workflow_type: 'app' | 'service' | 'feature' | 'capability';
     workflow_name: string;
     current_stage: string;
     previous_stage?: string;
     stage_outputs?: Record<string, unknown>;
   };
-  priority?: TASK_PRIORITY.CRITICAL | TASK_PRIORITY.HIGH | TASK_PRIORITY.MEDIUM | TASK_PRIORITY.LOW;
+  priority?: 'critical' | 'high' | 'medium' | 'low';
   trace_id?: string;
 }): ValidationEnvelope {
   const now = new Date().toISOString();
@@ -372,9 +372,9 @@ export function createValidationEnvelope(params: {
     // Envelope metadata
     task_id: params.task_id as TaskId,
     workflow_id: params.workflow_id as WorkflowId,
-    agent_type: AGENT_TYPES.VALIDATION,
-    priority: params.priority || TASK_PRIORITY.MEDIUM,
-    status: TASK_STATUS.PENDING,
+    agent_type: 'validation',
+    priority: params.priority || 'medium',
+    status: 'pending',
     retry_count: 0,
     max_retries: 3,
     timeout_ms: 300000,
@@ -405,8 +405,8 @@ export function createValidationEnvelope(params: {
 export function createTaskError(params: {
   code: string;
   message: string;
-  severity: 'fatal' | LOG_LEVEL.ERROR | 'warning' | LOG_LEVEL.INFO;
-  category: AGENT_TYPES.VALIDATION | 'execution' | 'timeout' | 'resource' | 'dependency' | 'configuration' | 'network' | 'unknown';
+  severity: 'fatal' | 'error' | 'warning' | 'info';
+  category: 'validation' | 'execution' | 'timeout' | 'resource' | 'dependency' | 'configuration' | 'network' | 'unknown';
   details?: {
     file_path?: string;
     line_number?: number;

@@ -32,10 +32,10 @@ describe('Phase 2: Surface Abstraction Integration', () => {
     webhookSurface = new WebhookSurfaceService(surfaceRouter, {
       verify_signature: false, // Disable signature verification for tests
       event_mapping: {
-        push: WORKFLOW_TYPES.FEATURE,
-        pull_request: WORKFLOW_TYPES.FEATURE,
-        release: WORKFLOW_TYPES.APP,
-        issues: WORKFLOW_TYPES.BUGFIX
+        push: 'feature',
+        pull_request: 'feature',
+        release: 'app',
+        issues: 'bugfix'
       }
     })
     cliSurface = new CliSurfaceService(surfaceRouter, {
@@ -49,7 +49,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
       const request: SurfaceRequest = {
         surface_type: 'REST',
         payload: {
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           name: 'Test App'
         }
       }
@@ -76,7 +76,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
       const request: SurfaceRequest = {
         surface_type: 'WEBHOOK',
         payload: {
-          type: WORKFLOW_TYPES.FEATURE,
+          type: 'feature',
           name: 'Webhook Workflow'
         }
       }
@@ -90,7 +90,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
         surface_type: 'REST',
         platform_id: 'test-platform-id',
         payload: {
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           name: 'Platform App'
         }
       }
@@ -103,15 +103,15 @@ describe('Phase 2: Surface Abstraction Integration', () => {
       const request: SurfaceRequest = {
         surface_type: 'REST',
         payload: {
-          type: WORKFLOW_TYPES.FEATURE,
+          type: 'feature',
           name: '  Feature Name  ', // With whitespace
-          priority: TASK_PRIORITY.HIGH
+          priority: 'high'
         }
       }
 
       const context = await surfaceRouter.routeRequest(request)
       expect(context.validated_payload.name).toBe('Feature Name')
-      expect(context.validated_payload.priority).toBe(TASK_PRIORITY.HIGH)
+      expect(context.validated_payload.priority).toBe('high')
     })
 
     it('should get surface metadata', () => {
@@ -135,10 +135,10 @@ describe('Phase 2: Surface Abstraction Integration', () => {
         path: '/api/v1/workflows',
         headers: { 'Content-Type': 'application/json' },
         body: {
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           name: 'Test App',
           description: 'Test Description',
-          priority: TASK_PRIORITY.HIGH
+          priority: 'high'
         },
         source_ip: '127.0.0.1'
       }
@@ -211,7 +211,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
         path: '/api/v1/platforms/test-platform/workflows',
         headers: { 'Content-Type': 'application/json' },
         body: {
-          type: WORKFLOW_TYPES.FEATURE,
+          type: 'feature',
           name: 'Platform Feature'
         }
       }
@@ -331,8 +331,8 @@ describe('Phase 2: Surface Abstraction Integration', () => {
     it('should handle workflow creation command', async () => {
       const command: CliCommand = {
         command: 'workflow:create',
-        args: [WORKFLOW_TYPES.APP, 'My CLI App'],
-        flags: { priority: TASK_PRIORITY.HIGH }
+        args: ['app', 'My CLI App'],
+        flags: { priority: 'high' }
       }
 
       const result = await cliSurface.handleCommand(command)
@@ -380,7 +380,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
     it('should support platform-targeted workflows', async () => {
       const command: CliCommand = {
         command: 'workflow:create',
-        args: [WORKFLOW_TYPES.FEATURE, 'New Feature'],
+        args: ['feature', 'New Feature'],
         flags: { platform: 'web-apps' }
       }
 
@@ -403,7 +403,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
 
       const command: CliCommand = {
         command: 'workflow:create',
-        args: [WORKFLOW_TYPES.APP, 'Offline App'],
+        args: ['app', 'Offline App'],
         flags: {}
       }
 
@@ -421,9 +421,9 @@ describe('Phase 2: Surface Abstraction Integration', () => {
         path: '/api/v1/workflows',
         headers: {},
         body: {
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           name: 'Multi-Surface App',
-          priority: TASK_PRIORITY.HIGH
+          priority: 'high'
         }
       }
 
@@ -433,8 +433,8 @@ describe('Phase 2: Surface Abstraction Integration', () => {
       // Via CLI
       const cliCommand: CliCommand = {
         command: 'workflow:create',
-        args: [WORKFLOW_TYPES.APP, 'Multi-Surface App'],
-        flags: { priority: TASK_PRIORITY.HIGH }
+        args: ['app', 'Multi-Surface App'],
+        flags: { priority: 'high' }
       }
 
       const cliResult = await cliSurface.handleCommand(cliCommand)
@@ -461,7 +461,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
         path: '/api/v1/platforms/web-apps/workflows',
         headers: {},
         body: {
-          type: WORKFLOW_TYPES.FEATURE,
+          type: 'feature',
           name: 'Web Feature'
         }
       }
@@ -479,7 +479,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
         path: '/api/v1/workflows',
         headers: {},
         body: {
-          type: WORKFLOW_TYPES.FEATURE,
+          type: 'feature',
           name: 'Legacy Feature'
         }
       }
@@ -492,7 +492,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
     it('should support legacy workflow creation via CLI', async () => {
       const command: CliCommand = {
         command: 'workflow:create',
-        args: [WORKFLOW_TYPES.BUGFIX, 'Fix bug'],
+        args: ['bugfix', 'Fix bug'],
         flags: {} // No platform specified
       }
 
@@ -534,7 +534,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
         method: 'POST',
         path: '/api/v1/workflows',
         headers: {},
-        body: { type: WORKFLOW_TYPES.APP, name: 'Test' }
+        body: { type: 'app', name: 'Test' }
       }
       const restResp = await restSurface.handleRequest(restReq)
       checks.restApiSurfaceWorking = restResp.status_code === 202
@@ -551,7 +551,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
       // Check 3: CLI surface working
       const cliCmd: CliCommand = {
         command: 'workflow:create',
-        args: [WORKFLOW_TYPES.APP, 'Test'],
+        args: ['app', 'Test'],
         flags: {}
       }
       const cliResult = await cliSurface.handleCommand(cliCmd)
@@ -568,7 +568,7 @@ describe('Phase 2: Surface Abstraction Integration', () => {
         method: 'POST',
         path: '/api/v1/workflows',
         headers: {},
-        body: { type: WORKFLOW_TYPES.FEATURE, name: 'Legacy' }
+        body: { type: 'feature', name: 'Legacy' }
       }
       const legacyResp = await restSurface.handleRequest(legacyReq)
       checks.backwardCompatibilityMaintained = legacyResp.status_code === 202

@@ -150,9 +150,9 @@ export class SeedWorkflowDefinitionsService {
           stages: [
             ...SAMPLE_DEFINITIONS.feature.stages,
             {
-              name: AGENT_TYPES.DEPLOYMENT,
+              name: 'deployment',
               display_name: 'Deploy to Web',
-              agent_type: AGENT_TYPES.DEPLOYMENT,
+              agent_type: 'deployment',
               required: true,
               progress_weight: 10,
               timeout_ms: 300000
@@ -172,42 +172,42 @@ export class SeedWorkflowDefinitionsService {
           stages: [
             {
               name: 'initialization',
-              agent_type: AGENT_TYPES.SCAFFOLD,
+              agent_type: 'scaffold',
               required: true,
               progress_weight: 10,
               timeout_ms: 60000
             },
             {
               name: 'schema_definition',
-              agent_type: AGENT_TYPES.VALIDATION,
+              agent_type: 'validation',
               required: true,
               progress_weight: 20,
               timeout_ms: 300000
             },
             {
-              name: AGENT_TYPES.VALIDATION,
-              agent_type: AGENT_TYPES.VALIDATION,
+              name: 'validation',
+              agent_type: 'validation',
               required: true,
               progress_weight: 20,
               timeout_ms: 300000
             },
             {
               name: 'unit_testing',
-              agent_type: AGENT_TYPES.E2E_TEST,
+              agent_type: 'e2e_test',
               required: true,
               progress_weight: 20,
               timeout_ms: 600000
             },
             {
               name: 'integration_testing',
-              agent_type: AGENT_TYPES.INTEGRATION,
+              agent_type: 'integration',
               required: true,
               progress_weight: 15,
               timeout_ms: 600000
             },
             {
-              name: AGENT_TYPES.DEPLOYMENT,
-              agent_type: AGENT_TYPES.DEPLOYMENT,
+              name: 'deployment',
+              agent_type: 'deployment',
               required: true,
               progress_weight: 15,
               timeout_ms: 300000
@@ -227,35 +227,35 @@ export class SeedWorkflowDefinitionsService {
           stages: [
             {
               name: 'initialization',
-              agent_type: AGENT_TYPES.SCAFFOLD,
+              agent_type: 'scaffold',
               required: true,
               progress_weight: 10,
               timeout_ms: 60000
             },
             {
               name: 'plan',
-              agent_type: AGENT_TYPES.VALIDATION,
+              agent_type: 'validation',
               required: true,
               progress_weight: 20,
               timeout_ms: 300000
             },
             {
-              name: AGENT_TYPES.VALIDATION,
-              agent_type: AGENT_TYPES.VALIDATION,
+              name: 'validation',
+              agent_type: 'validation',
               required: true,
               progress_weight: 20,
               timeout_ms: 300000
             },
             {
               name: 'testing',
-              agent_type: AGENT_TYPES.E2E_TEST,
+              agent_type: 'e2e_test',
               required: true,
               progress_weight: 20,
               timeout_ms: 600000
             },
             {
-              name: AGENT_TYPES.DEPLOYMENT,
-              agent_type: AGENT_TYPES.DEPLOYMENT,
+              name: 'deployment',
+              agent_type: 'deployment',
               required: true,
               progress_weight: 30,
               timeout_ms: 600000

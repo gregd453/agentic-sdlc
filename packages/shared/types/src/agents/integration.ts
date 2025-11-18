@@ -158,7 +158,7 @@ export const RunIntegrationTestsPayloadSchema = z.object({
  * Extends the base AgentTaskSchema with integration-specific fields
  */
 export const IntegrationTaskSchema = AgentTaskSchema.extend({
-  agent_type: z.literal(AGENT_TYPES.INTEGRATION),
+  agent_type: z.literal('integration'),
   action: IntegrationActionEnum,
   payload: z.union([
     MergeBranchPayloadSchema,
@@ -222,7 +222,7 @@ export const IntegrationTestResultSchema = z.object({
  * Extends the base AgentResultSchema with integration-specific results
  */
 export const IntegrationResultSchema = AgentResultSchema.extend({
-  agent_type: z.literal(AGENT_TYPES.INTEGRATION),
+  agent_type: z.literal('integration'),
   action: IntegrationActionEnum,
   result: z.union([
     MergeResultSchema,
@@ -282,9 +282,9 @@ export function createMergeBranchTask(
   return {
     task_id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as any,
     workflow_id: workflowId as any,
-    agent_type: AGENT_TYPES.INTEGRATION,
+    agent_type: 'integration',
     action: 'merge_branch',
-    status: TASK_STATUS.PENDING,
+    status: 'pending',
     priority: 50,
     payload: {
       source_branch: sourceBranch,
@@ -317,9 +317,9 @@ export function createUpdateDependenciesTask(
   return {
     task_id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as any,
     workflow_id: workflowId as any,
-    agent_type: AGENT_TYPES.INTEGRATION,
+    agent_type: 'integration',
     action: 'update_dependencies',
-    status: TASK_STATUS.PENDING,
+    status: 'pending',
     priority: 50,
     payload: {
       package_manager: packageManager,
@@ -348,9 +348,9 @@ export function createRunIntegrationTestsTask(
   return {
     task_id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as any,
     workflow_id: workflowId as any,
-    agent_type: AGENT_TYPES.INTEGRATION,
+    agent_type: 'integration',
     action: 'run_integration_tests',
-    status: TASK_STATUS.PENDING,
+    status: 'pending',
     priority: 50,
     payload: {
       environment,

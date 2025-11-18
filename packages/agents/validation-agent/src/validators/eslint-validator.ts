@@ -73,7 +73,7 @@ export async function validateESLint(
       file: string;
       line: number;
       column: number;
-      severity: LOG_LEVEL.ERROR | 'warning';
+      severity: 'error' | 'warning';
       message: string;
       rule_id?: string;
     }> = [];
@@ -90,7 +90,7 @@ export async function validateESLint(
           file: result.filePath,
           line: message.line,
           column: message.column,
-          severity: message.severity === 2 ? LOG_LEVEL.ERROR : 'warning',
+          severity: message.severity === 2 ? 'error' : 'warning',
           message: message.message,
           rule_id: message.ruleId || undefined
         });
@@ -107,7 +107,7 @@ export async function validateESLint(
     };
 
     // Determine status
-    const status = errorCount > 0 ? WORKFLOW_STATUS.FAILED : warningCount > 0 ? 'warning' : 'passed';
+    const status = errorCount > 0 ? 'failed' : warningCount > 0 ? 'warning' : 'passed';
 
     const errors = errorCount > 0
       ? [`Found ${errorCount} ESLint error(s) across ${filesChecked} file(s)`]
@@ -128,7 +128,7 @@ export async function validateESLint(
   } catch (error) {
     return {
       type: 'eslint',
-      status: WORKFLOW_STATUS.FAILED,
+      status: 'failed',
       duration_ms: Date.now() - startTime,
       errors: [`ESLint validation failed: ${error instanceof Error ? error.message : String(error)}`]
     };

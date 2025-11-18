@@ -32,7 +32,7 @@ describe('ConfigurationManager', () => {
 
       const config = manager.getConfig();
       expect(config.logging).toBeDefined();
-      expect(config.logging?.global_level).toBe(LOG_LEVEL.INFO);
+      expect(config.logging?.global_level).toBe('info');
     });
 
     it('should load configuration from YAML file', async () => {
@@ -52,7 +52,7 @@ logging:
       const config = manager.getConfig();
       expect(config.agents?.scaffold?.timeout_ms).toBe(60000);
       expect(config.agents?.scaffold?.max_retries).toBe(5);
-      expect(config.logging?.global_level).toBe(LOG_LEVEL.DEBUG);
+      expect(config.logging?.global_level).toBe('debug');
     });
 
     it('should load configuration from JSON file', async () => {
@@ -65,7 +65,7 @@ logging:
           }
         },
         logging: {
-          global_level: LOG_LEVEL.WARN
+          global_level: 'warn'
         }
       };
       fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
@@ -74,11 +74,11 @@ logging:
 
       const loaded = manager.getConfig();
       expect(loaded.agents?.validation?.timeout_ms).toBe(45000);
-      expect(loaded.logging?.global_level).toBe(LOG_LEVEL.WARN);
+      expect(loaded.logging?.global_level).toBe('warn');
     });
 
     it('should warn when file does not exist', async () => {
-      const spy = vi.spyOn(console, LOG_LEVEL.WARN).mockImplementation(() => {});
+      const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       await manager.initialize('/nonexistent/path/config.yaml');
 
@@ -116,7 +116,7 @@ agents:
     });
 
     it('should return agent config with merged defaults', async () => {
-      const config = manager.getAgentConfig(AGENT_TYPES.SCAFFOLD);
+      const config = manager.getAgentConfig('scaffold');
 
       expect(config.enabled).toBe(true);
       expect(config.timeout_ms).toBe(30000);
@@ -141,7 +141,7 @@ agents:
       manager = new ConfigurationManager();
       await manager.initialize(configPath);
 
-      const config = manager.getAgentConfig(AGENT_TYPES.SCAFFOLD);
+      const config = manager.getAgentConfig('scaffold');
 
       expect(config.timeout_ms).toBe(90000);
       expect(config.max_retries).toBe(5);
@@ -157,7 +157,7 @@ agents:
     it('should return default logging config', () => {
       const config = manager.getLoggingConfig();
 
-      expect(config.global_level).toBe(LOG_LEVEL.INFO);
+      expect(config.global_level).toBe('info');
       expect(config.trace_enabled).toBe(true);
       expect(config.pretty_print).toBe(true);
     });
@@ -175,7 +175,7 @@ logging:
 
       const config = manager.getLoggingConfig();
 
-      expect(config.global_level).toBe(LOG_LEVEL.DEBUG);
+      expect(config.global_level).toBe('debug');
       expect(config.trace_enabled).toBe(false);
     });
   });
@@ -188,9 +188,9 @@ logging:
     it('should update agent configuration at runtime', async () => {
       await manager.initialize();
 
-      manager.setAgentConfig(AGENT_TYPES.SCAFFOLD, { timeout_ms: 120000 });
+      manager.setAgentConfig('scaffold', { timeout_ms: 120000 });
 
-      const config = manager.getAgentConfig(AGENT_TYPES.SCAFFOLD);
+      const config = manager.getAgentConfig('scaffold');
       expect(config.timeout_ms).toBe(120000);
       expect(config.max_retries).toBe(3); // Preserved from default
     });
@@ -213,7 +213,7 @@ logging:
       manager = new ConfigurationManager();
       await manager.initialize();
 
-      const config = manager.getAgentConfig(AGENT_TYPES.SCAFFOLD);
+      const config = manager.getAgentConfig('scaffold');
       expect(config.timeout_ms).toBe(75000);
       expect(config.max_retries).toBe(4);
 
@@ -223,13 +223,13 @@ logging:
     });
 
     it('should apply LOG_LEVEL environment variable', async () => {
-      process.env.LOG_LEVEL = LOG_LEVEL.ERROR;
+      process.env.LOG_LEVEL = 'error';
 
       manager = new ConfigurationManager();
       await manager.initialize();
 
       const config = manager.getLoggingConfig();
-      expect(config.global_level).toBe(LOG_LEVEL.ERROR);
+      expect(config.global_level).toBe('error');
 
       delete process.env.LOG_LEVEL;
     });
@@ -259,7 +259,7 @@ agents:
       manager = new ConfigurationManager();
       await manager.initialize(configPath);
 
-      const config = manager.getAgentConfig(AGENT_TYPES.SCAFFOLD);
+      const config = manager.getAgentConfig('scaffold');
       expect(config.timeout_ms).toBe(99000); // Env var wins
 
       delete process.env.AGENT_SCAFFOLD_TIMEOUT_MS;
@@ -287,7 +287,7 @@ agents:
     });
   });
 
-  describe(AGENT_TYPES.VALIDATION, () => {
+  describe('validation', () => {
     it('should throw ConfigurationError on invalid config', async () => {
       const configPath = path.join(tempDir, 'invalid-config.yaml');
       const content = `
@@ -308,7 +308,7 @@ agents:
       await manager.initialize();
 
       // Should not throw - invalid string accepted
-      const config = manager.getAgentConfig(AGENT_TYPES.SCAFFOLD);
+      const config = manager.getAgentConfig('scaffold');
       expect(config.timeout_ms).toBe('invalid'); // String value
 
       delete process.env.AGENT_SCAFFOLD_TIMEOUT_MS;

@@ -11,13 +11,13 @@ import { logger } from '../utils/logger';
  * Shutdown Phase
  */
 export enum ShutdownPhase {
-  INITIATED = WORKFLOW_STATUS.INITIATED,
+  INITIATED = 'initiated',
   DRAINING = 'draining',
   SAVING_STATE = 'saving_state',
   CLOSING_CONNECTIONS = 'closing_connections',
   CLEANUP = 'cleanup',
   COMPLETE = 'complete',
-  FAILED = WORKFLOW_STATUS.FAILED
+  FAILED = 'failed'
 }
 
 /**

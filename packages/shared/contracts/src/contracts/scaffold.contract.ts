@@ -90,7 +90,7 @@ export const SCAFFOLD_CONTRACT_CHANGELOG = {
  * const taskData = {
  *   task_id: '...',
  *   workflow_id: '...',
- *   type: WORKFLOW_TYPES.APP,
+ *   type: 'app',
  *   name: 'my-app',
  *   description: 'My application',
  *   requirements: 'Build a web app'

@@ -13,10 +13,10 @@ describe('WorkflowRepository', () => {
       workflow: {
         create: vi.fn().mockResolvedValue({
           id: 'test-workflow-id',
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           name: 'Test Workflow',
           description: 'Test Description',
-          status: WORKFLOW_STATUS.INITIATED,
+          status: 'initiated',
           current_stage: 'initialization',
           progress: 0,
           priority: 'normal',
@@ -42,7 +42,7 @@ describe('WorkflowRepository', () => {
           id: 'stage-id',
           workflow_id: 'test-workflow-id',
           name: 'initialization',
-          status: TASK_STATUS.PENDING
+          status: 'pending'
         }),
         update: vi.fn().mockResolvedValue({})
       },
@@ -51,7 +51,7 @@ describe('WorkflowRepository', () => {
           id: 'task-id',
           task_id: 'test-task-id',
           workflow_id: 'test-workflow-id',
-          status: TASK_STATUS.PENDING
+          status: 'pending'
         }),
         update: vi.fn().mockResolvedValue({}),
         findMany: vi.fn().mockResolvedValue([])
@@ -64,7 +64,7 @@ describe('WorkflowRepository', () => {
   describe('create', () => {
     it('should create workflow with stages and event', async () => {
       const data = {
-        type: WORKFLOW_TYPES.APP as const,
+        type: 'app' as const,
         name: 'Test App',
         description: 'Test Description',
         requirements: 'Test Requirements',
@@ -80,9 +80,9 @@ describe('WorkflowRepository', () => {
       // Verify workflow was created
       expect(mockPrisma.workflow.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           name: 'Test App',
-          status: WORKFLOW_STATUS.INITIATED,
+          status: 'initiated',
           current_stage: 'initialization'
         })
       });
@@ -101,9 +101,9 @@ describe('WorkflowRepository', () => {
 
     it('should create appropriate stages for workflow type', async () => {
       const data = {
-        type: WORKFLOW_TYPES.FEATURE as const,
+        type: 'feature' as const,
         name: 'Test Feature',
-        priority: TASK_PRIORITY.HIGH as const,
+        priority: 'high' as const,
         created_by: 'test-user'
       };
 
@@ -113,10 +113,10 @@ describe('WorkflowRepository', () => {
         data: expect.arrayContaining([
           expect.objectContaining({ name: 'initialization' }),
           expect.objectContaining({ name: 'implementation' }),
-          expect.objectContaining({ name: AGENT_TYPES.VALIDATION }),
+          expect.objectContaining({ name: 'validation' }),
           expect.objectContaining({ name: 'testing' }),
-          expect.objectContaining({ name: AGENT_TYPES.INTEGRATION }),
-          expect.objectContaining({ name: AGENT_TYPES.DEPLOYMENT })
+          expect.objectContaining({ name: 'integration' }),
+          expect.objectContaining({ name: 'deployment' })
         ])
       });
     });
@@ -126,7 +126,7 @@ describe('WorkflowRepository', () => {
     it('should find workflow by ID with relations', async () => {
       const mockWorkflow = {
         id: 'test-id',
-        status: WORKFLOW_STATUS.RUNNING,
+        status: 'running',
         stages: [],
         events: [],
         tasks: []
@@ -159,8 +159,8 @@ describe('WorkflowRepository', () => {
   describe('findAll', () => {
     it('should find all workflows', async () => {
       const mockWorkflows = [
-        { id: 'workflow-1', status: WORKFLOW_STATUS.RUNNING },
-        { id: 'workflow-2', status: WORKFLOW_STATUS.COMPLETED }
+        { id: 'workflow-1', status: 'running' },
+        { id: 'workflow-2', status: 'completed' }
       ];
 
       mockPrisma.workflow.findMany.mockResolvedValue(mockWorkflows);
@@ -176,10 +176,10 @@ describe('WorkflowRepository', () => {
     });
 
     it('should filter workflows by status', async () => {
-      await repository.findAll({ status: WORKFLOW_STATUS.RUNNING });
+      await repository.findAll({ status: 'running' });
 
       expect(mockPrisma.workflow.findMany).toHaveBeenCalledWith({
-        where: { status: WORKFLOW_STATUS.RUNNING },
+        where: { status: 'running' },
         orderBy: { created_at: 'desc' },
         include: { stages: true }
       });
@@ -187,16 +187,16 @@ describe('WorkflowRepository', () => {
 
     it('should filter workflows by multiple criteria', async () => {
       await repository.findAll({
-        status: WORKFLOW_STATUS.RUNNING,
-        type: WORKFLOW_TYPES.APP,
-        priority: TASK_PRIORITY.HIGH
+        status: 'running',
+        type: 'app',
+        priority: 'high'
       });
 
       expect(mockPrisma.workflow.findMany).toHaveBeenCalledWith({
         where: {
-          status: WORKFLOW_STATUS.RUNNING,
-          type: WORKFLOW_TYPES.APP,
-          priority: TASK_PRIORITY.HIGH
+          status: 'running',
+          type: 'app',
+          priority: 'high'
         },
         orderBy: { created_at: 'desc' },
         include: { stages: true }
@@ -208,12 +208,12 @@ describe('WorkflowRepository', () => {
     it('should update workflow when it exists', async () => {
       mockPrisma.workflow.findUnique.mockResolvedValue({
         id: 'test-id',
-        status: WORKFLOW_STATUS.RUNNING,
+        status: 'running',
         version: 1
       });
 
       const updates = {
-        status: WORKFLOW_STATUS.COMPLETED,
+        status: 'completed',
         progress: 100,
         completed_at: new Date()
       };
@@ -242,8 +242,8 @@ describe('WorkflowRepository', () => {
       const task = {
         task_id: 'test-task-id',
         workflow_id: 'test-workflow-id',
-        agent_type: AGENT_TYPES.SCAFFOLD as const,
-        status: TASK_STATUS.PENDING as const,
+        agent_type: 'scaffold' as const,
+        status: 'pending' as const,
         priority: 'normal' as const,
         payload: { test: 'data' },
         retry_count: 0,
@@ -263,7 +263,7 @@ describe('WorkflowRepository', () => {
   describe('updateTask', () => {
     it('should update an agent task', async () => {
       const updates = {
-        status: WORKFLOW_STATUS.COMPLETED as const,
+        status: 'completed' as const,
         completed_at: new Date()
       };
 
@@ -279,7 +279,7 @@ describe('WorkflowRepository', () => {
   describe('getPendingTasks', () => {
     it('should get all pending tasks ordered by priority', async () => {
       const mockTasks = [
-        { task_id: 'task-1', priority: TASK_PRIORITY.HIGH },
+        { task_id: 'task-1', priority: 'high' },
         { task_id: 'task-2', priority: 'normal' }
       ];
 
@@ -289,7 +289,7 @@ describe('WorkflowRepository', () => {
 
       expect(result).toEqual(mockTasks);
       expect(mockPrisma.agentTask.findMany).toHaveBeenCalledWith({
-        where: { status: TASK_STATUS.PENDING },
+        where: { status: 'pending' },
         orderBy: [
           { priority: 'desc' },
           { assigned_at: 'asc' }
@@ -298,12 +298,12 @@ describe('WorkflowRepository', () => {
     });
 
     it('should filter by agent type when specified', async () => {
-      await repository.getPendingTasks(AGENT_TYPES.SCAFFOLD);
+      await repository.getPendingTasks('scaffold');
 
       expect(mockPrisma.agentTask.findMany).toHaveBeenCalledWith({
         where: {
-          status: TASK_STATUS.PENDING,
-          agent_type: AGENT_TYPES.SCAFFOLD
+          status: 'pending',
+          agent_type: 'scaffold'
         },
         orderBy: [
           { priority: 'desc' },

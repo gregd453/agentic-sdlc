@@ -95,7 +95,7 @@ export interface DeploymentResult {
 
 export interface DeploymentStatus {
   environment: string
-  status: 'deployed' | 'deploying' | WORKFLOW_STATUS.FAILED
+  status: 'deployed' | 'deploying' | 'failed'
   version: string
   deployedAt: Date
   rollbackAvailable: boolean
@@ -160,7 +160,7 @@ export interface WorkflowResponse {
   id: string
   name?: string
   type: string
-  status: TASK_STATUS.PENDING | WORKFLOW_STATUS.RUNNING | WORKFLOW_STATUS.COMPLETED | WORKFLOW_STATUS.FAILED | WORKFLOW_STATUS.CANCELLED
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled'
   createdAt: Date
   updatedAt: Date
   progress?: number
@@ -170,7 +170,7 @@ export interface Agent {
   id: string
   type: string
   name: string
-  status: 'online' | 'offline' | LOG_LEVEL.ERROR
+  status: 'online' | 'offline' | 'error'
   version: string
   capabilities: string[]
   platform?: string

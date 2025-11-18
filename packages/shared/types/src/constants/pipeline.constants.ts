@@ -33,14 +33,14 @@ export const REDIS_CHANNELS = {
  * All supported agent types in the system
  */
 export const AGENT_TYPES = {
-  SCAFFOLD: AGENT_TYPES.SCAFFOLD,
-  VALIDATION: AGENT_TYPES.VALIDATION,
+  SCAFFOLD: 'scaffold',
+  VALIDATION: 'validation',
   E2E: 'e2e',
-  E2E_TEST: AGENT_TYPES.E2E_TEST, // Alias for backward compatibility
-  INTEGRATION: AGENT_TYPES.INTEGRATION,
-  DEPLOYMENT: AGENT_TYPES.DEPLOYMENT,
+  E2E_TEST: 'e2e_test', // Alias for backward compatibility
+  INTEGRATION: 'integration',
+  DEPLOYMENT: 'deployment',
   MONITORING: 'monitoring',
-  DEBUG: LOG_LEVEL.DEBUG,
+  DEBUG: 'debug',
   BASE: 'base',
 } as const;
 
@@ -57,11 +57,11 @@ export const WORKFLOW_STAGES = {
   SCAFFOLDING: 'scaffolding',
   DEPENDENCY_INSTALLATION: 'dependency_installation',
   IMPLEMENTATION: 'implementation',
-  VALIDATION: AGENT_TYPES.VALIDATION,
+  VALIDATION: 'validation',
   TESTING: 'testing',
   E2E_TESTING: 'e2e_testing',
-  INTEGRATION: AGENT_TYPES.INTEGRATION,
-  DEPLOYMENT: AGENT_TYPES.DEPLOYMENT,
+  INTEGRATION: 'integration',
+  DEPLOYMENT: 'deployment',
   MONITORING: 'monitoring',
   DEBUGGING: 'debugging',
   FIXING: 'fixing',
@@ -75,11 +75,11 @@ export type WorkflowStageConstant = typeof WORKFLOW_STAGES[keyof typeof WORKFLOW
  * Types of workflows supported by the system
  */
 export const WORKFLOW_TYPES = {
-  APP: WORKFLOW_TYPES.APP,
+  APP: 'app',
   SERVICE: 'service',
-  FEATURE: WORKFLOW_TYPES.FEATURE,
+  FEATURE: 'feature',
   CAPABILITY: 'capability',
-  BUGFIX: WORKFLOW_TYPES.BUGFIX,
+  BUGFIX: 'bugfix',
 } as const;
 
 export type WorkflowTypeConstant = typeof WORKFLOW_TYPES[keyof typeof WORKFLOW_TYPES];
@@ -90,15 +90,15 @@ export type WorkflowTypeConstant = typeof WORKFLOW_TYPES[keyof typeof WORKFLOW_T
  * Possible task execution statuses
  */
 export const TASK_STATUS = {
-  PENDING: TASK_STATUS.PENDING,
+  PENDING: 'pending',
   QUEUED: 'queued',
-  RUNNING: WORKFLOW_STATUS.RUNNING,
-  SUCCESS: WORKFLOW_STATUS.SUCCESS,
+  RUNNING: 'running',
+  SUCCESS: 'success',
   FAILURE: 'failure',
-  FAILED: WORKFLOW_STATUS.FAILED, // Alias
+  FAILED: 'failed', // Alias
   PARTIAL: 'partial',
   TIMEOUT: 'timeout',
-  CANCELLED: WORKFLOW_STATUS.CANCELLED,
+  CANCELLED: 'cancelled',
   RETRYING: 'retrying',
   BLOCKED: 'blocked',
 } as const;
@@ -113,17 +113,17 @@ export type TaskStatusConstant = typeof TASK_STATUS[keyof typeof TASK_STATUS];
  * Session #78: Added PAUSED status for pause/resume support
  */
 export const WORKFLOW_STATUS = {
-  INITIATED: WORKFLOW_STATUS.INITIATED,
-  RUNNING: WORKFLOW_STATUS.RUNNING,
+  INITIATED: 'initiated',
+  RUNNING: 'running',
   PAUSED: 'paused',
   SCAFFOLDING: 'scaffolding',
   VALIDATING: 'validating',
   TESTING: 'testing',
   INTEGRATING: 'integrating',
   DEPLOYING: 'deploying',
-  COMPLETED: WORKFLOW_STATUS.COMPLETED,
-  FAILED: WORKFLOW_STATUS.FAILED,
-  CANCELLED: WORKFLOW_STATUS.CANCELLED,
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+  CANCELLED: 'cancelled',
 } as const;
 
 export type WorkflowStatus = typeof WORKFLOW_STATUS[keyof typeof WORKFLOW_STATUS];
@@ -134,10 +134,10 @@ export type WorkflowStatus = typeof WORKFLOW_STATUS[keyof typeof WORKFLOW_STATUS
  * Task and workflow priority levels
  */
 export const PRIORITY_LEVELS = {
-  CRITICAL: TASK_PRIORITY.CRITICAL,
-  HIGH: TASK_PRIORITY.HIGH,
-  MEDIUM: TASK_PRIORITY.MEDIUM,
-  LOW: TASK_PRIORITY.LOW,
+  CRITICAL: 'critical',
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low',
 } as const;
 
 export type PriorityLevel = typeof PRIORITY_LEVELS[keyof typeof PRIORITY_LEVELS];
@@ -276,7 +276,7 @@ export const RETRY_DEFAULTS = {
  * Error categories for structured error handling
  */
 export const ERROR_CATEGORIES = {
-  VALIDATION: AGENT_TYPES.VALIDATION,
+  VALIDATION: 'validation',
   EXECUTION: 'execution',
   TIMEOUT: 'timeout',
   RESOURCE: 'resource',

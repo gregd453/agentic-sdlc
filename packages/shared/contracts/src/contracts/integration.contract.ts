@@ -93,9 +93,9 @@ export const INTEGRATION_CONTRACT_CHANGELOG = {
  * const taskData = {
  *   task_id: 'task_123',
  *   workflow_id: 'workflow_456',
- *   agent_type: AGENT_TYPES.INTEGRATION,
+ *   agent_type: 'integration',
  *   action: 'merge_branch',
- *   status: TASK_STATUS.PENDING,
+ *   status: 'pending',
  *   priority: 50,
  *   payload: {
  *     source_branch: 'feature/new-feature',

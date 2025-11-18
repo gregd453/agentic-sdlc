@@ -133,7 +133,7 @@ export class ShellExecutor {
         })
       }
 
-      proc.on(LOG_LEVEL.ERROR, error => {
+      proc.on('error', error => {
         reject(error)
       })
 

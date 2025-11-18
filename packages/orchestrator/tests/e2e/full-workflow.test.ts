@@ -96,10 +96,10 @@ describe('End-to-End Workflow Integration', () => {
         method: 'POST',
         url: '/api/v1/workflows',
         payload: {
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           name: TEST_WORKFLOW_NAME,
           description: 'End-to-end integration test workflow',
-          priority: TASK_PRIORITY.HIGH,
+          priority: 'high',
           requirements: 'Create a simple REST API with authentication'
         }
       });
@@ -108,7 +108,7 @@ describe('End-to-End Workflow Integration', () => {
       const body = JSON.parse(response.body);
 
       expect(body.workflow_id).toBeDefined();
-      expect(body.status).toBe(WORKFLOW_STATUS.INITIATED);
+      expect(body.status).toBe('initiated');
       expect(body.current_stage).toBe('initialization');
       expect(body.progress_percentage).toBe(0);
 
@@ -123,7 +123,7 @@ describe('End-to-End Workflow Integration', () => {
       });
 
       expect(workflow).toBeDefined();
-      expect(workflow?.status).toBe(WORKFLOW_STATUS.INITIATED);
+      expect(workflow?.status).toBe('initiated');
       expect(workflow?.name).toBe(TEST_WORKFLOW_NAME);
     }, 5000);
   });
@@ -133,7 +133,7 @@ describe('End-to-End Workflow Integration', () => {
       const agentId = 'test-scaffold-agent-1';
       const registration = {
         agent_id: agentId,
-        type: AGENT_TYPES.SCAFFOLD,
+        type: 'scaffold',
         version: '1.0.0',
         capabilities: ['code_generation', 'template_rendering'],
         status: 'ready',
@@ -157,7 +157,7 @@ describe('End-to-End Workflow Integration', () => {
       // If not implemented, this test documents the expected behavior
       if (storedAgent) {
         const agentData = JSON.parse(storedAgent);
-        expect(agentData.type).toBe(AGENT_TYPES.SCAFFOLD);
+        expect(agentData.type).toBe('scaffold');
         expect(agentData.status).toBe('ready');
       }
     }, 5000);
@@ -166,7 +166,7 @@ describe('End-to-End Workflow Integration', () => {
       const agentId = 'test-validation-agent-1';
       const heartbeat = {
         agent_id: agentId,
-        type: AGENT_TYPES.VALIDATION,
+        type: 'validation',
         status: 'idle',
         load: 0.2,
         timestamp: new Date().toISOString()
@@ -199,7 +199,7 @@ describe('End-to-End Workflow Integration', () => {
       const task = {
         task_id: taskId,
         workflow_id: createdWorkflowId,
-        type: AGENT_TYPES.SCAFFOLD,
+        type: 'scaffold',
         action: 'generate_code',
         parameters: {
           template: 'fastify-rest-api',
@@ -237,7 +237,7 @@ describe('End-to-End Workflow Integration', () => {
 
       expect(receivedMessage).toBeDefined();
       expect(receivedMessage.task_id).toBe(taskId);
-      expect(receivedMessage.type).toBe(AGENT_TYPES.SCAFFOLD);
+      expect(receivedMessage.type).toBe('scaffold');
 
       await subscriber.quit();
     }, 5000);
@@ -249,7 +249,7 @@ describe('End-to-End Workflow Integration', () => {
         task_id: 'test-task-123',
         workflow_id: createdWorkflowId,
         agent_id: 'test-scaffold-agent-1',
-        status: WORKFLOW_STATUS.SUCCESS,
+        status: 'success',
         data: {
           files_generated: 15,
           lines_of_code: 450
@@ -286,7 +286,7 @@ describe('End-to-End Workflow Integration', () => {
 
       expect(receivedMessage).toBeDefined();
       expect(receivedMessage.result_id).toBe(resultId);
-      expect(receivedMessage.status).toBe(WORKFLOW_STATUS.SUCCESS);
+      expect(receivedMessage.status).toBe('success');
 
       await subscriber.quit();
     }, 5000);
@@ -300,7 +300,7 @@ describe('End-to-End Workflow Integration', () => {
       let workflow = await prisma.workflow.findUnique({
         where: { id: createdWorkflowId }
       });
-      expect(workflow?.status).toBe(WORKFLOW_STATUS.INITIATED);
+      expect(workflow?.status).toBe('initiated');
 
       // Transition to scaffolding
       await stateMachine.transitionWorkflow(
@@ -327,13 +327,13 @@ describe('End-to-End Workflow Integration', () => {
       // Transition to completed
       await stateMachine.transitionWorkflow(
         createdWorkflowId,
-        WORKFLOW_STATUS.COMPLETED
+        'completed'
       );
 
       workflow = await prisma.workflow.findUnique({
         where: { id: createdWorkflowId }
       });
-      expect(workflow?.status).toBe(WORKFLOW_STATUS.COMPLETED);
+      expect(workflow?.status).toBe('completed');
     }, 10000);
 
     it('should reject invalid state transitions', async () => {
@@ -343,7 +343,7 @@ describe('End-to-End Workflow Integration', () => {
       await expect(
         stateMachine.transitionWorkflow(
           createdWorkflowId,
-          WORKFLOW_STATUS.INITIATED
+          'initiated'
         )
       ).rejects.toThrow();
     }, 5000);
@@ -406,7 +406,7 @@ describe('End-to-End Workflow Integration', () => {
         task_id: 'test-task-999',
         workflow_id: createdWorkflowId,
         agent_id: 'test-agent-error',
-        status: WORKFLOW_STATUS.FAILED,
+        status: 'failed',
         error: {
           code: 'VALIDATION_ERROR',
           message: 'Code quality check failed',
@@ -434,9 +434,9 @@ describe('End-to-End Workflow Integration', () => {
         method: 'POST',
         url: '/api/v1/workflows',
         payload: {
-          type: WORKFLOW_TYPES.FEATURE,
+          type: 'feature',
           name: 'Workflow to Cancel',
-          priority: TASK_PRIORITY.LOW
+          priority: 'low'
         }
       });
 
@@ -455,7 +455,7 @@ describe('End-to-End Workflow Integration', () => {
         where: { id: workflow_id }
       });
 
-      expect(workflow?.status).toBe(WORKFLOW_STATUS.CANCELLED);
+      expect(workflow?.status).toBe('cancelled');
 
       // Cleanup
       await prisma.workflow.delete({ where: { id: workflow_id } });

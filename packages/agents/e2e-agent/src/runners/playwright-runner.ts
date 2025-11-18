@@ -168,7 +168,7 @@ async function runTestsForBrowser(
       }
     });
 
-    child.on(LOG_LEVEL.ERROR, (error) => {
+    child.on('error', (error) => {
       reject(error);
     });
   });

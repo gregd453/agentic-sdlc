@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 process.env.NODE_ENV = 'test';
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
 process.env.REDIS_URL = 'redis://localhost:6379';
-process.env.LOG_LEVEL = LOG_LEVEL.ERROR; // Reduce noise during tests
+process.env.LOG_LEVEL = 'error'; // Reduce noise during tests
 
 // Mock external dependencies
 vi.mock('@prisma/client', () => ({
@@ -15,9 +15,9 @@ vi.mock('@prisma/client', () => ({
       workflow: {
         create: vi.fn().mockResolvedValue({
           id: 'test-workflow-id',
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           name: 'Test Workflow',
-          status: WORKFLOW_STATUS.INITIATED,
+          status: 'initiated',
           current_stage: 'initialization',
           progress: 0,
           created_at: new Date(),

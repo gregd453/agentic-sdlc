@@ -70,7 +70,7 @@ export async function taskRoutes(
           properties: {
             error: { type: 'string' }
           },
-          required: [LOG_LEVEL.ERROR]
+          required: ['error']
         }
       }
     },

@@ -5,7 +5,7 @@ import { z } from 'zod';
  * Used for runtime validation of agent and system configurations
  */
 
-export type LogLevel = 'trace' | LOG_LEVEL.DEBUG | LOG_LEVEL.INFO | LOG_LEVEL.WARN | LOG_LEVEL.ERROR | 'fatal';
+export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
 /**
  * Base configuration schema for agents
@@ -21,8 +21,8 @@ export const AgentConfigSchema = z.object({
  * Logging configuration schema
  */
 export const LoggingConfigSchema = z.object({
-  global_level: z.enum(['trace', LOG_LEVEL.DEBUG, LOG_LEVEL.INFO, LOG_LEVEL.WARN, LOG_LEVEL.ERROR, 'fatal']).default(LOG_LEVEL.INFO),
-  modules: z.record(z.enum(['trace', LOG_LEVEL.DEBUG, LOG_LEVEL.INFO, LOG_LEVEL.WARN, LOG_LEVEL.ERROR, 'fatal'])).optional().describe('Per-module log levels'),
+  global_level: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
+  modules: z.record(z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])).optional().describe('Per-module log levels'),
   trace_enabled: z.boolean().default(true),
   pretty_print: z.boolean().default(true).describe('Pretty-print vs JSON output')
 });
@@ -61,7 +61,7 @@ export const DEFAULT_AGENT_CONFIG: AgentConfig = {
 };
 
 export const DEFAULT_LOGGING_CONFIG: LoggingConfig = {
-  global_level: LOG_LEVEL.INFO,
+  global_level: 'info',
   trace_enabled: true,
   pretty_print: true,
   modules: {}

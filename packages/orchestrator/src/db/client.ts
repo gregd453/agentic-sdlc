@@ -4,8 +4,8 @@ import { logger } from '../utils/logger';
 const prismaClientSingleton = () => {
   return new PrismaClient({
     log: process.env.NODE_ENV === 'development'
-      ? ['query', LOG_LEVEL.INFO, LOG_LEVEL.WARN, LOG_LEVEL.ERROR]
-      : [LOG_LEVEL.ERROR],
+      ? ['query', 'info', 'warn', 'error']
+      : ['error'],
   });
 };
 

@@ -57,19 +57,19 @@ export class StatsRepository {
         stats.total_workflows += count;
 
         switch (row.status) {
-          case WORKFLOW_STATUS.INITIATED:
+          case 'initiated':
             stats.initiated_workflows = count;
             break;
-          case WORKFLOW_STATUS.RUNNING:
+          case 'running':
             stats.running_workflows = count;
             break;
-          case WORKFLOW_STATUS.COMPLETED:
+          case 'completed':
             stats.completed_workflows = count;
             break;
-          case WORKFLOW_STATUS.FAILED:
+          case 'failed':
             stats.failed_workflows = count;
             break;
-          case WORKFLOW_STATUS.CANCELLED:
+          case 'cancelled':
             stats.cancelled_workflows = count;
             break;
           case 'paused':
@@ -104,9 +104,9 @@ export class StatsRepository {
         SELECT
           agent_type,
           COUNT(*) as total_tasks,
-          COALESCE(SUM(CASE WHEN status = WORKFLOW_STATUS.COMPLETED THEN 1 ELSE 0 END), 0) as completed_tasks,
-          COALESCE(SUM(CASE WHEN status = WORKFLOW_STATUS.FAILED THEN 1 ELSE 0 END), 0) as failed_tasks,
-          COALESCE(SUM(CASE WHEN status = WORKFLOW_STATUS.CANCELLED THEN 1 ELSE 0 END), 0) as cancelled_tasks,
+          COALESCE(SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END), 0) as completed_tasks,
+          COALESCE(SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END), 0) as failed_tasks,
+          COALESCE(SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END), 0) as cancelled_tasks,
           AVG(EXTRACT(EPOCH FROM (completed_at - started_at)) * 1000)::float as avg_duration_ms,
           AVG(retry_count)::float as avg_retries
         FROM "AgentTask"
@@ -235,9 +235,9 @@ export class StatsRepository {
         const count = row._count.id;
         statsByType[type].total += count;
 
-        if (row.status === WORKFLOW_STATUS.COMPLETED) {
+        if (row.status === 'completed') {
           statsByType[type].completed += count;
-        } else if (row.status === WORKFLOW_STATUS.FAILED) {
+        } else if (row.status === 'failed') {
           statsByType[type].failed += count;
         }
       });

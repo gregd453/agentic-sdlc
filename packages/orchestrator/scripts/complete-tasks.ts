@@ -8,7 +8,7 @@ async function completeTasksSimulation() {
 
     // Get all pending tasks
     const pendingTasks = await prisma.agentTask.findMany({
-      where: { status: TASK_STATUS.PENDING },
+      where: { status: 'pending' },
       select: { id: true, agent_type: true },
     });
 
@@ -36,7 +36,7 @@ async function completeTasksSimulation() {
         await prisma.agentTask.update({
           where: { id: task.id },
           data: {
-            status: isSuccess ? WORKFLOW_STATUS.COMPLETED : WORKFLOW_STATUS.FAILED,
+            status: isSuccess ? 'completed' : 'failed',
             completed_at: now,
             started_at: startedAt,
             result: {

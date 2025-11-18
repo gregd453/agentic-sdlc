@@ -100,7 +100,7 @@ export function createAnthropicMock(options: AnthropicMockOptions = {}): Anthrop
     if (lastUserMessage.includes('analyze requirements')) {
       responseText = JSON.stringify({
         analysis: 'Requirements analyzed successfully',
-        complexity: TASK_PRIORITY.MEDIUM,
+        complexity: 'medium',
         recommendations: ['Use TypeScript', 'Add unit tests', 'Implement CI/CD']
       });
     } else if (lastUserMessage.includes('generate code')) {
@@ -204,7 +204,7 @@ export const AnthropicMocks = {
         files: ['package.json', 'tsconfig.json', 'README.md']
       },
       analysis: {
-        complexity: TASK_PRIORITY.MEDIUM,
+        complexity: 'medium',
         estimatedHours: 8
       }
     })

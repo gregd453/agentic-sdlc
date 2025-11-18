@@ -4,7 +4,7 @@
 
 import chalk from 'chalk'
 
-export type LogLevel = LOG_LEVEL.DEBUG | LOG_LEVEL.INFO | LOG_LEVEL.WARN | LOG_LEVEL.ERROR
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
 export interface LogEntry {
   timestamp: Date
@@ -28,7 +28,7 @@ export class Logger {
   debug(message: string, context?: Record<string, unknown>) {
     if (!this.verbose) return
 
-    this.log(LOG_LEVEL.DEBUG, message, context)
+    this.log('debug', message, context)
     console.log(chalk.gray(`[DEBUG] ${message}`))
   }
 
@@ -36,7 +36,7 @@ export class Logger {
    * Log info message
    */
   info(message: string, context?: Record<string, unknown>) {
-    this.log(LOG_LEVEL.INFO, message, context)
+    this.log('info', message, context)
     console.log(chalk.blue(`[INFO] ${message}`))
   }
 
@@ -44,7 +44,7 @@ export class Logger {
    * Log warning message
    */
   warn(message: string, context?: Record<string, unknown>) {
-    this.log(LOG_LEVEL.WARN, message, context)
+    this.log('warn', message, context)
     console.log(chalk.yellow(`[WARN] ${message}`))
   }
 
@@ -53,7 +53,7 @@ export class Logger {
    */
   error(message: string, error?: Error | string, context?: Record<string, unknown>) {
     const err = typeof error === 'string' ? new Error(error) : error
-    this.log(LOG_LEVEL.ERROR, message, { ...context, error: err?.message })
+    this.log('error', message, { ...context, error: err?.message })
     console.log(chalk.red(`[ERROR] ${message}`))
     if (err) {
       console.log(chalk.red(err.message))

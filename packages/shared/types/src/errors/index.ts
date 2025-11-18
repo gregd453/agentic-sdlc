@@ -7,7 +7,7 @@
  *
  * throw new AgentError('Task execution failed', AgentErrorCode.TASK_EXECUTION_FAILED, {
  *   agentId: 'agent-123',
- *   agentType: AGENT_TYPES.SCAFFOLD,
+ *   agentType: 'scaffold',
  *   retryable: true
  * });
  * ```

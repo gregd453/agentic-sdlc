@@ -79,7 +79,7 @@ export class DecisionGateService {
       escalation_route: should_escalate ? 'platform-arch@company.com' : undefined,
       decision: {
         decision_id,
-        status: auto_approved ? 'approved' : TASK_STATUS.PENDING,
+        status: auto_approved ? 'approved' : 'pending',
         workflow_id: request.workflow_id,
         category: request.category,
         confidence: request.confidence,
@@ -163,8 +163,8 @@ export class DecisionGateService {
     // Decision gates for stages that might be high-impact
     const decisionGateStages = [
       'scaffolding',      // Architectural decisions
-      AGENT_TYPES.DEPLOYMENT,       // Cost/security impact
-      AGENT_TYPES.INTEGRATION,      // Breaking changes possible
+      'deployment',       // Cost/security impact
+      'integration',      // Breaking changes possible
       'migration',        // Data safety
     ];
 
@@ -190,10 +190,10 @@ export class DecisionGateService {
     if (stage === 'scaffolding') {
       return 'architectural_change';
     }
-    if (stage === AGENT_TYPES.DEPLOYMENT) {
-      return workflowType === WORKFLOW_TYPES.APP ? 'cost_impacting' : 'technical_refactor';
+    if (stage === 'deployment') {
+      return workflowType === 'app' ? 'cost_impacting' : 'technical_refactor';
     }
-    if (stage === AGENT_TYPES.INTEGRATION) {
+    if (stage === 'integration') {
       return 'architectural_change';
     }
     if (stage === 'migration') {

@@ -30,9 +30,9 @@ describe('DeploymentAgent', () => {
       const mockTask = {
         task_id: 'task_test-123',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.DEPLOYMENT as const,
+        agent_type: 'deployment' as const,
         action: 'build_docker_image' as const,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {
           dockerfile_path: './Dockerfile',
@@ -63,9 +63,9 @@ describe('DeploymentAgent', () => {
       const mockTask = {
         task_id: 'task_test-456',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.DEPLOYMENT as const,
+        agent_type: 'deployment' as const,
         action: 'push_to_ecr' as const,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {
           image_name: 'test-app',
@@ -104,9 +104,9 @@ describe('DeploymentAgent', () => {
       const mockTask = {
         task_id: 'task_test-789',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.DEPLOYMENT as const,
+        agent_type: 'deployment' as const,
         action: 'health_check' as const,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {
           cluster_name: 'my-cluster',
@@ -137,9 +137,9 @@ describe('DeploymentAgent', () => {
       const mockTask = {
         task_id: 'task_test-101',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.DEPLOYMENT as const,
+        agent_type: 'deployment' as const,
         action: 'rollback_deployment' as const,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {
           cluster_name: 'my-cluster',
@@ -171,9 +171,9 @@ describe('DeploymentAgent', () => {
       const mockTask = {
         task_id: 'task_test-202',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.DEPLOYMENT as const,
+        agent_type: 'deployment' as const,
         action: 'unknown_action' as any,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {},
         version: '1.0.0',

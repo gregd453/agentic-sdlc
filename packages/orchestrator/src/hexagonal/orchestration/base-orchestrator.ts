@@ -34,7 +34,7 @@ export interface OrchestratorInput {
 
 export interface OrchestratorOutput {
   [key: string]: any;
-  status: WORKFLOW_STATUS.SUCCESS | 'failure';
+  status: 'success' | 'failure';
   error?: string;
 }
 
@@ -137,7 +137,7 @@ export abstract class BaseOrchestrator<I extends OrchestratorInput = Orchestrato
         // Processing succeeded
         const output = {
           ...result,
-          status: WORKFLOW_STATUS.SUCCESS as const,
+          status: 'success' as const,
         };
 
         // Publish result

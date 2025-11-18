@@ -1,6 +1,6 @@
 import pino from 'pino'
 
-const level = process.env.LOG_LEVEL || LOG_LEVEL.INFO
+const level = process.env.LOG_LEVEL || 'info'
 
 // Use simple transport in Docker/production environments
 // pino-pretty is optional and only used in local development

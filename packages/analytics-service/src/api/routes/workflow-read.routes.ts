@@ -68,7 +68,7 @@ export async function workflowReadRoutes(
           properties: {
             error: { type: 'string' }
           },
-          required: [LOG_LEVEL.ERROR]
+          required: ['error']
         }
       }
     },

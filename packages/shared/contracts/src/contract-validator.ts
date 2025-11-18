@@ -59,7 +59,7 @@ export interface ContractValidationError {
   type: 'schema' | 'version' | 'migration' | 'breaking_change';
   field?: string;
   message: string;
-  severity: LOG_LEVEL.ERROR | 'warning';
+  severity: 'error' | 'warning';
 }
 
 /**
@@ -96,7 +96,7 @@ export class ContractValidator {
         errors.push({
           type: 'version',
           message: versionCompatibility.reason || 'Version incompatible',
-          severity: LOG_LEVEL.ERROR
+          severity: 'error'
         });
 
         return {
@@ -127,7 +127,7 @@ export class ContractValidator {
         errors.push({
           type: 'migration',
           message: migrationResult.error || 'Migration failed',
-          severity: LOG_LEVEL.ERROR
+          severity: 'error'
         });
 
         return {
@@ -154,7 +154,7 @@ export class ContractValidator {
           type: 'schema',
           field: issue.path.join('.'),
           message: issue.message,
-          severity: LOG_LEVEL.ERROR
+          severity: 'error'
         });
       }
 
@@ -199,7 +199,7 @@ export class ContractValidator {
         errors.push({
           type: 'version',
           message: versionCompatibility.reason || 'Version incompatible',
-          severity: LOG_LEVEL.ERROR
+          severity: 'error'
         });
 
         return {
@@ -221,7 +221,7 @@ export class ContractValidator {
           type: 'schema',
           field: issue.path.join('.'),
           message: issue.message,
-          severity: LOG_LEVEL.ERROR
+          severity: 'error'
         });
       }
 
@@ -258,7 +258,7 @@ export class ContractValidator {
       errors.push({
         type: 'schema',
         message: `Contract names don't match: ${oldContract.name} vs ${newContract.name}`,
-        severity: LOG_LEVEL.ERROR
+        severity: 'error'
       });
     }
 
@@ -272,7 +272,7 @@ export class ContractValidator {
       errors.push({
         type: 'version',
         message: versionCompatibility.reason || 'Versions incompatible',
-        severity: LOG_LEVEL.ERROR
+        severity: 'error'
       });
     }
 
@@ -300,7 +300,7 @@ export class ContractValidator {
     }
 
     return {
-      valid: errors.filter(e => e.severity === LOG_LEVEL.ERROR).length === 0,
+      valid: errors.filter(e => e.severity === 'error').length === 0,
       contract_name: newContract.name,
       errors,
       warnings,
@@ -361,7 +361,7 @@ export class ContractValidator {
         type: 'schema',
         field: 'name',
         message: 'Contract name is required',
-        severity: LOG_LEVEL.ERROR
+        severity: 'error'
       });
     }
 
@@ -370,7 +370,7 @@ export class ContractValidator {
         type: 'schema',
         field: 'version',
         message: 'Contract version is required',
-        severity: LOG_LEVEL.ERROR
+        severity: 'error'
       });
     } else {
       // Validate version format
@@ -383,7 +383,7 @@ export class ContractValidator {
           type: 'version',
           field: 'version',
           message: 'Invalid version format (must be semver)',
-          severity: LOG_LEVEL.ERROR
+          severity: 'error'
         });
       }
     }
@@ -393,7 +393,7 @@ export class ContractValidator {
         type: 'schema',
         field: 'input_schema',
         message: 'Input schema is required',
-        severity: LOG_LEVEL.ERROR
+        severity: 'error'
       });
     }
 
@@ -402,7 +402,7 @@ export class ContractValidator {
         type: 'schema',
         field: 'output_schema',
         message: 'Output schema is required',
-        severity: LOG_LEVEL.ERROR
+        severity: 'error'
       });
     }
 

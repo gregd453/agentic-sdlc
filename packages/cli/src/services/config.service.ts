@@ -42,7 +42,7 @@ export class ConfigService {
       orchestratorUrl: 'http://localhost:3000',
       databaseUrl: process.env.DATABASE_URL || 'postgresql://localhost/agentic-sdlc',
       redisUrl: 'redis://localhost:6380',
-      logLevel: LOG_LEVEL.INFO,
+      logLevel: 'info',
       verbose: false,
       timeout: 30000,
       retryAttempts: 3,

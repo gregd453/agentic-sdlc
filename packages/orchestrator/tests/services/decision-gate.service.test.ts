@@ -52,7 +52,7 @@ describe('DecisionGateService', () => {
       expect(result.requires_human_approval).toBe(true);
       expect(result.should_escalate).toBe(true);  // Below 0.80 escalation threshold
       expect(result.escalation_route).toBe('platform-arch@company.com');
-      expect(result.decision.status).toBe(TASK_STATUS.PENDING);
+      expect(result.decision.status).toBe('pending');
     });
 
     it('should always require human approval for cost impacting changes', async () => {
@@ -69,7 +69,7 @@ describe('DecisionGateService', () => {
       expect(result.auto_approved).toBe(false);
       expect(result.requires_human_approval).toBe(true);
       expect(result.should_escalate).toBe(false);  // High confidence, no escalation needed
-      expect(result.decision.status).toBe(TASK_STATUS.PENDING);
+      expect(result.decision.status).toBe('pending');
     });
 
     it('should always require human approval for security affecting changes', async () => {
@@ -85,7 +85,7 @@ describe('DecisionGateService', () => {
 
       expect(result.auto_approved).toBe(false);
       expect(result.requires_human_approval).toBe(true);
-      expect(result.decision.status).toBe(TASK_STATUS.PENDING);
+      expect(result.decision.status).toBe('pending');
     });
 
     it('should always require human approval for architectural changes', async () => {
@@ -101,7 +101,7 @@ describe('DecisionGateService', () => {
 
       expect(result.auto_approved).toBe(false);
       expect(result.requires_human_approval).toBe(true);
-      expect(result.decision.status).toBe(TASK_STATUS.PENDING);
+      expect(result.decision.status).toBe('pending');
     });
 
     it('should always require human approval for data migrations', async () => {
@@ -117,7 +117,7 @@ describe('DecisionGateService', () => {
 
       expect(result.auto_approved).toBe(false);
       expect(result.requires_human_approval).toBe(true);
-      expect(result.decision.status).toBe(TASK_STATUS.PENDING);
+      expect(result.decision.status).toBe('pending');
     });
 
     it('should escalate decisions with very low confidence', async () => {
@@ -331,32 +331,32 @@ describe('DecisionGateService', () => {
 
   describe('Stage Decision Routing', () => {
     it('should evaluate decision gate for scaffolding stage', () => {
-      const result = service.shouldEvaluateDecision('scaffolding', WORKFLOW_TYPES.APP);
+      const result = service.shouldEvaluateDecision('scaffolding', 'app');
       expect(result).toBe(true);
     });
 
     it('should evaluate decision gate for deployment stage', () => {
-      const result = service.shouldEvaluateDecision(AGENT_TYPES.DEPLOYMENT, WORKFLOW_TYPES.APP);
+      const result = service.shouldEvaluateDecision('deployment', 'app');
       expect(result).toBe(true);
     });
 
     it('should evaluate decision gate for integration stage', () => {
-      const result = service.shouldEvaluateDecision(AGENT_TYPES.INTEGRATION, WORKFLOW_TYPES.APP);
+      const result = service.shouldEvaluateDecision('integration', 'app');
       expect(result).toBe(true);
     });
 
     it('should evaluate decision gate for migration stage', () => {
-      const result = service.shouldEvaluateDecision('migration', WORKFLOW_TYPES.APP);
+      const result = service.shouldEvaluateDecision('migration', 'app');
       expect(result).toBe(true);
     });
 
     it('should not evaluate decision gate for validation stage', () => {
-      const result = service.shouldEvaluateDecision(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP);
+      const result = service.shouldEvaluateDecision('validation', 'app');
       expect(result).toBe(false);
     });
 
     it('should not evaluate decision gate for testing stage', () => {
-      const result = service.shouldEvaluateDecision('testing', WORKFLOW_TYPES.APP);
+      const result = service.shouldEvaluateDecision('testing', 'app');
       expect(result).toBe(false);
     });
 
@@ -376,44 +376,44 @@ describe('DecisionGateService', () => {
     });
 
     it('should not evaluate clarification for deployment stage', () => {
-      const result = service.shouldEvaluateClarification(AGENT_TYPES.DEPLOYMENT);
+      const result = service.shouldEvaluateClarification('deployment');
       expect(result).toBe(false);
     });
   });
 
   describe('Decision Category Determination', () => {
     it('should categorize scaffolding as architectural change', () => {
-      const category = service.getDecisionCategory('scaffolding', WORKFLOW_TYPES.APP);
+      const category = service.getDecisionCategory('scaffolding', 'app');
       expect(category).toBe('architectural_change');
     });
 
     it('should categorize app deployment as cost impacting', () => {
-      const category = service.getDecisionCategory(AGENT_TYPES.DEPLOYMENT, WORKFLOW_TYPES.APP);
+      const category = service.getDecisionCategory('deployment', 'app');
       expect(category).toBe('cost_impacting');
     });
 
     it('should categorize non-app deployment as technical refactor', () => {
-      const category = service.getDecisionCategory(AGENT_TYPES.DEPLOYMENT, WORKFLOW_TYPES.FEATURE);
+      const category = service.getDecisionCategory('deployment', 'feature');
       expect(category).toBe('technical_refactor');
     });
 
     it('should categorize integration as architectural change', () => {
-      const category = service.getDecisionCategory(AGENT_TYPES.INTEGRATION, WORKFLOW_TYPES.APP);
+      const category = service.getDecisionCategory('integration', 'app');
       expect(category).toBe('architectural_change');
     });
 
     it('should categorize migration as data migration', () => {
-      const category = service.getDecisionCategory('migration', WORKFLOW_TYPES.APP);
+      const category = service.getDecisionCategory('migration', 'app');
       expect(category).toBe('data_migration');
     });
 
     it('should default to technical refactor for unknown stages', () => {
-      const category = service.getDecisionCategory('unknown-stage', WORKFLOW_TYPES.APP);
+      const category = service.getDecisionCategory('unknown-stage', 'app');
       expect(category).toBe('technical_refactor');
     });
 
     it('should default to technical refactor for validation stage', () => {
-      const category = service.getDecisionCategory(AGENT_TYPES.VALIDATION, WORKFLOW_TYPES.APP);
+      const category = service.getDecisionCategory('validation', 'app');
       expect(category).toBe('technical_refactor');
     });
   });

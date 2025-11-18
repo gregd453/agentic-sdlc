@@ -19,8 +19,8 @@ export const LogLevelValue: Record<LogLevel, number> = {
 
 /**
  * Check if a log level should be output
- * @param currentLevel The minimum level to output (e.g., LOG_LEVEL.INFO means info, warn, error, fatal)
- * @param messageLevel The level of the current message (e.g., LOG_LEVEL.DEBUG)
+ * @param currentLevel The minimum level to output (e.g., 'info' means info, warn, error, fatal)
+ * @param messageLevel The level of the current message (e.g., 'debug')
  * @returns true if message should be logged
  */
 export function shouldLog(currentLevel: LogLevel, messageLevel: LogLevel): boolean {

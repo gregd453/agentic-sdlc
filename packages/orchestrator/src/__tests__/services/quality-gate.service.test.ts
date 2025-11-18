@@ -125,12 +125,12 @@ describe('QualityGateService', () => {
         name: 'status',
         metric: 'build_status',
         operator: '==',
-        threshold: WORKFLOW_STATUS.SUCCESS,
+        threshold: 'success',
         blocking: true
       };
 
       const data = {
-        build_status: WORKFLOW_STATUS.SUCCESS
+        build_status: 'success'
       };
 
       const result = await service.evaluate(gate, data);

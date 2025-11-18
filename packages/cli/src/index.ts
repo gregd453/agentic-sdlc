@@ -390,7 +390,7 @@ async function main() {
           if (result.failed > 0) {
             console.log(chalk.red('\n✗ Failed Tests:'))
             result.results
-              .filter(r => r.status === WORKFLOW_STATUS.FAILED)
+              .filter(r => r.status === 'failed')
               .forEach(r => {
                 console.log(
                   `  ${chalk.red('✗')} ${r.name} (${r.duration}ms) - ${r.error}`
@@ -542,7 +542,7 @@ async function main() {
           } catch (error) {
             console.log(chalk.red('✗'))
             failed++
-            results.push({ name: check.name, status: WORKFLOW_STATUS.FAILED })
+            results.push({ name: check.name, status: 'failed' })
           }
         }
 
@@ -616,7 +616,7 @@ async function main() {
         if (program.opts().json) {
           console.log(JSON.stringify(status, null, 2))
         } else {
-          if (status.status === WORKFLOW_STATUS.COMPLETED) {
+          if (status.status === 'completed') {
             console.log(chalk.green(`\n✓ Deployment successful!`))
           } else {
             console.log(chalk.red(`\n✗ Deployment failed!`))
@@ -633,7 +633,7 @@ async function main() {
           }
         }
 
-        process.exit(status.status === WORKFLOW_STATUS.COMPLETED ? EXIT_CODES.SUCCESS : EXIT_CODES.DEPLOYMENT_FAILED)
+        process.exit(status.status === 'completed' ? EXIT_CODES.SUCCESS : EXIT_CODES.DEPLOYMENT_FAILED)
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
         logger.error(`Deployment failed: ${message}`)
@@ -804,11 +804,11 @@ async function main() {
           } else {
             limited.forEach(wf => {
               const statusColor =
-                wf.status === WORKFLOW_STATUS.COMPLETED
+                wf.status === 'completed'
                   ? chalk.green
-                  : wf.status === WORKFLOW_STATUS.FAILED
+                  : wf.status === 'failed'
                     ? chalk.red
-                    : wf.status === WORKFLOW_STATUS.RUNNING
+                    : wf.status === 'running'
                       ? chalk.cyan
                       : chalk.gray
               console.log(
@@ -865,7 +865,7 @@ async function main() {
     .description('Run a test workflow with behavior metadata')
     .option('--behavior <preset>', 'Behavior preset to use (success, validation_error, timeout, crash, etc.)')
     .option('--platform <platform>', 'Platform name', 'legacy')
-    .option('--priority <priority>', 'Priority (low|medium|high)', TASK_PRIORITY.HIGH)
+    .option('--priority <priority>', 'Priority (low|medium|high)', 'high')
     .option('--desc <description>', 'Workflow description')
     .option('--wait', 'Wait for workflow to complete')
     .option('--timeout <seconds>', 'Wait timeout', '300')
@@ -876,7 +876,7 @@ async function main() {
         const payload: any = {
           name,
           platform: options.platform,
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           priority: options.priority,
           project_spec: {
             name: name.toLowerCase().replace(/\s+/g, '-'),
@@ -907,7 +907,7 @@ async function main() {
 
           while (Date.now() - startTime < timeout) {
             const status = await apiClient.getWorkflow(workflowId)
-            const isComplete = [WORKFLOW_STATUS.COMPLETED, WORKFLOW_STATUS.FAILED, WORKFLOW_STATUS.CANCELLED].includes(status.status)
+            const isComplete = ['completed', 'failed', 'cancelled'].includes(status.status)
 
             if (isComplete) {
               console.log(chalk.green(`✅ Workflow completed: ${status.status}`))
@@ -941,11 +941,11 @@ async function main() {
     .description('Run a workflow with a preset behavior')
     .option('--name <name>', 'Workflow name (auto-generated if not provided)')
     .option('--platform <platform>', 'Platform name', 'legacy')
-    .option('--priority <priority>', 'Priority (low|medium|high)', TASK_PRIORITY.MEDIUM)
+    .option('--priority <priority>', 'Priority (low|medium|high)', 'medium')
     .option('--wait', 'Wait for workflow to complete')
     .action(async (preset, options) => {
       const presets = [
-        WORKFLOW_STATUS.SUCCESS, 'fast_success', 'slow_success',
+        'success', 'fast_success', 'slow_success',
         'validation_error', 'deployment_failed', 'unrecoverable_error',
         'timeout', 'tests_partial_pass', 'high_resource_usage', 'crash'
       ]
@@ -963,7 +963,7 @@ async function main() {
         const payload: any = {
           name: workflowName,
           platform: options.platform,
-          type: WORKFLOW_TYPES.APP,
+          type: 'app',
           priority: options.priority,
           project_spec: {
             name: workflowName.toLowerCase().replace(/\s+/g, '-'),
@@ -988,10 +988,10 @@ async function main() {
 
           while (Date.now() - startTime < timeout) {
             const status = await apiClient.getWorkflow(workflowId)
-            const isComplete = [WORKFLOW_STATUS.COMPLETED, WORKFLOW_STATUS.FAILED, WORKFLOW_STATUS.CANCELLED].includes(status.status)
+            const isComplete = ['completed', 'failed', 'cancelled'].includes(status.status)
 
             if (isComplete) {
-              const statusColor = status.status === WORKFLOW_STATUS.FAILED ? chalk.red : chalk.green
+              const statusColor = status.status === 'failed' ? chalk.red : chalk.green
               console.log(statusColor(`✅ Workflow ${status.status}`))
               process.exit(EXIT_CODES.SUCCESS)
             }
@@ -1018,7 +1018,7 @@ async function main() {
     .description('List available preset behaviors')
     .action(() => {
       const presets = [
-        { name: WORKFLOW_STATUS.SUCCESS, description: 'Normal successful completion' },
+        { name: 'success', description: 'Normal successful completion' },
         { name: 'fast_success', description: 'Quick execution (minimal delays)' },
         { name: 'slow_success', description: 'Extended execution' },
         { name: 'validation_error', description: 'TypeScript compilation failure' },

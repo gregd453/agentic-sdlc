@@ -39,7 +39,7 @@ describe('Milestone 1: Scaffold Workflow Happy Path E2E', () => {
         files: ['package.json', 'tsconfig.json', 'README.md']
       },
       analysis: {
-        complexity: TASK_PRIORITY.MEDIUM,
+        complexity: 'medium',
         estimatedHours: 8,
         dependencies: {
           'fastify': '^4.0.0',
@@ -56,17 +56,17 @@ describe('Milestone 1: Scaffold Workflow Happy Path E2E', () => {
 
   it('should complete scaffold workflow with full type safety', async () => {
     // Step 1: Create workflow via orchestrator
-    const workflow = createWorkflow(WORKFLOW_TYPES.APP, 'test-app', 'Test application for E2E');
+    const workflow = createWorkflow('app', 'test-app', 'Test application for E2E');
 
     expect(workflow.workflow_id).toBeDefined();
-    expect(workflow.type).toBe(WORKFLOW_TYPES.APP);
-    expect(workflow.current_state).toBe(WORKFLOW_STATUS.INITIATED);
+    expect(workflow.type).toBe('app');
+    expect(workflow.current_state).toBe('initiated');
 
     // Step 2: Create scaffold task
     const scaffoldTask = ScaffoldFactory.task({
       workflow_id: workflow.workflow_id,
       payload: {
-        project_type: WORKFLOW_TYPES.APP,
+        project_type: 'app',
         name: 'test-app',
         description: 'Test application',
         requirements: ['Authentication', 'Dashboard', 'API'],
@@ -82,7 +82,7 @@ describe('Milestone 1: Scaffold Workflow Happy Path E2E', () => {
 
     // Validate task against schema
     const validatedTask = SchemaRegistry.validate<ScaffoldTask>('scaffold.task', scaffoldTask);
-    expect(validatedTask.agent_type).toBe(AGENT_TYPES.SCAFFOLD);
+    expect(validatedTask.agent_type).toBe('scaffold');
     expect(validatedTask.action).toBe('generate_structure');
 
     // Step 3: Simulate dispatching task to scaffold agent
@@ -99,7 +99,7 @@ describe('Milestone 1: Scaffold Workflow Happy Path E2E', () => {
       task_id: scaffoldTask.task_id,
       workflow_id: scaffoldTask.workflow_id,
       success: true,
-      status: WORKFLOW_STATUS.SUCCESS,
+      status: 'success',
       result: {
         files_generated: [
           {
@@ -214,7 +214,7 @@ describe('Milestone 1: Scaffold Workflow Happy Path E2E', () => {
 
   describe('Type Safety Verification', () => {
     it('should enforce type safety for workflow IDs', () => {
-      const workflow = createWorkflow(WORKFLOW_TYPES.APP, 'type-safe-app', 'Type safe application');
+      const workflow = createWorkflow('app', 'type-safe-app', 'Type safe application');
 
       // WorkflowId type branding prevents mixing with other string types
       expect(typeof workflow.workflow_id).toBe('string');
@@ -229,7 +229,7 @@ describe('Milestone 1: Scaffold Workflow Happy Path E2E', () => {
       const invalidTask = {
         task_id: 'invalid',
         workflow_id: 'invalid',
-        agent_type: AGENT_TYPES.SCAFFOLD,
+        agent_type: 'scaffold',
         // Missing required fields
       };
 
@@ -264,10 +264,10 @@ describe('Milestone 1: Scaffold Workflow Happy Path E2E', () => {
     });
 
     it('should validate workflow transitions', () => {
-      const workflow = createWorkflow(WORKFLOW_TYPES.APP, 'transition-app', 'Test transitions');
+      const workflow = createWorkflow('app', 'transition-app', 'Test transitions');
 
       // Initial state
-      expect(workflow.current_state).toBe(WORKFLOW_STATUS.INITIATED);
+      expect(workflow.current_state).toBe('initiated');
 
       // Simulate state transitions
       workflow.current_state = 'scaffolding';
@@ -276,7 +276,7 @@ describe('Milestone 1: Scaffold Workflow Happy Path E2E', () => {
       workflow.current_state = 'validating';
       expect(() => SchemaRegistry.validate('workflow', workflow)).not.toThrow();
 
-      workflow.current_state = WORKFLOW_STATUS.COMPLETED;
+      workflow.current_state = 'completed';
       expect(() => SchemaRegistry.validate('workflow', workflow)).not.toThrow();
     });
 

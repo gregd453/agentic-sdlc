@@ -114,7 +114,7 @@ export class PipelineExecutorService {
 
         const failedExecution = {
           ...execution,
-          status: WORKFLOW_STATUS.FAILED as PipelineStatus,
+          status: 'failed' as PipelineStatus,
           completed_at: new Date().toISOString(),
           duration_ms: Date.now() - startTime
         };
@@ -144,7 +144,7 @@ export class PipelineExecutorService {
 
     try {
       // Update status to running
-      execution.status = WORKFLOW_STATUS.RUNNING;
+      execution.status = 'running';
       this.activeExecutions.set(execution.id, execution);
 
       // Build dependency graph
@@ -157,8 +157,8 @@ export class PipelineExecutorService {
         await this.executeStagesSequential(definition, execution, _graph, traceId);
       }
 
-      // Mark execution as complete (Session #78: Changed WORKFLOW_STATUS.SUCCESS to WORKFLOW_STATUS.COMPLETED)
-      execution.status = WORKFLOW_STATUS.COMPLETED;
+      // Mark execution as complete (Session #78: Changed 'success' to 'completed')
+      execution.status = 'completed';
       execution.completed_at = new Date().toISOString();
       execution.duration_ms = Date.now() - startTime;
 
@@ -224,7 +224,7 @@ export class PipelineExecutorService {
       execution.stage_results.push(result);
 
       // Check if stage failed and should stop execution
-      if (result.status === WORKFLOW_STATUS.FAILED && !stage.continue_on_failure) {
+      if (result.status === 'failed' && !stage.continue_on_failure) {
         throw new PipelineExecutionError(
           `Stage ${stage.id} failed`,
           stage.id,
@@ -232,7 +232,7 @@ export class PipelineExecutorService {
         );
       }
 
-      if (result.status === WORKFLOW_STATUS.SUCCESS) {
+      if (result.status === 'success') {
         executedStages.add(stage.id);
       }
     }
@@ -282,7 +282,7 @@ export class PipelineExecutorService {
 
       // Check if failed
       const stage = stageMap.get(stageId)!;
-      if (result.status === WORKFLOW_STATUS.FAILED && !stage.continue_on_failure) {
+      if (result.status === 'failed' && !stage.continue_on_failure) {
         // Cancel all in-progress stages
         await this.cancelInProgressStages(inProgress);
 
@@ -293,7 +293,7 @@ export class PipelineExecutorService {
         );
       }
 
-      if (result.status === WORKFLOW_STATUS.SUCCESS) {
+      if (result.status === 'success') {
         executedStages.add(stageId);
       }
 
@@ -331,7 +331,7 @@ export class PipelineExecutorService {
 
     const result: StageExecutionResult = {
       stage_id: stage.id,
-      status: WORKFLOW_STATUS.RUNNING,
+      status: 'running',
       started_at: new Date().toISOString(),
       artifacts: [],
       quality_gate_results: []
@@ -356,7 +356,7 @@ export class PipelineExecutorService {
         task_id: taskId,
         workflow_id: execution.workflow_id,
         agent_type: stage.agent_type,
-        priority: TASK_PRIORITY.HIGH,
+        priority: 'high',
         payload: {
           action: stage.action,
           parameters: stage.parameters,
@@ -382,8 +382,8 @@ export class PipelineExecutorService {
       result.agent_id = agentResult?.agent_id;
 
       // Check agent execution status
-      if (agentResult?.status !== WORKFLOW_STATUS.SUCCESS) {
-        result.status = WORKFLOW_STATUS.FAILED;
+      if (agentResult?.status !== 'success') {
+        result.status = 'failed';
         result.error = {
           code: 'AGENT_EXECUTION_FAILED',
           message: agentResult?.errors?.[0]?.message ?? 'Agent execution failed',
@@ -406,7 +406,7 @@ export class PipelineExecutorService {
         const blockingGateFailed = gateResults.some(g => !g.passed && g.blocking);
 
         if (blockingGateFailed) {
-          result.status = WORKFLOW_STATUS.FAILED;
+          result.status = 'failed';
           result.error = {
             code: 'QUALITY_GATE_FAILED',
             message: 'One or more blocking quality gates failed',
@@ -414,7 +414,7 @@ export class PipelineExecutorService {
             recoverable: false
           };
         } else {
-          result.status = WORKFLOW_STATUS.SUCCESS;
+          result.status = 'success';
         }
       }
 
@@ -430,7 +430,7 @@ export class PipelineExecutorService {
 
       await this.publishUpdate(
         execution,
-        result.status === WORKFLOW_STATUS.SUCCESS ? 'stage_completed' : 'stage_failed',
+        result.status === 'success' ? 'stage_completed' : 'stage_failed',
         { stage_id: stage.id, result }
       );
 
@@ -443,7 +443,7 @@ export class PipelineExecutorService {
       */ // End of Phase 2 commented code
 
     } catch (error) {
-      result.status = WORKFLOW_STATUS.FAILED;
+      result.status = 'failed';
       result.completed_at = new Date().toISOString();
       result.duration_ms = Date.now() - startTime;
       result.error = {
@@ -636,7 +636,7 @@ export class PipelineExecutorService {
       // Persist resume status to database
       const dbExecution = await this.pipelineExecutionRepository.updateStatus(
         executionId,
-        WORKFLOW_STATUS.RUNNING
+        'running'
       );
 
       logger.info('[SESSION #79] Execution resumed and persisted', {
@@ -647,7 +647,7 @@ export class PipelineExecutorService {
 
       // Update in-memory state
       if (execution) {
-        execution.status = WORKFLOW_STATUS.RUNNING;
+        execution.status = 'running';
       }
 
       return dbExecution as any;
@@ -670,11 +670,11 @@ export class PipelineExecutorService {
       throw new Error(`Execution ${executionId} not found`);
     }
 
-    execution.status = WORKFLOW_STATUS.CANCELLED;
+    execution.status = 'cancelled';
     execution.completed_at = new Date().toISOString();
 
     await this.publishUpdate(execution, 'execution_failed', {
-      reason: WORKFLOW_STATUS.CANCELLED
+      reason: 'cancelled'
     });
 
     this.activeExecutions.delete(executionId);
@@ -712,7 +712,7 @@ export class PipelineExecutorService {
    */
   async getActivePipelines(): Promise<PipelineExecution[]> {
     const activePipelines = Array.from(this.activeExecutions.values()).filter(
-      execution => execution.status === WORKFLOW_STATUS.RUNNING || execution.status === 'queued'
+      execution => execution.status === 'running' || execution.status === 'queued'
     );
 
     return activePipelines;

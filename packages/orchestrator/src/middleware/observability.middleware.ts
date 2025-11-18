@@ -90,7 +90,7 @@ export function registerObservabilityMiddleware(fastify: FastifyInstance): void 
 
     runWithContext(context, () => {
       // Log response
-      const logLevel = reply.statusCode >= 500 ? LOG_LEVEL.ERROR : reply.statusCode >= 400 ? LOG_LEVEL.WARN : LOG_LEVEL.INFO;
+      const logLevel = reply.statusCode >= 500 ? 'error' : reply.statusCode >= 400 ? 'warn' : 'info';
       logger[logLevel]('Request completed', {
         method: request.method,
         url: request.url,

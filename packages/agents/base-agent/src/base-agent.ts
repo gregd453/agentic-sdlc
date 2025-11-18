@@ -508,19 +508,19 @@ export abstract class BaseAgent implements AgentLifecycle {
     const stage = workflowStage || this.capabilities.type;
 
     // Convert status enum from TaskResult to AgentResultSchema
-    // TaskResult: WORKFLOW_STATUS.SUCCESS|'failure'|'partial'
-    // AgentResultSchema: WORKFLOW_STATUS.SUCCESS|WORKFLOW_STATUS.FAILED|'timeout'|WORKFLOW_STATUS.CANCELLED|...
-    let agentStatus: WORKFLOW_STATUS.SUCCESS | WORKFLOW_STATUS.FAILED | 'timeout' | WORKFLOW_STATUS.CANCELLED | WORKFLOW_STATUS.RUNNING | TASK_STATUS.PENDING | 'queued' | 'retrying';
+    // TaskResult: 'success'|'failure'|'partial'
+    // AgentResultSchema: 'success'|'failed'|'timeout'|'cancelled'|...
+    let agentStatus: 'success' | 'failed' | 'timeout' | 'cancelled' | 'running' | 'pending' | 'queued' | 'retrying';
     let success: boolean;
 
-    if (validatedResult.status === WORKFLOW_STATUS.SUCCESS) {
-      agentStatus = WORKFLOW_STATUS.SUCCESS;
+    if (validatedResult.status === 'success') {
+      agentStatus = 'success';
       success = true;
     } else if (validatedResult.status === 'failure') {
-      agentStatus = WORKFLOW_STATUS.FAILED;
+      agentStatus = 'failed';
       success = false;
     } else { // 'partial'
-      agentStatus = WORKFLOW_STATUS.SUCCESS; // Treat partial as success for workflow progression
+      agentStatus = 'success'; // Treat partial as success for workflow progression
       success = true;
     }
 
@@ -533,7 +533,7 @@ export abstract class BaseAgent implements AgentLifecycle {
       agent_id: this.agentId,
       agent_type: this.capabilities.type, // REQUIRED: Agent type enum value
       success: success, // REQUIRED: Boolean computed from status
-      status: agentStatus, // REQUIRED: Use mapped status (WORKFLOW_STATUS.FAILED not 'failure')
+      status: agentStatus, // REQUIRED: Use mapped status ('failed' not 'failure')
       action: `execute_${this.capabilities.type}`, // REQUIRED: Action description
       result: validatedResult.result, // REQUIRED: Task output data
       metrics: validatedResult.result?.metrics || { // REQUIRED: Execution metrics
@@ -576,7 +576,7 @@ export abstract class BaseAgent implements AgentLifecycle {
       required_fields: 'task_id, workflow_id, agent_id, agent_type, success, status, action, result, metrics, timestamp, version',
       optional_fields: 'artifacts, error, warnings',
       what_we_have: Object.keys(agentResult).join(','),
-      missing_required: ['agent_type', WORKFLOW_STATUS.SUCCESS, 'action', 'metrics'].filter(f => !(f in agentResult)).join(',') || 'none'
+      missing_required: ['agent_type', 'success', 'action', 'metrics'].filter(f => !(f in agentResult)).join(',') || 'none'
     });
 
     try {

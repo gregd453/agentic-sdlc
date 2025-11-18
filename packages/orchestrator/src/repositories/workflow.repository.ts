@@ -1,6 +1,3 @@
-import { TASK_PRIORITY } from '@agentic-sdlc/shared-types';
-import { WORKFLOW_TYPES } from '@agentic-sdlc/shared-types';
-import { WORKFLOW_STATUS, TASK_STATUS } from '@agentic-sdlc/shared-types';
 import { PrismaClient, Workflow, WorkflowStage, AgentTask } from '@prisma/client';
 import { CreateWorkflowRequest } from '../types';
 import { NotFoundError, ConcurrencyConflictError } from '../utils/errors';
@@ -66,8 +63,8 @@ export class WorkflowRepository {
           name: data.name,
           description: data.description,
           requirements: data.requirements,
-          priority: data.priority || TASK_PRIORITY.MEDIUM,
-          status: WORKFLOW_STATUS.INITIATED,
+          priority: data.priority || 'medium',
+          status: 'initiated',
           current_stage: 'initialization',
           created_by: data.created_by,
           trace_id: data.trace_id, // Phase 3: Store trace_id
@@ -95,7 +92,7 @@ export class WorkflowRepository {
         data: stages.map(stage => ({
           workflow_id: workflow.id,
           name: stage,
-          status: TASK_STATUS.PENDING
+          status: 'pending'
         }))
       });
 
@@ -302,7 +299,7 @@ export class WorkflowRepository {
   }
 
   async getPendingTasks(agentType?: string): Promise<AgentTask[]> {
-    const where: any = { status: TASK_STATUS.PENDING };
+    const where: any = { status: 'pending' };
     if (agentType) where.agent_type = agentType;
 
     return await this.prisma.agentTask.findMany({
@@ -319,27 +316,27 @@ export class WorkflowRepository {
       app: [
         'initialization',
         'scaffolding',
-        AGENT_TYPES.VALIDATION,
+        'validation',
         'e2e_testing',
-        AGENT_TYPES.INTEGRATION,
-        AGENT_TYPES.DEPLOYMENT,
+        'integration',
+        'deployment',
         'monitoring'
       ],
       feature: [
         'initialization',
         'implementation',
-        AGENT_TYPES.VALIDATION,
+        'validation',
         'testing',
-        AGENT_TYPES.INTEGRATION,
-        AGENT_TYPES.DEPLOYMENT
+        'integration',
+        'deployment'
       ],
       bugfix: [
         'initialization',
         'debugging',
         'fixing',
-        AGENT_TYPES.VALIDATION,
+        'validation',
         'testing',
-        AGENT_TYPES.DEPLOYMENT
+        'deployment'
       ]
     };
 

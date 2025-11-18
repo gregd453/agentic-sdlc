@@ -27,7 +27,7 @@ export function generateE2EReport(
   }
 ): E2ETestReport {
   // Calculate overall status
-  let overall_status: 'passed' | WORKFLOW_STATUS.FAILED | 'partial' = 'passed';
+  let overall_status: 'passed' | 'failed' | 'partial' = 'passed';
 
   if (execution) {
     const totalTests = execution.results.reduce((sum, r) => sum + r.total_tests, 0);
@@ -35,7 +35,7 @@ export function generateE2EReport(
     const totalFailed = execution.results.reduce((sum, r) => sum + r.failed, 0);
 
     if (totalFailed > 0) {
-      overall_status = totalPassed > 0 ? 'partial' : WORKFLOW_STATUS.FAILED;
+      overall_status = totalPassed > 0 ? 'partial' : 'failed';
     }
 
     const overall_pass_rate = totalTests > 0 ? (totalPassed / totalTests) * 100 : 0;
@@ -83,7 +83,7 @@ function generateRecommendations(
   if (status === 'passed') {
     recommendations.push('✓ All tests passed successfully!');
     recommendations.push('Consider adding more edge case scenarios for better coverage.');
-  } else if (status === WORKFLOW_STATUS.FAILED) {
+  } else if (status === 'failed') {
     recommendations.push('✗ Tests failed. Review failures and fix issues.');
 
     const failedTests = results.flatMap(r => r.failures || []);

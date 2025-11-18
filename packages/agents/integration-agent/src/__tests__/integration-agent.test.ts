@@ -31,9 +31,9 @@ describe('IntegrationAgent', () => {
       const mockTask = {
         task_id: 'task_test-123',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.INTEGRATION as const,
+        agent_type: 'integration' as const,
         action: 'merge_branch' as const,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {
           source_branch: 'feature/test',
@@ -69,9 +69,9 @@ describe('IntegrationAgent', () => {
       const mockTask = {
         task_id: 'task_test-456',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.INTEGRATION as const,
+        agent_type: 'integration' as const,
         action: 'resolve_conflict' as const,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {
           conflicts: [{
@@ -114,9 +114,9 @@ describe('IntegrationAgent', () => {
       const mockTask = {
         task_id: 'task_test-789',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.INTEGRATION as const,
+        agent_type: 'integration' as const,
         action: 'update_dependencies' as const,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {
           package_manager: 'pnpm' as const,
@@ -147,9 +147,9 @@ describe('IntegrationAgent', () => {
       const mockTask = {
         task_id: 'task_test-101',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.INTEGRATION as const,
+        agent_type: 'integration' as const,
         action: 'run_integration_tests' as const,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {
           environment: 'local' as const,
@@ -178,9 +178,9 @@ describe('IntegrationAgent', () => {
       const mockTask = {
         task_id: 'task_test-999',
         workflow_id: 'wf_test-123',
-        agent_type: AGENT_TYPES.INTEGRATION as const,
+        agent_type: 'integration' as const,
         action: 'unknown_action' as any,
-        status: TASK_STATUS.PENDING as const,
+        status: 'pending' as const,
         priority: 50,
         payload: {},
         version: '1.0.0',

@@ -13,36 +13,36 @@ import {
 export const VERSION = '1.0.0' as const;
 
 // ===== Enums =====
-export const WorkflowTypeEnum = z.enum([WORKFLOW_TYPES.APP, 'service', WORKFLOW_TYPES.FEATURE, 'capability']);
+export const WorkflowTypeEnum = z.enum(['app', 'service', 'feature', 'capability']);
 export const WorkflowStateEnum = z.enum([
-  WORKFLOW_STATUS.INITIATED,
+  'initiated',
   'scaffolding',
   'validating',
   'testing',
   'integrating',
   'deploying',
-  WORKFLOW_STATUS.COMPLETED,
-  WORKFLOW_STATUS.FAILED,
-  WORKFLOW_STATUS.CANCELLED
+  'completed',
+  'failed',
+  'cancelled'
 ]);
 
 export const AgentTypeEnum = z.enum([
-  AGENT_TYPES.SCAFFOLD,
-  AGENT_TYPES.VALIDATION,
+  'scaffold',
+  'validation',
   'e2e',
-  AGENT_TYPES.INTEGRATION,
-  AGENT_TYPES.DEPLOYMENT,
+  'integration',
+  'deployment',
   'base'
 ]);
 
 export const TaskStatusEnum = z.enum([
-  TASK_STATUS.PENDING,
+  'pending',
   'queued',
-  WORKFLOW_STATUS.RUNNING,
-  WORKFLOW_STATUS.SUCCESS,
-  WORKFLOW_STATUS.FAILED,
+  'running',
+  'success',
+  'failed',
   'timeout',
-  WORKFLOW_STATUS.CANCELLED,
+  'cancelled',
   'retrying'
 ]);
 
@@ -76,7 +76,7 @@ export const AgentTaskSchema = z.object({
   workflow_id: z.string().transform(toWorkflowId),
   agent_type: AgentTypeEnum,
   action: z.string(),
-  status: TaskStatusEnum.default(TASK_STATUS.PENDING),
+  status: TaskStatusEnum.default('pending'),
   priority: z.number().min(0).max(100).default(50),
   payload: z.record(z.unknown()),
   version: z.literal(VERSION),
@@ -131,7 +131,7 @@ export const PipelineStageSchema = z.object({
   name: z.string(),
   agent_type: AgentTypeEnum,
   action: z.string(),
-  status: z.enum([TASK_STATUS.PENDING, WORKFLOW_STATUS.RUNNING, WORKFLOW_STATUS.SUCCESS, WORKFLOW_STATUS.FAILED, 'skipped', 'blocked']),
+  status: z.enum(['pending', 'running', 'success', 'failed', 'skipped', 'blocked']),
   depends_on: z.array(z.string()).optional(),
   parallel_with: z.array(z.string()).optional(),
   timeout_ms: z.number().default(120000),
@@ -197,7 +197,7 @@ export const createWorkflow = (
     type,
     name,
     description,
-    current_stage: WORKFLOW_STATUS.INITIATED,
+    current_stage: 'initiated',
     progress: 0,
     version: VERSION,
     created_at: now,
@@ -217,7 +217,7 @@ export const createTask = (
     workflow_id: workflow.workflow_id,
     agent_type,
     action,
-    status: TASK_STATUS.PENDING,
+    status: 'pending',
     priority: 50,
     payload,
     version: VERSION,

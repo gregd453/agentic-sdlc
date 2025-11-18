@@ -19,8 +19,8 @@ const createMockAgent = (type: string) => ({
 
 // Test metadata
 const scaffoldMetadata: AgentMetadata = {
-  name: AGENT_TYPES.SCAFFOLD,
-  type: AGENT_TYPES.SCAFFOLD,
+  name: 'scaffold',
+  type: 'scaffold',
   version: '1.0.0',
   description: 'Code scaffolding agent',
   capabilities: ['analyze-requirements', 'generate-structure', 'create-boilerplate'],
@@ -29,8 +29,8 @@ const scaffoldMetadata: AgentMetadata = {
 };
 
 const validationMetadata: AgentMetadata = {
-  name: AGENT_TYPES.VALIDATION,
-  type: AGENT_TYPES.VALIDATION,
+  name: 'validation',
+  type: 'validation',
   version: '1.0.0',
   capabilities: ['typescript-compilation', 'eslint-validation'],
   timeout_ms: 60000,
@@ -46,11 +46,11 @@ describe('AgentRegistry', () => {
 
   describe('registerAgent', () => {
     it('should register an agent with valid metadata', () => {
-      const factory = vi.fn().mockResolvedValue(createMockAgent(AGENT_TYPES.SCAFFOLD));
+      const factory = vi.fn().mockResolvedValue(createMockAgent('scaffold'));
 
       registry.registerAgent(scaffoldMetadata, factory);
 
-      expect(registry.isRegistered(AGENT_TYPES.SCAFFOLD)).toBe(true);
+      expect(registry.isRegistered('scaffold')).toBe(true);
       expect(registry.size()).toBe(1);
     });
 
@@ -84,8 +84,8 @@ describe('AgentRegistry', () => {
       registry.registerAgent(validationMetadata, validationFactory);
 
       expect(registry.size()).toBe(2);
-      expect(registry.isRegistered(AGENT_TYPES.SCAFFOLD)).toBe(true);
-      expect(registry.isRegistered(AGENT_TYPES.VALIDATION)).toBe(true);
+      expect(registry.isRegistered('scaffold')).toBe(true);
+      expect(registry.isRegistered('validation')).toBe(true);
     });
   });
 
@@ -94,7 +94,7 @@ describe('AgentRegistry', () => {
       const factory = vi.fn();
       registry.registerAgent(scaffoldMetadata, factory);
 
-      const metadata = registry.getMetadata(AGENT_TYPES.SCAFFOLD);
+      const metadata = registry.getMetadata('scaffold');
 
       expect(metadata).toEqual(scaffoldMetadata);
     });
@@ -111,11 +111,11 @@ describe('AgentRegistry', () => {
       const factory = vi.fn();
       registry.registerAgent(scaffoldMetadata, factory);
 
-      expect(registry.isRegistered(AGENT_TYPES.SCAFFOLD)).toBe(true);
+      expect(registry.isRegistered('scaffold')).toBe(true);
     });
 
     it('should return false for unregistered agent', () => {
-      expect(registry.isRegistered(AGENT_TYPES.SCAFFOLD)).toBe(false);
+      expect(registry.isRegistered('scaffold')).toBe(false);
     });
   });
 
@@ -143,23 +143,23 @@ describe('AgentRegistry', () => {
 
   describe('createAgent', () => {
     it('should create agent instance using factory', async () => {
-      const mockAgent = createMockAgent(AGENT_TYPES.SCAFFOLD);
+      const mockAgent = createMockAgent('scaffold');
       const factory = vi.fn().mockResolvedValue(mockAgent);
 
       registry.registerAgent(scaffoldMetadata, factory);
-      const agent = await registry.createAgent(AGENT_TYPES.SCAFFOLD, mockMessageBus as any);
+      const agent = await registry.createAgent('scaffold', mockMessageBus as any);
 
       expect(factory).toHaveBeenCalledWith(mockMessageBus, undefined);
       expect(agent).toBe(mockAgent);
     });
 
     it('should pass configuration to factory', async () => {
-      const mockAgent = createMockAgent(AGENT_TYPES.SCAFFOLD);
+      const mockAgent = createMockAgent('scaffold');
       const factory = vi.fn().mockResolvedValue(mockAgent);
       const config = { timeout: 5000 };
 
       registry.registerAgent(scaffoldMetadata, factory);
-      await registry.createAgent(AGENT_TYPES.SCAFFOLD, mockMessageBus as any, config);
+      await registry.createAgent('scaffold', mockMessageBus as any, config);
 
       expect(factory).toHaveBeenCalledWith(mockMessageBus, config);
     });
@@ -176,18 +176,18 @@ describe('AgentRegistry', () => {
       registry.registerAgent(scaffoldMetadata, factory);
 
       await expect(
-        registry.createAgent(AGENT_TYPES.SCAFFOLD, mockMessageBus as any)
+        registry.createAgent('scaffold', mockMessageBus as any)
       ).rejects.toThrow(AgentFactoryError);
     });
 
     it('should throw error when created agent missing initialize method', async () => {
-      const invalidAgent = { type: AGENT_TYPES.SCAFFOLD }; // Missing initialize()
+      const invalidAgent = { type: 'scaffold' }; // Missing initialize()
       const factory = vi.fn().mockResolvedValue(invalidAgent);
 
       registry.registerAgent(scaffoldMetadata, factory);
 
       // Agent should be created, registry doesn't validate initialize at creation time
-      const agent = await registry.createAgent(AGENT_TYPES.SCAFFOLD, mockMessageBus as any);
+      const agent = await registry.createAgent('scaffold', mockMessageBus as any);
       expect(agent).toBe(invalidAgent);
     });
   });
@@ -199,7 +199,7 @@ describe('AgentRegistry', () => {
 
       // Should not throw for agent without config schema
       expect(() => {
-        registry.validateConfig(AGENT_TYPES.SCAFFOLD, {});
+        registry.validateConfig('scaffold', {});
       }).not.toThrow();
     });
 
@@ -223,8 +223,8 @@ describe('AgentRegistry', () => {
       registry.clear();
 
       expect(registry.size()).toBe(0);
-      expect(registry.isRegistered(AGENT_TYPES.SCAFFOLD)).toBe(false);
-      expect(registry.isRegistered(AGENT_TYPES.VALIDATION)).toBe(false);
+      expect(registry.isRegistered('scaffold')).toBe(false);
+      expect(registry.isRegistered('validation')).toBe(false);
     });
   });
 

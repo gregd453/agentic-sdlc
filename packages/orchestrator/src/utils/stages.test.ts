@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { AGENT_TYPES, WORKFLOW_TYPES } from '@agentic-sdlc/shared-types';
 import {
   StageEnum,
   validateStage,
@@ -13,7 +12,7 @@ import {
 describe('Stage Management - Phase 2 Unit Tests', () => {
   describe('validateStage - Zod validation for stage values', () => {
     it('should accept valid stages', () => {
-      const validStages = ['initialization', 'scaffolding', AGENT_TYPES.VALIDATION, 'e2e_testing', AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT, 'monitoring'];
+      const validStages = ['initialization', 'scaffolding', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring'];
 
       for (const stage of validStages) {
         expect(() => validateStage(stage)).not.toThrow();
@@ -42,20 +41,20 @@ describe('Stage Management - Phase 2 Unit Tests', () => {
     // Table-driven test approach
     const typeTests: Array<{ type: string; expectedStages: Stage[] }> = [
       {
-        type: WORKFLOW_TYPES.APP,
-        expectedStages: ['initialization', 'scaffolding', AGENT_TYPES.VALIDATION, 'e2e_testing', AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT, 'monitoring']
+        type: 'app',
+        expectedStages: ['initialization', 'scaffolding', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring']
       },
       {
-        type: WORKFLOW_TYPES.FEATURE,
-        expectedStages: ['initialization', 'scaffolding', AGENT_TYPES.VALIDATION, 'e2e_testing']
+        type: 'feature',
+        expectedStages: ['initialization', 'scaffolding', 'validation', 'e2e_testing']
       },
       {
-        type: WORKFLOW_TYPES.BUGFIX,
-        expectedStages: ['initialization', AGENT_TYPES.VALIDATION, 'e2e_testing']
+        type: 'bugfix',
+        expectedStages: ['initialization', 'validation', 'e2e_testing']
       },
       {
         type: 'unknown_type',
-        expectedStages: ['initialization', 'scaffolding', AGENT_TYPES.VALIDATION, 'e2e_testing', AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT, 'monitoring']
+        expectedStages: ['initialization', 'scaffolding', 'validation', 'e2e_testing', 'integration', 'deployment', 'monitoring']
       }
     ];
 
@@ -76,24 +75,24 @@ describe('Stage Management - Phase 2 Unit Tests', () => {
       expectedNext: Stage | null;
     }> = [
       // App type transitions
-      { currentStage: 'initialization', workflowType: WORKFLOW_TYPES.APP, expectedNext: 'scaffolding' },
-      { currentStage: 'scaffolding', workflowType: WORKFLOW_TYPES.APP, expectedNext: AGENT_TYPES.VALIDATION },
-      { currentStage: AGENT_TYPES.VALIDATION, workflowType: WORKFLOW_TYPES.APP, expectedNext: 'e2e_testing' },
-      { currentStage: 'e2e_testing', workflowType: WORKFLOW_TYPES.APP, expectedNext: AGENT_TYPES.INTEGRATION },
-      { currentStage: AGENT_TYPES.INTEGRATION, workflowType: WORKFLOW_TYPES.APP, expectedNext: AGENT_TYPES.DEPLOYMENT },
-      { currentStage: AGENT_TYPES.DEPLOYMENT, workflowType: WORKFLOW_TYPES.APP, expectedNext: 'monitoring' },
-      { currentStage: 'monitoring', workflowType: WORKFLOW_TYPES.APP, expectedNext: null }, // Terminal
+      { currentStage: 'initialization', workflowType: 'app', expectedNext: 'scaffolding' },
+      { currentStage: 'scaffolding', workflowType: 'app', expectedNext: 'validation' },
+      { currentStage: 'validation', workflowType: 'app', expectedNext: 'e2e_testing' },
+      { currentStage: 'e2e_testing', workflowType: 'app', expectedNext: 'integration' },
+      { currentStage: 'integration', workflowType: 'app', expectedNext: 'deployment' },
+      { currentStage: 'deployment', workflowType: 'app', expectedNext: 'monitoring' },
+      { currentStage: 'monitoring', workflowType: 'app', expectedNext: null }, // Terminal
 
       // Feature type transitions (shorter sequence)
-      { currentStage: 'initialization', workflowType: WORKFLOW_TYPES.FEATURE, expectedNext: 'scaffolding' },
-      { currentStage: 'scaffolding', workflowType: WORKFLOW_TYPES.FEATURE, expectedNext: AGENT_TYPES.VALIDATION },
-      { currentStage: AGENT_TYPES.VALIDATION, workflowType: WORKFLOW_TYPES.FEATURE, expectedNext: 'e2e_testing' },
-      { currentStage: 'e2e_testing', workflowType: WORKFLOW_TYPES.FEATURE, expectedNext: null }, // Terminal
+      { currentStage: 'initialization', workflowType: 'feature', expectedNext: 'scaffolding' },
+      { currentStage: 'scaffolding', workflowType: 'feature', expectedNext: 'validation' },
+      { currentStage: 'validation', workflowType: 'feature', expectedNext: 'e2e_testing' },
+      { currentStage: 'e2e_testing', workflowType: 'feature', expectedNext: null }, // Terminal
 
       // Bugfix type transitions (shortest sequence)
-      { currentStage: 'initialization', workflowType: WORKFLOW_TYPES.BUGFIX, expectedNext: AGENT_TYPES.VALIDATION },
-      { currentStage: AGENT_TYPES.VALIDATION, workflowType: WORKFLOW_TYPES.BUGFIX, expectedNext: 'e2e_testing' },
-      { currentStage: 'e2e_testing', workflowType: WORKFLOW_TYPES.BUGFIX, expectedNext: null }, // Terminal
+      { currentStage: 'initialization', workflowType: 'bugfix', expectedNext: 'validation' },
+      { currentStage: 'validation', workflowType: 'bugfix', expectedNext: 'e2e_testing' },
+      { currentStage: 'e2e_testing', workflowType: 'bugfix', expectedNext: null }, // Terminal
     ];
 
     transitionTests.forEach(({ currentStage, workflowType, expectedNext }) => {
@@ -104,65 +103,65 @@ describe('Stage Management - Phase 2 Unit Tests', () => {
     });
 
     it('should throw on unknown stage', () => {
-      expect(() => getNextStage('unknown_stage' as Stage, WORKFLOW_TYPES.APP)).toThrow();
+      expect(() => getNextStage('unknown_stage' as Stage, 'app')).toThrow();
     });
   });
 
   describe('getStageAtIndex - Retrieve stage by index', () => {
     it('should return correct stage at each index for app type', () => {
-      const appStages = getStagesForType(WORKFLOW_TYPES.APP);
+      const appStages = getStagesForType('app');
       appStages.forEach((stage, index) => {
-        const retrieved = getStageAtIndex(index, WORKFLOW_TYPES.APP);
+        const retrieved = getStageAtIndex(index, 'app');
         expect(retrieved).toBe(stage);
       });
     });
 
     it('should return undefined for out-of-bounds index', () => {
-      const result = getStageAtIndex(100, WORKFLOW_TYPES.APP);
+      const result = getStageAtIndex(100, 'app');
       expect(result).toBeUndefined();
     });
 
     it('should handle negative indices gracefully', () => {
-      const result = getStageAtIndex(-1, WORKFLOW_TYPES.APP);
+      const result = getStageAtIndex(-1, 'app');
       expect(result).toBeUndefined();
     });
   });
 
   describe('getStageIndex - Get index of stage', () => {
     it('should return correct indices for all stages', () => {
-      const appStages = getStagesForType(WORKFLOW_TYPES.APP);
+      const appStages = getStagesForType('app');
 
       appStages.forEach((stage, expectedIndex) => {
-        const index = getStageIndex(stage, WORKFLOW_TYPES.APP);
+        const index = getStageIndex(stage, 'app');
         expect(index).toBe(expectedIndex);
       });
     });
 
     it('should return -1 for unknown stage', () => {
-      const index = getStageIndex('unknown_stage' as Stage, WORKFLOW_TYPES.APP);
+      const index = getStageIndex('unknown_stage' as Stage, 'app');
       expect(index).toBe(-1);
     });
 
     it('should distinguish stages across different types', () => {
       // 'scaffolding' is at index 1 in app type
-      expect(getStageIndex('scaffolding', WORKFLOW_TYPES.APP)).toBe(1);
+      expect(getStageIndex('scaffolding', 'app')).toBe(1);
 
       // 'scaffolding' is at index 1 in feature type
-      expect(getStageIndex('scaffolding', WORKFLOW_TYPES.FEATURE)).toBe(1);
+      expect(getStageIndex('scaffolding', 'feature')).toBe(1);
 
       // 'scaffolding' is NOT in bugfix (returns -1)
-      expect(getStageIndex('scaffolding', WORKFLOW_TYPES.BUGFIX)).toBe(-1);
+      expect(getStageIndex('scaffolding', 'bugfix')).toBe(-1);
     });
   });
 
   describe('Integration - Stage progression sequences', () => {
     it('should allow complete progression through app workflow', () => {
-      const appStages = getStagesForType(WORKFLOW_TYPES.APP);
+      const appStages = getStagesForType('app');
       let currentStage: Stage | null = appStages[0];
 
       for (let i = 0; i < appStages.length; i++) {
         expect(currentStage).toBe(appStages[i]);
-        currentStage = currentStage ? getNextStage(currentStage, WORKFLOW_TYPES.APP) : null;
+        currentStage = currentStage ? getNextStage(currentStage, 'app') : null;
       }
 
       // Last stage should have no next
@@ -173,12 +172,12 @@ describe('Stage Management - Phase 2 Unit Tests', () => {
       const invalidTransitions = [
         { from: 'initialization' as Stage, to: 'e2e_testing' as Stage },
         { from: 'scaffolding' as Stage, to: 'monitoring' as Stage },
-        { from: AGENT_TYPES.VALIDATION as Stage, to: 'initialization' as Stage }, // Backwards
+        { from: 'validation' as Stage, to: 'initialization' as Stage }, // Backwards
       ];
 
       // These should NOT be the next stages
       for (const { from, to } of invalidTransitions) {
-        const nextStage = getNextStage(from, WORKFLOW_TYPES.APP);
+        const nextStage = getNextStage(from, 'app');
         expect(nextStage).not.toBe(to);
       }
     });

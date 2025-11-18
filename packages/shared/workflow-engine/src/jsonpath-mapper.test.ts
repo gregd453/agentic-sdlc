@@ -129,7 +129,7 @@ describe('JSONPathMapper', () => {
 
   describe('applyOutputMapping', () => {
     it('should map simple output', () => {
-      const stageOutput = { id: 123, name: 'Test', status: WORKFLOW_STATUS.SUCCESS };
+      const stageOutput = { id: 123, name: 'Test', status: 'success' };
       const mapping = {
         item_id: 'id',
         item_name: 'name'

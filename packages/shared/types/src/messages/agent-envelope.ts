@@ -9,20 +9,20 @@
 import { z } from 'zod';
 
 // === Priority Levels ===
-export const PriorityEnum = z.enum([TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, TASK_PRIORITY.CRITICAL]);
+export const PriorityEnum = z.enum(['low', 'medium', 'high', 'critical']);
 export type Priority = z.infer<typeof PriorityEnum>;
 
 // === Task Status ===
-export const TaskStatusEnum = z.enum([TASK_STATUS.PENDING, 'queued', WORKFLOW_STATUS.RUNNING]);
+export const TaskStatusEnum = z.enum(['pending', 'queued', 'running']);
 export type TaskStatus = z.infer<typeof TaskStatusEnum>;
 
 // === Agent Types ===
 export const AgentTypeEnum = z.enum([
-  AGENT_TYPES.SCAFFOLD,
-  AGENT_TYPES.VALIDATION,
-  AGENT_TYPES.E2E_TEST,
-  AGENT_TYPES.INTEGRATION,
-  AGENT_TYPES.DEPLOYMENT
+  'scaffold',
+  'validation',
+  'e2e_test',
+  'integration',
+  'deployment'
 ]);
 export type AgentType = z.infer<typeof AgentTypeEnum>;
 
@@ -52,9 +52,9 @@ export type TraceContext = z.infer<typeof TraceContextSchema>;
 
 // === Workflow Context (Stage Output Passing) ===
 export const WorkflowContextSchema = z.object({
-  workflow_type: z.string(),            // WORKFLOW_TYPES.APP | 'service' | WORKFLOW_TYPES.FEATURE | 'capability'
+  workflow_type: z.string(),            // 'app' | 'service' | 'feature' | 'capability'
   workflow_name: z.string(),
-  current_stage: z.string(),            // 'initialization' | AGENT_TYPES.VALIDATION | etc.
+  current_stage: z.string(),            // 'initialization' | 'validation' | etc.
   stage_outputs: z.record(z.unknown())  // Previous stage outputs
 });
 export type WorkflowContext = z.infer<typeof WorkflowContextSchema>;

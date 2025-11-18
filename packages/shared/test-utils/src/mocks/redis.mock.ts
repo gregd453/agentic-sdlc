@@ -92,7 +92,7 @@ export function createRedisMock(): RedisMock {
     on: vi.fn((event: string, handler: any) => {
       if (event === 'message') {
         messageHandlers.add(handler);
-      } else if (event === LOG_LEVEL.ERROR) {
+      } else if (event === 'error') {
         errorHandlers.add(handler);
       } else if (event === 'messageBuffer') {
         // For compatibility with real Redis client
@@ -106,7 +106,7 @@ export function createRedisMock(): RedisMock {
     off: vi.fn((event: string, handler: any) => {
       if (event === 'message') {
         messageHandlers.delete(handler);
-      } else if (event === LOG_LEVEL.ERROR) {
+      } else if (event === 'error') {
         errorHandlers.delete(handler);
       }
       return mock;

@@ -35,13 +35,13 @@ export async function makeRedisClient(
   const client = createClient({ url });
 
   // Error handler
-  client.on(LOG_LEVEL.ERROR, (err) => {
+  client.on('error', (err) => {
     log.error(`${name} error`, { error: String(err) });
   });
 
   // Connect and verify
   await client.connect();
-  log.info(`${name} connected`, { status: client.isReady ? 'ready' : TASK_STATUS.PENDING });
+  log.info(`${name} connected`, { status: client.isReady ? 'ready' : 'pending' });
 
   // Health check
   const pong = await client.ping();

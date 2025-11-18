@@ -19,13 +19,13 @@ export function generateValidationReport(
 
   // Calculate summary
   const passedChecks = validationChecks.filter(c => c.status === 'passed').length;
-  const failedChecks = validationChecks.filter(c => c.status === WORKFLOW_STATUS.FAILED).length;
+  const failedChecks = validationChecks.filter(c => c.status === 'failed').length;
   const warningChecks = validationChecks.filter(c => c.status === 'warning').length;
 
   // Determine overall status
-  let overallStatus: 'passed' | WORKFLOW_STATUS.FAILED | 'warning';
+  let overallStatus: 'passed' | 'failed' | 'warning';
   if (failedChecks > 0 || !qualityGates.passed) {
-    overallStatus = WORKFLOW_STATUS.FAILED;
+    overallStatus = 'failed';
   } else if (warningChecks > 0) {
     overallStatus = 'warning';
   } else {
@@ -64,7 +64,7 @@ function generateRecommendations(
   const recommendations: string[] = [];
 
   // Check for TypeScript errors
-  const tsCheck = checks.find(c => c.type === 'typescript' && c.status === WORKFLOW_STATUS.FAILED);
+  const tsCheck = checks.find(c => c.type === 'typescript' && c.status === 'failed');
   if (tsCheck) {
     recommendations.push(
       'Fix TypeScript compilation errors before proceeding. Run `pnpm typecheck` for details.'
@@ -72,7 +72,7 @@ function generateRecommendations(
   }
 
   // Check for ESLint errors
-  const lintCheck = checks.find(c => c.type === 'eslint' && c.status === WORKFLOW_STATUS.FAILED);
+  const lintCheck = checks.find(c => c.type === 'eslint' && c.status === 'failed');
   if (lintCheck) {
     recommendations.push(
       'Address ESLint errors. Run `pnpm lint --fix` to auto-fix some issues.'
@@ -80,7 +80,7 @@ function generateRecommendations(
   }
 
   // Check for coverage issues
-  const coverageCheck = checks.find(c => c.type === 'coverage' && c.status === WORKFLOW_STATUS.FAILED);
+  const coverageCheck = checks.find(c => c.type === 'coverage' && c.status === 'failed');
   if (coverageCheck) {
     recommendations.push(
       'Increase test coverage. Add unit tests for uncovered code paths.'
@@ -88,7 +88,7 @@ function generateRecommendations(
   }
 
   // Check for security issues
-  const securityCheck = checks.find(c => c.type === 'security' && c.status === WORKFLOW_STATUS.FAILED);
+  const securityCheck = checks.find(c => c.type === 'security' && c.status === 'failed');
   if (securityCheck) {
     recommendations.push(
       'Fix security vulnerabilities. Run `npm audit fix` or update vulnerable packages.'
@@ -144,7 +144,7 @@ export function formatReportAsText(report: ValidationReport): string {
   lines.push('-'.repeat(80));
   for (const check of report.validation_checks) {
     const statusSymbol = check.status === 'passed' ? '✓' :
-                         check.status === WORKFLOW_STATUS.FAILED ? '✗' : '⚠';
+                         check.status === 'failed' ? '✗' : '⚠';
     lines.push(`${statusSymbol} ${check.type.toUpperCase()}: ${check.status} (${check.duration_ms}ms)`);
 
     if (check.errors && check.errors.length > 0) {

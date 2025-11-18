@@ -21,12 +21,12 @@ export const ScaffoldFactory = {
     return {
       task_id: toTaskId(`task_test_${Date.now()}`),
       workflow_id: toWorkflowId(`wf_test_${Date.now()}`),
-      agent_type: AGENT_TYPES.SCAFFOLD,
+      agent_type: 'scaffold',
       action: 'generate_structure',
-      status: TASK_STATUS.PENDING,
+      status: 'pending',
       priority: 50,
       payload: {
-        project_type: WORKFLOW_TYPES.APP,
+        project_type: 'app',
         name: 'test-app',
         description: 'Test application for unit tests',
         tech_stack: {
@@ -80,9 +80,9 @@ export const ScaffoldFactory = {
       task_id: toTaskId(`task_test_${Date.now()}`),
       workflow_id: toWorkflowId(`wf_test_${Date.now()}`),
       agent_id: toAgentId(`scaffold_agent_test_${Date.now()}`),
-      agent_type: AGENT_TYPES.SCAFFOLD,
+      agent_type: 'scaffold',
       success: true,
-      status: WORKFLOW_STATUS.SUCCESS,
+      status: 'success',
       action: 'generate_structure',
       result: {
         files_generated: [
@@ -132,8 +132,8 @@ export const ScaffoldFactory = {
           }
         ],
         analysis: {
-          estimated_complexity: TASK_PRIORITY.MEDIUM,
-          recommended_agents: [AGENT_TYPES.VALIDATION, 'e2e', AGENT_TYPES.DEPLOYMENT],
+          estimated_complexity: 'medium',
+          recommended_agents: ['validation', 'e2e', 'deployment'],
           dependencies_identified: [
             {
               name: 'fastify',
@@ -148,7 +148,7 @@ export const ScaffoldFactory = {
           ],
           potential_issues: [
             {
-              type: LOG_LEVEL.INFO,
+              type: 'info',
               message: 'Consider adding rate limiting for API endpoints'
             }
           ],
@@ -186,7 +186,7 @@ export const ScaffoldFactory = {
         },
         next_steps: [
           {
-            agent: AGENT_TYPES.VALIDATION,
+            agent: 'validation',
             action: 'validate_code',
             reason: 'Verify TypeScript compilation and linting',
             priority: 1
@@ -226,7 +226,7 @@ export const ScaffoldFactory = {
   failedResult: (error: string = 'Template not found'): ScaffoldResult => {
     return ScaffoldFactory.result({
       success: false,
-      status: WORKFLOW_STATUS.FAILED,
+      status: 'failed',
       error: {
         code: 'SCAFFOLD_ERROR',
         message: error,
@@ -280,7 +280,7 @@ export const ScaffoldFactory = {
   complexAppTask: (): ScaffoldTask => {
     return ScaffoldFactory.task({
       payload: {
-        project_type: WORKFLOW_TYPES.APP,
+        project_type: 'app',
         name: 'complex-app',
         description: 'Complex application with multiple features',
         tech_stack: {

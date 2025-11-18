@@ -45,7 +45,7 @@ class TestAgent extends BaseAgent {
     return {
       task_id: task.task_id,
       workflow_id: task.workflow_id,
-      status: WORKFLOW_STATUS.SUCCESS,
+      status: 'success',
       output: {
         test: true,
         name: task.name
@@ -121,7 +121,7 @@ describe('BaseAgent', () => {
         name: 'Test Task',
         description: 'A test task',
         requirements: 'Test requirements',
-        priority: TASK_PRIORITY.MEDIUM
+        priority: 'medium'
       };
 
       const validated = agent.validateTask(task);
@@ -148,12 +148,12 @@ describe('BaseAgent', () => {
         name: 'Test Task',
         description: 'A test task',
         requirements: 'Test requirements',
-        priority: TASK_PRIORITY.MEDIUM
+        priority: 'medium'
       };
 
       const result = await agent.execute(task);
 
-      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
+      expect(result.status).toBe('success');
       expect(result.task_id).toBe(task.task_id);
       expect(result.workflow_id).toBe(task.workflow_id);
       expect(result.output).toHaveProperty('test', true);
@@ -165,14 +165,14 @@ describe('BaseAgent', () => {
       const result: TaskResult = {
         task_id: '123e4567-e89b-12d3-a456-426614174000',
         workflow_id: '123e4567-e89b-12d3-a456-426614174001',
-        status: WORKFLOW_STATUS.SUCCESS,
+        status: 'success',
         output: { test: true }
       };
 
       await agent.reportResult(result);
 
       // Result reporting successful (ioredis-mock handles publish operations)
-      expect(result.status).toBe(WORKFLOW_STATUS.SUCCESS);
+      expect(result.status).toBe('success');
     });
   });
 

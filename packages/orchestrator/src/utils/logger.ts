@@ -4,7 +4,7 @@ import { AsyncLocalStorage } from 'async_hooks';
 import { generateTraceId as generateTraceIdUtil } from '@agentic-sdlc/shared-utils';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
-const logLevel = process.env.LOG_LEVEL || LOG_LEVEL.INFO;
+const logLevel = process.env.LOG_LEVEL || 'info';
 
 /**
  * Request Context for distributed tracing
@@ -121,7 +121,7 @@ export function getRequestContext(): RequestContext | undefined {
  */
 export interface LogEntry {
   message: string;
-  level: 'trace' | LOG_LEVEL.DEBUG | LOG_LEVEL.INFO | LOG_LEVEL.WARN | LOG_LEVEL.ERROR | 'fatal';
+  level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
   context?: Record<string, unknown>;
   error?: Error;
   duration?: number;
@@ -209,19 +209,19 @@ export class StructuredLogger {
   }
 
   debug(message: string, context?: Record<string, unknown>): void {
-    this.log({ message, level: LOG_LEVEL.DEBUG, context });
+    this.log({ message, level: 'debug', context });
   }
 
   info(message: string, context?: Record<string, unknown>): void {
-    this.log({ message, level: LOG_LEVEL.INFO, context });
+    this.log({ message, level: 'info', context });
   }
 
   warn(message: string, context?: Record<string, unknown>): void {
-    this.log({ message, level: LOG_LEVEL.WARN, context });
+    this.log({ message, level: 'warn', context });
   }
 
   error(message: string, error?: Error, context?: Record<string, unknown>): void {
-    this.log({ message, level: LOG_LEVEL.ERROR, error, context });
+    this.log({ message, level: 'error', error, context });
   }
 
   fatal(message: string, error?: Error, context?: Record<string, unknown>): void {

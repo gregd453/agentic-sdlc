@@ -123,11 +123,11 @@ export class SurfaceRouterService {
       errors.push('workflow name is required in payload')
     }
 
-    if (payload.type && ![WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX].includes(payload.type)) {
+    if (payload.type && !['app', 'feature', 'bugfix'].includes(payload.type)) {
       errors.push(`invalid workflow type: ${payload.type}`)
     }
 
-    if (payload.priority && ![TASK_PRIORITY.LOW, TASK_PRIORITY.MEDIUM, TASK_PRIORITY.HIGH, TASK_PRIORITY.CRITICAL].includes(payload.priority)) {
+    if (payload.priority && !['low', 'medium', 'high', 'critical'].includes(payload.priority)) {
       errors.push(`invalid priority: ${payload.priority}`)
     }
 
@@ -143,11 +143,11 @@ export class SurfaceRouterService {
    */
   private normalizePayload(payload: Record<string, any>): Record<string, any> {
     return {
-      type: payload.type || WORKFLOW_TYPES.APP,
+      type: payload.type || 'app',
       name: (payload.name || '').trim(),
       description: payload.description || undefined,
       requirements: payload.requirements || undefined,
-      priority: payload.priority || TASK_PRIORITY.MEDIUM,
+      priority: payload.priority || 'medium',
       trace_id: payload.trace_id, // Preserve trace_id if provided
       // Store other surface-specific data
       ...payload

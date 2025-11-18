@@ -10,7 +10,7 @@ import {
 const execAsync = promisify(exec);
 
 interface NpmAuditVulnerability {
-  severity: TASK_PRIORITY.CRITICAL | TASK_PRIORITY.HIGH | 'moderate' | TASK_PRIORITY.MEDIUM | TASK_PRIORITY.LOW | LOG_LEVEL.INFO;
+  severity: 'critical' | 'high' | 'moderate' | 'medium' | 'low' | 'info';
   via: Array<{
     title: string;
     url?: string;
@@ -94,7 +94,7 @@ export async function validateSecurity(
 
       return {
         type: 'security',
-        status: WORKFLOW_STATUS.FAILED,
+        status: 'failed',
         duration_ms: Date.now() - startTime,
         errors: [`Security audit failed: ${error.message}`]
       };
@@ -102,7 +102,7 @@ export async function validateSecurity(
   } catch (error) {
     return {
       type: 'security',
-      status: WORKFLOW_STATUS.FAILED,
+      status: 'failed',
       duration_ms: Date.now() - startTime,
       errors: [`Security validation failed: ${error instanceof Error ? error.message : String(error)}`]
     };
@@ -127,7 +127,7 @@ function processAuditReport(
   // Extract vulnerability details
   const vulnerabilities: Array<{
     id: string;
-    severity: TASK_PRIORITY.CRITICAL | TASK_PRIORITY.HIGH | TASK_PRIORITY.MEDIUM | TASK_PRIORITY.LOW;
+    severity: 'critical' | 'high' | 'medium' | 'low';
     package: string;
     title: string;
     description?: string;
@@ -137,16 +137,16 @@ function processAuditReport(
 
   for (const [packageName, vuln] of Object.entries(report.vulnerabilities)) {
     // Skip info severity
-    if (vuln.severity === LOG_LEVEL.INFO) continue;
+    if (vuln.severity === 'info') continue;
 
     const via = Array.isArray(vuln.via) ? vuln.via[0] : vuln.via;
     const title = typeof via === 'object' ? via.title : String(via);
     const url = typeof via === 'object' ? via.url : undefined;
 
-    // Map 'moderate' to TASK_PRIORITY.MEDIUM
-    const severity: TASK_PRIORITY.CRITICAL | TASK_PRIORITY.HIGH | TASK_PRIORITY.MEDIUM | TASK_PRIORITY.LOW =
-      vuln.severity === 'moderate' ? TASK_PRIORITY.MEDIUM :
-      vuln.severity as TASK_PRIORITY.CRITICAL | TASK_PRIORITY.HIGH | TASK_PRIORITY.MEDIUM | TASK_PRIORITY.LOW;
+    // Map 'moderate' to 'medium'
+    const severity: 'critical' | 'high' | 'medium' | 'low' =
+      vuln.severity === 'moderate' ? 'medium' :
+      vuln.severity as 'critical' | 'high' | 'medium' | 'low';
 
     vulnerabilities.push({
       id: `${packageName}-${vuln.severity}`,
@@ -168,7 +168,7 @@ function processAuditReport(
   };
 
   // Determine status - fail if critical or high vulnerabilities
-  const status = criticalCount > 0 || highCount > 0 ? WORKFLOW_STATUS.FAILED :
+  const status = criticalCount > 0 || highCount > 0 ? 'failed' :
                  mediumCount > 0 ? 'warning' : 'passed';
 
   const errors = criticalCount > 0 || highCount > 0

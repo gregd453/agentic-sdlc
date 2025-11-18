@@ -397,7 +397,7 @@ export async function pipelineRoutes(
 
         return reply.code(202).send({
           accepted: true,
-          execution_id: TASK_STATUS.PENDING // Would return actual execution ID
+          execution_id: 'pending' // Would return actual execution ID
         });
       } catch (error) {
         logger.error('Failed to process pipeline webhook', {

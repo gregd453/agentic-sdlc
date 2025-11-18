@@ -1,4 +1,3 @@
-import { AGENT_TYPES } from '@agentic-sdlc/shared-types';
 /**
  * Platform Definitions - Seed data for platforms and surfaces
  *
@@ -12,29 +11,29 @@ export const platformDefinitions = {
     layer: 'APPLICATION',
     description: 'Legacy platform for backward compatibility with existing workflows',
     config: {
-      workflowTypes: [WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX],
+      workflowTypes: ['app', 'feature', 'bugfix'],
       stageSequences: {
         app: [
           'initialization',
           'scaffolding',
           'dependency_installation',
-          AGENT_TYPES.VALIDATION,
+          'validation',
           'e2e_testing',
-          AGENT_TYPES.INTEGRATION,
-          AGENT_TYPES.DEPLOYMENT,
+          'integration',
+          'deployment',
           'monitoring'
         ],
-        feature: ['initialization', 'scaffolding', 'dependency_installation', AGENT_TYPES.VALIDATION, 'e2e_testing'],
-        bugfix: ['initialization', AGENT_TYPES.VALIDATION, 'e2e_testing'],
-        service: ['initialization', 'scaffolding', 'dependency_installation', AGENT_TYPES.VALIDATION, AGENT_TYPES.INTEGRATION, AGENT_TYPES.DEPLOYMENT]
+        feature: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'e2e_testing'],
+        bugfix: ['initialization', 'validation', 'e2e_testing'],
+        service: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'integration', 'deployment']
       },
       supportedSurfaces: ['REST', 'DASHBOARD'],
       agentMapping: {
-        scaffolding: AGENT_TYPES.SCAFFOLD,
-        validation: AGENT_TYPES.VALIDATION,
-        e2e_testing: AGENT_TYPES.E2E_TEST,
-        integration: AGENT_TYPES.INTEGRATION,
-        deployment: AGENT_TYPES.DEPLOYMENT,
+        scaffolding: 'scaffold',
+        validation: 'validation',
+        e2e_testing: 'e2e_test',
+        integration: 'integration',
+        deployment: 'deployment',
         monitoring: 'monitoring'
       }
     },
@@ -46,29 +45,29 @@ export const platformDefinitions = {
     layer: 'APPLICATION',
     description: 'Platform for web application development and deployment',
     config: {
-      workflowTypes: [WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX],
+      workflowTypes: ['app', 'feature', 'bugfix'],
       stageSequences: {
         app: [
           'initialization',
           'scaffolding',
           'dependency_installation',
-          AGENT_TYPES.VALIDATION,
+          'validation',
           'e2e_testing',
-          AGENT_TYPES.INTEGRATION,
-          AGENT_TYPES.DEPLOYMENT,
+          'integration',
+          'deployment',
           'monitoring'
         ],
-        feature: ['initialization', 'scaffolding', 'dependency_installation', AGENT_TYPES.VALIDATION, 'e2e_testing', AGENT_TYPES.DEPLOYMENT],
-        bugfix: ['initialization', AGENT_TYPES.VALIDATION, 'e2e_testing', AGENT_TYPES.DEPLOYMENT]
+        feature: ['initialization', 'scaffolding', 'dependency_installation', 'validation', 'e2e_testing', 'deployment'],
+        bugfix: ['initialization', 'validation', 'e2e_testing', 'deployment']
       },
       supportedSurfaces: ['REST', 'WEBHOOK', 'DASHBOARD'],
       frameworks: ['React', 'Vue', 'Angular', 'Next.js'],
       agentMapping: {
-        scaffolding: AGENT_TYPES.SCAFFOLD,
-        validation: AGENT_TYPES.VALIDATION,
-        e2e_testing: AGENT_TYPES.E2E_TEST,
-        integration: AGENT_TYPES.INTEGRATION,
-        deployment: AGENT_TYPES.DEPLOYMENT
+        scaffolding: 'scaffold',
+        validation: 'validation',
+        e2e_testing: 'e2e_test',
+        integration: 'integration',
+        deployment: 'deployment'
       }
     },
     enabled: false // Not yet implemented
@@ -84,24 +83,24 @@ export const platformDefinitions = {
         pipeline: [
           'initialization',
           'schema_definition',
-          AGENT_TYPES.VALIDATION,
+          'validation',
           'unit_testing',
           'integration_testing',
           'performance_testing',
-          AGENT_TYPES.DEPLOYMENT
+          'deployment'
         ],
-        transformation: ['initialization', AGENT_TYPES.VALIDATION, 'unit_testing', AGENT_TYPES.DEPLOYMENT],
-        ingestion: ['initialization', 'connection_validation', 'schema_validation', AGENT_TYPES.DEPLOYMENT]
+        transformation: ['initialization', 'validation', 'unit_testing', 'deployment'],
+        ingestion: ['initialization', 'connection_validation', 'schema_validation', 'deployment']
       },
       supportedSurfaces: ['REST', 'WEBHOOK', 'CLI'],
       technologies: ['Apache Spark', 'Airflow', 'dbt', 'Kafka'],
       agentMapping: {
-        schema_definition: AGENT_TYPES.VALIDATION,
-        validation: AGENT_TYPES.VALIDATION,
-        unit_testing: AGENT_TYPES.E2E_TEST,
-        integration_testing: AGENT_TYPES.INTEGRATION,
-        performance_testing: AGENT_TYPES.E2E_TEST,
-        deployment: AGENT_TYPES.DEPLOYMENT
+        schema_definition: 'validation',
+        validation: 'validation',
+        unit_testing: 'e2e_test',
+        integration_testing: 'integration',
+        performance_testing: 'e2e_test',
+        deployment: 'deployment'
       }
     },
     enabled: false // Not yet implemented
@@ -114,17 +113,17 @@ export const platformDefinitions = {
     config: {
       workflowTypes: ['terraform', 'kubernetes', 'docker'],
       stageSequences: {
-        terraform: ['initialization', 'plan', AGENT_TYPES.VALIDATION, 'testing', AGENT_TYPES.DEPLOYMENT],
-        kubernetes: ['initialization', 'manifest_generation', AGENT_TYPES.VALIDATION, AGENT_TYPES.DEPLOYMENT],
-        docker: ['initialization', 'build', 'security_scan', 'push', AGENT_TYPES.DEPLOYMENT]
+        terraform: ['initialization', 'plan', 'validation', 'testing', 'deployment'],
+        kubernetes: ['initialization', 'manifest_generation', 'validation', 'deployment'],
+        docker: ['initialization', 'build', 'security_scan', 'push', 'deployment']
       },
       supportedSurfaces: ['REST', 'WEBHOOK', 'CLI'],
       technologies: ['Terraform', 'Kubernetes', 'Docker', 'CloudFormation'],
       agentMapping: {
-        plan: AGENT_TYPES.VALIDATION,
-        validation: AGENT_TYPES.VALIDATION,
-        testing: AGENT_TYPES.E2E_TEST,
-        deployment: AGENT_TYPES.DEPLOYMENT
+        plan: 'validation',
+        validation: 'validation',
+        testing: 'e2e_test',
+        deployment: 'deployment'
       }
     },
     enabled: false // Not yet implemented

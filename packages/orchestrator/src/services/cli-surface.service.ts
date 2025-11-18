@@ -127,13 +127,13 @@ export class CliSurfaceService {
 
     try {
       // Extract workflow parameters from args and flags
-      const workflowType = parsed.args[0] || command.flags.type || WORKFLOW_TYPES.APP
+      const workflowType = parsed.args[0] || command.flags.type || 'app'
       const workflowName = parsed.args[1] || command.flags.name || 'CLI Workflow'
       const description = command.flags.description as string || undefined
       const platform = command.flags.platform as string || undefined
 
       // Validate workflow type
-      if (![WORKFLOW_TYPES.APP, WORKFLOW_TYPES.FEATURE, WORKFLOW_TYPES.BUGFIX].includes(workflowType as string)) {
+      if (!['app', 'feature', 'bugfix'].includes(workflowType as string)) {
         return {
           success: false,
           message: `Invalid workflow type: ${workflowType}. Use: app, feature, bugfix`
@@ -148,7 +148,7 @@ export class CliSurfaceService {
           type: workflowType,
           name: workflowName,
           description,
-          priority: (command.flags.priority as string) || TASK_PRIORITY.MEDIUM,
+          priority: (command.flags.priority as string) || 'medium',
           cli_command: command.command,
           cli_flags: this.flagsToRecord(command.flags),
           cwd: command.cwd

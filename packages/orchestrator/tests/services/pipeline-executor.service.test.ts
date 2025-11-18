@@ -42,7 +42,7 @@ describe('PipelineExecutorService', () => {
     mockAgentDispatcher = {
       dispatchTask: vi.fn().mockResolvedValue({
         agent_id: 'agent-1',
-        status: WORKFLOW_STATUS.SUCCESS,
+        status: 'success',
         result: {
           data: {
             line_coverage: 90,
@@ -88,7 +88,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -112,7 +112,7 @@ describe('PipelineExecutorService', () => {
       expect(execution.id).toBeDefined();
       expect(execution.pipeline_id).toBe(definition.id);
       expect(execution.workflow_id).toBe(definition.workflow_id);
-      expect(['queued', WORKFLOW_STATUS.RUNNING]).toContain(execution.status);  // Status can be queued or running
+      expect(['queued', 'running']).toContain(execution.status);  // Status can be queued or running
       expect(execution.trigger).toBe('manual');
       expect(execution.triggered_by).toBe('test-user');
       expect(execution.branch).toBe('main');
@@ -208,7 +208,7 @@ describe('PipelineExecutorService', () => {
       await service.resumeExecution(execution.id);
 
       const retrieved = await service.getExecution(execution.id);
-      expect(retrieved?.status).toBe(WORKFLOW_STATUS.RUNNING);
+      expect(retrieved?.status).toBe('running');
     });
 
     it('should cancel execution', async () => {
@@ -282,7 +282,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -294,10 +294,10 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-2',
             name: 'Test',
-            agent_type: AGENT_TYPES.VALIDATION,
+            agent_type: 'validation',
             action: 'test',
             parameters: {},
-            dependencies: [{ stage_id: 'stage-1', required: true, condition: WORKFLOW_STATUS.SUCCESS }],
+            dependencies: [{ stage_id: 'stage-1', required: true, condition: 'success' }],
             quality_gates: [],
             timeout_ms: 300000,
             continue_on_failure: false,
@@ -328,10 +328,10 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
-            dependencies: [{ stage_id: 'non-existent', required: true, condition: WORKFLOW_STATUS.SUCCESS }],
+            dependencies: [{ stage_id: 'non-existent', required: true, condition: 'success' }],
             quality_gates: [],
             timeout_ms: 300000,
             continue_on_failure: false,
@@ -375,7 +375,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -387,7 +387,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-2',
             name: 'Test',
-            agent_type: AGENT_TYPES.VALIDATION,
+            agent_type: 'validation',
             action: 'test',
             parameters: {},
             dependencies: [],
@@ -424,7 +424,7 @@ describe('PipelineExecutorService', () => {
         // Second stage succeeds
         return Promise.resolve({
           agent_id: 'agent-2',
-          status: WORKFLOW_STATUS.SUCCESS,
+          status: 'success',
           result: { data: {}, artifacts: [], metrics: { duration_ms: 1000 } }
         });
       });
@@ -438,7 +438,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -450,7 +450,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-2',
             name: 'Test',
-            agent_type: AGENT_TYPES.VALIDATION,
+            agent_type: 'validation',
             action: 'test',
             parameters: {},
             dependencies: [],
@@ -480,7 +480,7 @@ describe('PipelineExecutorService', () => {
         executionTimes.push(Date.now());
         return Promise.resolve({
           agent_id: 'agent-1',
-          status: WORKFLOW_STATUS.SUCCESS,
+          status: 'success',
           result: { data: {}, artifacts: [], metrics: { duration_ms: 50 } }
         });
       });
@@ -494,7 +494,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Lint',
-            agent_type: AGENT_TYPES.VALIDATION,
+            agent_type: 'validation',
             action: 'lint',
             parameters: {},
             dependencies: [],
@@ -506,7 +506,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-2',
             name: 'Test',
-            agent_type: AGENT_TYPES.VALIDATION,
+            agent_type: 'validation',
             action: 'test',
             parameters: {},
             dependencies: [],
@@ -539,7 +539,7 @@ describe('PipelineExecutorService', () => {
 
         return {
           agent_id: 'agent-1',
-          status: WORKFLOW_STATUS.SUCCESS,
+          status: 'success',
           result: { data: {}, artifacts: [], metrics: { duration_ms: 10 } }
         };
       });
@@ -553,7 +553,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -565,10 +565,10 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-2',
             name: 'Test',
-            agent_type: AGENT_TYPES.VALIDATION,
+            agent_type: 'validation',
             action: 'test',
             parameters: {},
-            dependencies: [{ stage_id: 'stage-1', required: true, condition: WORKFLOW_STATUS.SUCCESS }],
+            dependencies: [{ stage_id: 'stage-1', required: true, condition: 'success' }],
             quality_gates: [],
             timeout_ms: 300000,
             continue_on_failure: false,
@@ -599,7 +599,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -642,7 +642,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -695,7 +695,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -739,7 +739,7 @@ describe('PipelineExecutorService', () => {
         {
           id: 'stage-1',
           name: 'Build',
-          agent_type: AGENT_TYPES.SCAFFOLD,
+          agent_type: 'scaffold',
           action: 'build',
           parameters: {},
           dependencies: [],
@@ -751,10 +751,10 @@ describe('PipelineExecutorService', () => {
         {
           id: 'stage-2',
           name: 'Test',
-          agent_type: AGENT_TYPES.VALIDATION,
+          agent_type: 'validation',
           action: 'test',
           parameters: {},
-          dependencies: [{ stage_id: 'stage-1', required: true, condition: WORKFLOW_STATUS.SUCCESS }],
+          dependencies: [{ stage_id: 'stage-1', required: true, condition: 'success' }],
           quality_gates: [],
           timeout_ms: 300000,
           continue_on_failure: false,
@@ -774,11 +774,11 @@ describe('PipelineExecutorService', () => {
       const stage: PipelineStage = {
         id: 'stage-2',
         name: 'Test',
-        agent_type: AGENT_TYPES.VALIDATION,
+        agent_type: 'validation',
         action: 'test',
         parameters: {},
         dependencies: [
-          { stage_id: 'stage-1', required: true, condition: WORKFLOW_STATUS.SUCCESS }
+          { stage_id: 'stage-1', required: true, condition: 'success' }
         ],
         quality_gates: [],
         timeout_ms: 300000,
@@ -800,11 +800,11 @@ describe('PipelineExecutorService', () => {
       const stage: PipelineStage = {
         id: 'stage-2',
         name: 'Test',
-        agent_type: AGENT_TYPES.VALIDATION,
+        agent_type: 'validation',
         action: 'test',
         parameters: {},
         dependencies: [
-          { stage_id: 'stage-1', required: false, condition: WORKFLOW_STATUS.SUCCESS }  // Optional
+          { stage_id: 'stage-1', required: false, condition: 'success' }  // Optional
         ],
         quality_gates: [],
         timeout_ms: 300000,
@@ -843,7 +843,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -883,7 +883,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -922,7 +922,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],
@@ -962,7 +962,7 @@ describe('PipelineExecutorService', () => {
           {
             id: 'stage-1',
             name: 'Build',
-            agent_type: AGENT_TYPES.SCAFFOLD,
+            agent_type: 'scaffold',
             action: 'build',
             parameters: {},
             dependencies: [],

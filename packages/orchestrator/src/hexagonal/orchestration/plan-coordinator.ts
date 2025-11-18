@@ -16,7 +16,7 @@ import { BaseOrchestrator, OrchestratorOptions, OrchestratorOutput } from './bas
 export interface PlanInput {
   projectId: string;
   requirements: string;
-  projectType: WORKFLOW_TYPES.APP | WORKFLOW_TYPES.FEATURE | WORKFLOW_TYPES.BUGFIX;
+  projectType: 'app' | 'feature' | 'bugfix';
   constraints?: {
     timeframe?: string;
     budget?: string;
@@ -86,7 +86,7 @@ export class PlanCoordinator extends BaseOrchestrator<PlanInput, PlanOutput> {
    */
   private generatePlan(
     requirements: string,
-    projectType: WORKFLOW_TYPES.APP | WORKFLOW_TYPES.FEATURE | WORKFLOW_TYPES.BUGFIX,
+    projectType: 'app' | 'feature' | 'bugfix',
     constraints?: any
   ) {
     // Simplified implementation
@@ -120,9 +120,9 @@ export class PlanCoordinator extends BaseOrchestrator<PlanInput, PlanOutput> {
     const standardPhases = ['Planning', 'Design', 'Implementation', 'Testing', 'Deployment'];
 
     switch (projectType) {
-      case WORKFLOW_TYPES.FEATURE:
+      case 'feature':
         return ['Planning', 'Implementation', 'Testing', 'Deployment'];
-      case WORKFLOW_TYPES.BUGFIX:
+      case 'bugfix':
         return ['Planning', 'Implementation', 'Testing', 'Deployment'];
       default:
         return standardPhases;
