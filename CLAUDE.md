@@ -1,8 +1,8 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC
 
-**Status:** ✅ Phase 7B Complete + Session #80 (Dashboard E2E) | **Updated:** 2025-11-18 | **Version:** 55.0
+**Status:** ✅ Phase 7B Complete + Session #83 (CI/CD Setup) | **Updated:** 2025-11-19 | **Version:** 56.0
 
-**📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md)
+**📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions)
 
 ---
 
@@ -54,6 +54,81 @@
 # Emergency: Check what's using a port
 lsof -i :3051                       # Check orchestrator port
 lsof -i :3050                       # Check dashboard port
+```
+
+---
+
+## 🔄 CI/CD & Deployment
+
+### GitHub Actions (Automated Cloud Deployment)
+**Workflow:** `.github/workflows/deploy.yml` - Auto-triggers on push to main
+```bash
+# View workflow runs
+gh run list -R gregd453/agentic-sdlc --limit 10
+
+# Check specific run details
+gh run view <run-id> -R gregd453/agentic-sdlc
+
+# View workflow actions
+https://github.com/gregd453/agentic-sdlc/actions
+```
+
+**Pipeline Stages:**
+1. **Test Job** - Linter, TypeScript check, build
+2. **Security Job** - Trivy vulnerability scan
+3. **Deploy Job** - Terraform apply to infrastructure
+4. **Health Check Job** - Verify Dashboard & API endpoints
+5. **Notify Job** - Report deployment status
+
+### Local Pre-Push Hook (Developer Validation)
+**Hook:** `.git/hooks/pre-push` - Runs BEFORE any push to GitHub
+```bash
+# The hook runs automatically. To verify it's executable:
+ls -la .git/hooks/pre-push     # Should show -rwx------
+
+# If not executable:
+chmod +x .git/hooks/pre-push
+```
+
+**What the hook does:**
+- Runs linter (catches style issues)
+- Runs TypeScript check (catches type errors)
+- Runs full build (ensures packages compile)
+- **Blocks push** if any check fails (prevents broken code on main)
+
+**Workflow when making changes:**
+```bash
+# 1. Make code changes
+# 2. Commit your work
+git commit -m "feat: your feature here"
+
+# 3. Try to push (hook runs automatically)
+git push origin main
+# ↓ Pre-push hook validates...
+# 🔍 Running linter... ✓
+# 🔍 Running TypeScript check... ✓
+# 🔍 Building packages... ✓
+# ✅ All pre-push checks passed! Ready to push.
+# ↓ Push succeeds → GitHub Actions auto-triggers
+```
+
+### Git History Management
+**Large files have been cleaned** using `git-filter-repo`:
+- Removed log files >100MB from entire history
+- Repository is now lean and fast to clone
+- Do NOT commit large files (.log, .tmp, cache/ directories)
+
+**If you accidentally commit a large file:**
+```bash
+# 1. Remove from working directory
+git rm --cached <large-file>
+git commit --amend
+
+# 2. Use git-filter-repo to remove from history
+git filter-repo --path <large-file> --invert-paths --force
+
+# 3. Force push
+git push origin main -f
 ```
 
 ---
@@ -119,6 +194,23 @@ Full development workflow:
 - ✅ 121+ test cases, 0 TypeScript errors
 - ✅ All 21 packages building successfully
 - ✅ 99%+ production ready
+
+**Session #83: CI/CD & GitHub Actions Integration (COMPLETE)**
+- ✅ **GitHub Actions Workflow:** Full pipeline with 5 jobs (test → security scan → deploy → health check → notify)
+  - Automated test validation (linter, TypeScript, build)
+  - Security scanning with Trivy
+  - Terraform infrastructure deployment
+  - Health checks for Dashboard (3050) and Orchestrator API (3051)
+  - Auto-triggers on push to main branch
+- ✅ **Git History Cleanup:** Removed 3.3GB+ log files from history using `git-filter-repo --strip-blobs-bigger-than 100M`
+- ✅ **Pre-Push Hook:** Local validation hook configured and executable
+  - Runs: linter → TypeScript check → build before allowing push
+  - Prevents pushing failing code
+  - Colored console output for user feedback
+- ✅ **Repository Push:** Successfully pushed cleaned history to GitHub
+  - Repository: https://github.com/gregd453/agentic-sdlc
+  - Workflows automatically triggered and running
+  - All 3 GitHub Actions workflows visible in Actions tab
 
 **Session #80: Dashboard E2E Testing & Trace Visualization (COMPLETE)**
 - ✅ **Infrastructure:** Terraform deployment with Docker containers (Dashboard, Orchestrator, PostgreSQL, Redis)
@@ -193,5 +285,60 @@ Full development workflow:
 2. File-based log rotation (1-2 hours)
 3. Advanced trace tree visualization (2-3 hours)
 4. Dashboard performance analytics pages (2-3 hours)
+
+---
+
+## 📋 Next Steps for Future Agents
+
+### Ready to Start Working?
+**Status:** Platform is fully operational with local and cloud CI/CD
+- ✅ All services running (Dashboard, Orchestrator, PostgreSQL, Redis)
+- ✅ GitHub Actions pipeline auto-configured
+- ✅ Pre-push hook prevents broken code from being pushed
+- ✅ Phase 3 UI implementation complete (Mock Workflow Pipeline Builder)
+
+### What to Work On:
+1. **Phase 4 - Pipeline Pause/Resume** (Low Priority)
+   - Requires Prisma schema migration for workflow state persistence
+   - Estimated: 2-3 hours
+   - Epic: Store/restore workflow state between pause and resume
+
+2. **Polish Items** (Low Priority)
+   - Remove DEBUG console.log statements
+   - Implement file-based log rotation
+   - Advanced trace visualization improvements
+   - Dashboard analytics pages
+
+3. **New Features** (As Requested)
+   - Expand agent capabilities
+   - Add new service types
+   - Enhance dashboard features
+   - Improve CLI commands
+
+### Development Workflow:
+```bash
+# 1. Start services
+./dev start
+
+# 2. Enable auto-rebuild (in another terminal)
+./dev watch
+
+# 3. Make changes and commit
+git commit -m "feat: your feature"
+
+# 4. Push (pre-push hook validates automatically)
+git push origin main
+
+# 5. GitHub Actions auto-triggers for cloud deployment
+# → Check status: https://github.com/gregd453/agentic-sdlc/actions
+```
+
+### Important Notes for Future Agents:
+- **Always use**: `./dev start` to begin development
+- **Always test**: Pre-push hook will run automatically on push attempts
+- **Never ignore**: TypeScript errors or linter warnings
+- **Review**: `.gitignore` before committing large files
+- **Monitor**: GitHub Actions tab for deployment status
+- **Document**: Changes in this CLAUDE.md file before completing work
 
 ---
