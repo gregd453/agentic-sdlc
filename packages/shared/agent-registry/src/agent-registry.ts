@@ -104,6 +104,102 @@ export class AgentRegistry {
   }
 
   /**
+   * Validate that agent exists, with helpful error messages for debugging
+   * Used by orchestrator before creating tasks to fail fast
+   *
+   * @param agentType - Agent type identifier (can be custom)
+   * @param platformId - Optional platform ID for scoped lookup
+   * @returns true if agent found, throws error with suggestions if not found
+   * @throws Error with available agents and similar agent type suggestions
+   */
+  validateAgentExists(agentType: string, platformId?: string): boolean {
+    if (this.isRegistered(agentType, platformId)) {
+      return true;
+    }
+
+    // Build helpful error message with suggestions
+    const scope = platformId ? ` for platform '${platformId}'` : '';
+    const allAvailable = this.listAgents(platformId);
+    const availableTypes = allAvailable.map(a => a.type);
+    const similar = this.findSimilarTypes(agentType, availableTypes);
+
+    let message = `Agent type '${agentType}' not found${scope}`;
+
+    if (availableTypes.length > 0) {
+      message += `\nAvailable agents: ${availableTypes.join(', ')}`;
+    }
+
+    if (similar.length > 0) {
+      message += `\nDid you mean: ${similar.join(', ')}?`;
+    }
+
+    if (platformId) {
+      const globalAgents = this.listAgents(); // No platform filter for globals
+      const globalTypes = globalAgents.map(a => a.type);
+      if (globalTypes.length > 0) {
+        message += `\nGlobal agents available: ${globalTypes.join(', ')}`;
+      }
+    }
+
+    throw new Error(message);
+  }
+
+  /**
+   * Find similar agent types using simple string matching
+   * Used for helpful error messages (typo suggestions)
+   */
+  private findSimilarTypes(target: string, available: string[]): string[] {
+    const similar: string[] = [];
+
+    for (const agentType of available) {
+      // Check for substring match or similar length with overlap
+      if (
+        agentType.includes(target) ||
+        target.includes(agentType) ||
+        this.levenshteinDistance(target, agentType) <= 2
+      ) {
+        similar.push(agentType);
+      }
+    }
+
+    return similar.slice(0, 3); // Return top 3 suggestions
+  }
+
+  /**
+   * Calculate Levenshtein distance for fuzzy matching
+   */
+  private levenshteinDistance(a: string, b: string): number {
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+
+    const matrix: number[][] = [];
+
+    for (let i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
+    }
+
+    for (let j = 0; j <= a.length; j++) {
+      matrix[0][j] = j;
+    }
+
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1,  // substitution
+            matrix[i][j - 1] + 1,      // insertion
+            matrix[i - 1][j] + 1       // deletion
+          );
+        }
+      }
+    }
+
+    return matrix[b.length][a.length];
+  }
+
+  /**
    * Get all registered agents
    * Can optionally filter by platform
    */

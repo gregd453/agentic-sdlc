@@ -1,485 +1,401 @@
-# Implementation Plan: Full Multi-Platform SDLC System Evolution
+# Implementation Plan: Unbounded Agent Extensibility (Any BaseAgent Subclass)
 
-**Version:** 1.0.0 | **Status:** PLANNING PHASE | **Date:** 2025-11-16
-**Timeline:** 8 weeks | **Production Readiness:** 99% → 99.5% (maintained through phasing)
+**Status:** PLAN PHASE COMPLETE
+**Updated:** 2025-11-19
+**Priority:** HIGH (Enables core architecture goal)
+**Owner:** AI Agent
 
 ---
 
-## 📋 Executive Summary
+## 📋 Overview
 
-**Vision:** Transform single-domain system (app, feature, bugfix) into enterprise-grade **multi-platform architecture** with 4+ independent platforms (Web Apps, Data Pipelines, Mobile, Infrastructure) and 5 surface types (REST, Webhook, CLI, Dashboard, Mobile API).
+### Objective
+Enable platforms to use **any custom agent that extends BaseAgent**, not limited to a predefined enum of agent types. This implements the core goal: "Platforms can have one or more workflows with any agent that extends BaseAgent."
 
-**Key Characteristics:**
-- ✅ **Non-breaking** - Hexagonal core protected, backward-compatible via "legacy-platform"
-- ✅ **Phased** - 7 phases over 8 weeks with gates maintaining 99% readiness
-- ✅ **Proven** - Builds on Session #70 Analytics Service precedent
-- ✅ **Enterprise-Ready** - Multi-tenant capable, definition-driven workflows
+### Why It's Needed
+1. **Core Architecture Goal**: Must support arbitrary custom agents
+2. **Extensibility**: Teams build domain-specific agents without core code changes
+3. **Multi-Platform Support**: Different platforms use different implementations
+4. **Future-Proof**: New agent types don't require schema migrations
 
-**Success Criteria:**
-- ✅ All 7 phases complete with phase gates passing
-- ✅ Hexagonal core unchanged (zero modifications)
-- ✅ Backward compatibility verified
-- ✅ Database migration non-breaking
-- ✅ 100+ tests passing with 80%+ coverage
-- ✅ CLAUDE.md updated with Session #72+
+### Success Criteria
+- [ ] `agent_type` accepts arbitrary strings in WorkflowStageDefinition
+- [ ] Agent registry resolves unknown types with clear error messages
+- [ ] Stage execution validates agent exists BEFORE task assignment
+- [ ] Backward compatible with existing enum-based agents
+- [ ] Complete documentation + working examples
+- [ ] Zero TypeScript errors across all packages
+- [ ] E2E test validates custom agent in pipeline
+- [ ] CLAUDE.md updated with agent creation guide
 
 ---
 
 ## 🏗️ Technical Approach
 
-### Layered Architecture
+### Current State vs Target
+
 ```
-SURFACE LAYER       [NEW] REST API, GitHub Webhook, CLI, Dashboard, Mobile
-  ↓ (SurfaceRouterService)
-PLATFORM LAYER      [NEW] Web Apps, Data Pipelines, Mobile, Infrastructure
-  ↓ (definition-driven WorkflowEngine)
-AGENT LAYER         [EXTENDS] Global + platform-scoped agents
-  ↓ (AgentRegistry with platform_id)
-HEXAGONAL CORE      [PROTECTED] Unchanged (ports, adapters, core)
-  ↓
-INFRASTRUCTURE      [UNCHANGED] Redis, PostgreSQL, Claude API, AWS, GitHub
-```
+BEFORE (Restricted):
+  agent_type: 'scaffold' | 'validation' | 'e2e_test'  (ENUM only)
+  ✗ Can't use custom agents without modifying core types
+  ✗ Type validation fails at compile-time
 
-### Design Principles
-1. Additive only (no modifications to existing layers)
-2. Definition-driven platforms & surfaces (YAML/JSON)
-3. Reusable components (GenericMockAgent, PlatformLoader, SurfaceRouter)
-4. Clear separation (Surfaces → Platforms → Agents → Core)
-5. Production-safe (phase gates before each stage)
-
----
-
-## 📊 Database Schema Changes
-
-### New Tables (Phase 1)
-```sql
-CREATE TABLE Platform (
-  id UUID PRIMARY KEY,
-  name String UNIQUE,
-  layer String (APPLICATION|DATA|INFRASTRUCTURE|ENTERPRISE),
-  description String,
-  config JSON,
-  created_at DateTime,
-  updated_at DateTime
-);
-
-CREATE TABLE WorkflowDefinition (
-  id UUID PRIMARY KEY,
-  platform_id UUID FOREIGN KEY,
-  name String,
-  version String,
-  description String,
-  definition JSON,
-  created_at DateTime,
-  updated_at DateTime,
-  UNIQUE(platform_id, name)
-);
-
-CREATE TABLE PlatformSurface (
-  id UUID PRIMARY KEY,
-  platform_id UUID FOREIGN KEY,
-  surface_type String (REST|WEBHOOK|CLI|DASHBOARD|MOBILE_API),
-  config JSON,
-  enabled Boolean,
-  created_at DateTime,
-  updated_at DateTime,
-  UNIQUE(platform_id, surface_type)
-);
+AFTER (Unbounded):
+  agent_type: string (ANY value allowed)
+  ✓ Any custom agent can be registered immediately
+  ✓ Validation happens at execution time (fail-early)
+  ✓ Clear error messages guide user
 ```
 
-### Modified Tables (Phase 1, additive only)
-```sql
-ALTER TABLE Workflow ADD COLUMN platform_id UUID FOREIGN KEY;
-ALTER TABLE Workflow ADD COLUMN workflow_definition_id UUID FOREIGN KEY;
-ALTER TABLE Workflow ADD COLUMN surface_id UUID FOREIGN KEY;
-ALTER TABLE Workflow ADD COLUMN input_data JSON;
-ALTER TABLE Workflow ADD COLUMN layer String;
+### Component Changes
 
-ALTER TABLE Agent ADD COLUMN platform_id UUID FOREIGN KEY (NULL = global);
+```
+SHARED TYPES (@agentic-sdlc/shared-types):
+  - Remove AgentType enum
+  - Change agent_type: AgentType → agent_type: string
+  - Add AgentTypeSchema for validation
+
+AGENT REGISTRY (@agentic-sdlc/shared-agent-registry):
+  - Add validateAgentExists(type, platformId) method
+  - Improve getAgent() error messages with suggestions
+
+ORCHESTRATOR (@agentic-sdlc/orchestrator):
+  - Validate agent exists BEFORE creating AgentTask (Task 2.1)
+  - Add CLI commands: validate-workflow, list-agents
+  - Update WorkflowDefinition queries (already string-based)
+
+DOCUMENTATION:
+  - Create AGENT_CREATION_GUIDE.md
+  - Update CLAUDE.md with agent section
+  - Create example custom agent (MLTrainingAgent)
+
+BACKWARD COMPATIBLE:
+  ✓ No database migrations (Agent.type already string)
+  ✓ Existing enum values work as strings
+  ✓ No code changes needed for existing workflows
 ```
 
-**Migration Strategy:** Create tables first (non-blocking), add nullable columns, backfill in Phase 2.
+---
+
+## 🎯 Task Breakdown (32 hours total)
+
+### Phase 1: Type System Updates (6 hours)
+
+**Task 1.1:** Update Type Definitions (1.5h)
+- File: `packages/shared/types/src/agents/agent-types.ts`
+- Change: `agent_type: AgentType` → `agent_type: z.string().min(1)`
+- Tests: String validation, backward compat with enum values
+
+**Task 1.2:** Update Agent Registry Types (1.5h)
+- File: `packages/shared/agent-registry/src/agent-registry.ts`
+- Add: `validateAgentExists(type: string, platformId?): boolean`
+- Tests: Platform-scoped lookup, global fallback, error messages
+
+**Task 1.3:** Create Agent Type Constants (1h)
+- File: `packages/shared/types/src/constants/agent-types.constants.ts` (NEW)
+- Content: Built-in types reference + naming conventions
+- Tests: Constants match implementations
 
 ---
 
-## 📋 7-Phase Implementation Plan (54 Core Tasks + 7 Phase Tests)
+### Phase 2: Orchestrator Validation (8 hours)
 
-### Phase 1: Core Platform Infrastructure (Weeks 1-2, 12 days)
+**Task 2.1:** Add Agent Validation in WorkflowService (2h) **[CRITICAL]**
+- File: `packages/orchestrator/src/services/workflow.service.ts`
+- Change: In `createTaskForStage()`, add validation BEFORE AgentTask creation
+- Effect: Prevents orphaned tasks in queue
+- Tests: Valid/invalid agent_type, workflow status updates, logging
 
-**Goal:** Establish platform abstraction layer with backward compatibility
+**Task 2.2:** Update WorkflowDefinition Queries (1.5h)
+- File: `packages/orchestrator/src/repositories/workflow-definition.repository.ts`
+- Change: Remove enum validations, verify Prisma handles strings
+- Tests: Arbitrary agent_type strings work in queries
 
-**Tasks:**
-1. Database Schema - New Tables (2d)
-2. Database Schema - Modified Tables (1d)
-3. Create PlatformLoader Service (2d)
-4. Create PlatformRegistry Service (2d)
-5. Create Legacy Platform Definition (1d)
-6. Update WorkflowService for Platform Awareness (2d)
-7. Update Workflow Repository (1d)
-8. Phase 1 Integration Test (1d)
+**Task 2.3:** Add CLI Validation Commands (2h)
+- New Files:
+  - `validate-workflow.command.ts` - Check definition for missing agents
+  - `list-agents.command.ts` - Show available agents per platform
+- Commands:
+  ```bash
+  agentic validate-workflow <file>
+  agentic list-agents [--platform <id>]
+  ```
 
-**Gate Validation:**
-- ✅ All 3 new tables created
-- ✅ All 5 nullable columns added
-- ✅ PlatformLoader caching working
-- ✅ PlatformRegistry lookups working
-- ✅ Legacy platform workflows progressing
-- ✅ Production readiness: 99%
+**Task 2.4:** Error Recovery & Logging (1.5h)
+- File: `packages/orchestrator/src/services/workflow.service.ts`
+- Add: Typo detection with string similarity
+- Improve: Error messages with suggestions ("Did you mean...")
+- Add: Structured logging for debugging
 
----
-
-### Phase 2: Surface Abstraction (Weeks 2-3, 13 days)
-
-**Goal:** Enable multiple entry points (REST, Webhook, CLI, Dashboard)
-
-**Tasks:**
-1. Define SurfaceRouter Service (2d)
-2. Implement REST API Surface (2d)
-3. Implement GitHub Webhook Surface (2d)
-4. Implement CLI Surface (2d)
-5. Implement Dashboard Surface Updates (2d)
-6. Database Backfill - Legacy Platform Assignment (1d)
-7. Update API Routes for Backward Compatibility (1d)
-8. Phase 2 Integration Test (1d)
-
-**Gate Validation:**
-- ✅ REST API surface working
-- ✅ GitHub webhook surface working
-- ✅ CLI surface working
-- ✅ Dashboard platform awareness added
-- ✅ Legacy workflows still progressing
-- ✅ Production readiness: 99%
+**Task 2.5:** Validation Before Task Creation (1h)
+- Ensure validation happens in right place in flow
+- Verify error prevents AgentTask persistence
 
 ---
 
-### Phase 3: Workflow Engine Integration (Weeks 3-4, 10 days)
+### Phase 3: Documentation (6 hours)
 
-**Goal:** Replace hard-coded STAGE_SEQUENCES with definition-driven routing
+**Task 3.1:** Create Agent Creation Guide (2h)
+- File: `AGENT_CREATION_GUIDE.md` (NEW)
+- Content:
+  - Quick start (5 steps)
+  - Complete working example
+  - Registration patterns (global + platform-scoped)
+  - Testing custom agents
+  - Common patterns & best practices
+  - Naming conventions
+  - Troubleshooting guide
 
-**Tasks:**
-1. Create WorkflowDefinitionSchema (1d)
-2. Create PlatformAwareWorkflowEngine Service (2d)
-3. Update WorkflowStateMachineService (2d)
-4. Implement Adaptive Progress Calculation (1d)
-5. Create Platform Definition Files (YAML) (2d)
-6. Seed Platform Tables with Definitions (1d)
-7. Update Dashboard Progress Calculation (1d)
-8. Phase 3 Integration Test (1d)
+**Task 3.2:** Update CLAUDE.md (1.5h)
+- Add "Custom Agents" section to quick start
+- Update architecture section with agent flexibility
+- Add CLI commands reference
+- Link to AGENT_CREATION_GUIDE.md
 
-**Gate Validation:**
-- ✅ Definition-driven routing working
-- ✅ Adaptive progress calculation working
-- ✅ All 4 platform definitions seeded
-- ✅ Dashboard showing correct progress rates
-- ✅ Legacy fallback working
-- ✅ Production readiness: 99%
-
----
-
-### Phase 4: Platform-Specific Agents (Weeks 4-5, 10 days)
-
-**Goal:** Enable agents scoped to specific platforms and global agents
-
-**Tasks:**
-1. Extend AgentRegistry with Platform Scoping (1d)
-2. Update Agent Base Class for Platform Context (1d)
-3. Register Platform-Specific Agents (2d)
-4. Update Task Creation for Platform-Aware Agent Selection (1d)
-5. Update WorkflowStateMachineService for Agent Routing (1d)
-6. Create GenericMockAgent for Testing (2d)
-7. Multi-Platform Test Suite (2d)
-8. Phase 4 Integration Test (1d)
-
-**Gate Validation:**
-- ✅ Platform-specific agent lookup working
-- ✅ GenericMockAgent registered 11+ times
-- ✅ Multi-platform parallel execution working
-- ✅ Independent trace IDs per platform
-- ✅ All agents completing tasks
-- ✅ Production readiness: 99%
+**Task 3.3:** Create Example Custom Agent (2.5h)
+- Package: `@agentic-sdlc/example-agents` (NEW)
+- Agent: `MLTrainingAgent extends BaseAgent`
+- Content:
+  - Complete implementation with comments
+  - Unit tests (testing patterns)
+  - Integration tests (envelope structure)
+  - Documentation
 
 ---
 
-### Phase 5: Dashboard & Monitoring (Weeks 5-6, 9 days)
+### Phase 4: Testing & Validation (8 hours)
 
-**Goal:** Platform-aware dashboard with real-time monitoring
+**Task 4.1:** Unit Tests - Type System (1.5h)
+- Package: `@agentic-sdlc/shared-types`
+- Coverage:
+  - AgentTypeSchema accepts arbitrary strings
+  - Existing enum values still work
+  - WorkflowStageDefinition validates correctly
 
-**Tasks:**
-1. Create PlatformsPage Component (2d)
-2. Create PlatformSelector Component (1d)
-3. Create SurfaceIndicator Component (1d)
-4. Create WorkflowBuilderPage (2d)
-5. Create WorkflowDetailPage Enhancement (1d)
-6. Add Platform Analytics Endpoint (1d)
-7. Update API Client for Platform Endpoints (1d)
-8. Phase 5 Integration Test (1d)
+**Task 4.2:** Unit Tests - Agent Registry (1.5h)
+- Package: `@agentic-sdlc/shared-agent-registry`
+- Coverage:
+  - validateAgentExists with various scenarios
+  - Platform-scoped vs global lookup
+  - Error messages helpful
 
-**Gate Validation:**
-- ✅ PlatformsPage displaying all platforms
-- ✅ WorkflowBuilderPage creating workflows
-- ✅ WorkflowDetailPage showing platform info
-- ✅ API endpoints returning platform data
-- ✅ Dashboard responsive to platform selection
-- ✅ Production readiness: 99%
+**Task 4.3:** Integration Tests - WorkflowService (2h)
+- Package: `@agentic-sdlc/orchestrator`
+- Coverage:
+  - Valid agent_type creates task ✓
+  - Invalid agent_type fails BEFORE persistence ✓
+  - Workflow status updated to 'failed' ✓
+  - Platform-scoped validation works ✓
 
----
+**Task 4.4:** E2E Pipeline Test - Custom Agent (2h) **[CRITICAL]**
+- Test: Full workflow with custom agent
+- Steps:
+  1. Register MLTrainingAgent
+  2. Create workflow definition with custom agent_type
+  3. Execute workflow through all stages
+  4. Verify custom agent executed
+  5. Check results in stage_outputs
 
-### Phase 6: Testing Infrastructure (Weeks 6-7, 8 days)
-
-**Goal:** Comprehensive test coverage for multi-platform system
-
-**Tasks:**
-1. Finalize GenericMockAgent (1d)
-2. Create Multi-Platform Test Scenarios (2d)
-3. Create Unit Tests for Platform Services (1d)
-4. Create Integration Tests for Message Bus (1d)
-5. Create E2E Pipeline Tests (1d)
-6. Create Dashboard E2E Tests (1d)
-7. Create Documentation Tests (1d)
-8. Phase 6 Integration Test (1d)
-
-**Gate Validation:**
-- ✅ GenericMockAgent working with 11+ registrations
-- ✅ 100+ tests passing
-- ✅ 80%+ code coverage
-- ✅ Multi-platform test scenarios all passing
-- ✅ Dashboard E2E tests passing
-- ✅ Production readiness: 99.5%
+**Task 4.5:** Build Validation (1h)
+- Run: `turbo run build && turbo run typecheck && turbo run test && turbo run lint`
+- Result: Zero errors, all tests pass
 
 ---
 
-### Phase 7: Documentation & Graduation (Weeks 7-8, 7 days)
+### Phase 5: Final Documentation (4 hours)
 
-**Goal:** Documentation, cleanup, and production graduation
+**Task 5.1:** Update Architecture Docs (1.5h)
+- Files: `STRATEGIC-ARCHITECTURE.md`, `AGENTIC_SDLC_RUNBOOK.md`
+- Add: Agent extensibility section, troubleshooting, monitoring
 
-**Tasks:**
-1. Create Platform Definition Templates (1d)
-2. Create Surface Adapter Templates (1d)
-3. Update CLAUDE.md with Multi-Platform Architecture (1d)
-4. Create Platform Onboarding Guide (1d)
-5. Create Architecture Migration Guide (1d)
-6. Update API Documentation (Swagger) (1d)
-7. Production Graduation & Cleanup (1d)
+**Task 5.2:** CLAUDE.md Final Update (1.5h)
+- Verify all sections accurate
+- Ensure all examples work
+- Final review
 
-**Gate Validation:**
-- ✅ All documentation complete
-- ✅ Platform onboarding guide tested
-- ✅ API documentation complete
-- ✅ Final smoke tests passing
-- ✅ Production readiness: 99.5%
+**Task 5.3:** API Documentation (1h)
+- File: `packages/orchestrator/API.md`
+- Add: Error codes, examples, custom agent scenarios
 
 ---
 
-## 🎯 Success Criteria Summary
+## ⚠️ Risk Assessment
 
-### Overall Success Criteria
-- ✅ All 7 phases complete on schedule (8 weeks)
-- ✅ Production readiness maintained at 99%+ throughout
-- ✅ Hexagonal core completely protected
-- ✅ Backward compatibility verified
-- ✅ Database migration non-breaking
-- ✅ 100+ tests passing (unit + integration + E2E)
-- ✅ 80%+ code coverage maintained
-- ✅ Documentation complete
+| Risk | Prob | Impact | Mitigation |
+|------|------|--------|-----------|
+| Type safety loss | LOW | MED | Unit tests, strict mode, linter |
+| Backward compat breaks | VERY LOW | HIGH | Enum values ARE strings, no migration |
+| Agent not found at runtime | MED | MED | **Validate BEFORE task creation (2.1)** |
+| Custom agents misbehave | MED | MED | BaseAgent contract, envelope validation |
+| Documentation unclear | MED | MED | Comprehensive guide + examples |
+| Performance impact | LOW | LOW | Registry is O(1) in-memory |
 
-### Phase Gates (Go/No-Go)
-- **Phase 1:** Database ready, PlatformRegistry working, legacy workflows progressing
-- **Phase 2:** All 4 surfaces working, API routes updated, backfill complete
-- **Phase 3:** Definition-driven routing working, 4 platforms seeded, dashboard updated
-- **Phase 4:** Platform-scoped agents working, GenericMockAgent registered, multi-platform testing
-- **Phase 5:** Dashboard components working, API endpoints returning data, E2E tests passing
-- **Phase 6:** 100+ tests passing, 80%+ coverage, multi-platform test scenarios all passing
-- **Phase 7:** Documentation complete, smoke tests passing, production ready
+### Critical Mitigations
+1. **Task 2.1** - Validation BEFORE persistence prevents orphaned tasks
+2. **Task 4.3** - Integration tests verify behavior
+3. **Task 4.4** - E2E test validates full custom agent flow
+4. **Task 3.1** - Documentation prevents confusion
 
 ---
 
-## 🔄 Risk Assessment & Mitigation
+## ✅ Testing Strategy
 
-### HIGH Risk: Database Migration
-**Risk:** Breaking workflows or data loss
-**Mitigation:** Create new tables first, add nullable columns, backfill in background, keep pre-migration snapshot
+### Unit Tests (Vitest)
+```bash
+turbo run test --filter='@agentic-sdlc/shared-types'
+turbo run test --filter='@agentic-sdlc/shared-agent-registry'
+turbo run test --filter='@agentic-sdlc/orchestrator'
+```
+- Target Coverage: 85%+ | Effort: 2h
 
-### MEDIUM Risk: Workflow State Machine Refactoring
-**Risk:** Bugs in definition-driven routing breaking progression
-**Mitigation:** Keep hard-coded STAGE_SEQUENCES as fallback, extensive testing before switch, gradual rollout
+### Integration Tests
+```bash
+turbo run test  # All integration tests
+```
+- Target Coverage: 80%+ | Effort: 3.5h
 
-### MEDIUM Risk: Agent Registry Platform Scoping
-**Risk:** Agent lookup bugs or ambiguity
-**Mitigation:** Make platform_id optional, implement clear precedence, unit + integration tests, Phase 4 gate testing
+### E2E Pipeline Test
+```bash
+./dev start
+./scripts/run-pipeline-test.sh "Custom Agent E2E"
+./dev stop
+```
+- Validates: Custom agent registration & execution | Effort: 2h
 
-### MEDIUM Risk: Dashboard Breaking Changes
-**Risk:** Existing URLs/components breaking
-**Mitigation:** Add new pages alongside existing (additive), maintain backward-compatible URLs, "All Platforms" default option
-
-### LOW Risk: Testing Infrastructure
-**Risk:** GenericMockAgent not reflecting real behavior
-**Mitigation:** Mock is additive, existing tests continue working, use real agents for critical E2E tests
-
-### LOW Risk: Performance Degradation
-**Risk:** New layers causing latency reduction
-**Mitigation:** PlatformRegistry caching, WorkflowEngine caching, database indexes, load testing, monitoring
-
----
-
-## 📈 Metrics & Success Indicators
-
-### Development Metrics
-- Code Coverage: 80%+ (unit + integration)
-- Test Count: 100+ tests (unit + integration + E2E)
-- Lines of Code: ~3,000 new lines
-- Technical Debt: Minimal
-- Build Time: < 60 seconds (no regression)
-
-### Production Metrics
-- Availability: 99%+ uptime (no degradation)
-- Response Time: < 200ms (p95) for API endpoints
-- Workflow Success Rate: 95%+ (no regression)
-- Error Rate: < 0.5% (no new error types)
-
-### Timeline Metrics
-- Phase Completion On-Time: 100% (all 7 phases)
-- Phase Gate Pass Rate: 100% (all phases pass gates)
-- No Major Blockers: Minimal blocking issues
+### Build Validation
+```bash
+turbo run build && turbo run typecheck && turbo run lint
+```
+- Result: Zero errors, all tests pass | Effort: 1h
 
 ---
 
-## 🚀 Resource Requirements
+## 📊 Dependencies
 
-### Team Composition
-- **Architecture Lead:** 1 person
-- **Backend Engineers:** 2 people
-- **Frontend Engineers:** 1 person
-- **QA/Test Engineer:** 1 person
-- **DevOps/Infrastructure:** 0.5 person
+**Critical Path:** 1.1 → 1.2 → 2.1 → 4.3 → 4.4 → 4.5 (24 hours)
 
-**Total:** 5.5 FTE for 8 weeks | **Estimated:** 69 person-days
+**Parallel Opportunities:**
+- Phase 1 tasks (all parallel)
+- Phase 2 tasks (after Phase 1)
+- Phase 3 tasks (can overlap Phase 2)
+- Phase 4 tasks (staggered by dependencies)
 
----
-
-## 🔧 Technical Dependencies
-
-### Required Packages (Already Exist)
-- ✅ @agentic-sdlc/shared-types (v1.0.0)
-- ✅ @agentic-sdlc/base-agent (v1.0.0)
-- ✅ @agentic-sdlc/agent-registry (v1.0.0)
-- ✅ @agentic-sdlc/orchestrator (v1.0.0)
-- ✅ Redis 7+, PostgreSQL 16+, Prisma ORM
-
-### New Packages (to Create)
-- ⚡ @agentic-sdlc/platforms (monorepo package)
-- ⚡ @agentic-sdlc/surfaces (monorepo package)
-- ⚡ @agentic-sdlc/cli (monorepo package)
-
-### External Services (No Changes)
-- Claude API (Haiku 4.5)
-- AWS (ECS, ECR)
-- GitHub API
-- Playwright
+**Build Order:** shared-types → agent-registry → orchestrator → agents
 
 ---
 
-## 📋 Phase Gate Checklist
+## 📝 Implementation Sequence
 
-### Phase 1 Gate
-- [ ] All 3 new tables created
-- [ ] All 5 nullable columns added
-- [ ] PlatformLoader operational
-- [ ] PlatformRegistry operational
-- [ ] Legacy platform workflows progressing
-- [ ] Integration test passing
-- [ ] Production readiness: 99%
+**Week 1 - Foundation:**
+- Day 1-2: Phase 1 (Type system) - 6 hours
+- Day 2-3: Phase 2.1-2.2 (Validation & queries) - 3.5 hours
+- Day 3-4: Phase 2.3-2.4 (CLI & logging) - 3.5 hours
+- Day 4-5: Phase 4.1-4.2 (Unit tests) - 3 hours
 
-### Phase 2 Gate
-- [ ] REST API surface working
-- [ ] GitHub webhook surface working
-- [ ] CLI surface working
-- [ ] Dashboard platform awareness added
-- [ ] Database backfill complete
-- [ ] Legacy API routes still working
-- [ ] 3 workflows via different surfaces
-- [ ] Production readiness: 99%
+**Week 2 - Documentation & Validation:**
+- Day 1-2: Phase 3.1-3.2 (Guides) - 3.5 hours
+- Day 2-3: Phase 3.3 (Example agent) - 2.5 hours
+- Day 3-4: Phase 4.3-4.4 (Integration & E2E) - 4 hours
+- Day 4-5: Phase 4.5, 5.1-5.3 (Build & final docs) - 4 hours
 
-### Phase 3 Gate
-- [ ] Definition-driven routing working
-- [ ] Adaptive progress calculation working
-- [ ] All 4 platform definitions seeded
-- [ ] Dashboard showing correct progress rates
-- [ ] Fallback to hard-coded STAGE_SEQUENCES working
-- [ ] Web-apps (6 stages) + data-pipelines (5 stages) test passing
-- [ ] Production readiness: 99%
-
-### Phase 4 Gate
-- [ ] Platform-specific agents registered
-- [ ] AgentRegistry lookup with platform context
-- [ ] GenericMockAgent registered 11+ times
-- [ ] Multi-platform parallel execution
-- [ ] Independent trace IDs per platform
-- [ ] 2 platforms with independent traces
-- [ ] Production readiness: 99%
-
-### Phase 5 Gate
-- [ ] PlatformsPage operational
-- [ ] WorkflowBuilderPage operational
-- [ ] PlatformSelector working
-- [ ] SurfaceIndicator working
-- [ ] API platform endpoints working
-- [ ] Playwright E2E tests passing
-- [ ] Production readiness: 99%
-
-### Phase 6 Gate
-- [ ] 100+ tests passing
-- [ ] 80%+ code coverage
-- [ ] Multi-platform test scenarios passing
-- [ ] GenericMockAgent reliable
-- [ ] Dashboard E2E tests passing
-- [ ] No performance regressions
-- [ ] Production readiness: 99.5%
-
-### Phase 7 Gate
-- [ ] All documentation complete
-- [ ] Platform onboarding guide tested
-- [ ] API documentation complete
-- [ ] Session #72+ summary written
-- [ ] Final smoke tests passing
-- [ ] All cleanup tasks done
-- [ ] Production ready: 99.5%
+**Total: 32 hours (4 working days)**
 
 ---
 
-## 📚 Documentation Deliverables
+## 🎯 Success Criteria (Checklist)
 
-### At Completion
-1. **STRATEGIC-ARCHITECTURE.md** (Session #71 - DONE)
-2. **EPCC_PLAN.md** (THIS DOCUMENT)
-3. **PLATFORM_ONBOARDING.md** - New platforms guide
-4. **MIGRATION_GUIDE.md** - Backward compatibility
-5. **API_DOCUMENTATION.md** - Platform endpoints
-6. **SESSION_SUMMARY.md** - Completion report
+### Code Changes
+- [ ] All type definitions updated (Phase 1)
+- [ ] Validation logic in place (Task 2.1)
+- [ ] CLI commands working (Task 2.3)
+- [ ] Zero TypeScript errors
+- [ ] Full build succeeds
+
+### Testing
+- [ ] All unit tests pass (85%+ coverage)
+- [ ] All integration tests pass (80%+ coverage)
+- [ ] E2E pipeline test passes with custom agent
+- [ ] No regressions in existing workflows
+
+### Documentation
+- [ ] AGENT_CREATION_GUIDE.md complete
+- [ ] CLAUDE.md updated with agent section
+- [ ] Example agent (MLTrainingAgent) working
+- [ ] API documentation updated
+- [ ] All examples compile and run
+
+### Backward Compatibility
+- [ ] Existing enum-based agents work
+- [ ] Existing workflow definitions unchanged
+- [ ] No database migrations needed
+- [ ] No breaking API changes
+
+### User Experience
+- [ ] Helpful error messages for missing agents
+- [ ] CLI commands guide users effectively
+- [ ] Documentation clear and comprehensive
+- [ ] Examples show patterns clearly
 
 ---
 
-## ✅ Next Steps: Ready for CODE Phase
+## 📋 Files Affected Summary
 
-Once approved, CODE phase will execute:
-- **Week 1:** Phase 1 tasks (database, services, legacy platform)
-- **Week 2:** Phase 2 tasks (surfaces, API routes)
-- **Week 3:** Phase 3 tasks (definition-driven routing)
-- **Week 4:** Phase 4 tasks (platform-specific agents)
-- **Week 5:** Phase 5 tasks (dashboard)
-- **Week 6:** Phase 6 tasks (testing)
-- **Week 7-8:** Phase 7 tasks (documentation, graduation)
+```
+SHARED TYPES (5 files):
+  agent-types.ts (MODIFY)
+  workflow-definition-schema.ts (MODIFY)
+  agent-metadata.ts (MODIFY)
+  agent-types.constants.ts (NEW)
+  agent-envelope.ts (NO CHANGE - already flexible)
 
-Each phase will:
-- Implement tasks sequentially
-- Run tests after each task
-- Update CLAUDE.md with progress
-- Execute phase gate validation
-- Go/No-Go decision before next phase
+AGENT REGISTRY (2 files):
+  agent-registry.ts (MODIFY)
+  agent-metadata.ts (MODIFY)
+
+ORCHESTRATOR (5 files):
+  workflow.service.ts (MODIFY - ADD VALIDATION)
+  workflow-definition.repository.ts (VERIFY)
+  validate-workflow.command.ts (NEW)
+  list-agents.command.ts (NEW)
+  workflow-state-machine.ts (NO CHANGE)
+
+DOCUMENTATION (5 files):
+  AGENT_CREATION_GUIDE.md (NEW)
+  CLAUDE.md (UPDATE)
+  STRATEGIC-ARCHITECTURE.md (UPDATE)
+  AGENTIC_SDLC_RUNBOOK.md (UPDATE)
+  API.md (UPDATE)
+
+EXAMPLES (NEW PACKAGE):
+  @agentic-sdlc/example-agents/
+    ml-training.agent.ts
+    ml-training.test.ts
+    README.md
+
+TESTS (Multiple new test files):
+  agent-types.test.ts
+  workflow-definition-schema.test.ts
+  agent-registry.test.ts
+  workflow.service.test.ts (update)
+  e2e-custom-agent.test.ts (NEW)
+```
 
 ---
 
-**Status:** ✅ PLANNING PHASE COMPLETE - Ready for CODE Phase
+## ✨ Conclusion
 
-**Prepared By:** Claude Code | **Date:** 2025-11-16 | **Session:** #72 (Planning Phase)
+This plan implements the core goal: **"Platforms can have one or more workflows with any agent that extends BaseAgent."**
 
-**Next Action:** Stakeholder approval → Begin CODE Phase with Week 1 (Phase 1) tasks
+**Approach:**
+- Low Risk: Backward compatible, no database changes
+- Well-Tested: Comprehensive unit, integration, E2E tests
+- Well-Documented: Complete guide + working examples
+- User-Friendly: Clear error messages + helpful CLI
+
+**Estimated Effort:** 32 hours (4 working days)
+
+---
+
+**Status:** ✅ PLAN PHASE COMPLETE - READY FOR CODE PHASE
+
+**Next Step:** `/epcc:epcc-code "Implement unbounded agent extensibility"`

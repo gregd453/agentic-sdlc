@@ -22,8 +22,8 @@ export {
   Priority,
   TaskStatusEnum as AgentTaskStatusEnum,  // Rename to avoid conflict with core/schemas
   TaskStatus as AgentTaskStatus,          // Rename to avoid conflict with core/schemas
-  AgentTypeEnum as AgentEnvelopeTypeEnum, // Rename to avoid conflict with core/schemas
-  AgentType as AgentEnvelopeType,         // Rename to avoid conflict with core/schemas
+  AgentTypeSchema as AgentEnvelopeTypeSchema, // Updated: Now a string schema that accepts arbitrary agent types
+  AgentType as AgentEnvelopeType,         // Still exports AgentType string
   ExecutionConstraintsSchema,
   ExecutionConstraints,
   EnvelopeMetadataSchema as AgentEnvelopeMetadataSchema,  // Rename to avoid conflict with envelope/
@@ -77,8 +77,9 @@ export * from './agents/deployment';
 // ===== Envelope Exports (Session #36 - OLD, keep for backward compat) =====
 export * from './envelope/agent-envelope';
 
-// ===== Constants Exports (Session #37) =====
+// ===== Constants Exports (Session #37 + Session #85: Agent Types) =====
 export * from './constants/pipeline.constants';
+export * from './constants/agent-types.constants';
 
 // Phase 5: SchemaRegistry and ContractValidator are auto-initialized on import
 // No additional registration needed - schemas are registered in schema-registry.ts

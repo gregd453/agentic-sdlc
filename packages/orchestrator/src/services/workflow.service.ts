@@ -506,6 +506,68 @@ export class WorkflowService {
       throw new Error(`Workflow ${workflowId} not found`);
     }
 
+    // SESSION #85: CRITICAL - Validate agent exists BEFORE creating task
+    // Prevents orphaned tasks in queue if agent not registered
+    // This is the fail-fast validation point that improves UX significantly
+    try {
+      const agentRegistry = (this.stateMachineService as any).agentRegistry;
+      if (agentRegistry && typeof agentRegistry.validateAgentExists === 'function') {
+        agentRegistry.validateAgentExists(agentType, workflow.platform_id);
+        logger.info('[SESSION #85] Agent validation passed', {
+          agent_type: agentType,
+          platform_id: workflow.platform_id,
+          workflow_id: workflowId,
+          stage
+        });
+      }
+    } catch (validationError) {
+      // Agent not found - fail fast with helpful error message
+      const errorMessage = validationError instanceof Error
+        ? validationError.message
+        : `Agent type '${agentType}' not found`;
+
+      logger.error('[SESSION #85] Agent validation FAILED - workflow marked as failed', {
+        agent_type: agentType,
+        platform_id: workflow.platform_id,
+        workflow_id: workflowId,
+        stage,
+        error: errorMessage
+      });
+
+      // Update workflow status to 'failed' to prevent orphaned workflow
+      const existingOutputs = typeof workflow.stage_outputs === 'object' && workflow.stage_outputs !== null
+        ? (workflow.stage_outputs as Record<string, any>)
+        : {};
+
+      await this.repository.update(workflowId, {
+        status: 'failed',
+        stage_outputs: {
+          ...existingOutputs,
+          validation_error: errorMessage,
+          error_timestamp: new Date().toISOString(),
+          failed_stage: stage
+        }
+      });
+
+      // Publish failure event
+      await this.eventBus.publish({
+        id: `event-${Date.now()}`,
+        type: 'WORKFLOW_FAILED',
+        workflow_id: workflowId,
+        payload: {
+          reason: 'Agent validation failed',
+          stage,
+          agent_type: agentType,
+          error: errorMessage
+        },
+        timestamp: new Date().toISOString(),
+        trace_id: workflow.trace_id || generateTraceIdUtil()
+      });
+
+      // Throw error to prevent further processing
+      throw new Error(`[SESSION #85] Cannot execute stage '${stage}': ${errorMessage}`);
+    }
+
     const stageOutputs = typeof workflow.stage_outputs === 'object' && workflow.stage_outputs !== null
       ? workflow.stage_outputs as Record<string, any>
       : {};

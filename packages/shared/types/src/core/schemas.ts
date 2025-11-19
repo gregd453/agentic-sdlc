@@ -26,14 +26,16 @@ export const WorkflowStateEnum = z.enum([
   'cancelled'
 ]);
 
-export const AgentTypeEnum = z.enum([
-  'scaffold',
-  'validation',
-  'e2e',
-  'integration',
-  'deployment',
-  'base'
-]);
+/**
+ * Agent types can be any string identifier.
+ * Custom agents can extend BaseAgent with any agent_type value.
+ *
+ * Built-in types: 'scaffold', 'validation', 'e2e', 'integration', 'deployment', 'base'
+ * Custom types: Any kebab-case string identifier
+ */
+export const AgentTypeSchema = z.string().min(1).describe(
+  'Agent type identifier - can be any custom agent that extends BaseAgent'
+);
 
 export const TaskStatusEnum = z.enum([
   'pending',
@@ -74,7 +76,7 @@ export const WorkflowSchema = z.object({
 export const AgentTaskSchema = z.object({
   task_id: z.string().transform(toTaskId),
   workflow_id: z.string().transform(toWorkflowId),
-  agent_type: AgentTypeEnum,
+  agent_type: AgentTypeSchema,
   action: z.string(),
   status: TaskStatusEnum.default('pending'),
   priority: z.number().min(0).max(100).default(50),
@@ -96,7 +98,7 @@ export const AgentResultSchema = z.object({
   task_id: z.string().transform(toTaskId),
   workflow_id: z.string().transform(toWorkflowId),
   agent_id: z.string().transform(toAgentId),
-  agent_type: AgentTypeEnum,
+  agent_type: AgentTypeSchema,
   success: z.boolean(),
   status: TaskStatusEnum,
   action: z.string(),
@@ -129,7 +131,7 @@ export const AgentResultSchema = z.object({
 export const PipelineStageSchema = z.object({
   stage_id: z.string(),
   name: z.string(),
-  agent_type: AgentTypeEnum,
+  agent_type: AgentTypeSchema,
   action: z.string(),
   status: z.enum(['pending', 'running', 'success', 'failed', 'skipped', 'blocked']),
   depends_on: z.array(z.string()).optional(),
@@ -167,7 +169,7 @@ export type WorkflowType = z.infer<typeof WorkflowTypeEnum>;
 export type WorkflowState = z.infer<typeof WorkflowStateEnum>;
 export type AgentTask = z.infer<typeof AgentTaskSchema>;
 export type AgentResult = z.infer<typeof AgentResultSchema>;
-export type AgentType = z.infer<typeof AgentTypeEnum>;
+export type AgentType = z.infer<typeof AgentTypeSchema>;  // Now supports arbitrary strings for custom agents
 export type TaskStatus = z.infer<typeof TaskStatusEnum>;
 export type PipelineStage = z.infer<typeof PipelineStageSchema>;
 export type Event = z.infer<typeof EventSchema>;

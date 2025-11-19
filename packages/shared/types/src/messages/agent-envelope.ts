@@ -17,14 +17,21 @@ export const TaskStatusEnum = z.enum(['pending', 'queued', 'running']);
 export type TaskStatus = z.infer<typeof TaskStatusEnum>;
 
 // === Agent Types ===
-export const AgentTypeEnum = z.enum([
-  'scaffold',
-  'validation',
-  'e2e_test',
-  'integration',
-  'deployment'
-]);
-export type AgentType = z.infer<typeof AgentTypeEnum>;
+/**
+ * Agent types can be any string identifier.
+ * Custom agents can extend BaseAgent with any agent_type value.
+ * Predefined types are provided for reference in agent-types.constants.ts
+ *
+ * Examples:
+ *   - Built-in: 'scaffold', 'validation', 'e2e_test', 'integration', 'deployment'
+ *   - Custom: 'ml-training', 'data-validation', 'compliance-checker'
+ *
+ * Naming convention: kebab-case, lowercase alphanumeric + hyphens
+ */
+export const AgentTypeSchema = z.string().min(1).describe(
+  'Agent type identifier - can be any custom agent that extends BaseAgent'
+);
+export type AgentType = z.infer<typeof AgentTypeSchema>;
 
 // === Execution Constraints ===
 export const ExecutionConstraintsSchema = z.object({
@@ -67,7 +74,7 @@ export const AgentEnvelopeSchema = z.object({
   workflow_id: z.string().uuid(),
 
   // Routing
-  agent_type: AgentTypeEnum,
+  agent_type: AgentTypeSchema,
 
   // Execution Control
   priority: PriorityEnum,
