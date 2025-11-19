@@ -240,6 +240,43 @@ module.exports = {
     },
 
     // ==========================================
+    // MOCK AGENT (for testing)
+    // ==========================================
+    {
+      name: 'agent-mock',
+      script: './packages/agents/generic-mock-agent/dist/run-agent.js',
+      cwd: projectRoot,
+
+      env: {
+        NODE_ENV: 'development',
+        REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6380',
+        REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+        REDIS_PORT: process.env.REDIS_PORT || '6380',
+        AGENT_TYPE: 'mock-agent',
+        MOCK_AGENT_DEBUG: process.env.MOCK_AGENT_DEBUG || 'false',
+        ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
+      },
+
+      instances: 1,
+      exec_mode: 'fork',
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '512M',
+
+      min_uptime: '10s',
+      max_restarts: 10,
+      restart_delay: 4000,
+
+      error_file: './scripts/logs/mock-agent-error.log',
+      out_file: './scripts/logs/mock-agent-out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      merge_logs: true,
+
+      listen_timeout: 10000,
+      kill_timeout: 5000
+    },
+
+    // ==========================================
     // DASHBOARD
     // ==========================================
     // NOTE: Dashboard is now managed via Docker only (docker-compose.simple.yml)

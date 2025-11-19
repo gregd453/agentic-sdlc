@@ -385,6 +385,130 @@ export async function fetchAgentLatencyTimeSeries(period: string = '24h'): Promi
   }
 }
 
+// Workflow Definition API (New - Workflow Definition Management)
+export interface WorkflowDefinition {
+  id: string
+  platform_id: string
+  name: string
+  version: string
+  description?: string | null
+  definition: Record<string, any>
+  enabled: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateWorkflowDefinitionRequest {
+  name: string
+  version?: string
+  description?: string
+  definition: Record<string, any>
+}
+
+export interface UpdateWorkflowDefinitionRequest {
+  name?: string
+  version?: string
+  description?: string
+  definition?: Record<string, any>
+  enabled?: boolean
+}
+
+/**
+ * Create a new workflow definition for a platform
+ */
+export async function createWorkflowDefinition(
+  platformId: string,
+  data: CreateWorkflowDefinitionRequest
+): Promise<WorkflowDefinition> {
+  const response = await fetch(`${API_BASE}/platforms/${platformId}/workflow-definitions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  return response.json()
+}
+
+/**
+ * Get a workflow definition by ID
+ */
+export async function fetchWorkflowDefinition(id: string): Promise<WorkflowDefinition> {
+  return fetchJSON<WorkflowDefinition>(`${API_BASE}/workflow-definitions/${id}`)
+}
+
+/**
+ * List workflow definitions for a platform
+ */
+export async function fetchWorkflowDefinitions(
+  platformId: string,
+  includeDisabled: boolean = false
+): Promise<WorkflowDefinition[]> {
+  const params = new URLSearchParams()
+  if (includeDisabled) params.append('includeDisabled', 'true')
+
+  const url = `${API_BASE}/platforms/${platformId}/workflow-definitions${
+    params.toString() ? `?${params}` : ''
+  }`
+  return fetchJSON<WorkflowDefinition[]>(url)
+}
+
+/**
+ * Update a workflow definition
+ */
+export async function updateWorkflowDefinition(
+  id: string,
+  data: UpdateWorkflowDefinitionRequest
+): Promise<WorkflowDefinition> {
+  const response = await fetch(`${API_BASE}/workflow-definitions/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  return response.json()
+}
+
+/**
+ * Delete a workflow definition
+ */
+export async function deleteWorkflowDefinition(id: string): Promise<void> {
+  const response = await fetch(`${API_BASE}/workflow-definitions/${id}`, {
+    method: 'DELETE'
+  })
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+}
+
+/**
+ * Enable or disable a workflow definition
+ */
+export async function setWorkflowDefinitionEnabled(
+  id: string,
+  enabled: boolean
+): Promise<WorkflowDefinition> {
+  const response = await fetch(`${API_BASE}/workflow-definitions/${id}/enabled`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled })
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  return response.json()
+}
+
 // Helper function to transform workflow response
 function transformWorkflow(w: any): Workflow {
   return {

@@ -3,13 +3,14 @@ import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { CreateWorkflowSchema, WorkflowResponseSchema } from '../../types';
 import { WorkflowService } from '../../services/workflow.service';
+import { WorkflowRepository } from '../../repositories/workflow.repository';
 import { logger } from '../../utils/logger';
 
 export async function workflowRoutes(
   fastify: FastifyInstance,
-  options: { workflowService: WorkflowService }
+  options: { workflowService: WorkflowService; workflowRepository: WorkflowRepository }
 ): Promise<void> {
-  const { workflowService } = options;
+  const { workflowService, workflowRepository } = options;
 
   // Create workflow
   fastify.post('/api/v1/workflows', {
@@ -75,6 +76,60 @@ export async function workflowRoutes(
         reply.code(200).send(workflow);
       } catch (error) {
         logger.error('Failed to get workflow', { error, id: request.params.id });
+        reply.code(500).send({
+          error: 'Internal server error'
+        });
+      }
+    }
+  });
+
+  // Get workflow tasks by workflow ID
+  fastify.get('/api/v1/workflows/:id/tasks', {
+    schema: {
+      params: zodToJsonSchema(z.object({
+        id: z.string().uuid()
+      })),
+      response: {
+        200: zodToJsonSchema(z.array(z.object({
+          id: z.string(),
+          task_id: z.string(),
+          workflow_id: z.string(),
+          agent_type: z.string(),
+          status: z.string(),
+          priority: z.string(),
+          payload: z.any().optional(),
+          result: z.any().optional(),
+          trace_id: z.string().optional(),
+          assigned_at: z.string().optional(),
+          started_at: z.string().optional(),
+          completed_at: z.string().optional(),
+          retry_count: z.number().optional(),
+          max_retries: z.number().optional(),
+          timeout_ms: z.number().optional()
+        }))),
+        404: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{ Params: { id: string } }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        const tasks = await workflowRepository.getWorkflowTasks(request.params.id);
+
+        logger.info('[GET /api/v1/workflows/:id/tasks] Retrieved workflow tasks', {
+          workflowId: request.params.id,
+          taskCount: tasks.length
+        });
+
+        reply.code(200).send(tasks);
+      } catch (error) {
+        logger.error('[GET /api/v1/workflows/:id/tasks] Failed to get workflow tasks', {
+          error,
+          workflowId: request.params.id
+        });
         reply.code(500).send({
           error: 'Internal server error'
         });

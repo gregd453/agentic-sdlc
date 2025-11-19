@@ -2,6 +2,7 @@
  * WorkflowPipelineBuilder - Phase 3: Multi-Stage Workflow Builder
  * Manages the visual workflow pipeline editor with stage management
  * Session #82: Multi-stage workflow creation and configuration
+ * Session #86: Integration with workflow definitions
  */
 
 import { useState } from 'react'
@@ -12,6 +13,8 @@ import PipelinePreview from './PipelinePreview'
 import StageEditorModal from './StageEditorModal'
 import { ValidationErrorCard } from './ValidationErrorCard'
 import { useWorkflowValidation } from '../../hooks/useWorkflowValidation'
+import DefinitionTemplateSelector from '../WorkflowDefinitions/DefinitionTemplateSelector'
+import { WorkflowDefinition } from '../../api/client'
 
 interface WorkflowPipelineBuilderProps {
   onWorkflowCreated?: (stages: WorkflowStage[]) => void
@@ -23,6 +26,7 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
   const [editingStageId, setEditingStageId] = useState<string | null>(null)
   const [draggedStageId, setDraggedStageId] = useState<string | null>(null)
   const [showPreview, setShowPreview] = useState(false)
+  const [showDefinitionSelector, setShowDefinitionSelector] = useState(false)
 
   // Validation hook
   const { validation, isValidating } = useWorkflowValidation(stages)
@@ -42,6 +46,28 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
     setCurrentTemplate(createBlankTemplate())
     setStages([])
     setEditingStageId(null)
+  }
+
+  // Load definition and convert to stages
+  const handleDefinitionSelected = (definition: WorkflowDefinition) => {
+    const definitionStages = (definition.definition?.stages || []).map((defStage: any, index: number) => ({
+      id: `stage-${Date.now()}-${index}-${Math.random()}`,
+      order: index + 1,
+      name: defStage.name || `Stage ${index + 1}`,
+      agentType: defStage.agent_type,
+      behaviorMetadata: { mode: 'success' },
+      constraints: { timeout_ms: 30000, max_retries: 0 },
+      description: defStage.description
+    } as WorkflowStage))
+
+    setCurrentTemplate({
+      ...createBlankTemplate(),
+      name: definition.name,
+      stages: definitionStages
+    })
+    setStages(definitionStages)
+    setEditingStageId(null)
+    setShowDefinitionSelector(false)
   }
 
   // Add new stage
@@ -129,12 +155,30 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
       </div>
 
       {/* Template Selector */}
-      <TemplateSelector
-        templates={WORKFLOW_TEMPLATES}
-        selectedTemplate={currentTemplate.id}
-        onTemplateSelected={handleTemplateSelected}
-        onStartBlank={handleStartBlank}
-      />
+      <div className="space-y-4">
+        <TemplateSelector
+          templates={WORKFLOW_TEMPLATES}
+          selectedTemplate={currentTemplate.id}
+          onTemplateSelected={handleTemplateSelected}
+          onStartBlank={handleStartBlank}
+        />
+
+        {/* Load from Definition Button */}
+        <button
+          onClick={() => setShowDefinitionSelector(true)}
+          className="w-full px-4 py-3 border-2 border-dashed border-indigo-400 dark:border-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors flex items-center justify-center gap-2 text-indigo-700 dark:text-indigo-400 font-medium"
+        >
+          ⬇ Load from Saved Definition
+        </button>
+      </div>
+
+      {/* Definition Selector Modal */}
+      {showDefinitionSelector && (
+        <DefinitionTemplateSelector
+          onSelect={handleDefinitionSelected}
+          onClose={() => setShowDefinitionSelector(false)}
+        />
+      )}
 
       {/* Validation Errors */}
       {validation.errors.length > 0 && (

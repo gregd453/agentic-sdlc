@@ -156,6 +156,36 @@ export class AgentRegistryService {
         capabilities: ['rollback-deployment', 'restore-database', 'health-check'],
         timeout_ms: 60000,
         max_retries: 2
+      },
+      {
+        type: 'mock-agent',
+        name: 'Mock Agent',
+        version: '1.0.0',
+        description: 'Generic mock agent for testing with metadata-driven behaviors',
+        capabilities: ['mock-task-completion', 'test-stage-progression', 'failure-injection', 'behavior-simulation'],
+        timeout_ms: 30000,
+        max_retries: 3,
+        configSchema: {
+          behavior_metadata: {
+            type: 'object',
+            description: 'Behavior configuration for test scenarios (success, failure, timeout, partial, crash)',
+            properties: {
+              mode: {
+                type: 'string',
+                enum: ['success', 'failure', 'timeout', 'partial', 'crash'],
+                description: 'Execution mode'
+              },
+              timing: {
+                type: 'object',
+                description: 'Timing configuration'
+              },
+              error: {
+                type: 'object',
+                description: 'Error details for failure mode'
+              }
+            }
+          }
+        }
       }
     ];
 

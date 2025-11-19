@@ -13,6 +13,7 @@ import { PlatformsPage } from './pages/PlatformsPage'
 import { PlatformDetailsPage } from './pages/PlatformDetailsPage'
 import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage'
 import WorkflowPipelineBuilderPage from './pages/WorkflowPipelineBuilderPage'
+import WorkflowDefinitionsPage from './pages/WorkflowDefinitionsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 const queryClient = new QueryClient({
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/platforms">
                   <Route index element={<PlatformsPage />} />
                   <Route path=":id" element={<PlatformDetailsPage />} />
+                  <Route path=":platformId/definitions" element={<WorkflowDefinitionsPage />} />
                 </Route>
                 <Route path="/traces" element={<TracesPage />} />
                 <Route path="/traces/:traceId" element={<TraceDetailPage />} />

@@ -135,6 +135,14 @@ export const PlatformDetailsPage: React.FC = () => {
               )}
             </div>
           </div>
+          <div className="flex gap-2">
+            <a
+              href={`/platforms/${platform.id}/definitions`}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors text-sm"
+            >
+              Manage Definitions
+            </a>
+          </div>
         </div>
 
         {/* Analytics Section */}

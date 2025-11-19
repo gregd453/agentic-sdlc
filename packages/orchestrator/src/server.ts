@@ -23,6 +23,8 @@ import { traceRoutes } from './api/routes/trace.routes';
 import { taskRoutes } from './api/routes/task.routes';
 import { platformRoutes } from './api/routes/platform.routes';
 import { agentsRoutes } from './api/routes/agents.routes';
+import { workflowDefinitionRoutes } from './api/routes/workflow-definition.routes';
+import { WorkflowDefinitionRepository } from './repositories/workflow-definition.repository';
 import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
 import { logger } from './utils/logger';
 import { PlatformLoaderService } from './services/platform-loader.service';
@@ -119,6 +121,7 @@ export async function createServer() {
   const workflowRepository = new WorkflowRepository(prisma);
   const statsRepository = new StatsRepository(prisma);
   const traceRepository = new TraceRepository(prisma);
+  const workflowDefinitionRepository = new WorkflowDefinitionRepository(prisma);
 
   // Phase 3: Extract dependencies from container
   logger.info('[PHASE-3] Extracting dependencies from container');
@@ -206,7 +209,7 @@ export async function createServer() {
 
   // Register routes
   await fastify.register(healthRoutes, { healthCheckService });
-  await fastify.register(workflowRoutes, { workflowService });
+  await fastify.register(workflowRoutes, { workflowService, workflowRepository });
   await fastify.register(pipelineRoutes, { pipelineExecutor });
   await fastify.register(statsRoutes, { statsService });
   await fastify.register(traceRoutes, { traceService });
@@ -214,6 +217,8 @@ export async function createServer() {
   await fastify.register(platformRoutes, { platformRegistry, statsService, agentRegistry });
   // Session #85: Agent discovery routes for dashboard agent extensibility
   await fastify.register(agentsRoutes, { agentRegistry });
+  // Workflow definition CRUD routes for platform-scoped workflow management
+  await fastify.register(workflowDefinitionRoutes, { workflowDefinitionRepository });
 
   // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 
