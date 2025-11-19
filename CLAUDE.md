@@ -1,8 +1,8 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC
 
-**Status:** ✅ Phase 7B Complete + Session #83 (CI/CD Setup) | **Updated:** 2025-11-19 | **Version:** 56.0
+**Status:** ✅ Phase 7B Complete + Session #84 (Deployment Pipeline) | **Updated:** 2025-11-19 | **Version:** 57.0
 
-**📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions)
+**📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./DEPLOYMENT_PIPELINE.md) | [Quick Start](./DEPLOYMENT_QUICKSTART.md)
 
 ---
 
@@ -51,9 +51,29 @@
 ./dev db-only
 ./dev cache-only
 
+# Complete reset (clears everything, rebuilds from scratch)
+./infrastructure/local/full-reset.sh              # Full reset with migrations
+CLEAN_NODE_MODULES=true ./infrastructure/local/full-reset.sh  # Full reset + npm reinstall
+
+# Post-deployment health checks
+./infrastructure/local/post-deploy-validation.sh  # Verify all services healthy
+
 # Emergency: Check what's using a port
 lsof -i :3051                       # Check orchestrator port
 lsof -i :3050                       # Check dashboard port
+```
+
+**React Component Changes:**
+```bash
+# Changes automatically propagate through:
+# 1. Source code changes
+# 2. Vite build (with asset hashing)
+# 3. Docker image rebuild
+# 4. Container restart
+# 5. Browser cache invalidation (automatic via hash)
+
+./dev watch  # Enables auto-rebuild on file changes
+# Make edits → save → 2s → dashboard rebuilds → browser refreshes
 ```
 
 ---
@@ -110,6 +130,31 @@ git push origin main
 # 🔍 Building packages... ✓
 # ✅ All pre-push checks passed! Ready to push.
 # ↓ Push succeeds → GitHub Actions auto-triggers
+```
+
+### Deployment Pipeline (Session #84)
+**Automated Component Change Propagation:**
+- ✅ **Production Dockerfile** (Dockerfile.prod) - Multi-stage build with Vite asset hashing
+- ✅ **Smart Cache Control** - Hashed assets cached 1 year, index.html never cached (cache-busting)
+- ✅ **Automated Migrations** - Prisma migrations run automatically during reset
+- ✅ **Post-Deploy Validation** - Comprehensive health checks verify all services
+- ✅ **Complete Documentation** - [DEPLOYMENT_PIPELINE.md](./DEPLOYMENT_PIPELINE.md) & [DEPLOYMENT_QUICKSTART.md](./DEPLOYMENT_QUICKSTART.md)
+
+**One-Command Complete Reset:**
+```bash
+./infrastructure/local/full-reset.sh
+# Does everything automatically:
+# 1. Stops all services
+# 2. Destroys Docker infrastructure
+# 3. Clears React artifacts
+# 4. Resets Terraform state
+# 5. Rebuilds Docker image
+# 6. Applies Terraform
+# 7. Runs Prisma migrations (NEW)
+# 8. Starts Orchestrator API (NEW)
+# 9. Starts PM2 agents (NEW)
+# 10. Validates all services
+# Result: Everything running and healthy
 ```
 
 ### Git History Management
@@ -194,6 +239,36 @@ Full development workflow:
 - ✅ 121+ test cases, 0 TypeScript errors
 - ✅ All 21 packages building successfully
 - ✅ 99%+ production ready
+
+**Session #84: Deployment Pipeline & Automated Reset (COMPLETE)**
+- ✅ **Infrastructure Audit:** Identified and fixed 5 critical deployment gaps
+  - Dev server in production (now: Production Dockerfile.prod with Express)
+  - Unused build artifacts (now: Integrated into Docker image)
+  - No cache invalidation (now: Smart cache headers with Vite asset hashing)
+  - Missing health verification (now: Complete post-deploy validation)
+  - Incomplete component propagation (now: Full automation)
+- ✅ **Automated Full Reset:** `./infrastructure/local/full-reset.sh` does everything
+  - Destroys and recreates Docker infrastructure
+  - Clears React artifacts and caches
+  - Resets Terraform state
+  - Rebuilds Docker image with Dockerfile.prod
+  - Applies Terraform infrastructure
+  - **NEW:** Runs 7 Prisma migrations automatically
+  - **NEW:** Starts Orchestrator API with health check
+  - **NEW:** Starts all 5 PM2 agent services
+  - Validates all services are healthy
+  - Time: ~60 seconds (full automation, zero manual steps)
+- ✅ **Cache Invalidation Strategy:** Smart HTTP headers
+  - Hashed assets: 1 year cache (immutable, content-addressed)
+  - index.html: No-cache (always gets latest asset references)
+  - Automatic cache-busting when component changes
+- ✅ **Complete Documentation:**
+  - [DEPLOYMENT_PIPELINE.md](./DEPLOYMENT_PIPELINE.md) - Architecture & flows
+  - [DEPLOYMENT_QUICKSTART.md](./DEPLOYMENT_QUICKSTART.md) - Quick reference
+- ✅ **Dashboard Fixes:** Fixed 24+ TypeScript errors in server code
+  - Corrected Prisma field names (camelCase → snake_case)
+  - Added proper response headers
+  - Cache control middleware
 
 **Session #83: CI/CD & GitHub Actions Integration (COMPLETE)**
 - ✅ **GitHub Actions Workflow:** Full pipeline with 5 jobs (test → security scan → deploy → health check → notify)
