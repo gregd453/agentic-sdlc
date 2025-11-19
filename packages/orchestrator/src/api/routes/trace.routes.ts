@@ -29,14 +29,20 @@ export async function traceRoutes(
                 type: 'object',
                 properties: {
                   trace_id: { type: 'string' },
-                  status: { type: 'string' },
-                  workflow_count: { type: 'number' },
-                  workflow_ids: { type: 'array', items: { type: 'string' } },
-                  task_count: { type: 'number' },
-                  span_count: { type: 'number' },
-                  total_duration_ms: { type: ['number', 'null'] },
-                  started_at: { type: ['string', 'null'] },
-                  completed_at: { type: ['string', 'null'] }
+                  metadata: {
+                    type: 'object',
+                    properties: {
+                      status: { type: 'string' },
+                      workflow_count: { type: 'number' },
+                      workflow_ids: { type: 'array', items: { type: 'string' } },
+                      task_count: { type: 'number' },
+                      span_count: { type: 'number' },
+                      total_duration_ms: { type: ['number', 'null'] },
+                      start_time: { type: ['string', 'null'] },
+                      end_time: { type: ['string', 'null'] },
+                      error_count: { type: 'number' }
+                    }
+                  }
                 }
               }
             },
@@ -73,7 +79,25 @@ export async function traceRoutes(
         }
 
         const result = await traceService.listTraces({ limit, offset, status });
-        reply.code(200).send(result);
+        // Transform each trace to wrap metrics in metadata field for consistency with detail endpoint
+        const transformedResult = {
+          traces: result.traces.map((trace: any) => ({
+            trace_id: trace.trace_id,
+            metadata: {
+              status: trace.status,
+              workflow_count: trace.workflow_count,
+              workflow_ids: trace.workflow_ids || [],
+              task_count: trace.task_count,
+              span_count: trace.span_count,
+              total_duration_ms: trace.total_duration_ms,
+              start_time: trace.started_at,
+              end_time: trace.completed_at,
+              error_count: 0 // Will be calculated if needed
+            }
+          })),
+          total: result.total
+        };
+        reply.code(200).send(transformedResult);
       } catch (error) {
         logger.error('Failed to list traces', { error });
         reply.code(500).send({

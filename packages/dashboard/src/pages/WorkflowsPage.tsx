@@ -33,12 +33,20 @@ export default function WorkflowsPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Workflows</h2>
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
-        >
-          + Create Mock Workflow
-        </button>
+        <div className="flex gap-3">
+          <a
+            href="/workflows/pipeline"
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium"
+          >
+            🏗️ Pipeline Builder (Phase 3)
+          </a>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+          >
+            + Create Mock Workflow
+          </button>
+        </div>
       </div>
 
       {/* Filters */}

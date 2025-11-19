@@ -4,6 +4,10 @@ import { z } from 'zod';
 export type { AgentEnvelope } from '@agentic-sdlc/shared-types';
 export { AgentEnvelopeSchema } from '@agentic-sdlc/shared-types';
 
+// Session #81: Import behavior metadata for mock workflows
+import { AgentBehaviorMetadataSchema, BEHAVIOR_SAMPLES } from '@agentic-sdlc/shared-types';
+export { AgentBehaviorMetadataSchema, BEHAVIOR_SAMPLES };
+
 // Keep TaskResult (unchanged, working correctly)
 export const TaskResultSchema = z.object({
   message_id: z.string().uuid(),
@@ -53,7 +57,9 @@ export const CreateWorkflowSchema = z.object({
   // Phase 1: Platform awareness (optional for backward compatibility)
   platform_id: z.string().uuid().optional(),
   surface_id: z.string().uuid().optional(),
-  input_data: z.record(z.unknown()).optional()
+  input_data: z.record(z.unknown()).optional(),
+  // Session #81: Mock workflow behavior metadata for testing
+  behavior_metadata: AgentBehaviorMetadataSchema.optional().describe('Behavior metadata for mock agent (for testing purposes)')
 });
 
 export const WorkflowResponseSchema = z.object({
@@ -69,7 +75,9 @@ export const WorkflowResponseSchema = z.object({
   estimated_duration_ms: z.number().optional(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
-  completed_at: z.string().datetime().nullable().optional()
+  completed_at: z.string().datetime().nullable().optional(),
+  // Session #81: Include input_data which stores behavior_metadata for mock testing
+  input_data: z.record(z.unknown()).optional().nullable()
 });
 
 // Type exports

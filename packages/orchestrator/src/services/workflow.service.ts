@@ -308,15 +308,30 @@ export class WorkflowService {
 
     try {
       // Create workflow in database
+      // Session #81: Extract behavior_metadata before spreading request
+      const { behavior_metadata, ...requestWithoutBehavior } = request;
+
+      // DEBUG: Log what we're storing
+      const inputDataToStore = behavior_metadata
+        ? { behavior_metadata }
+        : request.input_data || undefined;
+
+      logger.info('Creating workflow with behavior metadata', {
+        behavior_metadata,
+        inputDataToStore,
+        requestInputData: request.input_data
+      });
+
       const workflow = await this.repository.create({
-        ...request,
+        ...requestWithoutBehavior,
         created_by: 'system', // In production, get from auth context
         trace_id: traceId, // Phase 3: Store trace_id
         current_span_id: spanId, // Phase 3: Store current span
         // Phase 1: Store platform-aware fields
         platform_id: request.platform_id || undefined,
         surface_id: request.surface_id || undefined,
-        input_data: request.input_data || undefined
+        // Session #81: Store behavior metadata in input_data for mock testing
+        input_data: inputDataToStore
       });
 
       // Create state machine for workflow
@@ -409,7 +424,9 @@ export class WorkflowService {
       trace_id: workflow.trace_id,
       created_at: workflow.created_at.toISOString(),
       updated_at: workflow.updated_at.toISOString(),
-      completed_at: workflow.completed_at?.toISOString() || null
+      completed_at: workflow.completed_at?.toISOString() || null,
+      // Session #81: Include input_data which stores behavior_metadata for mock testing
+      input_data: workflow.input_data as any || undefined
     };
   }
 
@@ -432,7 +449,9 @@ export class WorkflowService {
       trace_id: workflow.trace_id,
       created_at: workflow.created_at.toISOString(),
       updated_at: workflow.updated_at.toISOString(),
-      completed_at: workflow.completed_at?.toISOString() || null
+      completed_at: workflow.completed_at?.toISOString() || null,
+      // Session #81: Include input_data which stores behavior_metadata for mock testing
+      input_data: workflow.input_data as any || undefined
     }));
   }
 
@@ -492,6 +511,8 @@ export class WorkflowService {
       : {};
 
     // SESSION #36: Build agent envelope (replaces TaskAssignment)
+    // Session #81: Extract behavior_metadata from workflow input_data if available
+    const behaviorMetadata = (workflow.input_data as any)?.behavior_metadata;
     const envelope = this.buildAgentEnvelope(
       taskId,
       workflowId,
@@ -499,7 +520,8 @@ export class WorkflowService {
       agentType,
       stageOutputs,
       workflowData,
-      workflow
+      workflow,
+      behaviorMetadata
     );
 
     // [DEBUG] Verify envelope structure before any operations
@@ -1139,7 +1161,8 @@ export class WorkflowService {
     agentType: string,
     stageOutputs: Record<string, any>,
     workflowData: any,
-    workflow: any
+    workflow: any,
+    behaviorMetadata?: any
   ): any {
     const now = new Date().toISOString();
 
@@ -1248,6 +1271,7 @@ export class WorkflowService {
               bundler: workflowData.tech_stack === 'react' ? 'vite' : undefined,
               ui_library: workflowData.tech_stack === 'react' ? 'react' : undefined,
             },
+            ...(behaviorMetadata && { behavior_metadata: behaviorMetadata }),
           }
         };
       }
@@ -1294,6 +1318,7 @@ export class WorkflowService {
               warnings: 10,
               duplications: 5,
             },
+            ...(behaviorMetadata && { behavior_metadata: behaviorMetadata }),
           }
         };
       }
@@ -1306,7 +1331,7 @@ export class WorkflowService {
 
         return {
           ...envelopeBase,
-          agent_type: 'e2e' as const,
+          agent_type: 'e2e_test' as const,
           payload: {
             working_directory: projectPath,
             entry_points: scaffoldOutput.entry_points || [],
@@ -1314,6 +1339,7 @@ export class WorkflowService {
             headless: true,
             screenshot_on_failure: true,
             video: false,
+            ...(behaviorMetadata && { behavior_metadata: behaviorMetadata }),
           }
         };
       }
@@ -1332,6 +1358,7 @@ export class WorkflowService {
             api_endpoints: [],
             test_database: true,
             test_external_services: false,
+            ...(behaviorMetadata && { behavior_metadata: behaviorMetadata }),
           }
         };
       }
@@ -1349,6 +1376,7 @@ export class WorkflowService {
             working_directory: projectPath,
             deployment_target: 'docker' as const,
             environment: 'development' as const,
+            ...(behaviorMetadata && { behavior_metadata: behaviorMetadata }),
           }
         };
       }

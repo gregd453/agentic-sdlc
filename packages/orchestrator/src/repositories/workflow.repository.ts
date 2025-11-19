@@ -54,7 +54,7 @@ export class WorkflowRepository {
     throw lastError!;
   }
 
-  async create(data: CreateWorkflowRequest & { created_by: string; trace_id?: string; current_span_id?: string; platform_id?: string; surface_id?: string; input_data?: Record<string, any> }): Promise<Workflow> {
+  async create(data: Omit<CreateWorkflowRequest, 'behavior_metadata'> & { created_by: string; trace_id?: string; current_span_id?: string; platform_id?: string; surface_id?: string; input_data?: Record<string, any> }): Promise<Workflow> {
     return await this.prisma.$transaction(async (tx) => {
       // Create workflow
       const workflow = await tx.workflow.create({

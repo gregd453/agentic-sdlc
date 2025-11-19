@@ -244,9 +244,26 @@ export const createWorkflowStateMachine = (
           }
         }
       },
-      updateProgress: ({ context, event }) => {
+      updateProgress: async ({ context, event }) => {
         if (event.type === 'STAGE_COMPLETE') {
           context.progress = Math.min(100, context.progress + 15);
+          // Persist progress to database immediately so dashboard shows real-time updates
+          try {
+            await repository.update(context.workflow_id, {
+              progress: context.progress
+            });
+            logger.debug('Progress persisted', {
+              workflow_id: context.workflow_id,
+              progress: context.progress
+            });
+          } catch (error) {
+            logger.error('Failed to persist progress', {
+              workflow_id: context.workflow_id,
+              progress: context.progress,
+              error
+            });
+            // Don't throw - allow workflow to continue even if progress persistence fails
+          }
         }
       },
       logStageComplete: ({ context, event }) => {

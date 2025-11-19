@@ -550,3 +550,572 @@ An audit identified **7 major problems** affecting distributed tracing, database
 ---
 
 **Next**: See EPCC_PLAN.md for detailed step-by-step implementation strategy for each of the 5 phases.
+
+---
+
+---
+
+# Exploration Report: Mock Workflow Management UI Design
+
+**Date:** 2025-11-19 | **Session:** EPCC Explore Phase | **Status:** Complete
+
+**Task:** Review all aspects of mock agent workflows and their configurations and methods for starting workflows. Design a user interface for the dashboard that enables end users to define, create and run mock workflows and agents for testing that they can then monitor in the dashboard.
+
+---
+
+## Executive Summary
+
+This exploration focuses on designing a user interface for the dashboard that enables end users to:
+1. Define mock workflows with customizable behaviors
+2. Create and run mock workflows and agents for testing
+3. Monitor workflow execution in real-time
+4. Visualize trace hierarchies and test results
+
+**Current State:** The agentic-sdlc platform is production-ready (Phase 7B complete, Session #80) with:
+- Fully functional mock agent system with metadata-driven behavior control
+- 7 PM2 services (orchestrator, 5 agents, dashboard)
+- Distributed tracing infrastructure (trace_id, span hierarchy)
+- Dashboard UI for workflow/trace monitoring (functional but limited for mock creation)
+- Comprehensive test infrastructure using behavior metadata presets
+
+**Key Finding:** The foundation for mock workflow management already exists. The system supports:
+- GenericMockAgent with BEHAVIOR_SAMPLES (success, failure, timeout, crash, partial_success)
+- Behavior metadata-driven test scenarios
+- Full workflow state machine with distributed tracing
+- REST API for workflow creation and querying
+- React dashboard with routing and data fetching hooks
+
+**Design Opportunity:** Create a new dashboard section that abstracts away the complexity of behavior metadata and provides a visual workflow builder interface.
+
+---
+
+## 1. MOCK AGENT WORKFLOWS & CONFIGURATIONS
+
+### 1.1 Mock Agent System
+
+**Location:** `packages/agents/generic-mock-agent/src/generic-mock-agent.ts`
+
+The GenericMockAgent is the backbone of testing infrastructure:
+- **Flexible Design:** Supports all agent types (scaffold, validation, e2e_test, integration, deployment)
+- **Platform-Aware:** Optional platform context for multi-platform testing
+- **Metadata-Driven:** Behavior controlled via metadata without code changes
+- **Configurable Delays:** Simulates realistic execution timing
+- **Failure Injection:** Support for success/failure/timeout/crash/partial scenarios
+
+### 1.2 Behavior Metadata System (Key to Mock Testing)
+
+**Primary Reference:** `packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md` (556 lines, Session #77)
+
+**Available Execution Modes:**
+
+1. **success** - Normal completion
+2. **failure** - Agent failure with customizable error codes
+3. **timeout** - Timeout simulation
+4. **partial** - Partial success (e.g., 8/10 tests pass)
+5. **crash** - Agent crash simulation
+
+**Behavior Presets (BEHAVIOR_SAMPLES):**
+```typescript
+{
+  success: { mode: 'success' },
+  fast_success: { mode: 'success', delay_ms: 10 },
+  slow_success: { mode: 'success', delay_ms: 5000 },
+  validation_error: { mode: 'failure', error_code: 'VALIDATION_ERROR' },
+  deployment_failed: { mode: 'failure', error_code: 'DEPLOYMENT_FAILED' },
+  unrecoverable_error: { mode: 'failure', error_code: 'FATAL_ERROR', retryable: false },
+  timeout: { mode: 'timeout', trigger_delay_ms: 5000 },
+  tests_partial_pass: { mode: 'partial', output: { tests_passed: 8, tests_run: 10 } },
+  high_resource_usage: { mode: 'success', duration_ms: 30000, memory_mb: 500 },
+  crash: { mode: 'crash' }
+}
+```
+
+**Location:** `packages/shared/types/src/messages/agent-behavior.ts`
+
+### 1.3 Behavior Executor
+
+**Location:** `packages/agents/generic-mock-agent/src/behavior-executor.ts`
+
+Implements behavior execution logic, handling result generation and metric customization.
+
+---
+
+## 2. WORKFLOW STARTING METHODS
+
+### 2.1 API Endpoint: POST /api/v1/workflows
+
+**File:** `packages/orchestrator/src/api/routes/workflow.routes.ts`
+
+**Request Format:**
+```json
+POST /api/v1/workflows
+{
+  "name": "string (required)",
+  "type": "app|feature|bugfix (required)",
+  "priority": "low|medium|high|critical (required)",
+  "description": "string (optional)",
+  "platform_id": "uuid (optional)"
+}
+```
+
+**Returns:** Workflow object with trace_id for distributed tracing.
+
+### 2.2 Dashboard Hook: useWorkflowCreation()
+
+**File:** `packages/dashboard/src/hooks/useWorkflowCreation.ts`
+
+Manages form state and API submission with automatic navigation.
+
+### 2.3 Workflow Service: createWorkflow()
+
+**File:** `packages/orchestrator/src/services/workflow.service.ts`
+
+**Execution Steps:**
+1. Generate UUID for workflow_id and trace_id (Session #60)
+2. Create workflow record in PostgreSQL
+3. Emit WORKFLOW_CREATED event
+4. Transition to START state in state machine
+5. Create first task via buildAgentEnvelope()
+
+### 2.4 Workflow State Machine
+
+**File:** `packages/orchestrator/src/state-machine/workflow-state-machine.ts`
+
+**States:** initiated → running → evaluating → completed/failed/paused/cancelled
+
+**Events:** START, STAGE_COMPLETE, STAGE_FAILED, PAUSE, RESUME, CANCEL, RETRY
+
+### 2.5 buildAgentEnvelope(): Canonical Task Pattern
+
+**File:** `packages/orchestrator/src/services/workflow.service.ts` (lines ~1135-1300)
+
+**Purpose:** Canonical producer of AgentEnvelopeSchema v2.0.0 for task assignment
+
+**Generated Fields:**
+- Identification: message_id, task_id, workflow_id
+- Routing: agent_type
+- Execution Control: priority, status, constraints (timeout, max_retries)
+- Payload: agent-specific data
+- Distributed Tracing: trace_id, span_id, parent_span_id
+- Workflow Context: workflow_type, current_stage, stage_outputs, platform_id
+
+---
+
+## 3. EXISTING DASHBOARD UI FOR WORKFLOW MANAGEMENT
+
+### 3.1 Dashboard Pages
+
+**Dashboard.tsx** - Overview with metrics and running workflows list
+
+**WorkflowsPage.tsx** - Table with Name | Type | Status | Stage | Progress | Trace ID | Actions
+- Filters: Status, Type
+- Progress bars showing completion %
+- Links to trace/workflow detail pages
+
+**WorkflowPage.tsx** - Single workflow detail
+- Metadata cards: ID, Type, Priority, Current Stage, Trace ID
+- Progress bar with stage labels
+- Tasks table with Agent | Status | Assigned | Retries | Duration
+- Events log placeholder
+
+**TracesPage.tsx** - Distributed traces list
+- Search by trace ID
+- Filter by status
+- Pagination with configurable size
+
+**TraceDetailPage.tsx** (Session #80) - Trace hierarchical view
+- Summary: ID, Status, Start time, Duration
+- Key metrics: Workflows, Tasks, Spans, Errors
+- Workflows and Spans tables
+
+### 3.2 Routing Structure
+
+```
+/                    → Dashboard
+/workflows           → Workflows List
+/workflows/:id       → Workflow Detail
+/traces              → Traces List
+/traces/:traceId     → Trace Detail
+```
+
+### 3.3 Data Fetching Hooks
+
+**Location:** `packages/dashboard/src/hooks/`
+
+- `useWorkflows()` - List with filters (5s refetch)
+- `useWorkflow()` - Single workflow with polling
+- `useWorkflowTasks()` - Tasks for workflow (5s refetch, Session #82)
+- `useTraces()` - Traces with pagination and filtering
+- `useTrace()` - Single trace details
+- `useWorkflowCreation()` - Form state and submission
+
+All use TanStack React Query with 5s refetch intervals.
+
+### 3.4 API Client
+
+**File:** `packages/dashboard/src/api/client.ts`
+
+**Base URL:** `http://localhost:3051/api/v1`
+
+**Key Endpoints:**
+```
+GET    /workflows?status=&type=&limit=&offset=
+GET    /workflows/:id
+GET    /workflows/:id/tasks
+POST   /workflows
+GET    /traces
+GET    /traces/:traceId
+```
+
+---
+
+## 4. MOCK DATA AND TEST SCENARIO SYSTEM
+
+### 4.1 Workflow Test Definitions
+
+Examples of mock workflow JSON definitions for testing (feature, app, bugfix types).
+
+### 4.2 E2E Pipeline Tests
+
+**File:** `packages/orchestrator/src/__tests__/services/phase-6-e2e-pipelines.test.ts`
+
+**Test Scenarios:**
+- Feature Workflow (5 stages)
+- App Workflow (8 stages)
+- Bugfix Workflow (3 stages)
+- Platform-specific pipelines
+
+All use GenericMockAgent with behavior metadata presets.
+
+### 4.3 Behavior Metadata Test Patterns
+
+**Pattern Examples:**
+
+1. Happy Path: `{ behavior_metadata: BEHAVIOR_SAMPLES.success }`
+2. Failure Injection: `{ behavior_metadata: BEHAVIOR_SAMPLES.validation_error }`
+3. Partial Success: `{ behavior_metadata: BEHAVIOR_SAMPLES.tests_partial_pass }`
+4. Timeout: `{ behavior_metadata: BEHAVIOR_SAMPLES.timeout }`
+5. Custom: Custom mode with output and metrics override
+
+### 4.4 Mock Factory Functions
+
+**Locations:**
+- `packages/agents/deployment-agent/src/__tests__/mock-factories.ts`
+- `packages/agents/integration-agent/src/__tests__/mock-factories.ts`
+
+---
+
+## 5. RELATED INFRASTRUCTURE
+
+### 5.1 Database Persistence
+
+**Repository:** `packages/orchestrator/src/repositories/workflow.repository.ts`
+
+**Tables:** workflows, tasks, spans, traces, trace_metadata
+
+**Database:** PostgreSQL (localhost:5433, user: agentic)
+
+### 5.2 Redis Message Bus (CANONICAL - DO NOT DUPLICATE)
+
+**Adapter:** `packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts`
+
+**Connection:** Redis localhost:6380
+
+**Channels:** orchestrator:tasks, orchestrator:results, orchestrator:events
+
+**Pattern:** Redis Streams with consumer groups for reliability.
+
+### 5.3 Status Enums (Session #79 Unified)
+
+**File:** `packages/shared/types/src/core/schemas.ts`
+
+```typescript
+type PipelineStatus = 'initiated' | 'running' | 'completed' | 'failed' | 'paused' | 'cancelled'
+type TaskStatus = 'pending' | 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'
+```
+
+### 5.4 AgentEnvelopeSchema v2.0.0 (CANONICAL - DO NOT DUPLICATE)
+
+**Location:** `packages/shared/types/src/messages/agent-envelope.ts`
+
+All messages validated against this schema. Contains:
+- message_id, task_id, workflow_id
+- agent_type, priority, status, constraints
+- payload, trace context, workflow_context
+
+### 5.5 Trace Routes API
+
+**File:** `packages/orchestrator/src/api/routes/trace.routes.ts`
+
+**Endpoints:**
+```
+GET /api/v1/traces
+GET /api/v1/traces/:traceId
+GET /api/v1/traces/:traceId/spans
+GET /api/v1/traces/:traceId/workflows
+GET /api/v1/traces/:traceId/tasks
+```
+
+### 5.6 Workflow Routes API
+
+**File:** `packages/orchestrator/src/api/routes/workflow.routes.ts`
+
+**Endpoints:**
+```
+POST /api/v1/workflows
+GET /api/v1/workflows
+GET /api/v1/workflows/:id
+POST /api/v1/workflows/:id/cancel
+POST /api/v1/workflows/:id/retry
+```
+
+---
+
+## 6. ARCHITECTURE PATTERNS & CRITICAL CONSTRAINTS
+
+### 6.1 Canonical Files (DO NOT DUPLICATE)
+
+1. `packages/shared/types/src/messages/agent-envelope.ts` - Schema v2.0.0
+2. `packages/orchestrator/src/hexagonal/adapters/redis-bus.adapter.ts` - Message bus
+3. `packages/agents/base-agent/src/base-agent.ts` - Base agent class
+4. `packages/shared/types/src/messages/agent-behavior.ts` - Behavior schema
+
+### 6.2 Import Rules
+
+**CORRECT:** `import { AgentEnvelopeSchema } from '@agentic-sdlc/shared-types';`
+
+**WRONG:** `import { ... } from '@agentic-sdlc/shared-types/src/...';`
+
+### 6.3 Message Bus Pattern
+
+All message publishing/subscription via `redis-bus.adapter.ts` (CRITICAL - DO NOT DUPLICATE).
+
+### 6.4 Distributed Tracing (Session #60, #65)
+
+- Trace initiated at workflow creation: `trace_id = generateTraceId()`
+- Each task creates span: `span_id = generateSpanId()`
+- Parent-child relationships via `parent_span_id`
+- All envelopes carry trace context
+- Spans persisted with entity_type and duration
+
+### 6.5 Workflow State Machine Pattern
+
+Single point of state transitions with automatic task creation on completion.
+
+---
+
+## 7. CURRENT LIMITATIONS & OPPORTUNITIES
+
+### 7.1 Current Dashboard Limitations
+
+1. **No Mock Workflow Builder**
+   - Users cannot visually create mock workflows with behavior metadata
+   - Requires API knowledge to send POST /workflows
+   - No UI for defining behavior metadata
+
+2. **No Behavior Metadata Editor**
+   - Complex JSON structure not abstracted into UI
+   - No presets selection (easy way to pick BEHAVIOR_SAMPLES)
+
+3. **Limited Test Scenario Creation**
+   - Creating multi-stage test scenarios requires manual definition
+   - No visual pipeline builder
+
+4. **No Workflow Template System**
+   - Users must recreate workflows manually
+   - No saved templates for common scenarios
+
+5. **Trace Visualization is One-Directional**
+   - Can view traces created by workflows
+   - Cannot trigger workflows specifically for tracing/debugging
+
+### 7.2 Design Opportunities
+
+1. **Mock Workflow Builder**
+   - Visual form to create workflows
+   - Behavior preset selector
+   - Custom behavior editor for advanced scenarios
+
+2. **Behavior Metadata Configurator**
+   - Dropdown for BEHAVIOR_SAMPLES presets
+   - Custom mode selection with relevant fields
+   - Live preview of behavior impact
+
+3. **Multi-Stage Workflow Designer**
+   - Visual pipeline editor
+   - Drag-drop stages with behavior assignment
+   - Per-stage failure injection
+
+4. **Workflow Templates**
+   - Pre-built templates (Happy Path, Error Recovery, Load Test)
+   - Save custom workflows as templates
+
+5. **Enhanced Trace Debugging**
+   - Link workflows to traces for investigation
+   - Filter traces by workflow type/status
+
+---
+
+## 8. KEY TECHNOLOGY STACK
+
+- **Frontend:** React 19 + TypeScript + React Router v6
+- **State Management:** TanStack React Query + React Hook Form
+- **Styling:** Tailwind CSS + Shadcn/ui components
+- **Backend:** Node.js/TypeScript + Express
+- **Database:** PostgreSQL
+- **Message Bus:** Redis Streams
+- **Build:** Turbo + pnpm workspaces (21 packages)
+- **Process Management:** PM2 (7 services)
+
+---
+
+## 9. RECOMMENDATIONS FOR UI DESIGN
+
+### 9.1 Phased Implementation Approach
+
+**Phase 1 (MVP - Quick Win):** Simple workflow creation + behavior preset selection
+- Add "Create Mock Workflow" button
+- Simple form: Name + Type + Priority + Behavior Preset
+- Map BEHAVIOR_SAMPLES to radio buttons
+
+**Phase 2 (Medium):** Behavior metadata editor
+- Advanced form for custom configurations
+- Conditional fields based on selected mode
+- Preview section
+
+**Phase 3 (Higher):** Multi-stage workflow builder
+- Visual pipeline editor
+- Per-stage behavior assignment
+- Platform-specific templates
+
+**Phase 4 (Polish):** Templates & management
+- Template library
+- Clone workflows for testing variations
+
+### 9.2 Design Principles
+
+1. **Abstraction Over Complexity**
+   - Hide AgentEnvelopeSchema complexity
+   - Behavior metadata → Simple dropdowns/toggles
+   - Advanced options for power users
+
+2. **Visual Feedback**
+   - Show what stages will run
+   - Preview behavior impact
+   - Real-time validation
+
+3. **Progressive Disclosure**
+   - Basic workflow creation in main UI
+   - Advanced behavior editor in modal
+   - Custom JSON editor for power users
+
+4. **Consistency**
+   - Reuse existing components
+   - Match current routing pattern
+   - Use same data fetching hooks pattern
+
+### 9.3 Suggested UI Structure
+
+```
+Dashboard / Workflows Page
+├── Existing Workflows List
+├── [NEW] "Create Mock Workflow" Button
+│   └── Modal: Simple Workflow Creation
+│       ├── Name input
+│       ├── Type selector
+│       ├── Priority selector
+│       ├── Behavior preset (radio)
+│       ├── [Advanced] Custom behavior editor
+│       └── Create button
+│
+└── Enhanced Workflow Detail Page
+    ├── Existing metadata + progress
+    ├── Tasks table
+    └── [NEW] "Re-run with different behavior"
+```
+
+### 9.4 Integration Points
+
+**Existing APIs to Leverage:**
+- `POST /api/v1/workflows`
+- `GET /api/v1/workflows`
+- `GET /api/v1/workflows/:id`
+- `GET /api/v1/traces/:traceId`
+
+**New API Endpoints (Optional):**
+- `POST /api/v1/workflows/:id/clone`
+- `POST /api/v1/workflows/templates`
+
+---
+
+## 10. CRITICAL SUCCESS FACTORS
+
+### 10.1 Must-Haves
+
+1. **Behavior Metadata Abstraction** - Users shouldn't know about AgentEnvelopeSchema
+2. **Real-Time Monitoring Integration** - Workflows appear in list within 5s
+3. **Error Handling** - Clear error messages and retry mechanisms
+4. **Performance** - Form validation < 100ms, API submission < 5s
+
+### 10.2 Avoid These Mistakes
+
+1. ❌ Do NOT duplicate AgentEnvelopeSchema or BEHAVIOR_SAMPLES
+2. ❌ Do NOT create new packages or break monorepo structure
+3. ❌ Do NOT skip distributed tracing (trace_id propagation)
+4. ❌ Do NOT add synchronous API calls in React components
+5. ❌ Do NOT break existing routing or data fetching patterns
+6. ❌ Do NOT create custom message bus logic
+
+---
+
+## 11. EXPLORATION COMPLETION CHECKLIST
+
+- [x] Mock agent system (GenericMockAgent) reviewed
+- [x] Behavior metadata system thoroughly explored
+- [x] Behavior presets catalogued (success/failure/timeout/crash/partial)
+- [x] Workflow creation API and hooks reviewed
+- [x] Existing Dashboard UI mapped
+- [x] Data fetching patterns understood
+- [x] Status enum consistency verified
+- [x] API client and routing structure documented
+- [x] All critical files and patterns identified
+- [x] Constraints and opportunities identified
+- [x] Architecture patterns and design principles documented
+
+---
+
+## EXPLORATION SUMMARY
+
+### What We Learned
+
+The agentic-sdlc platform has a **complete foundation** for mock workflow management:
+
+1. **GenericMockAgent** - Fully functional mock agent with behavior metadata
+2. **Behavior Metadata System** - Flexible, preset-based test scenarios
+3. **Workflow State Machine** - Reliable state management with auto-progression
+4. **Distributed Tracing** - Full trace hierarchy support
+5. **React Dashboard** - Functional monitoring with routing and polling
+6. **REST API** - Complete workflow and trace endpoints
+
+### Design Opportunity
+
+Create a **user-friendly UI** that abstracts behavior metadata complexity and provides:
+1. Visual workflow builder
+2. Behavior preset selector
+3. Test scenario templates
+4. Real-time monitoring integration
+
+### Implementation Path
+
+**Phase 1 (MVP):** Form + preset selector (quick win)
+**Phase 2:** Behavior editor + preview
+**Phase 3:** Pipeline builder + templates
+**Phase 4:** Advanced features
+
+All building on existing APIs without duplicating canonical code.
+
+---
+
+**Next Steps:** Proceed to PLAN phase to design detailed implementation approach.
+
+**Exploration Date:** 2025-11-19 | **Created by:** Claude Code (EPCC Explore) | **Status:** Complete & Ready for Planning

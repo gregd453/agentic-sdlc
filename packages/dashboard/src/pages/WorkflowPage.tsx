@@ -6,7 +6,7 @@ import StatusBadge from '../components/Common/StatusBadge'
 import ProgressBar from '../components/Common/ProgressBar'
 import MetadataCard from '../components/Common/MetadataCard'
 import { SurfaceIndicator } from '../components/Common/SurfaceIndicator'
-import { formatDate, formatRelativeTime, truncateId } from '../utils/formatters'
+import { formatDate, formatRelativeTime, truncateId, calculateProgressFromStage } from '../utils/formatters'
 
 export default function WorkflowPage() {
   const { id } = useParams<{ id: string }>()
@@ -34,7 +34,10 @@ export default function WorkflowPage() {
 
       {/* Progress */}
       <div className="mb-8">
-        <ProgressBar value={workflow.progress} className="w-full" />
+        <ProgressBar
+          value={workflow.progress > 0 ? workflow.progress : calculateProgressFromStage(workflow.current_stage, workflow.type)}
+          className="w-full"
+        />
       </div>
 
       {/* Metadata Grid */}
