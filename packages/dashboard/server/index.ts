@@ -53,17 +53,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Request logging
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.path}`);
+app.use((_req, _res, next) => {
+  logger.info(`${_req.method} ${_req.path}`);
   next();
 });
 
 // CORS (allow frontend to call API)
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  if (req.method === 'OPTIONS') {
+  if (_req.method === 'OPTIONS') {
     res.sendStatus(200);
   } else {
     next();
@@ -77,17 +77,17 @@ app.use((req, res, next) => {
 /**
  * Basic liveness probe
  */
-app.get('/health', async (req: Request, res: Response) => {
+app.get('/health', async (_req: Request, res: Response) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
-    res.json({
+    return res.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
     });
   } catch (error) {
     logger.error('Health check failed', error);
-    res.status(503).json({
+    return res.status(503).json({
       status: 'unhealthy',
       error: 'Database connection failed',
     });
@@ -97,10 +97,10 @@ app.get('/health', async (req: Request, res: Response) => {
 /**
  * Readiness probe (all dependencies ready)
  */
-app.get('/ready', async (req: Request, res: Response) => {
+app.get('/ready', async (_req: Request, res: Response) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
-    res.json({
+    return res.json({
       ready: true,
       services: {
         database: 'connected',
@@ -108,7 +108,7 @@ app.get('/ready', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    res.status(503).json({
+    return res.status(503).json({
       ready: false,
       error: 'Services not ready',
     });
@@ -123,17 +123,17 @@ app.get('/ready', async (req: Request, res: Response) => {
  * GET /api/v1/stats/overview
  * Dashboard KPI counts
  */
-app.get('/api/v1/stats/overview', async (req: Request, res: Response) => {
+app.get('/api/v1/stats/overview', async (_req: Request, res: Response) => {
   try {
     const [workflowCount, taskCount, errorCount] = await Promise.all([
       prisma.workflow.count(),
       prisma.agentTask.count(),
       prisma.workflowEvent.count({
-        where: { eventType: 'error' },
+        where: { event_type: 'error' },
       }),
     ]);
 
-    res.json({
+    return res.json({
       totalWorkflows: workflowCount,
       totalTasks: taskCount,
       totalErrors: errorCount,
@@ -141,7 +141,7 @@ app.get('/api/v1/stats/overview', async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Stats overview error', error);
-    res.status(500).json({ error: 'Failed to fetch overview' });
+    return res.status(500).json({ error: 'Failed to fetch overview' });
   }
 });
 
@@ -149,28 +149,28 @@ app.get('/api/v1/stats/overview', async (req: Request, res: Response) => {
  * GET /api/v1/stats/agents
  * Agent performance statistics
  */
-app.get('/api/v1/stats/agents', async (req: Request, res: Response) => {
+app.get('/api/v1/stats/agents', async (_req: Request, res: Response) => {
   try {
     const agents = await prisma.agentTask.groupBy({
-      by: ['agentType'],
+      by: ['agent_type'],
       _count: {
         id: true,
       },
       _avg: {
-        executionTimeMs: true,
+        timeout_ms: true,
       },
     });
 
-    res.json(
+    return res.json(
       agents.map((agent) => ({
-        type: agent.agentType,
-        taskCount: agent._count.id,
-        avgExecutionTime: agent._avg.executionTimeMs || 0,
+        type: agent.agent_type,
+        taskCount: agent._count?.id || 0,
+        avgExecutionTime: agent._avg?.timeout_ms || 0,
       }))
     );
   } catch (error) {
     logger.error('Agent stats error', error);
-    res.status(500).json({ error: 'Failed to fetch agent stats' });
+    return res.status(500).json({ error: 'Failed to fetch agent stats' });
   }
 });
 
@@ -200,18 +200,18 @@ app.get('/api/v1/stats/timeseries', async (req: Request, res: Response) => {
 
     const events = await prisma.workflowEvent.findMany({
       where: {
-        createdAt: {
+        timestamp: {
           gte: since,
         },
       },
       orderBy: {
-        createdAt: 'asc',
+        timestamp: 'asc',
       },
     });
 
     const grouped = events.reduce(
       (acc, event) => {
-        const hour = new Date(event.createdAt).toISOString().slice(0, 13);
+        const hour = new Date(event.timestamp).toISOString().slice(0, 13);
         if (!acc[hour]) {
           acc[hour] = 0;
         }
@@ -221,7 +221,7 @@ app.get('/api/v1/stats/timeseries', async (req: Request, res: Response) => {
       {} as Record<string, number>
     );
 
-    res.json(
+    return res.json(
       Object.entries(grouped).map(([timestamp, count]) => ({
         timestamp,
         count,
@@ -229,7 +229,7 @@ app.get('/api/v1/stats/timeseries', async (req: Request, res: Response) => {
     );
   } catch (error) {
     logger.error('Timeseries error', error);
-    res.status(500).json({ error: 'Failed to fetch timeseries data' });
+    return res.status(500).json({ error: 'Failed to fetch timeseries data' });
   }
 });
 
@@ -237,25 +237,25 @@ app.get('/api/v1/stats/timeseries', async (req: Request, res: Response) => {
  * GET /api/v1/stats/workflows
  * Workflow statistics by type
  */
-app.get('/api/v1/stats/workflows', async (req: Request, res: Response) => {
+app.get('/api/v1/stats/workflows', async (_req: Request, res: Response) => {
   try {
     const workflows = await prisma.workflow.groupBy({
-      by: ['workflowType', 'status'],
+      by: ['type', 'status'],
       _count: {
         id: true,
       },
     });
 
-    res.json(
+    return res.json(
       workflows.map((wf) => ({
-        type: wf.workflowType,
+        type: wf.type,
         status: wf.status,
-        count: wf._count.id,
+        count: wf._count?.id || 0,
       }))
     );
   } catch (error) {
     logger.error('Workflow stats error', error);
-    res.status(500).json({ error: 'Failed to fetch workflow stats' });
+    return res.status(500).json({ error: 'Failed to fetch workflow stats' });
   }
 });
 
@@ -272,8 +272,8 @@ app.get('/api/v1/tasks', async (req: Request, res: Response) => {
     const { workflowId, agentType, status, limit = '50', offset = '0' } = req.query;
 
     const where: any = {};
-    if (workflowId) where.workflowId = workflowId;
-    if (agentType) where.agentType = agentType;
+    if (workflowId) where.workflow_id = workflowId;
+    if (agentType) where.agent_type = agentType;
     if (status) where.status = status;
 
     const [tasks, total] = await Promise.all([
@@ -281,12 +281,12 @@ app.get('/api/v1/tasks', async (req: Request, res: Response) => {
         where,
         take: Math.min(parseInt(limit as string), 100),
         skip: parseInt(offset as string),
-        orderBy: { createdAt: 'desc' },
+        orderBy: { assigned_at: 'desc' },
       }),
       prisma.agentTask.count({ where }),
     ]);
 
-    res.json({
+    return res.json({
       tasks,
       pagination: {
         total,
@@ -296,7 +296,7 @@ app.get('/api/v1/tasks', async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Task list error', error);
-    res.status(500).json({ error: 'Failed to fetch tasks' });
+    return res.status(500).json({ error: 'Failed to fetch tasks' });
   }
 });
 
@@ -304,9 +304,9 @@ app.get('/api/v1/tasks', async (req: Request, res: Response) => {
  * GET /api/v1/tasks/:taskId
  * Get task by ID
  */
-app.get('/api/v1/tasks/:taskId', async (req: Request, res: Response) => {
+app.get('/api/v1/tasks/:taskId', async (_req: Request, res: Response) => {
   try {
-    const { taskId } = req.params;
+    const { taskId } = _req.params;
     const task = await prisma.agentTask.findUnique({
       where: { id: taskId },
     });
@@ -315,10 +315,10 @@ app.get('/api/v1/tasks/:taskId', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
-    res.json(task);
+    return res.json(task);
   } catch (error) {
     logger.error('Task fetch error', error);
-    res.status(500).json({ error: 'Failed to fetch task' });
+    return res.status(500).json({ error: 'Failed to fetch task' });
   }
 });
 
@@ -336,24 +336,24 @@ app.get('/api/v1/workflows', async (req: Request, res: Response) => {
 
     const where: any = {};
     if (status) where.status = status;
-    if (type) where.workflowType = type;
+    if (type) where.type = type;
 
     const [workflows, total] = await Promise.all([
       prisma.workflow.findMany({
         where,
         take: Math.min(parseInt(limit as string), 100),
         skip: parseInt(offset as string),
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         include: {
           stages: {
-            select: { id: true, stageName: true, status: true },
+            select: { id: true, name: true, status: true },
           },
         },
       }),
       prisma.workflow.count({ where }),
     ]);
 
-    res.json({
+    return res.json({
       workflows,
       pagination: {
         total,
@@ -363,7 +363,7 @@ app.get('/api/v1/workflows', async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Workflow list error', error);
-    res.status(500).json({ error: 'Failed to fetch workflows' });
+    return res.status(500).json({ error: 'Failed to fetch workflows' });
   }
 });
 
@@ -378,10 +378,10 @@ app.get('/api/v1/workflows/:workflowId', async (req: Request, res: Response) => 
       where: { id: workflowId },
       include: {
         stages: {
-          orderBy: { stageOrder: 'asc' },
+          orderBy: { id: 'asc' },
         },
         events: {
-          orderBy: { createdAt: 'desc' },
+          orderBy: { timestamp: 'desc' },
           take: 20,
         },
       },
@@ -391,10 +391,10 @@ app.get('/api/v1/workflows/:workflowId', async (req: Request, res: Response) => 
       return res.status(404).json({ error: 'Workflow not found' });
     }
 
-    res.json(workflow);
+    return res.json(workflow);
   } catch (error) {
     logger.error('Workflow fetch error', error);
-    res.status(500).json({ error: 'Failed to fetch workflow' });
+    return res.status(500).json({ error: 'Failed to fetch workflow' });
   }
 });
 
@@ -412,15 +412,15 @@ app.use(express.static(distPath));
  * SPA fallback: serve index.html for all unmatched routes
  * (React Router handles frontend routing)
  */
-app.get('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+app.get('*', (_req: Request, res: Response) => {
+  return res.sendFile(path.join(distPath, 'index.html'));
 });
 
 // ============================================================================
 // Error Handling
 // ============================================================================
 
-app.use((err: any, req: Request, res: Response) => {
+app.use((err: any, _req: Request, res: Response) => {
   logger.error('Unhandled error', err);
   res.status(500).json({
     error: 'Internal server error',
