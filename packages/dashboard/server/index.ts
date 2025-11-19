@@ -403,10 +403,40 @@ app.get('/api/v1/workflows/:workflowId', async (req: Request, res: Response) => 
 // ============================================================================
 
 /**
- * Serve static Vite-built frontend
+ * Cache-Control headers for static assets
+ * - Hashed assets (in dist/assets/): long-lived cache (1 year)
+ * - index.html: no cache (always fetch from server)
+ * - Other assets: moderate cache (1 hour)
  */
+const cacheControl = (_req: Request, res: Response, next: Function) => {
+  const path = _req.path;
+
+  if (path.includes('/assets/') && path.match(/\.[a-f0-9]{8}\./)) {
+    // Hashed asset files - cache forever (Vite asset hashing ensures uniqueness)
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+  } else if (path === '/index.html' || path === '/') {
+    // index.html - never cache (always get latest)
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  } else {
+    // Other files - moderate cache (1 hour)
+    res.set('Cache-Control', 'public, max-age=3600');
+  }
+
+  next();
+};
+
 const distPath = path.join(__dirname, '../dist');
-app.use(express.static(distPath));
+
+/**
+ * Serve static Vite-built frontend with proper cache headers
+ */
+app.use(cacheControl);
+app.use(express.static(distPath, {
+  etag: true,
+  lastModified: true,
+}));
 
 /**
  * SPA fallback: serve index.html for all unmatched routes

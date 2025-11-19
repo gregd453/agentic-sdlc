@@ -2,8 +2,12 @@
 # Dashboard Container
 # ============================================================================
 
-# Note: Dashboard image is built by watch-and-redeploy.sh script
+# Note: Dashboard image is built externally (by start-infra.sh or watch-and-redeploy.sh)
 # Terraform just manages the container lifecycle
+#
+# Built with:
+#   - Production: Dockerfile.prod (multi-stage build with static assets)
+#   - Development: Dockerfile (Vite dev server)
 
 # Dashboard container
 resource "docker_container" "dashboard" {

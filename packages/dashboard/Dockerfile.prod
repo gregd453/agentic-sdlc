@@ -1,0 +1,63 @@
+# ==========================================
+# Production Dockerfile for Dashboard
+# Multi-stage build with optimized caching
+# ==========================================
+
+# Stage 1: Build React frontend with asset hashing
+FROM node:20.11.0-alpine AS builder
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy workspace files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build frontend (Vite with asset hashing for cache-busting)
+WORKDIR /app/packages/dashboard
+RUN pnpm run build:frontend
+
+# Build server
+RUN pnpm run server:build
+
+# Stage 2: Runtime container (Express serving static + API)
+FROM node:20.11.0-alpine
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package.json for runtime dependencies only
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Install only production dependencies
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy built artifacts from builder
+COPY --from=builder /app/packages/dashboard/dist ./packages/dashboard/dist
+COPY --from=builder /app/packages/dashboard/dist/server ./dist/server
+
+# Copy Prisma schema (needed by server)
+COPY packages/orchestrator/prisma ./packages/orchestrator/prisma
+
+# Expose port
+EXPOSE 3050
+
+# Environment (will be overridden by container)
+ENV NODE_ENV=production
+ENV PORT=3050
+
+# Health check (check Express server, not Vite dev server)
+HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=15s \
+  CMD wget --quiet --tries=1 --spider http://localhost:3050/ || exit 1
+
+# Start Express server serving static files + API
+CMD ["node", "packages/dashboard/dist/server/index.js"]
