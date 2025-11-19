@@ -6,6 +6,7 @@
 import { useState } from 'react'
 import { WorkflowStage } from './workflowTemplates'
 import BehaviorMetadataEditor from './BehaviorMetadataEditor'
+import AgentSelector from './AgentSelector'
 
 interface StageEditorModalProps {
   stage: WorkflowStage
@@ -78,21 +79,11 @@ export default function StageEditorModal({ stage, onUpdate, onClose }: StageEdit
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Agent Type (Optional)</label>
-              <select
-                value={agentType}
-                onChange={(e) => setAgentType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Auto-assign</option>
-                <option value="scaffold-agent">Scaffold Agent</option>
-                <option value="validation-agent">Validation Agent</option>
-                <option value="e2e-agent">E2E Agent</option>
-                <option value="integration-agent">Integration Agent</option>
-                <option value="deployment-agent">Deployment Agent</option>
-              </select>
-            </div>
+            <AgentSelector
+              value={agentType}
+              onChange={setAgentType}
+              showMetadata={true}
+            />
           </div>
 
           {/* Behavior Configuration */}

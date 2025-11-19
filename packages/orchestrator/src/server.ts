@@ -22,10 +22,12 @@ import { statsRoutes } from './api/routes/stats.routes';
 import { traceRoutes } from './api/routes/trace.routes';
 import { taskRoutes } from './api/routes/task.routes';
 import { platformRoutes } from './api/routes/platform.routes';
+import { agentsRoutes } from './api/routes/agents.routes';
 import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
 import { logger } from './utils/logger';
 import { PlatformLoaderService } from './services/platform-loader.service';
 import { PlatformRegistryService } from './services/platform-registry.service';
+import { AgentRegistryService } from './services/agent-registry.service';
 import { metrics } from './utils/metrics';
 import {
   registerObservabilityMiddleware,
@@ -165,6 +167,11 @@ export async function createServer() {
   await platformRegistry.initialize();
   logger.info('Platform services initialized (PlatformRegistry with %d platforms)', platformRegistry.size());
 
+  // Initialize agent discovery service (Session #85 - Dashboard Agent Extensibility)
+  const agentRegistry = new AgentRegistryService();
+  await agentRegistry.initialize();
+  logger.info('Agent discovery service initialized');
+
   // Initialize pipeline services
   const qualityGateService = new QualityGateService();
   // Session #79: Create repository for pipeline execution persistence
@@ -204,7 +211,9 @@ export async function createServer() {
   await fastify.register(statsRoutes, { statsService });
   await fastify.register(traceRoutes, { traceService });
   await fastify.register(taskRoutes, { workflowRepository });
-  await fastify.register(platformRoutes, { platformRegistry, statsService });
+  await fastify.register(platformRoutes, { platformRegistry, statsService, agentRegistry });
+  // Session #85: Agent discovery routes for dashboard agent extensibility
+  await fastify.register(agentsRoutes, { agentRegistry });
 
   // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 

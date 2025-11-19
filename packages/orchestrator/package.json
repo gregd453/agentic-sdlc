@@ -32,6 +32,7 @@
     "db:generate": "prisma generate"
   },
   "dependencies": {
+    "@agentic-sdlc/agent-registry": "workspace:*",
     "@agentic-sdlc/shared-types": "workspace:*",
     "@agentic-sdlc/shared-utils": "workspace:*",
     "@anthropic-ai/sdk": "^0.20.0",

@@ -10,6 +10,8 @@ import TemplateSelector from './TemplateSelector'
 import StageList from './StageList'
 import PipelinePreview from './PipelinePreview'
 import StageEditorModal from './StageEditorModal'
+import { ValidationErrorCard } from './ValidationErrorCard'
+import { useWorkflowValidation } from '../../hooks/useWorkflowValidation'
 
 interface WorkflowPipelineBuilderProps {
   onWorkflowCreated?: (stages: WorkflowStage[]) => void
@@ -21,6 +23,9 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
   const [editingStageId, setEditingStageId] = useState<string | null>(null)
   const [draggedStageId, setDraggedStageId] = useState<string | null>(null)
   const [showPreview, setShowPreview] = useState(false)
+
+  // Validation hook
+  const { validation, isValidating } = useWorkflowValidation(stages)
 
   // Load template and set stages
   const handleTemplateSelected = (templateId: string) => {
@@ -108,6 +113,13 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
     return total + Math.max(delay, duration, timeout)
   }, 0)
 
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion: string, stageId: string) => {
+    setStages(stages.map(s =>
+      s.id === stageId ? { ...s, agentType: suggestion } : s
+    ))
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -123,6 +135,31 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
         onTemplateSelected={handleTemplateSelected}
         onStartBlank={handleStartBlank}
       />
+
+      {/* Validation Errors */}
+      {validation.errors.length > 0 && (
+        <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <svg className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <div className="flex-1">
+              <h4 className="font-semibold text-red-900 dark:text-red-100 mb-3">
+                Workflow Validation Errors ({validation.errors.length})
+              </h4>
+              <div className="space-y-2">
+                {validation.errors.map((error) => (
+                  <ValidationErrorCard
+                    key={error.stageId}
+                    error={error}
+                    onSuggestionClick={handleSuggestionClick}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -193,11 +230,22 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
               {showPreview ? '✓ Close Preview' : '👁️ Preview Pipeline'}
             </button>
             <button
-              disabled={stages.length === 0}
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              disabled={stages.length === 0 || !validation.isValid || isValidating}
+              className={`w-full px-4 py-2 rounded-lg text-white transition-colors text-sm font-medium ${
+                stages.length === 0 || !validation.isValid || isValidating
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
               onClick={() => onWorkflowCreated?.(stages)}
+              title={
+                !validation.isValid
+                  ? 'Fix validation errors before creating workflow'
+                  : isValidating
+                  ? 'Validating workflow...'
+                  : ''
+              }
             >
-              ✓ Create Workflow
+              {isValidating ? '⏳ Validating...' : !validation.isValid ? '✗ Fix Errors' : '✓ Create Workflow'}
             </button>
           </div>
 

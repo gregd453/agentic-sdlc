@@ -698,6 +698,9 @@ importers:
 
   packages/orchestrator:
     dependencies:
+      '@agentic-sdlc/agent-registry':
+        specifier: workspace:*
+        version: link:../shared/agent-registry
       '@agentic-sdlc/shared-types':
         specifier: workspace:*
         version: link:../shared/types

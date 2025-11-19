@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { PlatformRegistryService } from '../../services/platform-registry.service';
 import { StatsService } from '../../services/stats.service';
+import { AgentRegistryService } from '../../services/agent-registry.service';
 import { logger } from '../../utils/logger';
 
 export async function platformRoutes(
@@ -10,9 +11,10 @@ export async function platformRoutes(
   options: {
     platformRegistry: PlatformRegistryService
     statsService: StatsService
+    agentRegistry: AgentRegistryService
   }
 ): Promise<void> {
-  const { platformRegistry, statsService } = options;
+  const { platformRegistry, statsService, agentRegistry } = options;
 
   // List all platforms
   fastify.get('/api/v1/platforms', {
@@ -181,6 +183,62 @@ export async function platformRoutes(
             error: 'Internal server error'
           });
         }
+      }
+    }
+  });
+
+  // Get agents for a specific platform
+  fastify.get('/api/v1/platforms/:id/agents', {
+    schema: {
+      params: zodToJsonSchema(z.object({
+        id: z.string()
+      })),
+      response: {
+        200: zodToJsonSchema(z.array(z.object({
+          type: z.string(),
+          name: z.string(),
+          version: z.string(),
+          description: z.string().optional(),
+          capabilities: z.array(z.string()),
+          timeout_ms: z.number(),
+          max_retries: z.number(),
+          configSchema: z.any().optional(),
+          scope: z.enum(['global', 'platform']),
+          platformId: z.string().optional()
+        }))),
+        404: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{ Params: { id: string } }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        // Verify platform exists
+        const entry = platformRegistry.getPlatformById(request.params.id);
+        if (!entry) {
+          reply.code(404).send({
+            error: 'Platform not found'
+          });
+          return;
+        }
+
+        // Get agents for this platform
+        const agents = agentRegistry.listAgents(request.params.id);
+
+        logger.info('[GET /api/v1/platforms/:id/agents] Retrieved platform agents', {
+          platformId: request.params.id,
+          agentCount: agents.length
+        });
+
+        reply.code(200).send(agents);
+      } catch (error) {
+        logger.error('Failed to get platform agents', { error, id: request.params.id });
+        reply.code(500).send({
+          error: 'Internal server error'
+        });
       }
     }
   });

@@ -1,13 +1,17 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTrace } from '../hooks/useTraces'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import { formatRelativeTime, truncateId } from '../utils/formatters'
+import { TaskDetailsModal } from '../components/Traces/TaskDetailsModal'
+import type { AgentTask } from '../types'
 
 export default function TraceDetailPage() {
   const { traceId } = useParams<{ traceId: string }>()
   const { data: traceDetail, isLoading, error } = useTrace(traceId)
+  const [selectedTask, setSelectedTask] = useState<AgentTask | null>(null)
 
   if (!traceId) {
     return (
@@ -121,6 +125,56 @@ export default function TraceDetailPage() {
             </div>
           )}
 
+          {/* Tasks */}
+          {traceDetail.hierarchy?.tasks && traceDetail.hierarchy.tasks.length > 0 && (
+            <div className="bg-white shadow rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Tasks ({traceDetail.hierarchy.tasks.length})
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Task ID</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Agent Type</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {traceDetail.hierarchy.tasks.map(task => (
+                      <tr key={task.task_id} className="hover:bg-gray-50">
+                        <td className="px-4 py-2 text-sm font-mono text-gray-900">{truncateId(task.task_id)}</td>
+                        <td className="px-4 py-2 text-sm">
+                          <code className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                            {task.agent_type}
+                          </code>
+                        </td>
+                        <td className="px-4 py-2 text-sm">
+                          <StatusBadge status={task.status} />
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-500">
+                          {task.completed_at && task.started_at
+                            ? `${new Date(task.completed_at).getTime() - new Date(task.started_at).getTime()}ms`
+                            : 'N/A'}
+                        </td>
+                        <td className="px-4 py-2 text-sm">
+                          <button
+                            onClick={() => setSelectedTask(task)}
+                            className="text-blue-600 hover:text-blue-900 font-medium"
+                          >
+                            Details →
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* Spans */}
           {traceDetail.hierarchy?.spans && traceDetail.hierarchy.spans.length > 0 && (
             <div className="bg-white shadow rounded-lg p-6">
@@ -165,6 +219,14 @@ export default function TraceDetailPage() {
         <div className="text-center py-12">
           <p className="text-gray-500">Trace not found</p>
         </div>
+      )}
+
+      {/* Task Details Modal */}
+      {selectedTask && (
+        <TaskDetailsModal
+          task={selectedTask}
+          onClose={() => setSelectedTask(null)}
+        />
       )}
     </div>
   )

@@ -10,6 +10,7 @@ import TracesPage from './pages/TracesPage'
 import TraceDetailPage from './pages/TraceDetailPage'
 import AgentsPage from './pages/AgentsPage'
 import { PlatformsPage } from './pages/PlatformsPage'
+import { PlatformDetailsPage } from './pages/PlatformDetailsPage'
 import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage'
 import WorkflowPipelineBuilderPage from './pages/WorkflowPipelineBuilderPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -44,7 +45,10 @@ function App() {
                   <Route path="pipeline" element={<WorkflowPipelineBuilderPage />} />
                   <Route path=":id" element={<WorkflowPage />} />
                 </Route>
-                <Route path="/platforms" element={<PlatformsPage />} />
+                <Route path="/platforms">
+                  <Route index element={<PlatformsPage />} />
+                  <Route path=":id" element={<PlatformDetailsPage />} />
+                </Route>
                 <Route path="/traces" element={<TracesPage />} />
                 <Route path="/traces/:traceId" element={<TraceDetailPage />} />
                 <Route path="/agents" element={<AgentsPage />} />

@@ -198,6 +198,62 @@ export async function fetchPlatformAnalytics(
   return fetchJSON<PlatformAnalytics>(`${API_BASE}/platforms/${id}/analytics?period=${period}`)
 }
 
+export async function fetchPlatformAgents(platformId: string): Promise<AgentMetadata[]> {
+  return fetchJSON<AgentMetadata[]>(`${API_BASE}/platforms/${platformId}/agents`)
+}
+
+// Agent Discovery API (Session #85 - Dashboard Agent Extensibility)
+export interface AgentMetadata {
+  type: string
+  name: string
+  version: string
+  description?: string
+  capabilities: string[]
+  timeout_ms: number
+  max_retries: number
+  configSchema?: Record<string, any>
+  scope: 'global' | 'platform'
+  platformId?: string
+}
+
+export async function fetchAgents(platformId?: string): Promise<AgentMetadata[]> {
+  const params = new URLSearchParams()
+  if (platformId) params.append('platform', platformId)
+
+  const url = `${API_BASE}/agents${params.toString() ? `?${params}` : ''}`
+  return fetchJSON<AgentMetadata[]>(url)
+}
+
+export async function fetchAgent(agentType: string, platformId?: string): Promise<AgentMetadata> {
+  const params = new URLSearchParams()
+  if (platformId) params.append('platform', platformId)
+
+  const url = `${API_BASE}/agents/${agentType}${params.toString() ? `?${params}` : ''}`
+  return fetchJSON<AgentMetadata>(url)
+}
+
+export async function validateAgent(agentType: string, platformId?: string): Promise<{
+  valid: boolean
+  agent?: AgentMetadata
+  error?: string
+  suggestions?: string[]
+}> {
+  const response = await fetch(`${API_BASE}/agents/validate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      agent_type: agentType,
+      platform_id: platformId
+    })
+  })
+
+  if (!response.ok && response.status !== 400) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  return response.json()
+}
+
 // Dashboard-specific API functions
 
 /**
