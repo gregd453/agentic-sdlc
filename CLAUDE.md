@@ -1,6 +1,6 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC
 
-**Status:** ✅ Phase 7B Complete + Session #85 (Unbounded Agent Extensibility) | **Updated:** 2025-11-19 | **Version:** 58.0
+**Status:** ✅ Phase 7B Complete + Session #85 (Dashboard Agent Extensibility Integration P0-P4) | **Updated:** 2025-11-19 | **Version:** 59.0
 
 **📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Agent Guide](./AGENT_CREATION_GUIDE.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./DEPLOYMENT_PIPELINE.md) | [Quick Start](./DEPLOYMENT_QUICKSTART.md)
 
@@ -251,7 +251,9 @@ Full development workflow:
 - ✅ All 21 packages building successfully
 - ✅ 100%+ production ready (Agent extensibility complete)
 
-**Session #85: Unbounded Agent Extensibility (COMPLETE)**
+**Session #85: Unbounded Agent Extensibility + Dashboard Integration (COMPLETE)**
+
+*Phase 1: Core Extensibility (P0-P1)*
 - ✅ **Type System Flexibility:** AgentTypeEnum → AgentTypeSchema (accepts any string)
   - Custom agents can use any agent_type identifier (kebab-case)
   - Predefined types: scaffold, validation, e2e_test, integration, deployment, monitoring, debug, recovery
@@ -277,6 +279,37 @@ Full development workflow:
   - TypeScript: 0 errors
   - Build: 100% success rate
   - Ready for production deployment
+
+*Phase 2-4: Dashboard Integration (P2-P4) - NEW THIS SESSION*
+- ✅ **P2: Platform-Agent Visualization**
+  - New `/api/v1/platforms/:id/agents` endpoint showing available agents per platform
+  - PlatformCard component - clickable cards with agent/workflow counts
+  - AgentMatrixTable - comprehensive agent listing (type, version, scope, timeout, capabilities)
+  - PlatformDetailsPage - full platform view with analytics and agent matrix
+  - Route: `/platforms/:id` for detailed platform inspection
+- ✅ **P3: Trace Agent Context**
+  - Tasks section in TraceDetailPage with agent_type column (blue code badges)
+  - TaskDetailsModal - deep-dive task inspection with agent metadata
+  - Shows task info (ID, workflow, status, duration, retries) + agent details
+  - Display task payload and result in formatted JSON
+  - Full dark mode and responsive design
+- ✅ **P4: Client-Side Workflow Validation**
+  - useWorkflowValidation hook with Levenshtein distance typo detection
+  - ValidationErrorCard component for error display with suggestions
+  - Auto-validates workflow stages on changes
+  - Submit button states: "✓ Create Workflow" / "✗ Fix Errors" / "⏳ Validating..."
+  - Clickable suggestions to auto-fix invalid agent types
+  - Non-blocking validation with graceful degradation
+- ✅ **Components & Hooks Created:** 6 UI components + 1 validation hook
+  - PlatformCard, AgentMatrixTable, PlatformDetailsPage
+  - TaskDetailsModal, ValidationErrorCard, AgentSelector, SchemaFormBuilder
+  - useWorkflowValidation with intelligent suggestions
+- ✅ **Quality Metrics:**
+  - TypeScript: 0 errors (verified)
+  - New Code: 800+ lines
+  - Full dark mode support
+  - Responsive mobile-first design
+  - Git Commit: 5a7b0fd
 
 **Session #84: Deployment Pipeline & Automated Reset (COMPLETE)**
 - ✅ **Infrastructure Audit:** Identified and fixed 5 critical deployment gaps
@@ -358,7 +391,8 @@ Full development workflow:
 - ✅ AgentEnvelope v2.0.0 schema validation
 - ✅ Redis Streams message bus with ACK
 - ✅ Definition-driven workflow routing
-- ✅ Platform-scoped agent registry
+- ✅ Platform-scoped agent registry with typo detection
+- ✅ Unbounded agent extensibility (custom agent_type support)
 - ✅ 130+ integration tests
 - ✅ Dashboard platform-aware with Traces visualization (Session #80)
 - ✅ Trace detail page with hierarchical data display (Session #80)
@@ -367,6 +401,9 @@ Full development workflow:
 - ✅ Status enum consistency (Session #79)
 - ✅ Terminal state persistence (Session #79)
 - ✅ Distributed tracing restoration (Session #79)
+- ✅ Platform visualization with agent matrix (Session #85 P2)
+- ✅ Trace task details modal with agent metadata (Session #85 P3)
+- ✅ Client-side workflow validation with suggestions (Session #85 P4)
 
 ---
 
@@ -404,29 +441,33 @@ Full development workflow:
 ## 📋 Next Steps for Future Agents
 
 ### Ready to Start Working?
-**Status:** Platform is fully operational with local and cloud CI/CD
+**Status:** Platform is fully operational with complete dashboard agent extensibility
 - ✅ All services running (Dashboard, Orchestrator, PostgreSQL, Redis)
 - ✅ GitHub Actions pipeline auto-configured
 - ✅ Pre-push hook prevents broken code from being pushed
-- ✅ Phase 3 UI implementation complete (Mock Workflow Pipeline Builder)
+- ✅ Full dashboard integration complete (Platform discovery, trace context, validation)
+- ✅ Unbounded agent extensibility production-ready (any custom agent_type supported)
 
 ### What to Work On:
-1. **Phase 4 - Pipeline Pause/Resume** (Low Priority)
-   - Requires Prisma schema migration for workflow state persistence
-   - Estimated: 2-3 hours
-   - Epic: Store/restore workflow state between pause and resume
+1. **Integration Testing** (Recommended Next)
+   - End-to-end workflow creation with custom agents
+   - Platform visualization and agent discovery flows
+   - Validation suggestions in real-world scenarios
+   - Estimated: 1-2 hours
 
-2. **Polish Items** (Low Priority)
-   - Remove DEBUG console.log statements
-   - Implement file-based log rotation
-   - Advanced trace visualization improvements
-   - Dashboard analytics pages
+2. **Optional Enhancements** (Low Priority)
+   - Pipeline pause/resume (requires Prisma migration, 2-3 hours)
+   - Remove DEBUG console.log statements (30 min)
+   - Implement file-based log rotation (1-2 hours)
+   - Advanced trace tree visualization (2-3 hours)
+   - Dashboard performance analytics pages (2-3 hours)
 
 3. **New Features** (As Requested)
    - Expand agent capabilities
    - Add new service types
    - Enhance dashboard features
    - Improve CLI commands
+   - Custom platform creation UI
 
 ### Development Workflow:
 ```bash
