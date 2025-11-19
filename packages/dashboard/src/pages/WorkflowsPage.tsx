@@ -1,15 +1,18 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useWorkflows } from '../hooks/useWorkflows'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import ProgressBar from '../components/Common/ProgressBar'
+import CreateMockWorkflowModal from '../components/Workflows/CreateMockWorkflowModal'
 import { formatRelativeTime, truncateId, calculateProgressFromStage } from '../utils/formatters'
 
 export default function WorkflowsPage() {
+  const navigate = useNavigate()
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [typeFilter, setTypeFilter] = useState<string>('')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const filters = {
     ...(statusFilter && { status: statusFilter }),
@@ -20,10 +23,22 @@ export default function WorkflowsPage() {
     Object.keys(filters).length > 0 ? filters : undefined
   )
 
+  const handleWorkflowCreated = (workflowId: string) => {
+    // Refetch workflows and navigate to the new workflow
+    refetch()
+    navigate(`/workflows/${workflowId}`)
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Workflows</h2>
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+        >
+          + Create Mock Workflow
+        </button>
       </div>
 
       {/* Filters */}
@@ -119,7 +134,7 @@ export default function WorkflowsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <ProgressBar
-                        value={workflow.progress ?? calculateProgressFromStage(workflow.current_stage, workflow.type)}
+                        value={workflow.progress > 0 ? workflow.progress : calculateProgressFromStage(workflow.current_stage, workflow.type)}
                         showLabel
                         className="w-24"
                       />
@@ -160,6 +175,13 @@ export default function WorkflowsPage() {
           </table>
         </div>
       )}
+
+      {/* Create Mock Workflow Modal */}
+      <CreateMockWorkflowModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onWorkflowCreated={handleWorkflowCreated}
+      />
     </div>
   )
 }

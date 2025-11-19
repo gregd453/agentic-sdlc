@@ -1,0 +1,230 @@
+/**
+ * WorkflowPipelineBuilder - Phase 3: Multi-Stage Workflow Builder
+ * Manages the visual workflow pipeline editor with stage management
+ * Session #82: Multi-stage workflow creation and configuration
+ */
+
+import { useState } from 'react'
+import { WORKFLOW_TEMPLATES, WorkflowStage, WorkflowTemplate, createBlankTemplate } from './workflowTemplates'
+import TemplateSelector from './TemplateSelector'
+import StageList from './StageList'
+import PipelinePreview from './PipelinePreview'
+import StageEditorModal from './StageEditorModal'
+
+interface WorkflowPipelineBuilderProps {
+  onWorkflowCreated?: (stages: WorkflowStage[]) => void
+}
+
+export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowPipelineBuilderProps) {
+  const [currentTemplate, setCurrentTemplate] = useState<WorkflowTemplate>(createBlankTemplate())
+  const [stages, setStages] = useState<WorkflowStage[]>([])
+  const [editingStageId, setEditingStageId] = useState<string | null>(null)
+  const [draggedStageId, setDraggedStageId] = useState<string | null>(null)
+  const [showPreview, setShowPreview] = useState(false)
+
+  // Load template and set stages
+  const handleTemplateSelected = (templateId: string) => {
+    const template = WORKFLOW_TEMPLATES.find(t => t.id === templateId)
+    if (template) {
+      setCurrentTemplate(template)
+      setStages(template.stages.map(s => ({ ...s }))) // Deep copy
+      setEditingStageId(null)
+    }
+  }
+
+  // Create blank workflow
+  const handleStartBlank = () => {
+    setCurrentTemplate(createBlankTemplate())
+    setStages([])
+    setEditingStageId(null)
+  }
+
+  // Add new stage
+  const handleAddStage = () => {
+    const newStage: WorkflowStage = {
+      id: `stage-${Date.now()}-${Math.random()}`,
+      order: stages.length + 1,
+      name: `Stage ${stages.length + 1}`,
+      behaviorMetadata: { mode: 'success' },
+      constraints: { timeout_ms: 30000, max_retries: 0 }
+    }
+    setStages([...stages, newStage])
+  }
+
+  // Remove stage
+  const handleRemoveStage = (stageId: string) => {
+    const newStages = stages
+      .filter(s => s.id !== stageId)
+      .map((s, idx) => ({ ...s, order: idx + 1 }))
+    setStages(newStages)
+  }
+
+  // Edit stage
+  const handleEditStage = (stageId: string) => {
+    setEditingStageId(stageId)
+  }
+
+  // Update stage
+  const handleUpdateStage = (updatedStage: WorkflowStage) => {
+    setStages(stages.map(s => (s.id === updatedStage.id ? updatedStage : s)))
+    setEditingStageId(null)
+  }
+
+  // Reorder stages (drag-drop)
+  const handleReorderStages = (fromIndex: number, toIndex: number) => {
+    const newStages = [...stages]
+    const [removed] = newStages.splice(fromIndex, 1)
+    newStages.splice(toIndex, 0, removed)
+    // Update order numbers
+    newStages.forEach((s, idx) => {
+      s.order = idx + 1
+    })
+    setStages(newStages)
+    setDraggedStageId(null)
+  }
+
+  // Duplicate stage
+  const handleDuplicateStage = (stageId: string) => {
+    const stageToDuplicate = stages.find(s => s.id === stageId)
+    if (stageToDuplicate) {
+      const newStage: WorkflowStage = {
+        ...JSON.parse(JSON.stringify(stageToDuplicate)), // Deep copy
+        id: `stage-${Date.now()}-${Math.random()}`,
+        order: stages.length + 1,
+        name: `${stageToDuplicate.name} (Copy)`
+      }
+      setStages([...stages, newStage])
+    }
+  }
+
+  // Get currently editing stage
+  const editingStage = stages.find(s => s.id === editingStageId)
+
+  // Calculate estimated total duration
+  const estimatedDurationMs = stages.reduce((total, stage) => {
+    const delay = stage.behaviorMetadata?.timing?.execution_delay_ms || 0
+    const duration = stage.behaviorMetadata?.metrics?.duration_ms || 0
+    const timeout = stage.behaviorMetadata?.timing?.timeout_at_ms || 0
+    return total + Math.max(delay, duration, timeout)
+  }, 0)
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h3 className="text-2xl font-bold text-gray-900">Multi-Stage Workflow Builder</h3>
+        <p className="text-gray-600 mt-1">Design complex workflows with multiple stages and custom behaviors</p>
+      </div>
+
+      {/* Template Selector */}
+      <TemplateSelector
+        templates={WORKFLOW_TEMPLATES}
+        selectedTemplate={currentTemplate.id}
+        onTemplateSelected={handleTemplateSelected}
+        onStartBlank={handleStartBlank}
+      />
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Stage List */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex justify-between items-center">
+            <h4 className="text-lg font-semibold text-gray-900">Workflow Stages</h4>
+            <button
+              onClick={handleAddStage}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+            >
+              + Add Stage
+            </button>
+          </div>
+
+          {stages.length === 0 ? (
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
+              <p className="text-gray-600 mb-3">No stages yet</p>
+              <button
+                onClick={handleAddStage}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+              >
+                Add Your First Stage
+              </button>
+            </div>
+          ) : (
+            <StageList
+              stages={stages}
+              draggedStageId={draggedStageId}
+              onEditStage={handleEditStage}
+              onRemoveStage={handleRemoveStage}
+              onDuplicateStage={handleDuplicateStage}
+              onDragStart={(stageId) => setDraggedStageId(stageId)}
+              onDragEnd={() => setDraggedStageId(null)}
+              onReorder={handleReorderStages}
+            />
+          )}
+        </div>
+
+        {/* Right: Preview & Actions */}
+        <div className="space-y-4">
+          {/* Metrics Card */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs text-gray-600 uppercase tracking-wide">Total Stages</p>
+                <p className="text-3xl font-bold text-blue-600">{stages.length}</p>
+              </div>
+              <div className="border-t border-blue-200 pt-3">
+                <p className="text-xs text-gray-600 uppercase tracking-wide">Estimated Duration</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {(estimatedDurationMs / 1000).toFixed(1)}s
+                </p>
+              </div>
+              <div className="border-t border-blue-200 pt-3">
+                <p className="text-xs text-gray-600 uppercase tracking-wide">Current Template</p>
+                <p className="text-sm font-medium text-gray-900">{currentTemplate.name}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="space-y-2">
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium"
+            >
+              {showPreview ? '✓ Close Preview' : '👁️ Preview Pipeline'}
+            </button>
+            <button
+              disabled={stages.length === 0}
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              onClick={() => onWorkflowCreated?.(stages)}
+            >
+              ✓ Create Workflow
+            </button>
+          </div>
+
+          {/* Info */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-800">
+            <p className="font-medium mb-1">💡 Tip</p>
+            <p>Drag stages to reorder, click to configure behavior, or select a template to get started</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Pipeline Preview */}
+      {showPreview && stages.length > 0 && (
+        <div className="border border-gray-200 rounded-lg p-6 bg-white">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Pipeline Preview</h4>
+          <PipelinePreview stages={stages} estimatedDurationMs={estimatedDurationMs} />
+        </div>
+      )}
+
+      {/* Stage Editor Modal */}
+      {editingStage && (
+        <StageEditorModal
+          stage={editingStage}
+          onUpdate={handleUpdateStage}
+          onClose={() => setEditingStageId(null)}
+        />
+      )}
+    </div>
+  )
+}
