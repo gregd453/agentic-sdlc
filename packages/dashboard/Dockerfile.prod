@@ -19,8 +19,9 @@ COPY ops ./ops
 RUN pnpm install --frozen-lockfile
 
 # Generate Prisma Client (required for dashboard to run)
-RUN node_modules/.bin/prisma generate --schema=packages/orchestrator/prisma/schema.prisma || \
-    (echo "Prisma not available in binaries, will try at startup" && true)
+# Prisma CLI is available in .pnpm store as a dev dependency
+RUN echo "Generating Prisma Client..." && \
+    node_modules/.pnpm/prisma@5.22.0/node_modules/prisma/node_modules/.bin/prisma generate --schema=packages/orchestrator/prisma/schema.prisma
 
 # Expose port
 EXPOSE 3050
