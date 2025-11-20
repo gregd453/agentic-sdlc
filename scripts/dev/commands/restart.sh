@@ -21,14 +21,30 @@ SERVICE=$1
 
 if [ -z "$SERVICE" ]; then
   print_header "ZYP Platform - Restarting All Services"
-  print_subheader "Restarting..."
+
+  # Rebuild dashboard image with latest code
+  print_subheader "Rebuilding dashboard Docker image..."
+  cd "$PROJECT_ROOT"
+  docker build -f packages/dashboard/Dockerfile.prod -t agentic-sdlc-dashboard:latest . > /dev/null 2>&1
+  print_success "Dashboard image rebuilt"
+
+  print_subheader "Restarting containers..."
   docker_compose restart
-  print_success "All services restarted"
+  print_success "All services restarted with latest code"
 else
   print_header "ZYP Platform - Restarting Service: $SERVICE"
+
+  # Rebuild dashboard image if restarting dashboard
+  if [ "$SERVICE" = "dashboard" ] || [ "$SERVICE" = "agentic-sdlc-dev-dashboard" ]; then
+    print_subheader "Rebuilding dashboard Docker image..."
+    cd "$PROJECT_ROOT"
+    docker build -f packages/dashboard/Dockerfile.prod -t agentic-sdlc-dashboard:latest . > /dev/null 2>&1
+    print_success "Dashboard image rebuilt"
+  fi
+
   print_subheader "Restarting $SERVICE..."
   docker_compose restart "$SERVICE"
-  print_success "$SERVICE restarted"
+  print_success "$SERVICE restarted with latest code"
 fi
 
 echo ""
