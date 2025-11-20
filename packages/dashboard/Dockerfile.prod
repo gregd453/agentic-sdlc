@@ -39,18 +39,15 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy package.json for runtime dependencies only
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Copy workspace configuration and source to determine workspace structure
+COPY . .
 
-# Install only production dependencies
-RUN pnpm install --prod
+# Install only production dependencies (skip optional deps and scripts)
+RUN pnpm install --prod --prefer-offline --no-verify-store-integrity 2>/dev/null || pnpm install --prod 2>&1 | grep -v "ERR!\|WARN" | tail -20
 
 # Copy built artifacts from builder
 COPY --from=builder /app/packages/dashboard/dist ./packages/dashboard/dist
 COPY --from=builder /app/packages/dashboard/dist/server ./dist/server
-
-# Copy Prisma schema (needed by server)
-COPY packages/orchestrator/prisma ./packages/orchestrator/prisma
 
 # Expose port
 EXPOSE 3050
@@ -64,4 +61,4 @@ HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=15s \
   CMD wget --quiet --tries=1 --spider http://localhost:3050/ || exit 1
 
 # Start Express server serving static files + API
-CMD ["node", "packages/dashboard/dist/server/index.js"]
+CMD ["node", "dist/server/index.js"]

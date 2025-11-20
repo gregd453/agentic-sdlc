@@ -11,7 +11,6 @@
 
 import express, { Express, Request, Response } from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
 import pino from 'pino';
 
@@ -19,8 +18,8 @@ import pino from 'pino';
 // Setup
 // ============================================================================
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Static files are in packages/dashboard/dist (relative to project root /app)
+const staticDir = path.join(process.cwd(), 'packages/dashboard/dist');
 
 const app: Express = express();
 const PORT = process.env.PORT || 3050;
@@ -427,13 +426,11 @@ const cacheControl = (_req: Request, res: Response, next: Function) => {
   next();
 };
 
-const distPath = path.join(__dirname, '../dist');
-
 /**
  * Serve static Vite-built frontend with proper cache headers
  */
 app.use(cacheControl);
-app.use(express.static(distPath, {
+app.use(express.static(staticDir, {
   etag: true,
   lastModified: true,
 }));
@@ -443,7 +440,7 @@ app.use(express.static(distPath, {
  * (React Router handles frontend routing)
  */
 app.get('*', (_req: Request, res: Response) => {
-  return res.sendFile(path.join(distPath, 'index.html'));
+  return res.sendFile(path.join(staticDir, 'index.html'));
 });
 
 // ============================================================================
