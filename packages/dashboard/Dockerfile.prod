@@ -14,11 +14,15 @@ RUN npm install -g pnpm
 # Copy workspace files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
-
-# Copy source code
+# Copy source code first
 COPY . .
+
+# Install dependencies
+RUN pnpm install
+
+# Set environment variables for build
+ENV VITE_DASHBOARD_PORT=3050
+ENV VITE_ORCHESTRATOR_PORT=3051
 
 # Build frontend (Vite with asset hashing for cache-busting)
 WORKDIR /app/packages/dashboard
@@ -39,7 +43,7 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install only production dependencies
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --prod
 
 # Copy built artifacts from builder
 COPY --from=builder /app/packages/dashboard/dist ./packages/dashboard/dist

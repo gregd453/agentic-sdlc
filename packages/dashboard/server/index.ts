@@ -162,7 +162,7 @@ app.get('/api/v1/stats/agents', async (_req: Request, res: Response) => {
     });
 
     return res.json(
-      agents.map((agent) => ({
+      agents.map((agent: any) => ({
         type: agent.agent_type,
         taskCount: agent._count?.id || 0,
         avgExecutionTime: agent._avg?.timeout_ms || 0,
@@ -210,7 +210,7 @@ app.get('/api/v1/stats/timeseries', async (req: Request, res: Response) => {
     });
 
     const grouped = events.reduce(
-      (acc, event) => {
+      (acc: Record<string, number>, event: any) => {
         const hour = new Date(event.timestamp).toISOString().slice(0, 13);
         if (!acc[hour]) {
           acc[hour] = 0;
@@ -247,7 +247,7 @@ app.get('/api/v1/stats/workflows', async (_req: Request, res: Response) => {
     });
 
     return res.json(
-      workflows.map((wf) => ({
+      workflows.map((wf: any) => ({
         type: wf.type,
         status: wf.status,
         count: wf._count?.id || 0,
