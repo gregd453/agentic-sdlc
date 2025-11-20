@@ -1,6 +1,6 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC
 
-**Status:** ✅ Phase 7B Complete + Session #85 (Dashboard Agent Extensibility) + Session #86 (Dashboard Rebuild Automation) | **Updated:** 2025-11-20 | **Version:** 60.0
+**Status:** ✅ Phase 7B Complete + Session #85 (Dashboard Agent Extensibility) + Session #86 (Dashboard Rebuild Automation) + Session #87 (Platform CRUD Implementation) | **Updated:** 2025-11-20 | **Version:** 61.0
 
 **📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Agent Guide](./AGENT_CREATION_GUIDE.md) | [Dashboard Rebuild](./DASHBOARD_REBUILD.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./DEPLOYMENT_PIPELINE.md) | [Quick Start](./DEPLOYMENT_QUICKSTART.md)
 
@@ -306,6 +306,73 @@ Full development workflow:
 - ✅ **Git Commits:**
   - ddb2c17: feat: Add automated dashboard rebuild script and dev command
   - d84c88c: docs: Add dashboard rebuild guide and reference
+
+**Session #87: Complete Platform CRUD Implementation (COMPLETE)**
+
+*Backend Implementation (Phase 1-2)*
+- ✅ **PlatformService:** Full CRUD with database persistence
+  - Create: Validates input, generates UUID, stores in DB
+  - Update: Modifies fields independently, handles cache
+  - Delete: Cascade-safe with confirmation UX
+  - Input validation (required name, unique constraint, JSON config)
+- ✅ **API Endpoints:** 3 new REST endpoints
+  - `POST /api/v1/platforms` - Create (201, error handling)
+  - `PUT /api/v1/platforms/:id` - Update (200)
+  - `DELETE /api/v1/platforms/:id` - Delete (204)
+  - Full Zod schema validation, error responses (400/404/500)
+- ✅ **Registry Integration:** Automatic cache invalidation
+  - Platform changes reflected immediately
+  - Platform loader cache management
+  - Registry refresh on mutations
+
+*Frontend Components (Phase 2-3)*
+- ✅ **PlatformFormModal:** Create/edit platform UI
+  - Form fields: name (required), layer (dropdown), description, config (JSON editor)
+  - Validation: Required field checking, JSON validation
+  - Dark mode + responsive design
+  - Loading states and error handling
+  - Edit mode pre-population
+- ✅ **DeleteConfirmationModal:** Prevent accidental deletions
+  - Warning message with resource name
+  - Loading state on confirm
+  - Danger styling (red accent)
+  - Keyboard accessible (Esc to close)
+- ✅ **PlatformsPage Enhancement:** Full CRUD workflow
+  - "+ New Platform" button (create)
+  - Edit/delete icons on platform cards
+  - Automatic list refresh after operations
+  - Toast notifications for feedback
+  - Platform analytics display (workflows, success rate)
+- ✅ **API Client Methods:** Type-safe CRUD operations
+  - createPlatform(), updatePlatform(), deletePlatform()
+  - Proper error handling and response types
+  - Consistent with existing API patterns
+
+*Workflow Builder Integration (Phase 3)*
+- ✅ **Platform Selector:** Required field in WorkflowPipelineBuilder
+  - Loads platforms on mount
+  - Visual platform context display
+  - Filters agents by selected platform
+- ✅ **SaveWorkflowDefinitionModal:** Platform context awareness
+  - Accepts platformId from builder
+  - Pre-selects platform from builder
+  - Saves definitions scoped to platform
+
+*Quality & Validation*
+- ✅ **Build Validation:** TypeScript 0 errors
+  - turbo run typecheck: All 30 packages pass
+  - turbo run build: Orchestrator & Dashboard compile
+- ✅ **Architecture Compliance:**
+  - Hexagonal pattern: Service → Routes → Middleware
+  - No schema duplication (uses Prisma models)
+  - Proper package imports (@agentic-sdlc/*)
+- ✅ **Backward Compatibility:** No breaking changes
+  - Workflow.platform_id remains optional
+  - Existing workflows continue to work
+  - New platform context is opt-in
+
+- ✅ **Git Commit:**
+  - 8883218: feat: Complete platform CRUD implementation with dashboard integration
 
 **Session #85: Unbounded Agent Extensibility + Dashboard Integration (COMPLETE)**
 
