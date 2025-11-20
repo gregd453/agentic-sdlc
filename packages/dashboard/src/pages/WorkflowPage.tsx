@@ -6,7 +6,7 @@ import StatusBadge from '../components/Common/StatusBadge'
 import ProgressBar from '../components/Common/ProgressBar'
 import MetadataCard from '../components/Common/MetadataCard'
 import { SurfaceIndicator } from '../components/Common/SurfaceIndicator'
-import { formatDate, formatRelativeTime, truncateId, calculateProgressFromStage } from '../utils/formatters'
+import { formatDate, formatRelativeTime, truncateId, calculateProgressFromStage } from '../utils/format'
 
 export default function WorkflowPage() {
   const { id } = useParams<{ id: string }>()

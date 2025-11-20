@@ -1,21 +1,21 @@
-# EPCC Implementation Plan: Multi-Stage Workflow Builder & Platform CRUD
+# EPCC Implementation Plan: Dashboard API Refactoring
 
-**Session:** #87 (Planning Phase)
+**Session:** #88 (Planning Phase)
 **Date:** 2025-11-20
 **Status:** ✅ PLAN COMPLETE
-**Reference:** EPCC_EXPLORE.md
+**Reference:** DASHBOARD-API-REFACTOR.md
 
 ---
 
 ## Executive Summary
 
-The Multi-Stage Workflow Builder and Platform CRUD features are largely implemented in the backend and dashboard. This plan focuses on **closing the gap between the working API infrastructure and the dashboard UI**.
+The dashboard codebase contains approximately **50% code duplication** across ~5,000 lines, primarily in modal components, form validation logic, API client organization, and page state management. This refactoring plan will systematically eliminate duplication and establish reusable component patterns.
 
-**Key Gap:** Platform create/update/delete operations have API endpoints (possibly) but lack dashboard UI components and workflows.
+**Key Problem:** Scattered, duplicated logic in modals (6 files, 1,217 LOC), monolithic API client (598 LOC), repeated form validation, and inconsistent page layouts.
 
-**Scope:** Complete platform CRUD dashboard integration, enhance workflow builder to require platform context, and validate end-to-end integration.
+**Scope:** Extract reusable components (BaseModal, Alert), consolidate hooks (useFormState, useCRUD), modularize API client, and refactor all 12 pages to use new patterns.
 
-**Estimated Effort:** 12-14 hours (Backend verification + Frontend components + Testing + Documentation)
+**Estimated Effort:** 8-10 days across 4 phases (Foundation → Hooks → Pages → Polish)
 
 ---
 
@@ -23,35 +23,48 @@ The Multi-Stage Workflow Builder and Platform CRUD features are largely implemen
 
 ### What We're Building
 
-1. **Complete Platform CRUD in Dashboard**
-   - Create new platforms with configuration
-   - Edit existing platform metadata and settings
-   - Delete platforms with confirmation
-   - Display platform state and analytics
+**Goal:** Reduce code duplication from 50% to <10%, improve maintainability by 60-70%, and establish reusable component patterns that accelerate development velocity.
 
-2. **Enhanced Workflow Builder Integration**
-   - Require platform selection when creating workflows
-   - Default new workflows to selected platform
-   - Show platform-specific agents in builder UI
-   - Save workflow definitions scoped to platform
+#### Phase 1: Foundation Components
+1. **BaseModal** - Reusable modal wrapper eliminating 40-60% duplication across 6 modals
+2. **useFormState Hook** - Consolidate form validation logic repeated in 5+ components
+3. **Alert Component** - Replace 15+ duplicated error/success message displays
+4. **Modularized API Client** - Split 598-line monolithic file into 6 focused modules
 
-3. **Seamless Platform-Workflow Association**
-   - Workflows created from builder automatically tied to platform
-   - Platform analytics include related workflows
-   - Platform details show available definitions and active workflows
+#### Phase 2: Hooks & Utilities
+1. **useCRUD Hook** - CRUD state management for pages (PlatformsPage, TracesPage, WorkflowsPage)
+2. **useLoadingState Hook** - Standardize inconsistent loading state naming
+3. **Theme Constants** - Replace 200+ duplicated Tailwind class combinations
+4. **Consolidated Formatters** - Merge formatters.ts + numberFormatters.ts
+
+#### Phase 3: Page Components & Templates
+1. **PageTemplate** - Extract common page header/footer structure used in 12+ pages
+2. **Refactor All Pages** - Use PageTemplate, new hooks, and theme constants
+3. **Modal Refactoring** - Replace all modal implementations with BaseModal wrapper
+
+#### Phase 4: Polish & Completion
+1. **Input Components** - Extracted form input library (Input, TextArea, Select, Checkbox)
+2. **Status Components** - StatusBadge, ProgressIndicator, EmptyState, LoadingSpinner
+3. **Naming Standardization** - Consistent variable naming across codebase
+4. **Type Consolidation** - Move scattered component types to single location
 
 ### Success Criteria
 
-- [ ] All platform endpoints verified in backend
-- [ ] PlatformFormModal component created and tested
-- [ ] Create/Edit/Delete flows implemented in PlatformsPage
-- [ ] Workflow builder requires platform selection
-- [ ] Platform-workflow associations validated end-to-end
-- [ ] TypeScript compilation: 0 errors
-- [ ] E2E test validates full workflow
-- [ ] CLAUDE.md updated with workflow builder changes
-- [ ] All UI components responsive and dark-mode compatible
-- [ ] Performance: Dashboard loads in <3 seconds
+- [ ] All 6 modals refactored to use BaseModal component
+- [ ] All forms use useFormState hook (no duplicated form validation)
+- [ ] All error/success messages use Alert component
+- [ ] API client split into 6 focused modules
+- [ ] All 12 pages use PageTemplate component
+- [ ] useCRUD hook implemented and used in 4+ pages
+- [ ] Theme constants replace 200+ duplicated Tailwind classes
+- [ ] 50% code reduction achieved (5,000 → 2,500 LOC)
+- [ ] 80% duplication reduction
+- [ ] Zero TypeScript errors across all changes
+- [ ] All tests passing (>80% coverage for new code)
+- [ ] E2E tests validate no regressions
+- [ ] Code review approved
+- [ ] Dashboard functionality preserved (no breaking changes)
+- [ ] Build completes successfully with turbo
 
 ---
 
@@ -59,227 +72,366 @@ The Multi-Stage Workflow Builder and Platform CRUD features are largely implemen
 
 ### Architecture Overview
 
-**Frontend (Dashboard):**
-- PlatformFormModal - Create/edit platform modal component
-- PlatformsPage - List with CRUD buttons
-- DeleteConfirmationModal - Confirmation for deletion
-- WorkflowPipelineBuilder - Add platform selector (required field)
-- SaveWorkflowDefinitionModal - Include platform_id in save
+**Refactoring Strategy: Component Composition & Hook Consolidation**
 
-**Backend (Orchestrator):**
-- Platform routes (POST, PUT, DELETE endpoints)
-- PlatformService (business logic for CRUD)
-- PlatformRepository (data access)
+```
+BEFORE: Scattered, Duplicated Logic
+├── Modal 1-6: 40-60% duplicate structure (header, body, footer, errors)
+├── Forms: Repeated validation patterns in 5+ components
+├── API Client: 598 LOC monolithic file with repeated patterns
+├── Pages: 12 pages with identical CRUD state logic
+└── Utilities: Scattered formatters, theme classes
 
-**Database:**
-- Platform model with relationships
-- WorkflowDefinition with platform_id FK
-- Workflow with optional platform_id FK
+AFTER: Abstracted, Reusable Components & Hooks
+├── BaseModal: Single source of truth for modal structure
+├── useFormState: Consolidated form state management
+├── Alert: Reusable error/success display
+├── API Modules: 6 focused modules (workflows, platforms, traces, etc)
+├── useCRUD: CRUD state management hook
+├── useLoadingState: Standardized loading state
+├── PageTemplate: Common page header/footer/layout
+├── Theme Constants: Centralized Tailwind classes
+└── Input/Status Components: Extracted reusable component library
+```
 
 ### Design Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Form Component | React Modal | Matches existing SaveWorkflowDefinitionModal pattern |
-| Validation | Frontend + Backend | Real-time UX feedback + data integrity |
-| Platform Binding | Required on workflow creation | Prevent orphaned workflows |
-| Deletion | Cascade with confirmation | Clean database, safe UX |
+| Decision | Option Chosen | Rationale | Trade-offs |
+|----------|--------------|-----------|-----------|
+| **Modal Extraction** | BaseModal wrapper + composition | Eliminates 370 lines, maintains flexibility | Requires prop mapping in child modals |
+| **Form Management** | Custom useFormState hook | Simplifies form logic, consistent pattern | Additional hook to learn/maintain |
+| **API Organization** | Split into 6 modules (concern-based) | Better organization, easier to find code | Slightly more files, import path changes |
+| **Theme Management** | Constants + Tailwind utility classes | Centralized theming, easier changes | Build time for constant resolution |
+| **Page Templates** | Shared PageTemplate component | 30% boilerplate reduction | Custom pages need restructuring |
+| **Hook Strategy** | Combine logic into custom hooks | DRY principle, reusability | Testing complexity (hook behavior) |
+| **Testing Approach** | Incremental validation after each phase | Early bug detection | Slightly slower initial progress |
+| **Backward Compatibility** | Zero breaking changes | No migration needed | Slightly more complexity in transitions |
 
 ---
 
-## Task Breakdown
+## Detailed Task Breakdown
 
-### Phase 1: Backend Verification (1-2 hours)
+### Phase 1: Foundation Components (2-3 days, High Priority)
 
-#### Task 1.1: Verify Platform CRUD Endpoints
-- **File:** `packages/orchestrator/src/api/routes/platform.routes.ts`
-- **Effort:** 1 hour
+#### Task 1.1: Create BaseModal Component (3-4 hours)
+- **File:** `components/Common/BaseModal.tsx`
+- **Effort:** 3-4 hours
+- **Priority:** HIGH
+- **Dependencies:** None
 - **Acceptance Criteria:**
-  - POST /api/v1/platforms creates platform (201)
-  - PUT /api/v1/platforms/:id updates platform (200)
-  - DELETE /api/v1/platforms/:id deletes platform (204)
-  - Proper error handling and validation
-  - Input validation rejects invalid data (400)
+  - Component renders overlay with proper styling
+  - Dark mode support for all elements
+  - Header with title, subtitle, close button
+  - Body slot for children content
+  - Footer with configurable buttons
+  - Error/success message support
+  - Loading state with spinner overlay
+  - All props optional/configurable
+  - TypeScript types complete
+  - Unit tests passing
 
-#### Task 1.2: Enhance PlatformService if Needed
-- **File:** `packages/orchestrator/src/services/platform.service.ts`
-- **Effort:** 30 min (conditional)
+#### Task 1.2: Create useFormState Hook (2-3 hours)
+- **File:** `hooks/useFormState.ts`
+- **Effort:** 2-3 hours
 - **Priority:** HIGH
-- **Depends on:** Task 1.1
+- **Dependencies:** None
 - **Acceptance Criteria:**
-  - Create validates inputs, generates UUID
-  - Update modifies only provided fields
-  - Delete handles cascade properly
-  - All methods return typed Platform objects
+  - Hook manages form data, error, loading states
+  - Handles field changes with handleChange
+  - Implements handleSubmit with error handling
+  - Provides reset functionality
+  - TypeScript strict mode passing
+  - Comprehensive unit tests
+  - Integration tests with validation
 
-### Phase 2: Frontend UI Components (4-5 hours)
-
-#### Task 2.1: Create PlatformFormModal Component
-- **File:** `packages/dashboard/src/components/Platforms/PlatformFormModal.tsx`
-- **Effort:** 2.5 hours
+#### Task 1.3: Create Alert Component (2-3 hours)
+- **File:** `components/Common/Alert.tsx`
+- **Effort:** 2-3 hours
 - **Priority:** HIGH
+- **Dependencies:** None
 - **Acceptance Criteria:**
-  - Modal accepts: isOpen, onClose, platform (optional), onSave props
-  - Form fields: name (text), layer (select), description (textarea), config (JSON)
-  - Validation: name required/unique, layer required
-  - Submit button: "Create Platform" (new) / "Update Platform" (edit)
-  - Loading state during API call
-  - Error toast on failure, success toast on save
-  - Dark mode + responsive design
+  - 4 variants (error, success, warning, info)
+  - Dark mode support
+  - Icon indicators for each type
+  - Dismissible functionality
+  - Danger styling for critical alerts
+  - Unit tests for all variants
+  - TypeScript complete
 
-#### Task 2.2: Enhance PlatformsPage with CRUD Buttons
-- **File:** `packages/dashboard/src/pages/PlatformsPage.tsx`
-- **Effort:** 1.5 hours
+#### Task 1.4: Modularize API Client (4-5 hours)
+- **Files:** Split `api/client.ts` (598 LOC) into 6 modules:
+  - `api/workflows.ts` (120 lines)
+  - `api/platforms.ts` (100 lines)
+  - `api/traces.ts` (80 lines)
+  - `api/agents.ts` (60 lines)
+  - `api/definitions.ts` (70 lines)
+  - `api/stats.ts` (50 lines)
+  - Update `api/client.ts` to export from modules (30 lines)
+- **Effort:** 4-5 hours
 - **Priority:** HIGH
-- **Depends on:** Task 2.1
+- **Dependencies:** None
 - **Acceptance Criteria:**
-  - "New Platform" button opens PlatformFormModal
-  - PlatformCard shows edit/delete action icons
-  - Edit pre-fills form with platform data
-  - Delete shows confirmation modal first
-  - List refreshes automatically after operations
-  - Toast notifications for all CRUD operations
-  - Loading skeleton during fetch
-  - Error state with retry button
+  - API functions correctly organized by concern
+  - All imports updated in 30+ component files
+  - No import errors
+  - TypeScript clean
+  - Build succeeds
+  - All tests passing
 
-#### Task 2.3: Create DeleteConfirmationModal Component
-- **File:** `packages/dashboard/src/components/Common/DeleteConfirmationModal.tsx`
-- **Effort:** 1 hour
+### Phase 2: Hooks & Utilities (2-3 days, High Priority)
+
+#### Task 2.1: Create useCRUD Hook (3-4 hours)
+- **File:** `hooks/useCRUD.ts`
+- **Effort:** 3-4 hours
 - **Priority:** HIGH
+- **Dependencies:** Task 1.4 (API modules)
 - **Acceptance Criteria:**
-  - Modal accepts: isOpen, onClose, onConfirm, title, message, isLoading
-  - Shows warning with resource name
-  - Cancel closes without action
-  - Confirm (red button) calls onConfirm
-  - Loading state on confirm button
-  - Dark mode + keyboard accessible (Esc to close, Enter to confirm)
+  - Manages item list state
+  - Implements create with auto-refetch
+  - Implements update with item refresh
+  - Implements delete with removal
+  - Implements auto-refetch interval
+  - Error handling for all operations
+  - Comprehensive tests
+  - TypeScript strict mode
 
-### Phase 3: Workflow Builder Enhancement (2-3 hours)
-
-#### Task 3.1: Add Platform Selector to WorkflowPipelineBuilder
-- **File:** `packages/dashboard/src/components/Workflows/WorkflowPipelineBuilder.tsx`
-- **Effort:** 2 hours
+#### Task 2.2: Create useLoadingState Hook (1-2 hours)
+- **File:** `hooks/useLoadingState.ts`
+- **Effort:** 1-2 hours
 - **Priority:** HIGH
-- **Depends on:** Task 1.1
+- **Dependencies:** None
 - **Acceptance Criteria:**
-  - Platform dropdown at top (required field)
-  - Loads platforms from fetchPlatforms() on mount
-  - Selecting platform fetches platform-specific agents
-  - Agent selectors filtered by selected platform
-  - Platform context shown visually
-  - Error handling for API failures
-  - Pass platform to SaveWorkflowDefinitionModal
+  - Manages multiple loading states (main, saving, deleting, modal)
+  - setLoading helper function
+  - JSDoc documentation
+  - Unit tests
+  - TypeScript complete
 
-#### Task 3.2: Update SaveWorkflowDefinitionModal for Platform
-- **File:** `packages/dashboard/src/components/Workflows/SaveWorkflowDefinitionModal.tsx`
-- **Effort:** 1 hour
+#### Task 2.3: Extract Theme Constants (2-3 hours)
+- **File:** `constants/theme.ts`
+- **Effort:** 2-3 hours
 - **Priority:** HIGH
-- **Depends on:** Task 3.1
+- **Dependencies:** None
 - **Acceptance Criteria:**
-  - Accept platformId from parent component
-  - Include platformId in API request
-  - Display platform name in modal header
-  - Enforce platform required before save
-  - Error handling for missing platform_id
+  - Text, background, border color combinations
+  - Status colors (success, error, warning, info)
+  - Transitions and spacing utilities
+  - All combinations documented with examples
+  - Tests validate exports
+  - TypeScript complete
 
-### Phase 4: Testing & Validation (3-4 hours)
-
-#### Task 4.1: Write Backend Integration Tests
-- **File:** `packages/orchestrator/src/__tests__/platform.integration.test.ts`
-- **Effort:** 1.5 hours
-- **Priority:** HIGH
-- **Depends on:** Task 1.1, 1.2
-- **Coverage:**
-  - Create platform (201 success, 400 validation error)
-  - Read all platforms (200 with array)
-  - Update platform (200 with updated object)
-  - Delete platform (204 success, 404 not found)
-  - Platform analytics includes workflows
-  - Get platform agents (correct list)
-  - Use Vitest + supertest + mock database
-
-#### Task 4.2: Write Frontend Component Tests
-- **File:** `packages/dashboard/src/components/__tests__/PlatformCRUD.test.tsx`
-- **Effort:** 1.5 hours
-- **Priority:** HIGH
-- **Depends on:** Task 2.1, 2.2
-- **Coverage:**
-  - PlatformsPage renders platform list
-  - Create button opens modal
-  - Form validation rejects invalid input
-  - Submit creates platform (mocked API)
-  - Edit button populates form
-  - Update platform via form
-  - Delete button shows confirmation
-  - Confirmation deletes platform
-  - Error handling displays toasts
-  - Use Vitest + React Testing Library
-
-#### Task 4.3: Write E2E Pipeline Test
-- **File:** E2E test script or Vitest e2e suite
-- **Effort:** 1.5 hours
-- **Priority:** HIGH
-- **Depends on:** Task 4.1, 4.2
-- **Scenarios:**
-  - Create platform via API → Success
-  - Create workflow definition scoped to platform → Success
-  - Create workflow from definition → Success
-  - Verify workflow has platform_id
-  - Platform analytics shows new workflow
-  - Workflow builder shows platform's agents
-  - Test cascade on platform delete
-  - Run: `./dev start` → test flow → verify database → `./dev health`
-
-### Phase 5: Documentation & Polish (1 hour)
-
-#### Task 5.1: Update CLAUDE.md
-- **File:** `CLAUDE.md`
-- **Effort:** 30 min
+#### Task 2.4: Consolidate Formatter Utilities (1-2 hours)
+- **File:** Merge `utils/formatters.ts` + `utils/numberFormatters.ts` → `utils/format.ts`
+- **Effort:** 1-2 hours
 - **Priority:** MEDIUM
-- **Depends on:** Task 3.1
-- **Updates:**
-  - Add platform management workflow section
-  - Document platform layers and use cases
-  - Explain platform-scoped workflow definitions
-  - Add workflow builder platform requirement
-  - Update API endpoints section with platform CRUD
-  - Session #87 accomplishments
+- **Dependencies:** None
+- **Acceptance Criteria:**
+  - All formatters in single file
+  - No duplication
+  - All imports updated in 10+ files
+  - Old file deleted
+  - Tests passing
+  - Build succeeds
 
-#### Task 5.2: Code Quality & Build Validation
-- **Effort:** 30 min
+### Phase 3: Page Components & Templates (2-3 days, High Priority)
+
+#### Task 3.1: Create PageTemplate Component (3-4 hours)
+- **File:** `components/Layout/PageTemplate.tsx`
+- **Effort:** 3-4 hours
+- **Priority:** HIGH
+- **Dependencies:** Task 1.3 (Alert component)
+- **Acceptance Criteria:**
+  - Header with title, subtitle, action buttons
+  - Error alert display
+  - Loading skeleton state
+  - Content area (children)
+  - Dark mode support
+  - Responsive mobile layout
+  - Component tests
+  - Usage examples documented
+
+#### Task 3.2: Refactor PlatformsPage (2-3 hours)
+- **File:** `pages/PlatformsPage.tsx`
+- **Effort:** 2-3 hours
+- **Priority:** HIGH
+- **Dependencies:** Tasks 1.1-1.4, 2.1-2.4, 3.1
+- **Acceptance Criteria:**
+  - Uses useCRUD hook instead of manual state
+  - Uses useLoadingState for consistent naming
+  - Uses PageTemplate for layout
+  - Uses Alert component for errors
+  - Uses theme constants
+  - Uses updated API imports
+  - ~48% code reduction
+  - All tests passing
+  - E2E scenario works
+
+#### Task 3.3: Refactor TracesPage (2-3 hours)
+- **File:** `pages/TracesPage.tsx`
+- **Effort:** 2-3 hours
+- **Priority:** HIGH
+- **Dependencies:** Phase 1 & 2 complete
+- **Acceptance Criteria:**
+  - Uses useCRUD hook
+  - Uses PageTemplate
+  - Uses theme constants
+  - ~40% code reduction
+  - Tests passing
+  - E2E scenario works
+
+#### Task 3.4: Refactor WorkflowsPage (2-3 hours)
+- **File:** `pages/WorkflowsPage.tsx`
+- **Effort:** 2-3 hours
+- **Priority:** HIGH
+- **Dependencies:** Phase 1 & 2 complete
+- **Acceptance Criteria:**
+  - Same refactoring as TracesPage
+  - Code simplified
+  - Tests passing
+
+#### Task 3.5: Refactor Remaining 9 Pages (4-5 hours)
+- **Files:** All other pages (DashboardPage, WorkflowDefinitionsPage, etc)
+- **Effort:** 4-5 hours
+- **Priority:** HIGH
+- **Dependencies:** Phase 1, 2, 3.1 complete
+- **Acceptance Criteria:**
+  - All pages use PageTemplate
+  - All use theme constants
+  - All use new hooks as applicable
+  - Tests passing
+  - No broken functionality
+  - Consistent styling
+
+### Phase 4: Polish & Completion (2-3 days, Medium Priority)
+
+#### Task 4.1: Extract Input Components (2-3 hours)
+- **Files:** Create `components/Form/` with:
+  - `Input.tsx` (70 lines)
+  - `TextArea.tsx` (70 lines)
+  - `Select.tsx` (80 lines)
+  - `Checkbox.tsx` (60 lines)
+  - `FormField.tsx` (90 lines)
+- **Effort:** 2-3 hours
+- **Priority:** MEDIUM
+- **Dependencies:** Theme constants (Task 2.3)
+- **Acceptance Criteria:**
+  - All input components with consistent styling
+  - Dark mode support
+  - Accessibility features (labels, ARIA)
+  - Tests for each component
+  - Usage examples documented
+
+#### Task 4.2: Create Status Component Library (1-2 hours)
+- **Files:** Create `components/Status/` with:
+  - `StatusBadge.tsx` (70 lines)
+  - `ProgressIndicator.tsx` (60 lines)
+  - `EmptyState.tsx` (70 lines)
+  - `LoadingSpinner.tsx` (40 lines)
+- **Effort:** 1-2 hours
+- **Priority:** MEDIUM
+- **Dependencies:** None
+- **Acceptance Criteria:**
+  - All status components rendering correctly
+  - Dark mode support
+  - Tests passing
+  - Usage documented
+
+#### Task 4.3: Refactor Modal Components (3-4 hours)
+- **Files:** All 6 modal files updated to use BaseModal
+- **Effort:** 3-4 hours
+- **Priority:** MEDIUM
+- **Dependencies:** Task 1.1, 1.2, 1.3
+- **Modal Files:**
+  - SaveWorkflowDefinitionModal
+  - CreateMockWorkflowModal
+  - StageEditorModal
+  - PlatformFormModal
+  - DeleteConfirmationModal
+  - TaskDetailsModal
+- **Acceptance Criteria:**
+  - All modals use BaseModal wrapper
+  - Form logic uses useFormState if applicable
+  - Errors use Alert component
+  - ~60 lines reduced per modal
+  - Tests passing
+  - No functionality lost
+
+#### Task 4.4: Standardize Naming Conventions (1-2 hours)
+- **Effort:** 1-2 hours
+- **Priority:** MEDIUM
+- **Dependencies:** All refactoring complete
+- **Acceptance Criteria:**
+  - Consistent loading state naming
+  - Consistent modal state naming
+  - Consistent error state naming
+  - No linting errors
+  - Tests passing
+  - 30+ files updated
+
+#### Task 4.5: Consolidate Type Definitions (1-2 hours)
+- **File:** Create `types/components.ts`
+- **Effort:** 1-2 hours
+- **Priority:** MEDIUM
+- **Dependencies:** All components refactored
+- **Acceptance Criteria:**
+  - All component types in single location
+  - No duplicate interfaces
+  - All imports updated
+  - TypeScript clean
+  - Tests passing
+
+#### Task 4.6: Final Validation & Testing (2-3 hours)
+- **Effort:** 2-3 hours
 - **Priority:** CRITICAL
-- **Depends on:** Task 4.1, 4.2, 4.3
-- **Validation:**
-  - `turbo run build` → 0 errors
-  - `turbo run typecheck` → 0 TypeScript errors
-  - `turbo run lint` → 0 linting errors
-  - `turbo run test` → >85% coverage
-  - No console errors in dashboard
-  - `pnpm audit` → no vulnerabilities
+- **Dependencies:** All tasks complete
+- **Validation Steps:**
+  - Run full TypeScript check
+  - Run linting
+  - Run build
+  - Run all tests
+  - Run E2E dashboard test
+  - Manual QA on all pages
+  - Dark mode testing
+  - Responsive design testing
+- **Acceptance Criteria:**
+  - Zero TypeScript errors
+  - Zero linting errors
+  - All tests passing (>80% coverage)
+  - Build successful
+  - E2E tests pass
+  - Manual QA complete
+  - No breaking changes
 
 ---
 
 ## Dependencies & Build Order
 
-### Package Build Order (Turbo)
+### Phase Dependencies
 
-```
-1. @agentic-sdlc/shared-types
-   ↓
-2. @agentic-sdlc/orchestrator
-   ├─ Platform routes (Task 1.1)
-   ├─ Platform service (Task 1.2)
-   └─ Integration tests (Task 4.1)
-   ↓
-3. @agentic-sdlc/dashboard
-   ├─ PlatformFormModal (Task 2.1)
-   ├─ DeleteConfirmationModal (Task 2.3)
-   ├─ PlatformsPage (Task 2.2)
-   ├─ WorkflowPipelineBuilder (Task 3.1)
-   ├─ SaveWorkflowDefinitionModal (Task 3.2)
-   ├─ Component tests (Task 4.2)
-   └─ E2E tests (Task 4.3)
-```
+**Phase 1: Foundation (No dependencies)**
+- Task 1.1 → 1.2 → 1.3 (can be parallel)
+- Task 1.4 (independent)
+
+**Phase 2: Hooks (Depends on Phase 1)**
+- Task 2.1 (depends on Task 1.4)
+- Tasks 2.2, 2.3, 2.4 (independent)
+
+**Phase 3: Pages (Depends on Phase 1 & 2)**
+- Task 3.1 (depends on Task 1.3)
+- Tasks 3.2-3.5 (depend on 3.1, Phase 1, Phase 2)
+
+**Phase 4: Polish (Depends on all previous)**
+- Tasks 4.1, 4.2 (independent)
+- Task 4.3 (depends on 1.1, 1.2, 1.3)
+- Tasks 4.4, 4.5 (depend on all refactoring)
+- Task 4.6 (final validation, depends on all)
+
+### Build System Integration
+
+**Dashboard package:** `@agentic-sdlc/dashboard`
+- No orchestrator dependencies (pure frontend)
+- Builds independently: `turbo run build --filter=@agentic-sdlc/dashboard`
+- Tests independently: `turbo run test --filter=@agentic-sdlc/dashboard`
 
 ### No New External Dependencies Required
 
@@ -287,174 +439,262 @@ The Multi-Stage Workflow Builder and Platform CRUD features are largely implemen
 - TypeScript (existing)
 - Tailwind CSS (existing)
 - Vitest (existing)
+- TanStack Query (existing)
 - Axios (existing)
 
 ---
 
-## Risk Assessment
+## Risk Assessment & Mitigation
 
-| Risk | Probability | Impact | Mitigation |
-|------|------------|--------|-----------|
-| Platform delete cascade too aggressive | Low | High | Implement soft delete + confirmation |
-| Platform APIs don't exist | Medium | High | Task 1.1 verifies, Task 1.2 implements if needed |
-| Form validation complexity | Low | Medium | Mirror SaveWorkflowDefinitionModal patterns |
-| Workflow builder platform-agent coupling | Low | Medium | Comprehensive testing in Task 4.2 |
-| Database cascade delete issues | Low | High | Verify with integration tests |
-| E2E test flakiness | Medium | Medium | Retries, proper wait conditions, cleanup |
-| Breaking changes to existing workflows | Medium | High | Keep platform_id optional (backward compatible) |
-| Type safety in API responses | Low | Medium | Strict TypeScript, schema validation |
+| # | Risk | Probability | Impact | Severity | Mitigation Strategy |
+|---|------|-----------|--------|----------|-------------------|
+| 1 | Modal refactoring breaks existing functionality | Low | High | High | Phase testing with E2E, preserve all props, careful prop mapping |
+| 2 | API client split causes import errors in 30+ files | Medium | Medium | Medium | Use IDE refactor tools, verify build before commit, systematic updates |
+| 3 | Form state consolidation changes form behavior | Low | High | High | Thorough unit testing, manual testing each form, E2E validation |
+| 4 | Page refactoring introduces TypeScript errors | Medium | Medium | Medium | Run typecheck after each page, incremental refactoring |
+| 5 | Performance regression after refactoring | Low | Medium | Medium | Profile before/after, load testing, monitor bundle size |
+| 6 | Naming standardization conflicts with code | Medium | Low | Low | IDE refactor tools, clear standards, review before commit |
+| 7 | Dark mode breaks during refactoring | Medium | Low | Medium | Test dark mode on all changes, use theme constants properly |
+| 8 | Merge conflicts with concurrent development | Medium | Medium | Medium | Coordinate timing, work on separate branches, frequent syncs |
+| 9 | Insufficient test coverage for new components | Medium | Medium | Medium | Require >80% coverage for new files, review tests carefully |
+| 10 | Rollback needed after partial refactor | Low | High | High | Incremental commits, E2E test after each phase, easy revert |
+
+### Mitigation Strategies by Phase
+
+**Phase 1:** Create components in isolation, write tests first, use feature branch, run E2E after major components
+**Phase 2:** Test hooks with real components, verify imports update correctly, run full build
+**Phase 3:** Refactor one page at a time, run E2E after each page, manual QA on each page
+**Phase 4:** Final comprehensive testing, manual QA of all pages, E2E scenario validation
 
 ---
 
 ## Testing Strategy
 
 ### Unit Tests (Vitest)
-- PlatformService CRUD methods
-- Form validation logic
-- Component rendering
-- Error handling
-- Input validation
+**New Components:**
+- BaseModal component rendering and props
+- useFormState hook state management
+- Alert component variants
+- useCRUD hook CRUD operations
+- useLoadingState hook
+- Input/Status components
 
-**Run:** `turbo run test --filter=@agentic-sdlc/orchestrator`
+**Modified Components:**
+- Page components using new hooks
+- Modal components with BaseModal wrapper
+- Form components using useFormState
 
-### Integration Tests
-- Full HTTP request/response cycle
-- Database state after operations
-- Multi-step workflows (create → update → delete)
-- Form submission → API call → UI refresh
+**Run:**
+```bash
+turbo run test --filter=@agentic-sdlc/dashboard
+```
 
-**Run:** `turbo run test -- --include="**/*.integration.test.ts"`
+**Coverage Targets:**
+- New files: >90%
+- Modified files: >80%
+- Overall: >80%
+
+### Integration Tests (Vitest)
+- BaseModal + useFormState + Alert interaction
+- PageTemplate + page content integration
+- useCRUD + API client integration
+- Theme constants + Tailwind classes
 
 ### E2E Tests
-1. Start services: `./dev start`
-2. Execute: Create platform → Create definition → Create workflow
-3. Verify data integrity
-4. Health check: `./dev health`
-5. Cleanup: `./dev stop`
+```bash
+./scripts/env/start-dev.sh
 
-**Coverage:** All critical paths
+# Dashboard functionality
+./scripts/run-pipeline-test.sh "Dashboard Page Navigation"
+./scripts/run-pipeline-test.sh "Dashboard CRUD Operations"
+./scripts/run-pipeline-test.sh "Dashboard Modal Operations"
+./scripts/run-pipeline-test.sh "Dashboard Form Submission"
+./scripts/run-pipeline-test.sh "Dashboard Dark Mode"
+
+./scripts/env/stop-dev.sh
+```
 
 ### Build Validation
 ```bash
-turbo run build        # All packages compile
-turbo run typecheck    # 0 TypeScript errors
-turbo run lint         # 0 linting errors
-pnpm audit             # No vulnerabilities
+# After each phase
+turbo run typecheck --filter=@agentic-sdlc/dashboard
+turbo run lint --filter=@agentic-sdlc/dashboard
+turbo run test --filter=@agentic-sdlc/dashboard
+
+# After Phase 1 & 2
+turbo run build --filter=@agentic-sdlc/dashboard
+
+# Final validation
+turbo run typecheck
+turbo run lint
+turbo run test
+turbo run build
+npm test
+./scripts/run-pipeline-test.sh "Dashboard Refactor Final"
 ```
 
-### Coverage Targets
-- Unit tests: 85%+
-- Integration tests: 80%+
-- E2E: All critical paths
-- Overall: No untested code changes
+### Manual QA Checklist
+For each refactored page:
+- [ ] Page loads without errors
+- [ ] All content displays correctly
+- [ ] Forms submit successfully
+- [ ] Modals open/close
+- [ ] Dark mode toggles correctly
+- [ ] Mobile layout responsive
+- [ ] No console errors
 
 ---
 
 ## Timeline & Effort
 
-| Phase | Tasks | Hours | Status |
-|-------|-------|-------|--------|
-| Phase 1: Verification | 1.1, 1.2 | 1.5 | Pending |
-| Phase 2: Frontend UI | 2.1, 2.2, 2.3 | 4.5 | Pending |
-| Phase 3: Builder Enhancement | 3.1, 3.2 | 3.0 | Pending |
-| Phase 4: Testing | 4.1, 4.2, 4.3 | 4.5 | Pending |
-| Phase 5: Polish & Docs | 5.1, 5.2 | 1.0 | Pending |
-| **TOTAL** | **13 tasks** | **14.5 hours** | |
+| Phase | Tasks | Hours | Days | Status |
+|-------|-------|-------|------|--------|
+| Phase 1: Foundation | 1.1-1.4 | 12-15 | 2 days | Pending |
+| Phase 2: Hooks & Utilities | 2.1-2.4 | 7-9 | 1 day | Pending |
+| Phase 3: Pages & Templates | 3.1-3.5 | 14-17 | 2-3 days | Pending |
+| Phase 4: Polish & Completion | 4.1-4.6 | 12-15 | 2 days | Pending |
+| **TOTAL** | **18 tasks** | **45-56 hours** | **8-10 days** | |
 
-### Execution Order
+### Realistic Execution Timeline
 
-**Day 1 (Morning):** Phase 1 - Backend verification (1.5h)
-**Day 1 (Afternoon):** Phase 2 - Frontend components (4.5h)
-**Day 2 (Morning):** Phase 3 - Builder enhancement (3h)
-**Day 2 (Afternoon):** Phase 4 - Testing (4.5h)
-**Day 3 (Morning):** Phase 5 - Documentation & validation (1h)
+- **Week 1:** Phase 1 (Foundation) + Phase 2 (Hooks) = 3-4 days
+- **Week 2:** Phase 3 (Pages) = 2-3 days
+- **Week 2-3:** Phase 4 (Polish & Completion) = 2-3 days
+- **Buffer:** For testing, refactoring, and validation = 1-2 days
+
+**Total: 8-10 business days**
 
 ---
 
 ## Rollout Plan
 
-### Stage 1: Verification & Foundation
-- Verify backend endpoints
-- Implement missing endpoints if needed
-- **Commit:** "chore: Verify platform CRUD backend endpoints"
+### Stage 1: Foundation Components (2-3 days)
+- Create BaseModal component
+- Create useFormState hook
+- Create Alert component
+- Modularize API client
+- **Commits:**
+  - "refactor(dashboard): 1.1 - Extract BaseModal component"
+  - "refactor(dashboard): 1.2 - Create useFormState hook"
+  - "refactor(dashboard): 1.3 - Create Alert component"
+  - "refactor(dashboard): 1.4 - Modularize API client"
 
-### Stage 2: Frontend Components
-- Build PlatformFormModal
-- Add CRUD actions to PlatformsPage
-- **Commit:** "feat: Add platform CRUD UI components"
+### Stage 2: Hooks & Utilities (1-2 days)
+- Create useCRUD hook
+- Create useLoadingState hook
+- Extract theme constants
+- Consolidate formatters
+- **Commits:**
+  - "refactor(dashboard): 2.1 - Create useCRUD hook"
+  - "refactor(dashboard): 2.2-2.4 - Add utilities & formatters"
 
-### Stage 3: Integration
-- Add platform selector to workflow builder
-- Update SaveWorkflowDefinitionModal
-- **Commit:** "feat: Integrate platform context into workflow builder"
+### Stage 3: Page Components (2-3 days)
+- Create PageTemplate component
+- Refactor all 12 pages
+- **Commits:**
+  - "refactor(dashboard): 3.1 - Create PageTemplate component"
+  - "refactor(dashboard): 3.2-3.5 - Refactor all pages"
 
-### Stage 4: Testing & Validation
-- Write integration tests
-- Write component tests
-- Write E2E tests
-- Run full test suite
-- **Commit:** "test: Add comprehensive platform CRUD tests"
-
-### Stage 5: Documentation & Release
-- Update CLAUDE.md
-- Run final build validation
-- **Commit:** "docs: Update CLAUDE.md with platform CRUD documentation"
+### Stage 4: Polish & Completion (2 days)
+- Extract input/status components
+- Refactor modals to use BaseModal
+- Standardize naming
+- Final validation
+- **Commits:**
+  - "refactor(dashboard): 4.1-4.5 - Polish & component extraction"
+  - "refactor(dashboard): 4.6 - Final validation & testing"
 
 ### Rollback Procedure
 
 **Immediate (15 min):**
-- `git revert <commit-hash>`
-- `./dev restart`
-- Verify health checks
+```bash
+# Revert last commits
+git revert HEAD~5..HEAD
+./dev rebuild-dashboard  # Rebuild dashboard with previous code
+./dev health             # Verify services
+```
 
-**Short-term (1 hour):**
-- Identify root cause
-- Fix in feature branch
-- Test locally before re-deploy
+**Short-term (1-2 hours):**
+- Identify which phase broke
+- Create fix in separate branch
+- Run tests and E2E before merging
+- Reapply fixes incrementally
 
-**Data Recovery:**
-- Platform soft-delete keeps data
-- Restore: `UPDATE platforms SET deleted_at = NULL WHERE id = ...`
+**No Data Loss:**
+- Refactoring is code-only (no database changes)
+- All existing functionality preserved
+- Easy to roll back individual phases
 
 ---
 
 ## Code Quality Standards
 
-### Architecture
-- Core: Platform business logic (PlatformService)
-- Ports: Platform and Workflow repositories
-- Adapters: PostgreSQL repos, HTTP routes
-- Orchestration: API routes and middleware
+### Component Hierarchy
+- **Reusable Components** (components/Common, components/Form, components/Status)
+- **Feature Components** (components/Workflows, components/Platforms, etc)
+- **Page Components** (pages/)
+- **Custom Hooks** (hooks/)
+- **Utilities & Constants** (utils/, constants/)
 
 ### Standards
-- No code duplication (one source of truth)
-- Strict TypeScript (no `any` types)
-- Package imports: `@agentic-sdlc/*` index exports
-- Meaningful error messages
-- Structured logging (Pino)
-- Accessibility: ARIA labels, keyboard nav
-- Comments: Only for non-obvious logic
+- **DRY:** No code duplication (extract shared logic)
+- **TypeScript:** Strict mode, no `any` types, 0 errors
+- **Naming:** Consistent, clear, self-documenting
+- **Dark Mode:** All new components support dark theme
+- **Accessibility:** ARIA labels, keyboard navigation
+- **Tests:** >80% coverage for new/modified code
+- **Performance:** No unnecessary re-renders, efficient hooks
+- **Comments:** Only for non-obvious logic
 
-### File Organization
+### File Organization After Refactoring
 
 ```
-orchestrator/
-├── src/api/routes/platform.routes.ts (Task 1.1)
-├── src/services/platform.service.ts (Task 1.2)
-└── src/__tests__/platform.integration.test.ts (Task 4.1)
-
-dashboard/
-├── src/components/Platforms/
-│   ├── PlatformFormModal.tsx (Task 2.1)
-│   └── __tests__/PlatformFormModal.test.tsx (Task 4.2)
-├── src/components/Common/
-│   ├── DeleteConfirmationModal.tsx (Task 2.3)
-│   └── __tests__/DeleteConfirmationModal.test.tsx (Task 4.2)
-├── src/components/Workflows/
-│   ├── WorkflowPipelineBuilder.tsx (Task 3.1)
-│   ├── SaveWorkflowDefinitionModal.tsx (Task 3.2)
-│   └── __tests__/PlatformCRUD.test.tsx (Task 4.2)
-└── src/pages/PlatformsPage.tsx (Task 2.2)
+dashboard/src/
+├── api/
+│   ├── client.ts (30 lines - exports)
+│   ├── workflows.ts (120 lines)
+│   ├── platforms.ts (100 lines)
+│   ├── traces.ts (80 lines)
+│   ├── agents.ts (60 lines)
+│   ├── definitions.ts (70 lines)
+│   └── stats.ts (50 lines)
+├── components/
+│   ├── Common/
+│   │   ├── BaseModal.tsx (NEW - Task 1.1)
+│   │   ├── Alert.tsx (NEW - Task 1.3)
+│   │   └── [existing]
+│   ├── Form/ (NEW - Task 4.1)
+│   │   ├── Input.tsx
+│   │   ├── TextArea.tsx
+│   │   ├── Select.tsx
+│   │   ├── Checkbox.tsx
+│   │   └── FormField.tsx
+│   ├── Status/ (NEW - Task 4.2)
+│   │   ├── StatusBadge.tsx
+│   │   ├── ProgressIndicator.tsx
+│   │   ├── EmptyState.tsx
+│   │   └── LoadingSpinner.tsx
+│   ├── Layout/
+│   │   ├── PageTemplate.tsx (NEW - Task 3.1)
+│   │   └── [existing]
+│   ├── Workflows/ (REFACTORED - Tasks 4.3)
+│   ├── Platforms/ (REFACTORED)
+│   └── [other components - REFACTORED]
+├── hooks/
+│   ├── useFormState.ts (NEW - Task 1.2)
+│   ├── useCRUD.ts (NEW - Task 2.1)
+│   ├── useLoadingState.ts (NEW - Task 2.2)
+│   └── [existing]
+├── constants/
+│   ├── theme.ts (NEW - Task 2.3)
+│   └── [existing]
+├── types/
+│   ├── components.ts (NEW - Task 4.5)
+│   └── [existing]
+├── utils/
+│   ├── format.ts (CONSOLIDATED - Task 2.4)
+│   └── [existing]
+└── pages/ (ALL REFACTORED - Tasks 3.2-3.5)
 ```
 
 ---
@@ -462,63 +702,119 @@ dashboard/
 ## Implementation Checklist
 
 ### Phase 1 Complete
-- [ ] Platform endpoints verified
-- [ ] Missing endpoints implemented if needed
+- [ ] BaseModal component created and tested
+- [ ] useFormState hook created and tested
+- [ ] Alert component created and tested
+- [ ] API client split into 6 modules
+- [ ] All imports updated (30+ files)
+- [ ] Build succeeds
+- [ ] TypeScript clean
+- [ ] Tests passing
 
 ### Phase 2 Complete
-- [ ] PlatformFormModal renders correctly
-- [ ] PlatformsPage has CRUD buttons
-- [ ] DeleteConfirmationModal prevents accidental deletes
+- [ ] useCRUD hook implemented and tested
+- [ ] useLoadingState hook implemented and tested
+- [ ] Theme constants created (200+ classes)
+- [ ] Formatters consolidated
+- [ ] All imports updated
+- [ ] Build succeeds
+- [ ] Tests passing
 
 ### Phase 3 Complete
-- [ ] WorkflowPipelineBuilder has platform selector
-- [ ] SaveWorkflowDefinitionModal includes platform_id
+- [ ] PageTemplate component created
+- [ ] All 12 pages refactored
+- [ ] Modal refactoring to use BaseModal
+- [ ] Manual QA complete on all pages
+- [ ] E2E tests pass
+- [ ] Dark mode tested
+- [ ] 40-50% code reduction achieved
 
 ### Phase 4 Complete
-- [ ] Backend integration tests passing (>80% coverage)
-- [ ] Frontend component tests passing (>85% coverage)
-- [ ] E2E pipeline test passing (create platform → workflow definition → workflow)
-
-### Phase 5 Complete
-- [ ] CLAUDE.md updated
-- [ ] TypeScript: 0 errors
+- [ ] Input components extracted
+- [ ] Status components created
+- [ ] All 6 modals refactored to BaseModal
+- [ ] Naming conventions standardized
+- [ ] Type definitions consolidated
+- [ ] Final validation complete
 - [ ] All tests passing
-- [ ] Build: all packages compile
-- [ ] Linting: 0 errors
+- [ ] No breaking changes
+
+### Overall Success Criteria
+- [ ] 50% code reduction (5,000 → 2,500 LOC)
+- [ ] 80% duplication reduction
+- [ ] Zero TypeScript errors
+- [ ] Zero linting errors
+- [ ] All tests passing (>80% coverage)
+- [ ] E2E tests pass
+- [ ] Manual QA complete
+- [ ] Code review approved
+- [ ] Documentation updated
+- [ ] Ready for production merge
 
 ---
 
 ## Reference Materials
 
-- **Exploration:** EPCC_EXPLORE.md
-- **Project State:** CLAUDE.md (Session #86)
-- **Pattern Reference:** SaveWorkflowDefinitionModal.tsx
-- **Database:** packages/orchestrator/prisma/schema.prisma
-- **API Endpoints:** packages/orchestrator/src/api/routes/
+- **Analysis:** DASHBOARD-API-REFACTOR.md
+- **Project State:** CLAUDE.md (Session #87-88)
+- **Pattern Reference:** Existing modals, pages, hooks
+- **Build System:** turbo.json, QUICKSTART-UNIFIED.md
+- **Testing:** Vitest configuration, existing test patterns
 
 ---
 
 ## Next Steps (CODE Phase)
 
-When moving to CODE phase:
+### Immediate Actions
+1. Create feature branch: `git checkout -b refactor/dashboard-api`
+2. Start with **Phase 1** (Foundation Components)
+3. Commit after each task completion
+4. Run tests and build validation after each phase
 
-1. Start with **Task 1.1** - Verify backend endpoints
-2. Implement **Task 2.1** - PlatformFormModal (reference SaveWorkflowDefinitionModal)
-3. Implement **Task 2.2** - Update PlatformsPage
-4. Implement **Task 3.1** - Platform selector in builder
-5. Test each phase before moving to next
+### Phase 1 Tasks (Start Here)
+1. **Task 1.1:** Create BaseModal component
+   - Reference: Existing modal structure in SaveWorkflowDefinitionModal
+   - Render: overlay, header, body, footer, error/success states
+   - Test: All props, dark mode, loading states
 
-**Critical Reminders:**
-- No AgentEnvelopeSchema changes needed
-- Keep platform_id optional on Workflow (backward compatibility)
-- Dark mode support required
-- User-friendly error messages
-- TypeScript strict mode (0 errors)
-- Reference existing patterns (SaveWorkflowDefinitionModal)
+2. **Task 1.2:** Create useFormState hook
+   - Handle: form data, errors, loading, field changes
+   - Methods: handleChange, handleSubmit, reset
+   - Test: All state transitions
+
+3. **Task 1.3:** Create Alert component
+   - Types: error, success, warning, info
+   - Features: dismissible, icons, dark mode
+   - Test: All variants
+
+4. **Task 1.4:** Split API client
+   - Organize: by concern (workflows, platforms, traces, agents, definitions, stats)
+   - Update: all 30+ component imports
+   - Verify: build succeeds, no errors
+
+### Success Metrics for Phase 1
+✅ 4 new foundational components/hooks created
+✅ API client properly modularized
+✅ All imports updated
+✅ Build successful
+✅ Tests passing
+✅ Ready for Phase 2
+
+### Critical Reminders
+- **No breaking changes** - All functionality preserved
+- **Dark mode** - All new components support theme toggle
+- **TypeScript** - Strict mode, 0 errors, no `any` types
+- **Tests** - >80% coverage for new code
+- **Incremental** - Commit after each task, test frequently
+- **Documentation** - JSDoc for public APIs
 
 ---
 
 **Status:** ✅ PLAN COMPLETE
 **Ready for CODE Phase:** YES
 **Created:** 2025-11-20
-**Session:** #87
+**Session:** #88
+**Type:** Dashboard Refactoring (Phase 1-4 Implementation)
+**Estimated Duration:** 8-10 business days
+**Total Tasks:** 18 (organized into 4 phases)
+**Expected Outcome:** 50% code reduction, 60-70% maintainability improvement

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createWorkflow } from '../../api/client'
 import LoadingSpinner from '../Common/LoadingSpinner'
 import BehaviorMetadataEditor from './BehaviorMetadataEditor'
 
@@ -230,27 +231,15 @@ export default function CreateMockWorkflowModal({
       setIsSubmitting(true)
       setError(null)
 
-      const response = await fetch('http://localhost:3051/api/v1/workflows', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          type: formData.type,
-          priority: formData.priority,
-          // Include behavior metadata for mock agent (may be customized in advanced mode)
-          behavior_metadata: behaviorMetadata
-        })
+      // Create workflow using API client (no hardcoded ports)
+      const workflow = await createWorkflow({
+        name: formData.name,
+        description: formData.description,
+        type: formData.type,
+        priority: formData.priority,
+        // Include behavior metadata for mock agent (may be customized in advanced mode)
+        behavior_metadata: behaviorMetadata
       })
-
-      if (!response.ok) {
-        throw new Error(`Failed to create workflow: ${response.statusText}`)
-      }
-
-      const result = await response.json()
-      const workflowId = result.id || result.workflow_id
 
       // Reset form and close
       setFormData({
@@ -263,7 +252,7 @@ export default function CreateMockWorkflowModal({
       setBehaviorMetadata(BEHAVIOR_METADATA_PRESETS['success'])
       setAdvancedMode(false)
 
-      onWorkflowCreated?.(workflowId)
+      onWorkflowCreated?.(workflow.id)
       onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create workflow')

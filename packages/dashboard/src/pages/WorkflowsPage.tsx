@@ -6,7 +6,7 @@ import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import ProgressBar from '../components/Common/ProgressBar'
 import CreateMockWorkflowModal from '../components/Workflows/CreateMockWorkflowModal'
-import { formatRelativeTime, truncateId, calculateProgressFromStage } from '../utils/formatters'
+import { formatRelativeTime, truncateId, calculateProgressFromStage } from '../utils/format'
 
 export default function WorkflowsPage() {
   const navigate = useNavigate()

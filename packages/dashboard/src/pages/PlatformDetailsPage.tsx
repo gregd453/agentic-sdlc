@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { fetchPlatform, fetchPlatformAnalytics, fetchPlatformAgents, AgentMetadata } from '../api/client'
-import { formatDate, formatDuration } from '../utils/formatters'
+import { formatDate, formatDuration } from '../utils/format'
 import { getPlatformLayerColor, formatLayerName } from '../utils/platformColors'
 import { logger } from '../utils/logger'
 import LoadingSpinner from '../components/Common/LoadingSpinner'

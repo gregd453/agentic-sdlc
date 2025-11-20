@@ -7,11 +7,11 @@ if (!dashboardPortEnv) {
   console.error('❌ ERROR: VITE_DASHBOARD_PORT environment variable is not set');
   console.error('');
   console.error('Usage:');
-  console.error('  export VITE_DASHBOARD_PORT=3050');
+  console.error('  export VITE_DASHBOARD_PORT=3053');
   console.error('  npm run dev');
   console.error('');
   console.error('Or in .env file:');
-  console.error('  VITE_DASHBOARD_PORT=3050');
+  console.error('  VITE_DASHBOARD_PORT=3053');
   console.error('');
   process.exit(1);
 }

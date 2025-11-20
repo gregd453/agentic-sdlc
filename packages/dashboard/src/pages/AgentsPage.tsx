@@ -4,7 +4,7 @@ import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import ChartContainer from '../components/Common/ChartContainer'
 import ProgressBar from '../components/Common/ProgressBar'
-import { formatDuration } from '../utils/numberFormatters'
+import { formatDuration } from '../utils/format'
 import { getAgentHealthStatus, AGENT_HEALTH_COLORS } from '../utils/agentHealth'
 
 interface AgentMetrics {

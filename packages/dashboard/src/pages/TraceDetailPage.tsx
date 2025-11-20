@@ -4,7 +4,7 @@ import { useTrace } from '../hooks/useTraces'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
-import { formatRelativeTime, truncateId } from '../utils/formatters'
+import { formatRelativeTime, truncateId } from '../utils/format'
 import { TaskDetailsModal } from '../components/Traces/TaskDetailsModal'
 import type { AgentTask } from '../types'
 

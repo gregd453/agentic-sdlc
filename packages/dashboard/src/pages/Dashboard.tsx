@@ -7,7 +7,7 @@ import ErrorDisplay from '../components/Common/ErrorDisplay'
 import StatusBadge from '../components/Common/StatusBadge'
 import ChartContainer from '../components/Common/ChartContainer'
 import MetricCard from '../components/Dashboard/MetricCard'
-import { formatRelativeTime } from '../utils/formatters'
+import { formatRelativeTime } from '../utils/format'
 import { statusColors } from '../utils/chartColorMap'
 import { transformStatusDistribution, transformThroughputData } from '../utils/dashboardTransformers'
 
