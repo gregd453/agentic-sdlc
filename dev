@@ -109,6 +109,10 @@ case "$1" in
     echo "Restarting agents..."
     pnpm pm2:restart agent-scaffold agent-validation agent-e2e agent-integration agent-deployment 2>/dev/null || echo "Agents restarted"
     ;;
+  rebuild-dashboard)
+    echo "Rebuilding dashboard..."
+    "$PROJECT_ROOT/scripts/rebuild-dashboard.sh"
+    ;;
   *)
     echo "Agentic SDLC - Unified Infrastructure"
     echo ""
@@ -132,9 +136,10 @@ case "$1" in
     echo "  dev cache-only         Start cache only"
     echo "  dev restart-orchestrator   Restart just orchestrator"
     echo "  dev restart-agents     Restart just agents"
+    echo "  dev rebuild-dashboard  Rebuild React app + Docker image + restart"
     echo ""
     echo "ACCESS SERVICES:"
-    echo "  dev dashboard          Open dashboard UI (http://localhost:3050)"
+    echo "  dev dashboard          Open dashboard UI (http://localhost:3053)"
     echo "  dev api                Open orchestrator API (http://localhost:3051)"
     echo "  dev db                 Database connection info"
     echo "  dev cache              Cache connection info"
