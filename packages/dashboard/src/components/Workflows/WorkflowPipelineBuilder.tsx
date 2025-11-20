@@ -11,6 +11,7 @@ import TemplateSelector from './TemplateSelector'
 import StageList from './StageList'
 import PipelinePreview from './PipelinePreview'
 import StageEditorModal from './StageEditorModal'
+import SaveWorkflowDefinitionModal from './SaveWorkflowDefinitionModal'
 import { ValidationErrorCard } from './ValidationErrorCard'
 import { useWorkflowValidation } from '../../hooks/useWorkflowValidation'
 import DefinitionTemplateSelector from '../WorkflowDefinitions/DefinitionTemplateSelector'
@@ -27,6 +28,7 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
   const [draggedStageId, setDraggedStageId] = useState<string | null>(null)
   const [showPreview, setShowPreview] = useState(false)
   const [showDefinitionSelector, setShowDefinitionSelector] = useState(false)
+  const [showSaveModal, setShowSaveModal] = useState(false)
 
   // Validation hook
   const { validation, isValidating } = useWorkflowValidation(stages)
@@ -269,9 +271,21 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
           <div className="space-y-2">
             <button
               onClick={() => setShowPreview(!showPreview)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
             >
               {showPreview ? '✓ Close Preview' : '👁️ Preview Pipeline'}
+            </button>
+            <button
+              disabled={stages.length === 0}
+              onClick={() => setShowSaveModal(true)}
+              className={`w-full px-4 py-2 rounded-lg text-white transition-colors text-sm font-medium ${
+                stages.length === 0
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-indigo-600 hover:bg-indigo-700'
+              }`}
+              title={stages.length === 0 ? 'Add stages before saving' : 'Save this workflow as a reusable definition'}
+            >
+              💾 Save as Definition
             </button>
             <button
               disabled={stages.length === 0 || !validation.isValid || isValidating}
@@ -315,6 +329,18 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
           stage={editingStage}
           onUpdate={handleUpdateStage}
           onClose={() => setEditingStageId(null)}
+        />
+      )}
+
+      {/* Save Workflow Definition Modal */}
+      {showSaveModal && (
+        <SaveWorkflowDefinitionModal
+          stages={stages}
+          onClose={() => setShowSaveModal(false)}
+          onSuccess={(definitionId) => {
+            console.log('Workflow definition saved:', definitionId)
+            // Optional: show success toast or notification
+          }}
         />
       )}
     </div>
