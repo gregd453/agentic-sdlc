@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:full": "concurrently \"npm run dev\" \"npm run server:dev\"",
+    "prebuild": "prisma generate --schema=../orchestrator/prisma/schema.prisma",
     "build": "tsc && vite build && npm run server:build",
     "build:frontend": "tsc && vite build",
     "build:server": "tsc --project tsconfig.server.json",
