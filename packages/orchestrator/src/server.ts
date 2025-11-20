@@ -29,6 +29,7 @@ import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler
 import { logger } from './utils/logger';
 import { PlatformLoaderService } from './services/platform-loader.service';
 import { PlatformRegistryService } from './services/platform-registry.service';
+import { PlatformService } from './services/platform.service';
 import { AgentRegistryService } from './services/agent-registry.service';
 import { metrics } from './utils/metrics';
 import {
@@ -168,6 +169,7 @@ export async function createServer() {
   const platformLoader = new PlatformLoaderService(prisma);
   const platformRegistry = new PlatformRegistryService(platformLoader);
   await platformRegistry.initialize();
+  const platformService = new PlatformService(prisma);
   logger.info('Platform services initialized (PlatformRegistry with %d platforms)', platformRegistry.size());
 
   // Initialize agent discovery service (Session #85 - Dashboard Agent Extensibility)
@@ -214,7 +216,7 @@ export async function createServer() {
   await fastify.register(statsRoutes, { statsService });
   await fastify.register(traceRoutes, { traceService });
   await fastify.register(taskRoutes, { workflowRepository });
-  await fastify.register(platformRoutes, { platformRegistry, statsService, agentRegistry });
+  await fastify.register(platformRoutes, { platformRegistry, platformService, platformLoader, statsService, agentRegistry });
   // Session #85: Agent discovery routes for dashboard agent extensibility
   await fastify.register(agentsRoutes, { agentRegistry });
   // Workflow definition CRUD routes for platform-scoped workflow management

@@ -18,7 +18,7 @@ const getAPIBase = (): string => {
   }
 
   // In development, use the actual orchestrator API directly
-  // The dashboard is served from localhost:3050, orchestrator is at localhost:3051
+  // The dashboard (Vite) is served from localhost:3053, orchestrator API is at localhost:3051
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
     return 'http://localhost:3051/api/v1'
   }
@@ -87,6 +87,28 @@ export async function fetchWorkflowEvents(id: string) {
 
 export async function fetchWorkflowTimeline(id: string): Promise<WorkflowTimeline> {
   return fetchJSON<WorkflowTimeline>(`${API_BASE}/workflows/${id}/timeline`)
+}
+
+export async function createWorkflow(data: {
+  name: string
+  description?: string
+  type?: string
+  priority?: string
+  stages?: any[]
+  behavior_metadata?: any
+}): Promise<Workflow> {
+  const response = await fetch(`${API_BASE}/workflows`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  const workflow = await response.json()
+  return transformWorkflow(workflow)
 }
 
 // Stats API
@@ -200,6 +222,58 @@ export async function fetchPlatformAnalytics(
 
 export async function fetchPlatformAgents(platformId: string): Promise<AgentMetadata[]> {
   return fetchJSON<AgentMetadata[]>(`${API_BASE}/platforms/${platformId}/agents`)
+}
+
+// Platform CRUD operations
+export async function createPlatform(data: {
+  name: string
+  layer: 'APPLICATION' | 'DATA' | 'INFRASTRUCTURE' | 'ENTERPRISE'
+  description?: string
+  config?: Record<string, any>
+  enabled?: boolean
+}): Promise<Platform> {
+  const response = await fetch(`${API_BASE}/platforms`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to create platform')
+  }
+  return response.json()
+}
+
+export async function updatePlatform(
+  id: string,
+  data: {
+    name?: string
+    layer?: 'APPLICATION' | 'DATA' | 'INFRASTRUCTURE' | 'ENTERPRISE'
+    description?: string | null
+    config?: Record<string, any>
+    enabled?: boolean
+  }
+): Promise<Platform> {
+  const response = await fetch(`${API_BASE}/platforms/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to update platform')
+  }
+  return response.json()
+}
+
+export async function deletePlatform(id: string): Promise<void> {
+  const response = await fetch(`${API_BASE}/platforms/${id}`, {
+    method: 'DELETE'
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to delete platform')
+  }
 }
 
 // Agent Discovery API (Session #85 - Dashboard Agent Extensibility)

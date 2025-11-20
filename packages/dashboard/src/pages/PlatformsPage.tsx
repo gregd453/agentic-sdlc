@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { fetchPlatforms, fetchPlatformAnalytics } from '../api/client'
+import { fetchPlatforms, fetchPlatformAnalytics, createPlatform, updatePlatform, deletePlatform } from '../api/client'
 import { formatDate, formatDuration } from '../utils/formatters'
 import { getPlatformLayerColor, formatLayerName } from '../utils/platformColors'
 import { logger } from '../utils/logger'
@@ -7,12 +7,15 @@ import type { PlatformAnalytics } from '../types'
 import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import PageTransition from '../components/Animations/PageTransition'
+import PlatformFormModal from '../components/Platforms/PlatformFormModal'
+import DeleteConfirmationModal from '../components/Common/DeleteConfirmationModal'
 
 interface Platform {
   id: string
   name: string
-  layer: string
-  description?: string
+  layer: 'APPLICATION' | 'DATA' | 'INFRASTRUCTURE' | 'ENTERPRISE' | string
+  description?: string | null
+  config?: Record<string, any>
   enabled: boolean
   created_at?: string
   updated_at?: string
@@ -27,6 +30,13 @@ export const PlatformsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedPeriod, setSelectedPeriod] = useState('24h')
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false)
+  const [editingPlatform, setEditingPlatform] = useState<Platform | null>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [platformToDelete, setPlatformToDelete] = useState<Platform | null>(null)
+  const [isSaving, setSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [modalError, setModalError] = useState<string | null>(null)
 
   useEffect(() => {
     loadPlatforms()
@@ -78,6 +88,74 @@ export const PlatformsPage: React.FC = () => {
     }
   }
 
+  const handleOpenCreateModal = () => {
+    setEditingPlatform(null)
+    setModalError(null)
+    setIsFormModalOpen(true)
+  }
+
+  const handleOpenEditModal = (platform: Platform) => {
+    setEditingPlatform(platform)
+    setModalError(null)
+    setIsFormModalOpen(true)
+  }
+
+  const handleSavePlatform = async (data: any) => {
+    setSaving(true)
+    setModalError(null)
+
+    try {
+      if (editingPlatform) {
+        // Update existing platform
+        await updatePlatform(editingPlatform.id, data)
+        logger.info(`Platform updated successfully (${editingPlatform.id})`)
+      } else {
+        // Create new platform
+        await createPlatform(data)
+        logger.info(`Platform created successfully (${data.name})`)
+      }
+      // Reload platforms
+      await loadPlatforms()
+      setIsFormModalOpen(false)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save platform'
+      setModalError(errorMessage)
+      const errMsg = err instanceof Error ? err.message : 'Unknown error'
+      logger.error(errMsg)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleOpenDeleteModal = (platform: Platform) => {
+    setPlatformToDelete(platform)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!platformToDelete) return
+
+    setIsDeleting(true)
+
+    try {
+      await deletePlatform(platformToDelete.id)
+      logger.info(`Platform deleted successfully (${platformToDelete.id})`)
+      // Reload platforms
+      await loadPlatforms()
+      setIsDeleteModalOpen(false)
+      setPlatformToDelete(null)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete platform'
+      setError(errorMessage)
+      const errMsg = err instanceof Error ? err.message : 'Unknown error'
+      logger.error(errMsg)
+      setIsDeleteModalOpen(false)
+      setPlatformToDelete(null)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
 
   if (isLoading) {
     return <LoadingSpinner />
@@ -95,21 +173,32 @@ export const PlatformsPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Period Selector */}
-          <div className="flex gap-2">
-            {['1h', '24h', '7d', '30d'].map((period) => (
-              <button
-                key={period}
-                onClick={() => setSelectedPeriod(period)}
-                className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                  selectedPeriod === period
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                }`}
-              >
-                {period === '1h' ? '1H' : period === '24h' ? '24H' : period === '7d' ? '7D' : '30D'}
-              </button>
-            ))}
+          {/* Action Buttons and Period Selector */}
+          <div className="flex items-center gap-4">
+            {/* Create Platform Button */}
+            <button
+              onClick={handleOpenCreateModal}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+            >
+              + New Platform
+            </button>
+
+            {/* Period Selector */}
+            <div className="flex gap-2">
+              {['1h', '24h', '7d', '30d'].map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setSelectedPeriod(period)}
+                  className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                    selectedPeriod === period
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  {period === '1h' ? '1H' : period === '24h' ? '24H' : period === '7d' ? '7D' : '30D'}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -144,9 +233,30 @@ export const PlatformsPage: React.FC = () => {
                       {platform.description || 'No description'}
                     </p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPlatformLayerColor(platform.layer)}`}>
-                    {formatLayerName(platform.layer)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPlatformLayerColor(platform.layer)}`}>
+                      {formatLayerName(platform.layer)}
+                    </span>
+                    {/* Action Icons */}
+                    <button
+                      onClick={() => handleOpenEditModal(platform)}
+                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      title="Edit platform"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleOpenDeleteModal(platform)}
+                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                      title="Delete platform"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Analytics */}
@@ -204,6 +314,34 @@ export const PlatformsPage: React.FC = () => {
             ))}
           </div>
         )}
+
+        {/* Modals */}
+        <PlatformFormModal
+          isOpen={isFormModalOpen}
+          onClose={() => {
+            setIsFormModalOpen(false)
+            setEditingPlatform(null)
+            setModalError(null)
+          }}
+          onSave={handleSavePlatform}
+          platform={editingPlatform}
+          isLoading={isSaving}
+          error={modalError}
+        />
+
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false)
+            setPlatformToDelete(null)
+          }}
+          onConfirm={handleConfirmDelete}
+          title="Delete Platform"
+          message="Are you sure you want to delete this platform? This action cannot be undone."
+          itemName={platformToDelete?.name}
+          isLoading={isDeleting}
+          isDangerous={true}
+        />
       </div>
     </PageTransition>
   )

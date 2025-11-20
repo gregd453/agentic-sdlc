@@ -11,17 +11,19 @@ interface SaveWorkflowDefinitionModalProps {
   stages: WorkflowStage[]
   onClose: () => void
   onSuccess?: (definitionId: string) => void
+  platformId?: string
 }
 
 export default function SaveWorkflowDefinitionModal({
   stages,
   onClose,
-  onSuccess
+  onSuccess,
+  platformId: initialPlatformId
 }: SaveWorkflowDefinitionModalProps) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [version, setVersion] = useState('1.0.0')
-  const [platformId, setPlatformId] = useState('')
+  const [platformId, setPlatformId] = useState(initialPlatformId || '')
   const [platforms, setPlatforms] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,7 +35,10 @@ export default function SaveWorkflowDefinitionModal({
       try {
         const data = await fetchPlatforms()
         setPlatforms(data)
-        if (data.length > 0) {
+        // Use provided platformId or default to first platform
+        if (initialPlatformId && data.some(p => p.id === initialPlatformId)) {
+          setPlatformId(initialPlatformId)
+        } else if (data.length > 0 && !platformId) {
           setPlatformId(data[0].id)
         }
       } catch (err) {
@@ -41,7 +46,7 @@ export default function SaveWorkflowDefinitionModal({
       }
     }
     loadPlatforms()
-  }, [])
+  }, [initialPlatformId])
 
   const handleSave = async () => {
     setError(null)

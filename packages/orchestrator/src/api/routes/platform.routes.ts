@@ -2,6 +2,8 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { PlatformRegistryService } from '../../services/platform-registry.service';
+import { PlatformService } from '../../services/platform.service';
+import { PlatformLoaderService } from '../../services/platform-loader.service';
 import { StatsService } from '../../services/stats.service';
 import { AgentRegistryService } from '../../services/agent-registry.service';
 import { logger } from '../../utils/logger';
@@ -10,11 +12,13 @@ export async function platformRoutes(
   fastify: FastifyInstance,
   options: {
     platformRegistry: PlatformRegistryService
+    platformService: PlatformService
+    platformLoader: PlatformLoaderService
     statsService: StatsService
     agentRegistry: AgentRegistryService
   }
 ): Promise<void> {
-  const { platformRegistry, statsService, agentRegistry } = options;
+  const { platformRegistry, platformService, platformLoader, statsService, agentRegistry } = options;
 
   // List all platforms
   fastify.get('/api/v1/platforms', {
@@ -238,6 +242,198 @@ export async function platformRoutes(
         logger.error('Failed to get platform agents', { error, id: request.params.id });
         reply.code(500).send({
           error: 'Internal server error'
+        });
+      }
+    }
+  });
+
+  // Create a new platform
+  fastify.post('/api/v1/platforms', {
+    schema: {
+      body: zodToJsonSchema(z.object({
+        name: z.string().min(1, 'Platform name is required'),
+        layer: z.enum(['APPLICATION', 'DATA', 'INFRASTRUCTURE', 'ENTERPRISE']),
+        description: z.string().optional(),
+        config: z.record(z.any()).optional(),
+        enabled: z.boolean().optional()
+      })),
+      response: {
+        201: zodToJsonSchema(z.object({
+          id: z.string().uuid(),
+          name: z.string(),
+          layer: z.string(),
+          description: z.string().optional(),
+          config: z.any().optional(),
+          enabled: z.boolean(),
+          created_at: z.string().datetime(),
+          updated_at: z.string().datetime()
+        })),
+        400: zodToJsonSchema(z.object({
+          error: z.string()
+        })),
+        500: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{
+        Body: {
+          name: string
+          layer: string
+          description?: string
+          config?: Record<string, any>
+          enabled?: boolean
+        }
+      }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        // Cast layer string to PlatformLayer enum
+        const { layer, ...body } = request.body;
+        const platform = await platformService.createPlatform({
+          ...body,
+          layer: layer as any // layer is validated by schema
+        });
+
+        // Reload platform in registry
+        platformLoader.invalidateCache();
+        await platformRegistry.refresh();
+
+        logger.info('[POST /api/v1/platforms] Created platform', {
+          platformId: platform.id,
+          name: platform.name
+        });
+
+        reply.code(201).send(platform);
+      } catch (error: any) {
+        logger.error('[POST /api/v1/platforms] Failed to create platform', { error: error.message });
+        reply.code(400).send({
+          error: error.message || 'Failed to create platform'
+        });
+      }
+    }
+  });
+
+  // Update an existing platform
+  fastify.put('/api/v1/platforms/:id', {
+    schema: {
+      params: zodToJsonSchema(z.object({
+        id: z.string().uuid()
+      })),
+      body: zodToJsonSchema(z.object({
+        name: z.string().optional(),
+        layer: z.enum(['APPLICATION', 'DATA', 'INFRASTRUCTURE', 'ENTERPRISE']).optional(),
+        description: z.string().optional().nullable(),
+        config: z.record(z.any()).optional(),
+        enabled: z.boolean().optional()
+      })),
+      response: {
+        200: zodToJsonSchema(z.object({
+          id: z.string().uuid(),
+          name: z.string(),
+          layer: z.string(),
+          description: z.string().optional(),
+          config: z.any().optional(),
+          enabled: z.boolean(),
+          created_at: z.string().datetime(),
+          updated_at: z.string().datetime()
+        })),
+        400: zodToJsonSchema(z.object({
+          error: z.string()
+        })),
+        404: zodToJsonSchema(z.object({
+          error: z.string()
+        })),
+        500: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{
+        Params: { id: string }
+        Body: {
+          name?: string
+          layer?: string
+          description?: string | null
+          config?: Record<string, any>
+          enabled?: boolean
+        }
+      }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        // Cast layer string to PlatformLayer enum if provided
+        const { layer, ...body } = request.body;
+        const updateData = layer ? { ...body, layer: layer as any } : body;
+        const platform = await platformService.updatePlatform(request.params.id, updateData);
+
+        // Reload platform in registry
+        platformLoader.invalidateCache(request.params.id);
+        await platformRegistry.refresh();
+
+        logger.info('[PUT /api/v1/platforms/:id] Updated platform', {
+          platformId: request.params.id,
+          updates: Object.keys(request.body)
+        });
+
+        reply.code(200).send(platform);
+      } catch (error: any) {
+        const statusCode = error.message?.includes('not found') ? 404 : 400;
+        logger.error('[PUT /api/v1/platforms/:id] Failed to update platform', {
+          platformId: request.params.id,
+          error: error.message
+        });
+        reply.code(statusCode).send({
+          error: error.message || 'Failed to update platform'
+        });
+      }
+    }
+  });
+
+  // Delete a platform
+  fastify.delete('/api/v1/platforms/:id', {
+    schema: {
+      params: zodToJsonSchema(z.object({
+        id: z.string().uuid()
+      })),
+      response: {
+        204: z.null(),
+        404: zodToJsonSchema(z.object({
+          error: z.string()
+        })),
+        500: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{
+        Params: { id: string }
+      }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        await platformService.deletePlatform(request.params.id);
+
+        // Reload platforms in registry
+        platformLoader.invalidateCache();
+        await platformRegistry.refresh();
+
+        logger.info('[DELETE /api/v1/platforms/:id] Deleted platform', {
+          platformId: request.params.id
+        });
+
+        reply.code(204).send();
+      } catch (error: any) {
+        const statusCode = error.message?.includes('not found') ? 404 : 500;
+        logger.error('[DELETE /api/v1/platforms/:id] Failed to delete platform', {
+          platformId: request.params.id,
+          error: error.message
+        });
+        reply.code(statusCode).send({
+          error: error.message || 'Failed to delete platform'
         });
       }
     }

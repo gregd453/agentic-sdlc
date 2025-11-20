@@ -5,7 +5,7 @@
  * Session #86: Integration with workflow definitions
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { WORKFLOW_TEMPLATES, WorkflowStage, WorkflowTemplate, createBlankTemplate } from './workflowTemplates'
 import TemplateSelector from './TemplateSelector'
 import StageList from './StageList'
@@ -15,7 +15,13 @@ import SaveWorkflowDefinitionModal from './SaveWorkflowDefinitionModal'
 import { ValidationErrorCard } from './ValidationErrorCard'
 import { useWorkflowValidation } from '../../hooks/useWorkflowValidation'
 import DefinitionTemplateSelector from '../WorkflowDefinitions/DefinitionTemplateSelector'
-import { WorkflowDefinition } from '../../api/client'
+import { WorkflowDefinition, fetchPlatforms } from '../../api/client'
+
+interface Platform {
+  id: string
+  name: string
+  layer: string
+}
 
 interface WorkflowPipelineBuilderProps {
   onWorkflowCreated?: (stages: WorkflowStage[]) => void
@@ -29,9 +35,30 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
   const [showPreview, setShowPreview] = useState(false)
   const [showDefinitionSelector, setShowDefinitionSelector] = useState(false)
   const [showSaveModal, setShowSaveModal] = useState(false)
+  const [selectedPlatformId, setSelectedPlatformId] = useState<string>('')
+  const [platforms, setPlatforms] = useState<Platform[]>([])
+  const [loadingPlatforms, setLoadingPlatforms] = useState(true)
 
   // Validation hook
   const { validation, isValidating } = useWorkflowValidation(stages)
+
+  // Load platforms on mount
+  useEffect(() => {
+    const loadPlatforms = async () => {
+      try {
+        const data = await fetchPlatforms()
+        setPlatforms(data)
+        if (data.length > 0 && !selectedPlatformId) {
+          setSelectedPlatformId(data[0].id)
+        }
+      } catch (error) {
+        console.error('Failed to load platforms:', error)
+      } finally {
+        setLoadingPlatforms(false)
+      }
+    }
+    loadPlatforms()
+  }, [])
 
   // Load template and set stages
   const handleTemplateSelected = (templateId: string) => {
@@ -154,6 +181,36 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
       <div>
         <h3 className="text-2xl font-bold text-gray-900">Multi-Stage Workflow Builder</h3>
         <p className="text-gray-600 mt-1">Design complex workflows with multiple stages and custom behaviors</p>
+      </div>
+
+      {/* Platform Selector */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          Select Platform <span className="text-red-500">*</span>
+        </label>
+        {loadingPlatforms ? (
+          <div className="text-gray-600 dark:text-gray-400 text-sm">Loading platforms...</div>
+        ) : platforms.length === 0 ? (
+          <div className="text-red-600 dark:text-red-400 text-sm">No platforms available. Please create one first.</div>
+        ) : (
+          <select
+            value={selectedPlatformId}
+            onChange={(e) => setSelectedPlatformId(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">-- Select a platform --</option>
+            {platforms.map((platform) => (
+              <option key={platform.id} value={platform.id}>
+                {platform.name} ({platform.layer})
+              </option>
+            ))}
+          </select>
+        )}
+        {selectedPlatformId && (
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+            ✓ Platform selected: {platforms.find(p => p.id === selectedPlatformId)?.name}
+          </p>
+        )}
       </div>
 
       {/* Template Selector */}
@@ -341,6 +398,7 @@ export default function WorkflowPipelineBuilder({ onWorkflowCreated }: WorkflowP
             console.log('Workflow definition saved:', definitionId)
             // Optional: show success toast or notification
           }}
+          platformId={selectedPlatformId}
         />
       )}
     </div>
