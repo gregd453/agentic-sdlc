@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { fetchPlatforms, fetchPlatformAnalytics, createPlatform, updatePlatform, deletePlatform } from '../api/client'
 import { formatDate, formatDuration } from '../utils/format'
 import { getPlatformLayerColor, formatLayerName } from '../utils/platformColors'
@@ -7,6 +8,7 @@ import type { PlatformAnalytics } from '../types'
 import { PageTemplate } from '../components/Layout/PageTemplate'
 import PlatformFormModal from '../components/Platforms/PlatformFormModal'
 import DeleteConfirmationModal from '../components/Common/DeleteConfirmationModal'
+import CreateMockWorkflowModal from '../components/Workflows/CreateMockWorkflowModal'
 
 interface Platform {
   id: string
@@ -24,6 +26,7 @@ interface PlatformWithAnalytics extends Platform {
 }
 
 export const PlatformsPage: React.FC = () => {
+  const navigate = useNavigate()
   const [platforms, setPlatforms] = useState<PlatformWithAnalytics[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -35,6 +38,7 @@ export const PlatformsPage: React.FC = () => {
   const [isSaving, setSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [modalError, setModalError] = useState<string | null>(null)
+  const [isCreateWorkflowModalOpen, setIsCreateWorkflowModalOpen] = useState(false)
 
   useEffect(() => {
     loadPlatforms()
@@ -150,6 +154,11 @@ export const PlatformsPage: React.FC = () => {
     }
   }
 
+  const handleWorkflowCreated = (workflowId: string) => {
+    setIsCreateWorkflowModalOpen(false)
+    navigate(`/workflows/${workflowId}`)
+  }
+
   return (
     <PageTemplate
       title="Platforms"
@@ -166,20 +175,34 @@ export const PlatformsPage: React.FC = () => {
         </button>
       }
       headerActionSecondary={
-        <div className="flex gap-2">
-          {['1h', '24h', '7d', '30d'].map((period) => (
-            <button
-              key={period}
-              onClick={() => setSelectedPeriod(period)}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                selectedPeriod === period
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-            >
-              {period === '1h' ? '1H' : period === '24h' ? '24H' : period === '7d' ? '7D' : '30D'}
-            </button>
-          ))}
+        <div className="flex gap-2 flex-wrap items-center justify-end">
+          <a
+            href="/workflows/pipeline"
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium transition-colors"
+          >
+            🏗️ Pipeline Builder
+          </a>
+          <button
+            onClick={() => setIsCreateWorkflowModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
+          >
+            + Create Mock Workflow
+          </button>
+          <div className="flex gap-2 border-l border-gray-300 dark:border-gray-600 pl-2 ml-2">
+            {['1h', '24h', '7d', '30d'].map((period) => (
+              <button
+                key={period}
+                onClick={() => setSelectedPeriod(period)}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedPeriod === period
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                {period === '1h' ? '1H' : period === '24h' ? '24H' : period === '7d' ? '7D' : '30D'}
+              </button>
+            ))}
+          </div>
         </div>
       }
     >
@@ -313,6 +336,12 @@ export const PlatformsPage: React.FC = () => {
         itemName={platformToDelete?.name}
         isLoading={isDeleting}
         isDangerous={true}
+      />
+
+      <CreateMockWorkflowModal
+        isOpen={isCreateWorkflowModalOpen}
+        onClose={() => setIsCreateWorkflowModalOpen(false)}
+        onWorkflowCreated={handleWorkflowCreated}
       />
     </PageTemplate>
   )
