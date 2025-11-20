@@ -1,8 +1,8 @@
 # CLAUDE.md - AI Assistant Guide for Agentic SDLC
 
-**Status:** ✅ Phase 7B Complete + Session #85 (Dashboard Agent Extensibility Integration P0-P4) | **Updated:** 2025-11-19 | **Version:** 59.0
+**Status:** ✅ Phase 7B Complete + Session #85 (Dashboard Agent Extensibility) + Session #86 (Dashboard Rebuild Automation) | **Updated:** 2025-11-20 | **Version:** 60.0
 
-**📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Agent Guide](./AGENT_CREATION_GUIDE.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./DEPLOYMENT_PIPELINE.md) | [Quick Start](./DEPLOYMENT_QUICKSTART.md)
+**📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Agent Guide](./AGENT_CREATION_GUIDE.md) | [Dashboard Rebuild](./DASHBOARD_REBUILD.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./DEPLOYMENT_PIPELINE.md) | [Quick Start](./DEPLOYMENT_QUICKSTART.md)
 
 ---
 
@@ -45,6 +45,10 @@
 ./dev restart-orchestrator          # Restart just orchestrator
 ./dev restart-agents                # Restart just agents
 
+# Rebuild & redeploy dashboard (NEW - Session #86)
+./dev rebuild-dashboard             # Rebuild React + Docker image + restart container
+# Automates: pnpm build → docker build → container restart → health check
+
 # Start individual services (if needed)
 ./dev orchestrator-only
 ./dev agents-only
@@ -69,17 +73,44 @@ agentic list-agents --platform my-platform   # List agents for specific platform
 agentic validate-workflow workflow.json       # Validate workflow definition
 ```
 
+**Dashboard Development Workflow:**
+```bash
+# Edit dashboard components: packages/dashboard/src/**/*.tsx
+
+# Quick redeploy after code changes (NEW - Session #86)
+./dev rebuild-dashboard
+
+# OR manual process (if needed more control):
+source .env.development
+pnpm run build --filter=@agentic-sdlc/dashboard
+docker build -f packages/dashboard/Dockerfile.prod -t agentic-sdlc-dashboard:latest .
+docker rm -f agentic-sdlc-dev-dashboard && docker run -d --name agentic-sdlc-dev-dashboard --network agentic-network -p 3050:3050 -e NODE_ENV=production -e PORT=3050 agentic-sdlc-dashboard:latest
+
+# After deploy: Hard refresh browser (Ctrl+Shift+R or Cmd+Shift+R)
+```
+
 **React Component Changes:**
 ```bash
-# Changes automatically propagate through:
-# 1. Source code changes
-# 2. Vite build (with asset hashing)
-# 3. Docker image rebuild
-# 4. Container restart
-# 5. Browser cache invalidation (automatic via hash)
+# Standard workflow:
+# 1. Edit component (packages/dashboard/src/...)
+# 2. Run: ./dev rebuild-dashboard
+# 3. Hard refresh browser: Ctrl+Shift+R (or Cmd+Shift+R on Mac)
 
-./dev watch  # Enables auto-rebuild on file changes
-# Make edits → save → 2s → dashboard rebuilds → browser refreshes
+# Expected time: 30-60 seconds
+#   - React build: 5-10s
+#   - Docker image: 15-30s
+#   - Container restart: 5-10s
+#   - Health check: 1-5s
+
+# Automated rebuild process includes:
+# 1. Load environment variables
+# 2. Build React app (pnpm)
+# 3. Build Docker image (with Prisma generation)
+# 4. Stop old container
+# 5. Start new container with proper networking
+# 6. Verify health check (HTTP 200)
+
+# See DASHBOARD_REBUILD.md for detailed guide
 ```
 
 ---
@@ -250,6 +281,31 @@ Full development workflow:
 - ✅ 121+ test cases, 0 TypeScript errors
 - ✅ All 21 packages building successfully
 - ✅ 100%+ production ready (Agent extensibility complete)
+
+**Session #86: Dashboard Rebuild Automation (COMPLETE)**
+- ✅ **Workflow Save Feature**
+  - SaveWorkflowDefinitionModal component for persisting workflows
+  - "💾 Save as Definition" button in WorkflowPipelineBuilder
+  - Form validation (name, platform, version, description)
+  - Integration with createWorkflowDefinition API
+  - Saved workflows reloadable via "Load from Saved Definition"
+- ✅ **Build Automation Script**
+  - Created `scripts/rebuild-dashboard.sh` (95 lines)
+  - Automates: pnpm build → docker build → container restart → health check
+  - Added `./dev rebuild-dashboard` command to dev script
+  - Eliminates manual 5-step process
+  - Expected execution time: 30-60 seconds
+- ✅ **Dashboard Rebuild Documentation**
+  - Created DASHBOARD_REBUILD.md with complete developer guide
+  - Includes troubleshooting section for common issues
+  - Manual process reference for advanced users
+- ✅ **CLAUDE.md Updates**
+  - Added dashboard development workflow
+  - Documented automated rebuild process
+  - Updated key resources and status
+- ✅ **Git Commits:**
+  - ddb2c17: feat: Add automated dashboard rebuild script and dev command
+  - d84c88c: docs: Add dashboard rebuild guide and reference
 
 **Session #85: Unbounded Agent Extensibility + Dashboard Integration (COMPLETE)**
 
