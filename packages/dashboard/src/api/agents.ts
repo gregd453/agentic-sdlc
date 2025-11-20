@@ -5,7 +5,6 @@
 
 import { getAPIBase, fetchJSON } from './client'
 
-const API_BASE = getAPIBase()
 
 // Types
 export interface AgentMetadata {
@@ -26,7 +25,7 @@ export async function fetchAgents(platformId?: string): Promise<AgentMetadata[]>
   const params = new URLSearchParams()
   if (platformId) params.append('platform', platformId)
 
-  const url = `${API_BASE}/agents${params.toString() ? `?${params}` : ''}`
+  const url = `${getAPIBase()}/agents${params.toString() ? `?${params}` : ''}`
   return fetchJSON<AgentMetadata[]>(url)
 }
 
@@ -34,7 +33,7 @@ export async function fetchAgent(agentType: string, platformId?: string): Promis
   const params = new URLSearchParams()
   if (platformId) params.append('platform', platformId)
 
-  const url = `${API_BASE}/agents/${agentType}${params.toString() ? `?${params}` : ''}`
+  const url = `${getAPIBase()}/agents/${agentType}${params.toString() ? `?${params}` : ''}`
   return fetchJSON<AgentMetadata>(url)
 }
 
@@ -45,7 +44,7 @@ export async function validateAgent(agentType: string, platformId?: string): Pro
   error?: string
   suggestions?: string[]
 }> {
-  const response = await fetch(`${API_BASE}/agents/validate`, {
+  const response = await fetch(`${getAPIBase()}/agents/validate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -72,7 +71,7 @@ export interface AgentLatencyPercentiles {
 
 export async function fetchAgentLatencyPercentiles(): Promise<AgentLatencyPercentiles[]> {
   try {
-    return fetchJSON<AgentLatencyPercentiles[]>(`${API_BASE}/stats/agent-latency-percentiles`)
+    return fetchJSON<AgentLatencyPercentiles[]>(`${getAPIBase()}/stats/agent-latency-percentiles`)
   } catch {
     // Fallback: get agent stats which include avg_duration_ms
     const { fetchAgentStats } = await import('./stats')
@@ -101,7 +100,7 @@ export interface AgentLatencyTimePoint {
 
 export async function fetchAgentLatencyTimeSeries(period: string = '24h'): Promise<AgentLatencyTimePoint[]> {
   try {
-    return fetchJSON<AgentLatencyTimePoint[]>(`${API_BASE}/stats/agent-latency-timeseries?period=${period}`)
+    return fetchJSON<AgentLatencyTimePoint[]>(`${getAPIBase()}/stats/agent-latency-timeseries?period=${period}`)
   } catch {
     // Fallback: return empty array - feature requires backend support
     return []

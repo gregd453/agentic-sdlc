@@ -6,7 +6,6 @@
 import type { Workflow, AgentTask, WorkflowTimeline } from '../types'
 import { getAPIBase, fetchJSON, transformWorkflow } from './client'
 
-const API_BASE = getAPIBase()
 
 // Workflow Fetching
 export async function fetchWorkflows(filters?: {
@@ -19,26 +18,26 @@ export async function fetchWorkflows(filters?: {
   if (filters?.type) params.append('type', filters.type)
   if (filters?.priority) params.append('priority', filters.priority)
 
-  const url = `${API_BASE}/workflows${params.toString() ? `?${params}` : ''}`
+  const url = `${getAPIBase()}/workflows${params.toString() ? `?${params}` : ''}`
   const workflows = await fetchJSON<any[]>(url)
   return workflows.map(transformWorkflow)
 }
 
 export async function fetchWorkflow(id: string): Promise<Workflow> {
-  const workflow = await fetchJSON<any>(`${API_BASE}/workflows/${id}`)
+  const workflow = await fetchJSON<any>(`${getAPIBase()}/workflows/${id}`)
   return transformWorkflow(workflow)
 }
 
 export async function fetchWorkflowTasks(id: string): Promise<AgentTask[]> {
-  return fetchJSON<AgentTask[]>(`${API_BASE}/workflows/${id}/tasks`)
+  return fetchJSON<AgentTask[]>(`${getAPIBase()}/workflows/${id}/tasks`)
 }
 
 export async function fetchWorkflowEvents(id: string) {
-  return fetchJSON(`${API_BASE}/workflows/${id}/events`)
+  return fetchJSON(`${getAPIBase()}/workflows/${id}/events`)
 }
 
 export async function fetchWorkflowTimeline(id: string): Promise<WorkflowTimeline> {
-  return fetchJSON<WorkflowTimeline>(`${API_BASE}/workflows/${id}/timeline`)
+  return fetchJSON<WorkflowTimeline>(`${getAPIBase()}/workflows/${id}/timeline`)
 }
 
 // Workflow Creation
@@ -50,7 +49,7 @@ export async function createWorkflow(data: {
   stages?: any[]
   behavior_metadata?: any
 }): Promise<Workflow> {
-  const response = await fetch(`${API_BASE}/workflows`, {
+  const response = await fetch(`${getAPIBase()}/workflows`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
@@ -72,7 +71,7 @@ export async function createWorkflow(data: {
 export async function fetchSlowWorkflows(thresholdMs: number = 300000): Promise<Workflow[]> {
   try {
     // Try new endpoint if available
-    const workflows = await fetchJSON<any[]>(`${API_BASE}/workflows/slow?threshold=${thresholdMs}`)
+    const workflows = await fetchJSON<any[]>(`${getAPIBase()}/workflows/slow?threshold=${thresholdMs}`)
     return workflows.map(transformWorkflow)
   } catch {
     // Fallback: fetch all workflows and filter client-side

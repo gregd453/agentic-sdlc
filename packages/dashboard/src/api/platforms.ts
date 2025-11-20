@@ -6,8 +6,6 @@
 import type { TimeSeriesDataPoint } from '../types'
 import { getAPIBase, fetchJSON } from './client'
 
-const API_BASE = getAPIBase()
-
 // Types
 export interface Platform {
   id: string
@@ -33,22 +31,22 @@ export interface PlatformAnalytics {
 
 // Read Operations
 export async function fetchPlatforms(): Promise<Platform[]> {
-  return fetchJSON<Platform[]>(`${API_BASE}/platforms`)
+  return fetchJSON<Platform[]>(`${getAPIBase()}/platforms`)
 }
 
 export async function fetchPlatform(id: string): Promise<Platform> {
-  return fetchJSON<Platform>(`${API_BASE}/platforms/${id}`)
+  return fetchJSON<Platform>(`${getAPIBase()}/platforms/${id}`)
 }
 
 export async function fetchPlatformAnalytics(
   id: string,
   period: string = '24h'
 ): Promise<PlatformAnalytics> {
-  return fetchJSON<PlatformAnalytics>(`${API_BASE}/platforms/${id}/analytics?period=${period}`)
+  return fetchJSON<PlatformAnalytics>(`${getAPIBase()}/platforms/${id}/analytics?period=${period}`)
 }
 
 export async function fetchPlatformAgents(platformId: string): Promise<any[]> {
-  return fetchJSON<any[]>(`${API_BASE}/platforms/${platformId}/agents`)
+  return fetchJSON<any[]>(`${getAPIBase()}/platforms/${platformId}/agents`)
 }
 
 // Create Operation
@@ -59,7 +57,7 @@ export async function createPlatform(data: {
   config?: Record<string, any>
   enabled?: boolean
 }): Promise<Platform> {
-  const response = await fetch(`${API_BASE}/platforms`, {
+  const response = await fetch(`${getAPIBase()}/platforms`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
@@ -84,7 +82,7 @@ export async function updatePlatform(
     enabled?: boolean
   }
 ): Promise<Platform> {
-  const response = await fetch(`${API_BASE}/platforms/${id}`, {
+  const response = await fetch(`${getAPIBase()}/platforms/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
@@ -100,7 +98,7 @@ export async function updatePlatform(
 
 // Delete Operation
 export async function deletePlatform(id: string): Promise<void> {
-  const response = await fetch(`${API_BASE}/platforms/${id}`, {
+  const response = await fetch(`${getAPIBase()}/platforms/${id}`, {
     method: 'DELETE'
   })
 

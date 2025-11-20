@@ -5,7 +5,6 @@
 
 import { getAPIBase } from './client'
 
-const API_BASE = getAPIBase()
 
 // Types
 export interface WorkflowDefinition {
@@ -40,7 +39,7 @@ export async function createWorkflowDefinition(
   platformId: string,
   data: CreateWorkflowDefinitionRequest
 ): Promise<WorkflowDefinition> {
-  const response = await fetch(`${API_BASE}/platforms/${platformId}/workflow-definitions`, {
+  const response = await fetch(`${getAPIBase()}/platforms/${platformId}/workflow-definitions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
@@ -55,7 +54,7 @@ export async function createWorkflowDefinition(
 
 // Read Definition
 export async function fetchWorkflowDefinition(id: string): Promise<WorkflowDefinition> {
-  const response = await fetch(`${API_BASE}/workflow-definitions/${id}`)
+  const response = await fetch(`${getAPIBase()}/workflow-definitions/${id}`)
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
@@ -70,7 +69,7 @@ export async function fetchWorkflowDefinitions(
   const params = new URLSearchParams()
   if (includeDisabled) params.append('includeDisabled', 'true')
 
-  const url = `${API_BASE}/platforms/${platformId}/workflow-definitions${
+  const url = `${getAPIBase()}/platforms/${platformId}/workflow-definitions${
     params.toString() ? `?${params}` : ''
   }`
 
@@ -86,7 +85,7 @@ export async function updateWorkflowDefinition(
   id: string,
   data: UpdateWorkflowDefinitionRequest
 ): Promise<WorkflowDefinition> {
-  const response = await fetch(`${API_BASE}/workflow-definitions/${id}`, {
+  const response = await fetch(`${getAPIBase()}/workflow-definitions/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
@@ -101,7 +100,7 @@ export async function updateWorkflowDefinition(
 
 // Delete Definition
 export async function deleteWorkflowDefinition(id: string): Promise<void> {
-  const response = await fetch(`${API_BASE}/workflow-definitions/${id}`, {
+  const response = await fetch(`${getAPIBase()}/workflow-definitions/${id}`, {
     method: 'DELETE'
   })
 
@@ -115,7 +114,7 @@ export async function setWorkflowDefinitionEnabled(
   id: string,
   enabled: boolean
 ): Promise<WorkflowDefinition> {
-  const response = await fetch(`${API_BASE}/workflow-definitions/${id}/enabled`, {
+  const response = await fetch(`${getAPIBase()}/workflow-definitions/${id}/enabled`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ enabled })

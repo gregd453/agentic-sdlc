@@ -6,7 +6,6 @@
 import type { TraceDetails, TraceSpan, AgentTask, Workflow } from '../types'
 import { getAPIBase, fetchJSON } from './client'
 
-const API_BASE = getAPIBase()
 
 // Trace List Fetching
 export async function fetchTraces(options?: {
@@ -19,26 +18,26 @@ export async function fetchTraces(options?: {
   if (options?.offset) params.append('offset', options.offset.toString())
   if (options?.status) params.append('status', options.status)
 
-  const url = `${API_BASE}/traces${params.toString() ? `?${params}` : ''}`
+  const url = `${getAPIBase()}/traces${params.toString() ? `?${params}` : ''}`
   return fetchJSON<{ traces: TraceDetails[]; total: number }>(url)
 }
 
 // Single Trace Fetching
 export async function fetchTrace(traceId: string): Promise<TraceDetails> {
-  return fetchJSON<TraceDetails>(`${API_BASE}/traces/${traceId}`)
+  return fetchJSON<TraceDetails>(`${getAPIBase()}/traces/${traceId}`)
 }
 
 // Trace Details - Spans
 export async function fetchTraceSpans(traceId: string): Promise<TraceSpan[]> {
-  return fetchJSON<TraceSpan[]>(`${API_BASE}/traces/${traceId}/spans`)
+  return fetchJSON<TraceSpan[]>(`${getAPIBase()}/traces/${traceId}/spans`)
 }
 
 // Trace Details - Workflows
 export async function fetchTraceWorkflows(traceId: string): Promise<Workflow[]> {
-  return fetchJSON<Workflow[]>(`${API_BASE}/traces/${traceId}/workflows`)
+  return fetchJSON<Workflow[]>(`${getAPIBase()}/traces/${traceId}/workflows`)
 }
 
 // Trace Details - Tasks
 export async function fetchTraceTasks(traceId: string): Promise<AgentTask[]> {
-  return fetchJSON<AgentTask[]>(`${API_BASE}/traces/${traceId}/tasks`)
+  return fetchJSON<AgentTask[]>(`${getAPIBase()}/traces/${traceId}/tasks`)
 }

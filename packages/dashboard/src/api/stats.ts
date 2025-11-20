@@ -6,26 +6,25 @@
 import type { DashboardOverview, AgentStats, TimeSeriesDataPoint } from '../types'
 import { getAPIBase, fetchJSON } from './client'
 
-const API_BASE = getAPIBase()
 
 // Dashboard Overview
 export async function fetchDashboardOverview(): Promise<DashboardOverview> {
-  return fetchJSON<DashboardOverview>(`${API_BASE}/stats/overview`)
+  return fetchJSON<DashboardOverview>(`${getAPIBase()}/stats/overview`)
 }
 
 // Agent Statistics
 export async function fetchAgentStats(): Promise<AgentStats[]> {
-  return fetchJSON<AgentStats[]>(`${API_BASE}/stats/agents`)
+  return fetchJSON<AgentStats[]>(`${getAPIBase()}/stats/agents`)
 }
 
 // Time Series Data
 export async function fetchTimeSeries(period: string = '24h'): Promise<TimeSeriesDataPoint[]> {
-  return fetchJSON<TimeSeriesDataPoint[]>(`${API_BASE}/stats/timeseries?period=${period}`)
+  return fetchJSON<TimeSeriesDataPoint[]>(`${getAPIBase()}/stats/timeseries?period=${period}`)
 }
 
 // Workflow Statistics
 export async function fetchWorkflowStats() {
-  return fetchJSON(`${API_BASE}/stats/workflows`)
+  return fetchJSON(`${getAPIBase()}/stats/workflows`)
 }
 
 // SLO Metrics
@@ -38,7 +37,7 @@ export interface SLOMetrics {
 
 export async function fetchSLOMetrics(thresholdMs: number = 300000): Promise<SLOMetrics> {
   try {
-    return fetchJSON<SLOMetrics>(`${API_BASE}/stats/slo?threshold=${thresholdMs}`)
+    return fetchJSON<SLOMetrics>(`${getAPIBase()}/stats/slo?threshold=${thresholdMs}`)
   } catch {
     // Fallback: calculate SLO from workflows
     const { fetchWorkflows } = await import('./workflows')
