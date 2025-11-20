@@ -20,6 +20,9 @@ COPY . .
 # Install dependencies
 RUN pnpm install
 
+# Generate Prisma client
+RUN cd packages/orchestrator && npx prisma generate && cd /app
+
 # Set environment variables for build
 ENV VITE_DASHBOARD_PORT=3050
 ENV VITE_ORCHESTRATOR_PORT=3051
@@ -39,15 +42,21 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy workspace configuration and source to determine workspace structure
-COPY . .
+# Copy all workspace files and built artifacts
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/packages ./packages
 
-# Install only production dependencies (skip optional deps and scripts)
-RUN pnpm install --prod --prefer-offline --no-verify-store-integrity 2>/dev/null || pnpm install --prod 2>&1 | grep -v "ERR!\|WARN" | tail -20
+# Copy only the dist folders (remove src to keep image small)
+RUN find packages -type d -name dist ! -path "*/node_modules/*" -prune -o \
+    -type d -name src -exec rm -rf {} \; 2>/dev/null || true
 
-# Copy built artifacts from builder
+# Copy built artifacts (replace package.json with built versions)
 COPY --from=builder /app/packages/dashboard/dist ./packages/dashboard/dist
 COPY --from=builder /app/packages/dashboard/dist/server ./dist/server
+COPY --from=builder /app/packages/orchestrator/prisma ./packages/orchestrator/prisma
+
+# Install only production dependencies in the full workspace context
+RUN pnpm install --prod --prefer-offline
 
 # Expose port
 EXPOSE 3050
