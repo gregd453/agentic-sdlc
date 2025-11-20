@@ -1,37 +1,8 @@
 # ==========================================
 # Production Dockerfile for Dashboard
-# Multi-stage build with optimized caching
+# Single-stage build with all dependencies
 # ==========================================
 
-# Stage 1: Build React frontend with asset hashing
-FROM node:20.11.0-alpine AS builder
-
-WORKDIR /app
-
-# Install pnpm
-RUN npm install -g pnpm
-
-# Copy workspace files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-# Copy source code first
-COPY . .
-
-# Install dependencies
-RUN pnpm install
-
-# Set environment variables for build
-ENV VITE_DASHBOARD_PORT=3050
-ENV VITE_ORCHESTRATOR_PORT=3051
-
-# Build frontend (Vite with asset hashing for cache-busting)
-WORKDIR /app/packages/dashboard
-RUN pnpm run build:frontend
-
-# Build server
-RUN pnpm run server:build
-
-# Stage 2: Runtime container (Express serving static + API)
 FROM node:20.11.0-alpine
 
 WORKDIR /app
@@ -39,32 +10,35 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy all workspace files and built artifacts
-COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
-COPY --from=builder /app/packages ./packages
+# Copy workspace configuration
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Copy only the dist folders (remove src to keep image small)
-RUN find packages -type d -name dist ! -path "*/node_modules/*" -prune -o \
-    -type d -name src -exec rm -rf {} \; 2>/dev/null || true
+# Copy all source code
+COPY . .
 
-# Copy built artifacts (replace package.json with built versions)
-COPY --from=builder /app/packages/dashboard/dist ./packages/dashboard/dist
-COPY --from=builder /app/packages/dashboard/dist/server ./dist/server
-COPY --from=builder /app/packages/orchestrator/prisma ./packages/orchestrator/prisma
+# Install all dependencies (build + runtime)
+RUN pnpm install
 
-# Install only production dependencies in the full workspace context
-RUN pnpm install --prod --prefer-offline
+# Set build environment variables
+ENV VITE_DASHBOARD_PORT=3050
+ENV VITE_ORCHESTRATOR_PORT=3051
+
+# Build everything (prebuild hooks handle Prisma generation)
+RUN pnpm build
+
+# Remove dev dependencies to keep image smaller
+RUN pnpm prune --prod
 
 # Expose port
 EXPOSE 3050
 
-# Environment (will be overridden by container)
+# Environment
 ENV NODE_ENV=production
 ENV PORT=3050
 
-# Health check (check Express server, not Vite dev server)
+# Health check
 HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=15s \
   CMD wget --quiet --tries=1 --spider http://localhost:3050/ || exit 1
 
-# Start Express server serving static files + API
-CMD ["node", "dist/server/index.js"]
+# Start Express server
+CMD ["node", "packages/dashboard/dist/server/index.js"]
