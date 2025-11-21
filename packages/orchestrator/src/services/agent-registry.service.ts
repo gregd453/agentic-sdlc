@@ -131,33 +131,6 @@ export class AgentRegistryService {
         }
       },
       {
-        type: AGENT_TYPES.MONITORING,
-        name: 'Monitoring Agent',
-        version: '1.0.0',
-        description: 'System monitoring and observability agent',
-        capabilities: ['collect-metrics', 'analyze-logs', 'alert'],
-        timeout_ms: 30000,
-        max_retries: 3
-      },
-      {
-        type: AGENT_TYPES.DEBUG,
-        name: 'Debug Agent',
-        version: '1.0.0',
-        description: 'Debugging and troubleshooting agent',
-        capabilities: ['analyze-logs', 'trace-execution', 'suggest-fixes'],
-        timeout_ms: 45000,
-        max_retries: 2
-      },
-      {
-        type: BuiltInAgentTypes.RECOVERY,
-        name: 'Recovery Agent',
-        version: '1.0.0',
-        description: 'System recovery and rollback agent',
-        capabilities: ['rollback-deployment', 'restore-database', 'health-check'],
-        timeout_ms: 60000,
-        max_retries: 2
-      },
-      {
         type: 'mock-agent',
         name: 'Mock Agent',
         version: '1.0.0',

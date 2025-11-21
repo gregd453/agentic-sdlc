@@ -18,12 +18,7 @@ export const BuiltInAgentTypes = {
   VALIDATION: 'validation',
   E2E_TEST: 'e2e_test',
   INTEGRATION: 'integration',
-  DEPLOYMENT: 'deployment',
-
-  // Additional infrastructure
-  MONITORING: 'monitoring',
-  DEBUG: 'debug',
-  RECOVERY: 'recovery'
+  DEPLOYMENT: 'deployment'
 } as const;
 
 /**

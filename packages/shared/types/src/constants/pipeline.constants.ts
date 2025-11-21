@@ -39,8 +39,6 @@ export const AGENT_TYPES = {
   E2E_TEST: 'e2e_test', // Alias for backward compatibility
   INTEGRATION: 'integration',
   DEPLOYMENT: 'deployment',
-  MONITORING: 'monitoring',
-  DEBUG: 'debug',
   BASE: 'base',
 } as const;
 
@@ -62,9 +60,6 @@ export const WORKFLOW_STAGES = {
   E2E_TESTING: 'e2e_testing',
   INTEGRATION: 'integration',
   DEPLOYMENT: 'deployment',
-  MONITORING: 'monitoring',
-  DEBUGGING: 'debugging',
-  FIXING: 'fixing',
 } as const;
 
 export type WorkflowStageConstant = typeof WORKFLOW_STAGES[keyof typeof WORKFLOW_STAGES];
@@ -180,9 +175,6 @@ export const STAGE_TO_AGENT_MAP: Record<string, AgentTypeConstant> = {
   [WORKFLOW_STAGES.E2E_TESTING]: AGENT_TYPES.E2E_TEST,
   [WORKFLOW_STAGES.INTEGRATION]: AGENT_TYPES.INTEGRATION,
   [WORKFLOW_STAGES.DEPLOYMENT]: AGENT_TYPES.DEPLOYMENT,
-  [WORKFLOW_STAGES.MONITORING]: AGENT_TYPES.MONITORING,
-  [WORKFLOW_STAGES.DEBUGGING]: AGENT_TYPES.DEBUG,
-  [WORKFLOW_STAGES.FIXING]: AGENT_TYPES.DEBUG,
 };
 
 // ===== Stage Sequences by Workflow Type =====
@@ -201,7 +193,6 @@ export const STAGE_SEQUENCES: Record<WorkflowTypeConstant, readonly WorkflowStag
     WORKFLOW_STAGES.E2E_TESTING,
     WORKFLOW_STAGES.INTEGRATION,
     WORKFLOW_STAGES.DEPLOYMENT,
-    WORKFLOW_STAGES.MONITORING,
   ],
   [WORKFLOW_TYPES.FEATURE]: [
     WORKFLOW_STAGES.INITIALIZATION,
