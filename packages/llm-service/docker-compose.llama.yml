@@ -1,0 +1,132 @@
+version: '3.8'
+
+services:
+  # Llama 3.3 70B Service using Ollama
+  llama-ollama:
+    image: ollama/ollama:latest
+    container_name: agentic-sdlc-llama-ollama
+    ports:
+      - "11434:11434"  # Ollama API port
+    volumes:
+      - llama-models:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_NUM_PARALLEL=4
+      - OLLAMA_MAX_LOADED_MODELS=2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - agentic-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    command: serve
+
+  # Alternative: vLLM for production-grade serving
+  llama-vllm:
+    image: vllm/vllm-openai:latest
+    container_name: agentic-sdlc-llama-vllm
+    ports:
+      - "8000:8000"  # OpenAI-compatible API
+    volumes:
+      - llama-models:/models
+    environment:
+      - MODEL_NAME=meta-llama/Llama-3.3-70B-Instruct
+      - TENSOR_PARALLEL_SIZE=2
+      - GPU_MEMORY_UTILIZATION=0.95
+      - MAX_NUM_BATCHED_TOKENS=32768
+      - DTYPE=half
+      - TRUST_REMOTE_CODE=true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+        limits:
+          memory: 140G  # For 70B model
+    networks:
+      - agentic-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # LLM Gateway Service (routes requests to appropriate backend)
+  llm-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.llm-gateway
+    container_name: agentic-sdlc-llm-gateway
+    ports:
+      - "3458:3458"  # Gateway API port
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://agentic-sdlc-dev-cache:6379
+      - OLLAMA_URL=http://llama-ollama:11434
+      - VLLM_URL=http://llama-vllm:8000
+      - DEFAULT_BACKEND=ollama
+      - ENABLE_CACHING=true
+      - MAX_TOKENS=4096
+      - DEFAULT_TEMPERATURE=0.7
+    depends_on:
+      - llama-ollama
+    networks:
+      - agentic-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3458/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # Model Downloader Service (one-time setup)
+  model-downloader:
+    image: alpine/curl:latest
+    container_name: agentic-sdlc-model-downloader
+    volumes:
+      - llama-models:/models
+    environment:
+      - MODEL_SIZE=70b
+      - MODEL_VARIANT=instruct
+    command: |
+      sh -c "
+        echo 'Checking for Llama 3.3 model...'
+        if [ ! -f /models/llama-3.3-70b-instruct.gguf ]; then
+          echo 'Downloading Llama 3.3 70B model...'
+          # For Ollama
+          curl -X POST http://llama-ollama:11434/api/pull -d '{\"name\":\"llama3.3:70b-instruct\"}'
+          # For GGUF format (alternative)
+          # wget https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct-GGUF/resolve/main/llama-3.3-70b-instruct.Q4_K_M.gguf -O /models/llama-3.3-70b-instruct.gguf
+        else
+          echo 'Model already exists'
+        fi
+      "
+    networks:
+      - agentic-network
+    depends_on:
+      - llama-ollama
+
+volumes:
+  llama-models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./llm-models
+
+networks:
+  agentic-network:
+    external: true
+    name: agentic-network

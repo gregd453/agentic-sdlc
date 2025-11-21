@@ -1,0 +1,23 @@
+{
+  "name": "@agentic-sdlc/hello-world-lambda",
+  "version": "1.0.0",
+  "description": "Hello World Lambda Agent for Agentic SDLC",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test-local.js",
+    "package": "zip -r function.zip index.js node_modules package.json",
+    "deploy-local": "sam local start-api --port 3456",
+    "invoke-local": "sam local invoke HelloWorldAgent --event test-event.json"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.1",
+    "axios": "^1.13.2",
+    "express": "^4.21.2",
+    "ioredis": "^5.8.2",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1450.0"
+  }
+}

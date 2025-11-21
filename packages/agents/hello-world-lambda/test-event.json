@@ -1,0 +1,29 @@
+{
+  "task_id": "test-task-123",
+  "workflow_id": "test-workflow-456",
+  "agent_type": "hello-world",
+  "priority": "medium",
+  "status": "pending",
+  "payload": {
+    "message": "Hello from the orchestrator!",
+    "test_data": {
+      "key1": "value1",
+      "key2": "value2"
+    }
+  },
+  "workflow_context": {
+    "workflow_type": "test",
+    "workflow_name": "Lambda Integration Test",
+    "current_stage": "hello-world-stage"
+  },
+  "constraints": {
+    "timeout_ms": 30000,
+    "max_retries": 3,
+    "required_confidence": 0.8
+  },
+  "metadata": {
+    "created_at": "2024-11-21T12:00:00Z",
+    "created_by": "orchestrator",
+    "envelope_version": "2.0.0"
+  }
+}

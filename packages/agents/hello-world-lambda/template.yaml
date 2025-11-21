@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Hello World Lambda Agent for Agentic SDLC
+
+Globals:
+  Function:
+    Timeout: 300
+    MemorySize: 512
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        REDIS_URL: redis://localhost:6380
+        NODE_ENV: development
+
+Resources:
+  HelloWorldAgent:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: hello-world-agent
+      Handler: index.handler
+      Description: Processes hello-world tasks from the orchestrator
+      Environment:
+        Variables:
+          AGENT_TYPE: hello-world
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /invoke
+            Method: POST
+
+  # Lambda can also be triggered by SQS for async processing
+  AgentTaskQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: hello-world-agent-tasks
+      VisibilityTimeout: 310
+      MessageRetentionPeriod: 1209600
+
+  HelloWorldAgentSQSTrigger:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !GetAtt AgentTaskQueue.Arn
+      FunctionName: !Ref HelloWorldAgent
+      BatchSize: 1
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL for Hello World Agent
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/invoke"
+  FunctionArn:
+    Description: Lambda Function ARN
+    Value: !GetAtt HelloWorldAgent.Arn
+  QueueUrl:
+    Description: SQS Queue URL for async task submission
+    Value: !Ref AgentTaskQueue

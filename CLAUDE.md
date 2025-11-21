@@ -2,7 +2,7 @@
 
 **Status:** ✅ Phase 7B Complete + Session #85 (Dashboard Agent Extensibility) + Session #86 (Dashboard Rebuild Automation) + Session #87 (Platform CRUD Implementation) | **Updated:** 2025-11-20 | **Version:** 61.0
 
-**📚 Key Resources:** [Runbook](./AGENTIC_SDLC_RUNBOOK.md) | [Logging](./LOGGING_LEVELS.md) | [Strategy](./STRATEGIC-ARCHITECTURE.md) | [Agent Guide](./AGENT_CREATION_GUIDE.md) | [Dashboard Rebuild](./DASHBOARD_REBUILD.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./DEPLOYMENT_PIPELINE.md) | [Quick Start](./DEPLOYMENT_QUICKSTART.md)
+**📚 Key Resources:** [Runbook](./docs/AGENTIC_SDLC_RUNBOOK.md) | [Logging](./docs/LOGGING_LEVELS.md) | [Strategy](./docs/STRATEGIC-ARCHITECTURE.md) | [Agent Guide](./docs/AGENT_CREATION_GUIDE.md) | [Dashboard Rebuild](./docs/DASHBOARD_REBUILD.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./docs/DEPLOYMENT_PIPELINE.md) | [Quick Start](./docs/DEPLOYMENT_QUICKSTART.md)
 
 ---
 
@@ -32,12 +32,12 @@
 ```
 
 **Key Docs for Your Task:**
-- **Setup**: [QUICKSTART-UNIFIED.md](./QUICKSTART-UNIFIED.md)
+- **Setup**: [QUICKSTART-UNIFIED.md](./docs/QUICKSTART-UNIFIED.md)
 - **Architecture**: [UNIFIED-ORCHESTRATION.md](./infrastructure/local/UNIFIED-ORCHESTRATION.md)
-- **Custom Agents**: [AGENT_CREATION_GUIDE.md](./AGENT_CREATION_GUIDE.md) ⭐ NEW (Session #85)
-- **Ports**: [PORT_CONFIGURATION.md](./PORT_CONFIGURATION.md)
+- **Custom Agents**: [AGENT_CREATION_GUIDE.md](./docs/AGENT_CREATION_GUIDE.md) ⭐ NEW (Session #85)
+- **Ports**: [PORT_CONFIGURATION.md](./docs/PORT_CONFIGURATION.md)
 - **Schemas**: [Agent Envelope v2.0](./packages/shared/types/src/messages/agent-envelope.ts)
-- **Logging**: [LOGGING_LEVELS.md](./LOGGING_LEVELS.md)
+- **Logging**: [LOGGING_LEVELS.md](./docs/LOGGING_LEVELS.md)
 
 **Common Tasks:**
 ```bash
@@ -110,7 +110,7 @@ docker rm -f agentic-sdlc-dev-dashboard && docker run -d --name agentic-sdlc-dev
 # 5. Start new container with proper networking
 # 6. Verify health check (HTTP 200)
 
-# See DASHBOARD_REBUILD.md for detailed guide
+# See docs/DASHBOARD_REBUILD.md for detailed guide
 ```
 
 ---
@@ -175,7 +175,7 @@ git push origin main
 - ✅ **Smart Cache Control** - Hashed assets cached 1 year, index.html never cached (cache-busting)
 - ✅ **Automated Migrations** - Prisma migrations run automatically during reset
 - ✅ **Post-Deploy Validation** - Comprehensive health checks verify all services
-- ✅ **Complete Documentation** - [DEPLOYMENT_PIPELINE.md](./DEPLOYMENT_PIPELINE.md) & [DEPLOYMENT_QUICKSTART.md](./DEPLOYMENT_QUICKSTART.md)
+- ✅ **Complete Documentation** - [DEPLOYMENT_PIPELINE.md](./docs/DEPLOYMENT_PIPELINE.md) & [DEPLOYMENT_QUICKSTART.md](./docs/DEPLOYMENT_QUICKSTART.md)
 
 **One-Command Complete Reset:**
 ```bash
@@ -227,7 +227,7 @@ git push origin main -f
 7. ✅ **Custom Agents:** Any agent extending BaseAgent with any string agent_type (Session #85)
    - agent_type now accepts arbitrary strings (kebab-case: ml-training, data-validation, etc)
    - Validation happens BEFORE task creation via validateAgentExists()
-   - See AGENT_CREATION_GUIDE.md for complete pattern
+   - See docs/AGENT_CREATION_GUIDE.md for complete pattern
 
 **Critical Files (Never Duplicate):**
 - `packages/shared/types/src/messages/agent-envelope.ts` - Schema
@@ -296,7 +296,7 @@ Full development workflow:
   - Eliminates manual 5-step process
   - Expected execution time: 30-60 seconds
 - ✅ **Dashboard Rebuild Documentation**
-  - Created DASHBOARD_REBUILD.md with complete developer guide
+  - Created docs/DASHBOARD_REBUILD.md with complete developer guide
   - Includes troubleshooting section for common issues
   - Manual process reference for advanced users
 - ✅ **CLAUDE.md Updates**
@@ -390,7 +390,7 @@ Full development workflow:
   - Prevents orphaned tasks in Redis queue
   - Updates workflow status to 'failed' with clear error messages
   - Publishes WORKFLOW_FAILED event for monitoring
-- ✅ **Complete Documentation:** AGENT_CREATION_GUIDE.md (800+ lines)
+- ✅ **Complete Documentation:** docs/AGENT_CREATION_GUIDE.md (800+ lines)
   - 5-minute quick start
   - 8 complete, runnable code examples (ML training agent, etc)
   - 6 common patterns with code
@@ -457,8 +457,8 @@ Full development workflow:
   - index.html: No-cache (always gets latest asset references)
   - Automatic cache-busting when component changes
 - ✅ **Complete Documentation:**
-  - [DEPLOYMENT_PIPELINE.md](./DEPLOYMENT_PIPELINE.md) - Architecture & flows
-  - [DEPLOYMENT_QUICKSTART.md](./DEPLOYMENT_QUICKSTART.md) - Quick reference
+  - [DEPLOYMENT_PIPELINE.md](./docs/DEPLOYMENT_PIPELINE.md) - Architecture & flows
+  - [DEPLOYMENT_QUICKSTART.md](./docs/DEPLOYMENT_QUICKSTART.md) - Quick reference
 - ✅ **Dashboard Fixes:** Fixed 24+ TypeScript errors in server code
   - Corrected Prisma field names (camelCase → snake_case)
   - Added proper response headers
@@ -532,10 +532,10 @@ Full development workflow:
 
 ## 📚 Key Documentation
 
-- **LOGGING_LEVELS.md** - Log level hierarchy, environments, modules
-- **LOGGING_IMPLEMENTATION.md** - How-to guide with 5 patterns
-- **AGENTIC_SDLC_RUNBOOK.md** - Operational guide
-- **STRATEGIC-ARCHITECTURE.md** - Multi-platform strategy
+- **docs/LOGGING_LEVELS.md** - Log level hierarchy, environments, modules
+- **docs/LOGGING_IMPLEMENTATION.md** - How-to guide with 5 patterns
+- **docs/AGENTIC_SDLC_RUNBOOK.md** - Operational guide
+- **docs/STRATEGIC-ARCHITECTURE.md** - Multi-platform strategy
 - **Behavior Metadata Guide** - Mock agent test scenarios
 
 ---

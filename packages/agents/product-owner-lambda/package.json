@@ -1,0 +1,30 @@
+{
+  "name": "@agentic-sdlc/product-owner-lambda",
+  "version": "1.0.0",
+  "description": "Product Owner Lambda Agent - Generates application requirements using DDD principles",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test-scenarios.js",
+    "package": "zip -r function.zip index.js node_modules package.json",
+    "deploy-local": "sam local start-api --port 3457",
+    "invoke": "node invoke-test.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "ioredis": "^5.3.2",
+    "express": "^4.18.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "axios": "^1.6.0"
+  },
+  "keywords": [
+    "product-owner",
+    "requirements",
+    "ddd",
+    "domain-driven-design",
+    "lambda",
+    "agent"
+  ]
+}
