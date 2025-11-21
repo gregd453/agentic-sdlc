@@ -31,6 +31,25 @@ export class MonitoringWebSocketHandler {
   }
 
   /**
+   * Stop the WebSocket handler and clean up resources
+   */
+  async stop(): Promise<void> {
+    logger.info('[MonitoringWebSocket] Stopping WebSocket handler');
+
+    // Clear broadcast interval if running
+    if (this.broadcastInterval) {
+      clearInterval(this.broadcastInterval);
+      this.broadcastInterval = null;
+    }
+
+    // Clean up WebSocket manager
+    // Note: IWebSocketManager doesn't have a close method, clients handle their own cleanup
+
+    this.isRegistered = false;
+    logger.info('[MonitoringWebSocket] WebSocket handler stopped');
+  }
+
+  /**
    * Register WebSocket route with Fastify
    */
   async register(fastify: FastifyInstance): Promise<void> {

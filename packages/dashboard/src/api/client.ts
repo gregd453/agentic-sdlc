@@ -119,6 +119,17 @@ export {
   type SLOMetrics,
 } from './stats'
 
+// Monitoring (Real-time metrics and controls)
+export {
+  fetchRealtimeMetrics,
+  subscribeToMetrics,
+  controlWorkflow,
+  cancelWorkflow,
+  pauseWorkflow,
+  resumeWorkflow,
+  type RealtimeMetrics,
+} from './monitoring'
+
 // Task API (kept in main client for now as it's a small utility)
 export async function fetchTasks(filters?: {
   workflow_id?: string

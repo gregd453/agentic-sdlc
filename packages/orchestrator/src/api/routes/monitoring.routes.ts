@@ -57,7 +57,13 @@ export async function monitoringRoutes(
         logger.debug('[MonitoringRoutes] Fetching realtime metrics');
 
         // Fetch metrics from event aggregator (cached in Redis)
-        const metrics = await eventAggregator.getMetrics();
+        let metrics;
+        try {
+          metrics = await eventAggregator.getMetrics();
+        } catch (err) {
+          logger.error('[MonitoringRoutes] Error calling getMetrics', { error: err });
+          throw err;
+        }
 
         if (!metrics) {
           logger.warn('[MonitoringRoutes] Metrics not yet available');
@@ -70,11 +76,28 @@ export async function monitoringRoutes(
 
         const duration = Date.now() - startTime;
 
-        // Build response with cache TTL
-        const response = {
-          data: metrics,
+        // Transform metrics to match frontend expectations
+        const transformedMetrics = {
           timestamp: new Date().toISOString(),
-          ttl_ms: 5000 // Metrics cache expires in 5 seconds
+          overview: {
+            total_workflows: metrics?.overview?.total_workflows || 0,
+            running: metrics?.overview?.running_workflows || 0,
+            completed: metrics?.overview?.completed_workflows || 0,
+            failed: metrics?.overview?.failed_workflows || 0,
+            paused: metrics?.overview?.paused_workflows || 0,
+            cancelled: 0, // Not in current metrics
+            avg_completion_time_ms: metrics?.overview?.avg_completion_time_ms || 0,
+            success_rate: metrics?.overview?.success_rate_percent || 100
+          },
+          agents: metrics?.agents || [],
+          error_rate_percent: metrics?.overview?.error_rate_percent || 0,
+          throughput_workflows_per_sec: (metrics?.throughput_per_minute || 0) / 60,
+          avg_latency_ms: metrics?.latency_p50_ms || 0,
+          p50_latency_ms: metrics?.latency_p50_ms || 0,
+          p95_latency_ms: metrics?.latency_p95_ms || 0,
+          p99_latency_ms: metrics?.latency_p99_ms || 0,
+          active_workflows: metrics?.overview?.running_workflows || 0,
+          agent_health: {} // TODO: Transform agent health data
         };
 
         // Set proper cache headers
@@ -82,22 +105,51 @@ export async function monitoringRoutes(
           .header('Cache-Control', 'no-cache, must-revalidate')
           .header('Content-Type', 'application/json')
           .code(200)
-          .send(response);
+          .send(transformedMetrics);
 
         logger.debug('[MonitoringRoutes] Metrics returned', {
           duration_ms: duration,
-          total_workflows: metrics.overview.total_workflows
+          total_workflows: transformedMetrics.overview.total_workflows
         });
       } catch (error) {
         logger.error('[MonitoringRoutes] Failed to get metrics', {
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined
         });
 
         reply.code(500).send({
           error: 'Internal server error',
-          message: 'Failed to fetch monitoring metrics'
+          message: error instanceof Error ? error.message : 'Failed to fetch monitoring metrics'
         });
       }
+    }
+  });
+
+  /**
+   * GET /api/v1/monitoring/test
+   * Test endpoint to verify monitoring is working
+   */
+  fastify.get('/api/v1/monitoring/test', {
+    schema: {
+      description: 'Test monitoring endpoint',
+      tags: ['Monitoring'],
+      response: {
+        200: zodToJsonSchema(
+          z.object({
+            message: z.string(),
+            timestamp: z.string().datetime()
+          })
+        )
+      }
+    },
+    handler: async (
+      _request: FastifyRequest,
+      reply: FastifyReply
+    ): Promise<void> => {
+      reply.code(200).send({
+        message: 'Monitoring test endpoint working',
+        timestamp: new Date().toISOString()
+      });
     }
   });
 

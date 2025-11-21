@@ -14,6 +14,7 @@ import { PlatformDetailsPage } from './pages/PlatformDetailsPage'
 import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage'
 import WorkflowPipelineBuilderPage from './pages/WorkflowPipelineBuilderPage'
 import WorkflowDefinitionsPage from './pages/WorkflowDefinitionsPage'
+import MonitoringDashboardPage from './pages/MonitoringDashboardPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 const queryClient = new QueryClient({
@@ -40,6 +41,7 @@ function App() {
             <Layout>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/monitoring" element={<MonitoringDashboardPage />} />
                 <Route path="/workflows">
                   <Route index element={<WorkflowsPage />} />
                   <Route path="new" element={<WorkflowBuilderPage />} />

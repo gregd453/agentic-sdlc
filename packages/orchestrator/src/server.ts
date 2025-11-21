@@ -26,6 +26,9 @@ import { agentsRoutes } from './api/routes/agents.routes';
 import { workflowDefinitionRoutes } from './api/routes/workflow-definition.routes';
 import { WorkflowDefinitionRepository } from './repositories/workflow-definition.repository';
 import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
+import { MonitoringWebSocketHandler } from './websocket/monitoring-websocket.handler';
+import { EventAggregatorService } from './services/event-aggregator.service';
+import { monitoringRoutes } from './api/routes/monitoring.routes';
 import { logger } from './utils/logger';
 import { PlatformLoaderService } from './services/platform-loader.service';
 import { PlatformRegistryService } from './services/platform-registry.service';
@@ -165,6 +168,12 @@ export async function createServer() {
   const traceService = new TraceService(traceRepository, workflowRepository);
   logger.info('Dashboard services initialized (StatsService, TraceService)');
 
+  // Session #88: Initialize EventAggregatorService for real-time monitoring
+  // Pass EventBus for workflow events, messageBus/kv from container for Redis access
+  const eventAggregator = new EventAggregatorService(messageBus, kv, statsService, eventBus);
+  await eventAggregator.start();
+  logger.info('[Session #88] EventAggregatorService initialized for real-time monitoring');
+
   // Initialize platform services
   const platformLoader = new PlatformLoaderService(prisma);
   const platformRegistry = new PlatformRegistryService(platformLoader);
@@ -194,8 +203,11 @@ export async function createServer() {
   await pipelineExecutor.recoverPausedExecutions();
   logger.info('Pipeline service initialized with pause/resume persistence (Session #79)');
 
-  // Initialize WebSocket handler
+  // Initialize WebSocket handlers
   const pipelineWebSocketHandler = new PipelineWebSocketHandler(eventBus);
+
+  // Session #88: Initialize MonitoringWebSocketHandler for real-time metrics
+  const monitoringWebSocketHandler = new MonitoringWebSocketHandler(eventAggregator);
 
   // Initialize health check service
   const healthCheckService = new HealthCheckService(prisma, eventBus); // Phase 2: AgentDispatcherService removed (2 args now)
@@ -203,8 +215,12 @@ export async function createServer() {
   // Register WebSocket support
   await fastify.register(require('@fastify/websocket'));
 
-  // Register WebSocket handler
+  // Register WebSocket handlers
   await pipelineWebSocketHandler.register(fastify);
+
+  // Session #88: Register MonitoringWebSocket handler for real-time metrics
+  await monitoringWebSocketHandler.register(fastify);
+  logger.info('[Session #88] MonitoringWebSocket handler registered at /ws/monitoring');
 
   // Register observability middleware (logging, metrics, tracing)
   registerObservabilityMiddleware(fastify);
@@ -221,6 +237,10 @@ export async function createServer() {
   await fastify.register(agentsRoutes, { agentRegistry });
   // Workflow definition CRUD routes for platform-scoped workflow management
   await fastify.register(workflowDefinitionRoutes, { workflowDefinitionRepository });
+
+  // Session #88: Monitoring routes for real-time metrics
+  await fastify.register(monitoringRoutes, { eventAggregator });
+  logger.info('[Session #88] Monitoring routes registered at /api/v1/monitoring');
 
   // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 
@@ -300,6 +320,13 @@ export async function createServer() {
   // Phase 3: Add shutdown hook for OrchestratorContainer
   fastify.addHook('onClose', async () => {
     logger.info('[PHASE-3] Shutting down OrchestratorContainer');
+
+    // Session #88: Stop monitoring services
+    logger.info('[Session #88] Stopping monitoring services');
+    await monitoringWebSocketHandler.stop();
+    await eventAggregator.stop();
+    logger.info('[Session #88] Monitoring services stopped');
+
     await container.shutdown();
     logger.info('[PHASE-3] Container shutdown complete');
   });

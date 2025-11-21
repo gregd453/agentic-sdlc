@@ -15,6 +15,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const navLinks = [
     { path: '/', label: 'Dashboard' },
+    { path: '/monitoring', label: 'Monitors' },
     { path: '/workflows', label: 'Workflows' },
     { path: '/platforms', label: 'Platforms' },
     { path: '/traces', label: 'Traces' },
