@@ -289,3 +289,56 @@ model PlatformSurface {
   @@unique([platform_id, surface_type])
   @@index([platform_id])
 }
+
+// Session #88: Monitoring System - Alert Management
+enum AlertSeverity {
+  critical
+  warning
+  info
+}
+
+enum AlertStatusType {
+  triggered
+  acknowledged
+  resolved
+}
+
+model AlertRule {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  description     String?
+  enabled         Boolean          @default(true)
+  severity        AlertSeverity
+  // Serialized alert condition: {metric: string, operator: string, value: number, duration_ms?: number}
+  condition       Json
+  // Channels for notifications: dashboard, email, slack, webhook
+  channels        String[]         @default(["dashboard"])
+
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+
+  alerts          Alert[]
+
+  @@index([enabled])
+  @@index([severity])
+}
+
+model Alert {
+  id              String           @id @default(uuid())
+  rule_id         String
+  severity        AlertSeverity
+  message         String
+  // The metric values that triggered this alert: {latency_p95: 523, threshold: 500}
+  data            Json
+  status          AlertStatusType  @default(triggered)
+
+  created_at      DateTime         @default(now())
+  acknowledged_at DateTime?
+  resolved_at     DateTime?
+
+  rule            AlertRule        @relation(fields: [rule_id], references: [id], onDelete: Cascade)
+
+  @@index([rule_id])
+  @@index([status])
+  @@index([created_at])
+}

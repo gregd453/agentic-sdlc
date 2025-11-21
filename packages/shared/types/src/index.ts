@@ -74,6 +74,9 @@ export * from './agents/e2e';
 export * from './agents/integration';
 export * from './agents/deployment';
 
+// ===== Monitoring System Exports (Session #88) =====
+export * from './monitoring';
+
 // ===== Envelope Exports (Session #36 - OLD, keep for backward compat) =====
 export * from './envelope/agent-envelope';
 
