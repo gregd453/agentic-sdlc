@@ -2,7 +2,7 @@
 
 **Status:** ✅ Phase 7B Complete + Session #85-89 + **Surface Architecture V3 COMPLETE** + **ZYP UI Phase 2 COMPLETE** | **Updated:** 2025-11-22 | **Version:** 64.0
 
-**📚 Key Resources:** [Runbook](./docs/AGENTIC_SDLC_RUNBOOK.md) | [Logging](./docs/LOGGING_LEVELS.md) | [Strategy](./docs/STRATEGIC-ARCHITECTURE.md) | [Agent Guide](./docs/AGENT_CREATION_GUIDE.md) | [Workflow Definitions](./docs/WORKFLOW_DEFINITION_GUIDE.md) ⭐ NEW | [Workflow Migration](./docs/WORKFLOW_MIGRATION_GUIDE.md) ⭐ NEW | [Dashboard Rebuild](./docs/DASHBOARD_REBUILD.md) | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./docs/DEPLOYMENT_PIPELINE.md) | [Quick Start](./docs/DEPLOYMENT_QUICKSTART.md)
+**📚 Key Resources:** [Runbook](./docs/AGENTIC_SDLC_RUNBOOK.md) | [Logging](./docs/LOGGING_LEVELS.md) | [Strategy](./docs/STRATEGIC-ARCHITECTURE.md) | [Agent Guide](./docs/AGENT_CREATION_GUIDE.md) | [Workflow Definitions](./docs/WORKFLOW_DEFINITION_GUIDE.md) | [Workflow Migration](./docs/WORKFLOW_MIGRATION_GUIDE.md) | [Dashboard Rebuild](./docs/DASHBOARD_REBUILD.md) | **[ZYP UI Plan](./docs/ZYP_UI_IMPLEMENTATION_PLAN.md)** ⭐ NEW | **[ZYP UI Status](./docs/ZYP_UI_PHASE2_COMPLETE.md)** ⭐ NEW | [Behavior Metadata](./packages/agents/generic-mock-agent/BEHAVIOR_METADATA_GUIDE.md) | [GitHub Repo](https://github.com/gregd453/agentic-sdlc) | [GitHub Actions](https://github.com/gregd453/agentic-sdlc/actions) | [Deployment Pipeline](./docs/DEPLOYMENT_PIPELINE.md) | [Quick Start](./docs/DEPLOYMENT_QUICKSTART.md)
 
 ---
 
@@ -776,11 +776,42 @@ Full development workflow:
 
 ## 📚 Key Documentation
 
+### Core Platform Documentation
 - **docs/LOGGING_LEVELS.md** - Log level hierarchy, environments, modules
 - **docs/LOGGING_IMPLEMENTATION.md** - How-to guide with 5 patterns
 - **docs/AGENTIC_SDLC_RUNBOOK.md** - Operational guide
 - **docs/STRATEGIC-ARCHITECTURE.md** - Multi-platform strategy
+- **docs/AGENT_CREATION_GUIDE.md** - Complete guide to creating custom agents
+- **docs/WORKFLOW_DEFINITION_GUIDE.md** - Workflow definitions and templates
 - **Behavior Metadata Guide** - Mock agent test scenarios
+
+### ZYP Dashboard UI Documentation 🎨
+**Location:** `docs/ZYP_UI_*.md`
+
+**Master Plan:**
+- **docs/ZYP_UI_IMPLEMENTATION_PLAN.md** - 20-week comprehensive UI transformation plan (all phases)
+
+**Current Status (Phase 1-2 Complete):**
+- **docs/ZYP_UI_PHASE2_COMPLETE.md** - Phase 2 Platform Management complete report
+- **docs/ZYP_UI_PHASE1_AUDIT.md** - Phase 1 Foundation audit and completion report
+- **docs/ZYP_UI_DEPLOYMENT_VERIFIED.md** - Build and deployment verification
+
+**Progress:**
+- ✅ Phase 1: Foundation & Design System (100% - 22 components, shadcn/ui, command palette)
+- ✅ Phase 2: Platform Management (100% - bulk ops, surfaces, agents)
+- ⏸️ Phase 3: Workflow System (0% - templates, real-time monitoring)
+- ⏸️ Phase 4: Analytics & Monitoring (0% - dashboards, charts)
+- ⏸️ Phase 5: Polish & UX (0% - notifications, help system)
+- ⏸️ Phase 6: Testing & Launch (0% - optimization, deployment)
+
+**Overall Progress:** 33% complete (2/6 phases, ~3.5 hours of ~100 hours estimated)
+
+**Quick Reference:**
+- All UI components: `packages/dashboard/src/components/ui/` (10 shadcn/ui components)
+- Layout system: `packages/dashboard/src/components/Layout/` (AppShell, Sidebar, Header, PageContainer)
+- Pages: Enhanced PlatformsPage, SurfaceRegistryPage, AgentsPageEnhanced
+- Routes: `/platforms`, `/surfaces`, `/agents`
+- Dashboard: http://localhost:3050
 
 ---
 
