@@ -25,6 +25,8 @@ import { platformRoutes } from './api/routes/platform.routes';
 import { agentsRoutes } from './api/routes/agents.routes';
 import { workflowDefinitionRoutes } from './api/routes/workflow-definition.routes';
 import { WorkflowDefinitionRepository } from './repositories/workflow-definition.repository';
+import { PlatformAwareWorkflowEngine } from './services/platform-aware-workflow-engine.service';
+import { WorkflowDefinitionAdapter } from './services/workflow-definition-adapter.service';
 import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler';
 import { MonitoringWebSocketHandler } from './websocket/monitoring-websocket.handler';
 import { EventAggregatorService } from './services/event-aggregator.service';
@@ -140,13 +142,26 @@ export async function createServer() {
   const stateManager = new WorkflowStateManager(kv, messageBus);
   logger.info('[PHASE-3] WorkflowStateManager initialized');
 
+  // SESSION #88: Phase 3 - Initialize definition-driven workflow engine
+  logger.info('[SESSION #88] Initializing PlatformAwareWorkflowEngine');
+  const platformAwareWorkflowEngine = new PlatformAwareWorkflowEngine(prisma);
+  logger.info('[SESSION #88] PlatformAwareWorkflowEngine initialized');
+
+  // SESSION #88: Phase 3 - Initialize workflow definition adapter
+  logger.info('[SESSION #88] Initializing WorkflowDefinitionAdapter');
+  const workflowDefinitionAdapter = new WorkflowDefinitionAdapter(platformAwareWorkflowEngine);
+  logger.info('[SESSION #88] WorkflowDefinitionAdapter initialized');
+
   // Phase 4 & 6: Pass messageBus and stateManager to state machine
+  // SESSION #88: Phase 3 - Also pass workflowDefinitionAdapter for definition-driven routing
   const stateMachineService = new WorkflowStateMachineService(
     workflowRepository,
     eventBus,
     messageBus, // Phase 4: State machine receives events autonomously
-    stateManager // Phase 6: State machine persists to KV store
+    stateManager, // Phase 6: State machine persists to KV store
+    workflowDefinitionAdapter // SESSION #88: Phase 3 - Enable definition-driven workflow routing
   );
+  logger.info('[SESSION #88] WorkflowStateMachineService initialized with definition adapter');
 
   // Phase 3: Create WorkflowService with messageBus from container
   logger.info('[PHASE-3] WorkflowService created with messageBus');

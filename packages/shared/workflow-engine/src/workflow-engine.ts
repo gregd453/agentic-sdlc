@@ -236,6 +236,129 @@ export class WorkflowEngine {
   }
 
   /**
+   * SESSION #88 PHASE 3: Calculate workflow progress based on completed stages
+   *
+   * Uses stage weights if defined, otherwise distributes progress evenly.
+   *
+   * @param completedStages - Array of stage names that have been completed
+   * @returns Progress percentage (0-100)
+   *
+   * @example
+   * // With weights: [30, 50, 20] for 3 stages
+   * calculateProgress(['stage1']) // returns 30
+   * calculateProgress(['stage1', 'stage2']) // returns 80
+   * calculateProgress(['stage1', 'stage2', 'stage3']) // returns 100
+   *
+   * // Without weights: 3 stages
+   * calculateProgress(['stage1']) // returns 33
+   * calculateProgress(['stage1', 'stage2']) // returns 67
+   * calculateProgress(['stage1', 'stage2', 'stage3']) // returns 100
+   */
+  calculateProgress(completedStages: string[]): number {
+    const allStages = this.getStages();
+    const totalStages = allStages.length;
+
+    if (totalStages === 0) {
+      return 0;
+    }
+
+    if (completedStages.length === 0) {
+      return 0;
+    }
+
+    // Calculate total weight of all stages
+    let totalWeight = 0;
+    let completedWeight = 0;
+    const stageWeights = new Map<string, number>();
+
+    for (const stageName of allStages) {
+      const stage = this.definition.stages[stageName];
+      const weight = stage.weight || (100 / totalStages); // Even distribution if no weight
+      stageWeights.set(stageName, weight);
+      totalWeight += weight;
+    }
+
+    // Calculate weight of completed stages
+    for (const completedStage of completedStages) {
+      const weight = stageWeights.get(completedStage);
+      if (weight !== undefined) {
+        completedWeight += weight;
+      }
+    }
+
+    // Calculate percentage (ensure it's between 0-100)
+    const progress = Math.round((completedWeight / totalWeight) * 100);
+    return Math.max(0, Math.min(100, progress));
+  }
+
+  /**
+   * SESSION #88 PHASE 3: Validate workflow can be executed with available agents
+   *
+   * Pre-validates that all agent types referenced in the workflow definition
+   * exist in the agent registry before workflow execution begins.
+   *
+   * @param agentRegistry - Object with validateAgentExists method (from AgentRegistryService)
+   * @param platformId - Optional platform ID for platform-scoped validation
+   * @returns Validation result with agent availability details
+   *
+   * @example
+   * const result = await engine.validateExecution(agentRegistry, 'platform-123');
+   * if (!result.valid) {
+   *   console.error('Missing agents:', result.missing_agents);
+   *   console.error('Suggestions:', result.suggestions);
+   * }
+   */
+  async validateExecution(
+    agentRegistry: { validateAgentExists: (agentType: string, platformId?: string) => void },
+    platformId?: string
+  ): Promise<{
+    valid: boolean;
+    missing_agents: string[];
+    suggestions: string[];
+    errors: string[];
+  }> {
+    const missingAgents: string[] = [];
+    const suggestions: string[] = [];
+    const errors: string[] = [];
+
+    // Collect all unique agent types from stages
+    const agentTypes = new Set<string>();
+    for (const stageName in this.definition.stages) {
+      const stage = this.definition.stages[stageName];
+      agentTypes.add(stage.agent_type);
+    }
+
+    // Validate each agent type exists
+    for (const agentType of agentTypes) {
+      try {
+        agentRegistry.validateAgentExists(agentType, platformId);
+        // Agent exists - no error
+      } catch (error) {
+        missingAgents.push(agentType);
+
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        errors.push(`Agent '${agentType}' not available: ${errorMessage}`);
+
+        // Extract suggestion from error message if available
+        // AgentRegistryService provides "Did you mean?" suggestions
+        if (errorMessage.includes('Did you mean')) {
+          const suggestionMatch = errorMessage.match(/Did you mean: (.+)\?/);
+          if (suggestionMatch) {
+            suggestions.push(`For '${agentType}': ${suggestionMatch[1]}`);
+          }
+        }
+      }
+    }
+
+    return {
+      valid: missingAgents.length === 0,
+      missing_agents: missingAgents,
+      suggestions,
+      errors
+    };
+  }
+
+  /**
    * Create initial workflow context
    */
   createInitialContext(workflowId: string, inputData?: Record<string, unknown>): WorkflowContext {

@@ -5,6 +5,7 @@ import { EventBus } from '../events/event-bus';
 import { IMessageBus } from '../hexagonal/ports/message-bus.port';
 import { WorkflowStateManager, WorkflowStateSnapshot } from '../hexagonal/persistence/workflow-state-manager';
 import { getStagesForType } from '../utils/stages';
+import { WorkflowDefinitionAdapter } from '../services/workflow-definition-adapter.service';
 
 export interface WorkflowContext {
   workflow_id: string;
@@ -18,6 +19,7 @@ export interface WorkflowContext {
   clarification_id?: string;
   pending_decision?: boolean;
   pending_clarification?: boolean;
+  platform_id?: string; // SESSION #88: Phase 3 - Platform ID for definition-driven routing
   _advanceInFlight?: boolean; // Single-flight guard for transitionToNextStage
   _seenEventIds?: Set<string>; // Deduplication: track processed event IDs to prevent triple-fire
 }
@@ -39,7 +41,8 @@ export type WorkflowEvent =
 export const createWorkflowStateMachine = (
   context: WorkflowContext,
   repository: WorkflowRepository,
-  eventBus: EventBus
+  eventBus: EventBus,
+  workflowDefinitionAdapter?: WorkflowDefinitionAdapter  // SESSION #88: Phase 3 - Definition-driven routing
 ) => {
   // TODO: Update xstate type arguments for newer version compatibility
   return createMachine({
@@ -133,20 +136,57 @@ export const createWorkflowStateMachine = (
         invoke: {
           id: 'advanceStage',
           src: fromPromise(async ({ input }: { input: any }) => {
-            logger.info('SESSION #23 FIX: Invoked service executing', {
+            logger.info('[SESSION #88] Invoked service executing (definition-driven routing)', {
               workflow_id: input.workflow_id,
-              next_stage_input: input.nextStage
+              next_stage_preliminary: input.nextStage,
+              adapter_available: !!workflowDefinitionAdapter
             });
-            // Simulate async work (stage transition already computed)
-            await new Promise(resolve => setTimeout(resolve, 10));
-            logger.info('SESSION #23 FIX: Invoked service completed', {
-              workflow_id: input.workflow_id,
-              next_stage: input.nextStage
-            });
+
+            // SESSION #88: Use WorkflowDefinitionAdapter for definition-driven routing if available
+            if (workflowDefinitionAdapter && input.platform_id) {
+              try {
+                const transition = await workflowDefinitionAdapter.getNextStageWithFallback({
+                  workflow_id: input.workflow_id,
+                  workflow_type: input.workflow_type,
+                  current_stage: input.current_stage,
+                  platform_id: input.platform_id,
+                  progress: input.progress
+                });
+
+                logger.info('[SESSION #88] Definition-driven next stage computed', {
+                  workflow_id: input.workflow_id,
+                  from_stage: input.current_stage,
+                  to_stage: transition.next_stage,
+                  is_fallback: transition.is_fallback,
+                  agent_type: transition.agent_type,
+                  preliminary_stage: input.nextStage
+                });
+
+                return transition.next_stage;
+              } catch (error) {
+                logger.error('[SESSION #88] Definition-driven routing failed, using preliminary stage', {
+                  workflow_id: input.workflow_id,
+                  error: error instanceof Error ? error.message : String(error),
+                  fallback_stage: input.nextStage
+                });
+                // Fall through to return preliminary stage
+              }
+            } else {
+              logger.info('[SESSION #88] Using preliminary stage (no adapter or platform_id)', {
+                workflow_id: input.workflow_id,
+                next_stage: input.nextStage
+              });
+            }
+
+            // Return preliminary stage (computed by legacy logic or if adapter failed)
             return input.nextStage;
           }),
           input: ({ context }: { context: WorkflowContext }) => ({
             workflow_id: context.workflow_id,
+            workflow_type: context.type,
+            current_stage: context.current_stage,
+            platform_id: context.platform_id,
+            progress: context.progress,
             nextStage: context.nextStage
           }),
           onDone: [
@@ -276,18 +316,20 @@ export const createWorkflowStateMachine = (
       },
       computeNextStageOnEvent: assign({
         nextStage: ({ context }) => {
-          // CRITICAL FIX: Compute the next stage ONCE on the event, BEFORE entering evaluating
-          // This prevents re-evaluation in the evaluating entry action
+          // SESSION #88 PHASE 3: This action remains SYNCHRONOUS for XState compatibility
+          // The async adapter logic is now in the 'evaluating' state's invoked service
+          // Here we just use legacy logic as a fallback
+
           const stages = getStagesForType(context.type as any) as string[];
           const currentIndex = (stages as string[]).indexOf(context.current_stage);
 
-          // SESSION #28: Cleaned up debug logging (verified correct in Session #27)
-          logger.debug('Computing next stage from current stage', {
+          logger.debug('[SESSION #88] Computing next stage (sync)', {
             workflow_id: context.workflow_id,
             workflow_type: context.type,
             current_stage: context.current_stage,
             current_index: currentIndex,
-            total_stages: stages.length
+            total_stages: stages.length,
+            adapter_available: !!workflowDefinitionAdapter
           });
 
           // Check if current stage not found
@@ -309,14 +351,16 @@ export const createWorkflowStateMachine = (
             return undefined;
           }
 
-          // Compute the next stage
+          // Compute the next stage using legacy logic
+          // The adapter will be used in the evaluating state's invoked service
           const nextStage = stages[currentIndex + 1];
-          logger.info('Stage transition computed', {
+          logger.info('[SESSION #88] Stage transition computed', {
             workflow_id: context.workflow_id,
             from_stage: context.current_stage,
             from_index: currentIndex,
             to_stage: nextStage,
-            to_index: currentIndex + 1
+            to_index: currentIndex + 1,
+            note: 'Adapter will refine this in evaluating state'
           });
           return nextStage;
         }
@@ -654,15 +698,18 @@ export class WorkflowStateMachineService {
   private messageBus?: IMessageBus; // Phase 4: Message bus for autonomous event handling
   private stateManager?: WorkflowStateManager; // Phase 6: State persistence and recovery
   private taskCreator?: (workflowId: string, stage: string, workflowData?: any) => Promise<void>; // SESSION #66: Task creation callback
+  private workflowDefinitionAdapter?: WorkflowDefinitionAdapter; // SESSION #88: Phase 3 - Definition-driven routing
 
   constructor(
     private repository: WorkflowRepository,
     private eventBus: EventBus,
     messageBus?: IMessageBus, // Phase 4: Optional message bus
-    stateManager?: WorkflowStateManager // Phase 6: Optional state manager
+    stateManager?: WorkflowStateManager, // Phase 6: Optional state manager
+    workflowDefinitionAdapter?: WorkflowDefinitionAdapter // SESSION #88: Phase 3 - Definition adapter
   ) {
     this.messageBus = messageBus;
     this.stateManager = stateManager;
+    this.workflowDefinitionAdapter = workflowDefinitionAdapter;
 
     // Phase 4: Set up autonomous event subscription
     if (messageBus) {
@@ -678,6 +725,13 @@ export class WorkflowStateMachineService {
     // Phase 6: Log state manager availability
     if (stateManager) {
       logger.info('[PHASE-6] WorkflowStateMachineService initialized with state persistence');
+    }
+
+    // SESSION #88: Log workflow definition adapter availability
+    if (workflowDefinitionAdapter) {
+      logger.info('[SESSION #88] WorkflowStateMachineService initialized with definition-driven routing');
+    } else {
+      logger.warn('[SESSION #88] WorkflowStateMachineService initialized WITHOUT adapter - using legacy hard-coded stages');
     }
   }
 
@@ -733,16 +787,22 @@ export class WorkflowStateMachineService {
     return null;  // Consistent with not-found case
   }
 
-  createStateMachine(workflowId: string, type: string): any {
+  createStateMachine(workflowId: string, type: string, platformId?: string): any {
     const context: WorkflowContext = {
       workflow_id: workflowId,
       type,
       current_stage: 'initialization',
       progress: 0,
-      metadata: {}
+      metadata: {},
+      platform_id: platformId // SESSION #88: Phase 3 - Include platform_id for definition-driven routing
     };
 
-    const machine = createWorkflowStateMachine(context, this.repository, this.eventBus);
+    const machine = createWorkflowStateMachine(
+      context,
+      this.repository,
+      this.eventBus,
+      this.workflowDefinitionAdapter // SESSION #88: Phase 3 - Pass adapter for definition-driven routing
+    );
     const service = interpret(machine).start();
 
     // Phase 6: Subscribe to state changes for persistence
@@ -837,10 +897,16 @@ export class WorkflowStateMachineService {
       metadata: snapshot.metadata,
       nextStage: snapshot.state_machine_context?.nextStage,
       pending_decision: snapshot.state_machine_context?.pending_decision,
-      pending_clarification: snapshot.state_machine_context?.pending_clarification
+      pending_clarification: snapshot.state_machine_context?.pending_clarification,
+      platform_id: snapshot.state_machine_context?.platform_id // SESSION #88: Phase 3 - Recover platform_id
     };
 
-    const machine = createWorkflowStateMachine(context, this.repository, this.eventBus);
+    const machine = createWorkflowStateMachine(
+      context,
+      this.repository,
+      this.eventBus,
+      this.workflowDefinitionAdapter // SESSION #88: Phase 3 - Pass adapter when recovering
+    );
     const service = interpret(machine).start();
 
     // Subscribe to state changes

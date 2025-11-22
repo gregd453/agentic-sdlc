@@ -289,12 +289,32 @@ export class WorkflowService {
     }
   }
 
-  async createWorkflow(request: CreateWorkflowRequest): Promise<WorkflowResponse> {
+  /**
+   * SESSION #88 PHASE 3 (P3-T3): Create workflow with optional surface context
+   *
+   * @param request - Workflow creation request
+   * @param createdBy - User/system that created the workflow (default: 'system')
+   * @param surfaceContext - Optional surface context for surface-aware workflows
+   */
+  async createWorkflow(
+    request: CreateWorkflowRequest,
+    createdBy: string = 'system',
+    surfaceContext?: any // SurfaceContext - using any to avoid import issues
+  ): Promise<WorkflowResponse> {
     const startTime = Date.now();
 
     // Phase 3: Use trace_id from request (HTTP header) or generate new one
     const traceId = request.trace_id || generateTraceIdUtil();
     const spanId = generateSpanId(); // Generate span for workflow creation
+
+    // SESSION #88: Log surface context if provided
+    if (surfaceContext) {
+      logger.info('[SESSION #88] Workflow created via surface', {
+        surface_id: surfaceContext.surface_id,
+        surface_type: surfaceContext.surface_type,
+        trace_id: traceId
+      });
+    }
 
     logger.info('Creating workflow - Full request details', {
       type: request.type,
@@ -312,32 +332,38 @@ export class WorkflowService {
       const { behavior_metadata, ...requestWithoutBehavior } = request;
 
       // DEBUG: Log what we're storing
-      const inputDataToStore = behavior_metadata
-        ? { behavior_metadata }
-        : request.input_data || undefined;
+      // SESSION #88 PHASE 3: Include surface_context in input_data if provided
+      const inputDataToStore = {
+        ...(request.input_data || {}),
+        ...(behavior_metadata && { behavior_metadata }),
+        ...(surfaceContext && { surface_context: surfaceContext })
+      };
 
-      logger.info('Creating workflow with behavior metadata', {
+      logger.info('Creating workflow with metadata', {
         behavior_metadata,
+        surface_context: surfaceContext,
         inputDataToStore,
         requestInputData: request.input_data
       });
 
       const workflow = await this.repository.create({
         ...requestWithoutBehavior,
-        created_by: 'system', // In production, get from auth context
+        created_by: createdBy, // SESSION #88: Use provided createdBy parameter
         trace_id: traceId, // Phase 3: Store trace_id
         current_span_id: spanId, // Phase 3: Store current span
         // Phase 1: Store platform-aware fields
-        platform_id: request.platform_id || undefined,
-        surface_id: request.surface_id || undefined,
+        platform_id: request.platform_id || surfaceContext?.platform_id || undefined,
+        surface_id: request.surface_id || surfaceContext?.surface_id || undefined,
         // Session #81: Store behavior metadata in input_data for mock testing
         input_data: inputDataToStore
       });
 
       // Create state machine for workflow
+      // SESSION #88: Phase 3 - Pass platform_id for definition-driven routing
       const stateMachine = this.stateMachineService.createStateMachine(
         workflow.id,
-        workflow.type
+        workflow.type,
+        workflow.platform_id || undefined
       );
 
       // Start the workflow
@@ -575,6 +601,10 @@ export class WorkflowService {
     // SESSION #36: Build agent envelope (replaces TaskAssignment)
     // Session #81: Extract behavior_metadata from workflow input_data if available
     const behaviorMetadata = (workflow.input_data as any)?.behavior_metadata;
+
+    // SESSION #88 PHASE 3: Extract surface_context from workflow input_data if available
+    const surfaceContext = (workflow.input_data as any)?.surface_context;
+
     const envelope = this.buildAgentEnvelope(
       taskId,
       workflowId,
@@ -583,7 +613,8 @@ export class WorkflowService {
       stageOutputs,
       workflowData,
       workflow,
-      behaviorMetadata
+      behaviorMetadata,
+      surfaceContext // SESSION #88: Pass surface context
     );
 
     // [DEBUG] Verify envelope structure before any operations
@@ -1216,6 +1247,9 @@ export class WorkflowService {
    * SESSION #65: Build agent envelope conforming to AgentEnvelopeSchema v2.0.0
    * This is the canonical task format - single source of truth
    */
+  /**
+   * SESSION #88 PHASE 3 (P3-T3): Build agent envelope with optional surface context
+   */
   private buildAgentEnvelope(
     taskId: string,
     workflowId: string,
@@ -1224,7 +1258,8 @@ export class WorkflowService {
     stageOutputs: Record<string, any>,
     workflowData: any,
     workflow: any,
-    behaviorMetadata?: any
+    behaviorMetadata?: any,
+    surfaceContext?: any // SurfaceContext - SESSION #88
   ): any {
     const now = new Date().toISOString();
 
@@ -1293,7 +1328,13 @@ export class WorkflowService {
       metadata: {
         created_at: now,
         created_by: 'orchestrator',
-        envelope_version: '2.0.0' as const
+        envelope_version: '2.0.0' as const,
+        // SESSION #88 PHASE 3: Include surface context if provided
+        ...(surfaceContext && {
+          surface_id: surfaceContext.surface_id,
+          surface_type: surfaceContext.surface_type,
+          entry_metadata: surfaceContext.entry_metadata
+        })
       },
 
       // Distributed Tracing

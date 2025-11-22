@@ -25,6 +25,7 @@ export const StageConfigSchema = z.object({
   on_failure: z.string().optional().describe('Next stage on failure'),
   parallel: z.boolean().default(false).describe('Execute in parallel with other stages'),
   skip_condition: z.string().optional().describe('Expression to skip this stage'),
+  weight: z.number().positive().optional().describe('Progress weight for this stage (SESSION #88)'),
   metadata: z.record(z.unknown()).optional().describe('Custom stage metadata')
 });
 export type StageConfig = z.infer<typeof StageConfigSchema>;
