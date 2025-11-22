@@ -1,0 +1,63 @@
+# Generic Workflow Definition Template
+# Copy this template and customize for your platform
+
+name: my-workflow
+version: 1.0.0
+description: Describe what this workflow does
+enabled: true
+
+definition:
+  name: my-workflow
+  version: 1.0.0
+
+  stages:
+    # Stage 1: Entry point
+    - name: stage1
+      agent_type: scaffold  # Change to your agent type
+      timeout_ms: 300000    # 5 minutes (adjust as needed)
+      max_retries: 3        # Retry 3 times on failure
+      on_success: stage2    # Next stage on success
+      on_failure: fail_workflow  # Fail workflow on error
+      config:
+        # Add agent-specific configuration here
+        example_key: example_value
+
+    # Stage 2: Processing
+    - name: stage2
+      agent_type: validation  # Change to your agent type
+      timeout_ms: 180000      # 3 minutes
+      max_retries: 2
+      on_success: stage3
+      on_failure: fail_workflow
+      config: {}
+
+    # Stage 3: Completion
+    - name: stage3
+      agent_type: deployment  # Change to your agent type
+      timeout_ms: 600000      # 10 minutes
+      max_retries: 1
+      on_success: END         # End workflow successfully
+      on_failure: fail_workflow
+      config: {}
+
+  metadata:
+    author: your-name
+    created_at: '2025-11-22'
+    tags:
+      - template
+      - example
+
+# Usage:
+# 1. Copy this file and customize stages
+# 2. Convert to JSON if needed (yaml2json or manual)
+# 3. Create via API:
+#    curl -X POST http://localhost:3051/api/v1/platforms/${PLATFORM_ID}/workflow-definitions \
+#      -H "Content-Type: application/json" \
+#      -d @workflow-definition.json
+
+# Tips:
+# - Use descriptive stage names (scaffold, validate, deploy)
+# - Set realistic timeouts (short for quick tasks, long for complex tasks)
+# - Choose appropriate retry counts (1-2 for critical, 3+ for flaky operations)
+# - Ensure on_success references valid stages or 'END'
+# - Use on_failure: 'skip' for non-critical stages

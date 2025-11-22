@@ -480,15 +480,35 @@ redis-cli -n 0 KEYS "*scaffold*"
 
 ### 2. Workflow Definitions
 
+**📚 Complete Guide:** See [WORKFLOW_DEFINITION_GUIDE.md](./WORKFLOW_DEFINITION_GUIDE.md) for comprehensive workflow definition documentation including:
+- Quick start (5-minute tutorial)
+- Definition structure and schema
+- Stage configuration (timeouts, retries, routing)
+- Advanced features (conditional routing, error handling)
+- Best practices and examples
+- API reference with curl examples
+- Troubleshooting common issues
+
+**Templates Available:**
+- [Generic Workflow Template](./templates/workflow-definition.yaml)
+- [Web App Workflow](./templates/web-app-workflow.yaml) - Full CI/CD pipeline
+- [Data Pipeline Workflow](./templates/data-pipeline-workflow.yaml) - ETL/ELT processing
+- [Platform Configuration](./templates/platform-config.json)
+- [REST Surface Config](./templates/surface-config-rest.json)
+- [Webhook Surface Config](./templates/surface-config-webhook.json)
+
 ✅ **DO:**
 - Keep stage weights realistic (sum to 100)
 - Define clear descriptions for each stage
 - Test definition-driven routing
+- Use templates as starting points
+- Version your workflow definitions (semver)
 
 ❌ **DON'T:**
 - Create too many stages (5-8 is optimal)
 - Use unclear stage names
 - Skip retry policy configuration
+- Hardcode secrets in workflow config
 
 ### 3. Agent Implementation
 
@@ -535,8 +555,13 @@ redis-cli -n 0 KEYS "*scaffold*"
 ## Next Steps
 
 1. **Create Your Platform** - Follow Phase 1-2 above
-2. **Test It** - Follow Phase 3 testing checklist
-3. **Add Custom Agents** (optional) - Phase 4
+2. **Create Workflow Definitions** - Use the [Workflow Definition Guide](./WORKFLOW_DEFINITION_GUIDE.md) 🆕
+   - Comprehensive guide with examples and best practices
+   - YAML/JSON templates available in [docs/templates/](./templates/)
+   - Quick start tutorial: Create your first definition in 5 minutes
+3. **Test It** - Follow Phase 3 testing checklist
+4. **Add Custom Agents** (optional) - Phase 4
+5. **Migrate Existing Workflows** (if applicable) - See [Workflow Migration Guide](./WORKFLOW_MIGRATION_GUIDE.md) 🆕
 4. **Deploy** - Reference Architecture Migration Guide
 5. **Monitor** - Use dashboard analytics
 

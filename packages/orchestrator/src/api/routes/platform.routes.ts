@@ -438,4 +438,278 @@ export async function platformRoutes(
       }
     }
   });
+
+  // ==========================================
+  // PHASE 4: SURFACE MANAGEMENT API ROUTES
+  // ==========================================
+
+  // List platform surfaces
+  fastify.get('/api/v1/platforms/:platformId/surfaces', {
+    schema: {
+      params: zodToJsonSchema(z.object({
+        platformId: z.string().uuid()
+      })),
+      response: {
+        200: zodToJsonSchema(z.array(z.object({
+          id: z.string().uuid(),
+          platform_id: z.string().uuid(),
+          surface_type: z.enum(['REST', 'WEBHOOK', 'CLI', 'DASHBOARD', 'MOBILE_API']),
+          config: z.record(z.any()).optional(),
+          enabled: z.boolean(),
+          created_at: z.string().datetime(),
+          updated_at: z.string().datetime()
+        }))),
+        404: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{ Params: { platformId: string } }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        // Verify platform exists
+        const entry = platformRegistry.getPlatformById(request.params.platformId);
+        if (!entry) {
+          reply.code(404).send({
+            error: 'Platform not found'
+          });
+          return;
+        }
+
+        // Get surfaces for this platform
+        const surfaces = await platformService.getPlatformSurfaces(request.params.platformId);
+
+        logger.info('[GET /api/v1/platforms/:platformId/surfaces] Retrieved platform surfaces', {
+          platformId: request.params.platformId,
+          surfaceCount: surfaces.length
+        });
+
+        reply.code(200).send(surfaces);
+      } catch (error) {
+        logger.error('Failed to get platform surfaces', { error, platformId: request.params.platformId });
+        reply.code(500).send({
+          error: 'Internal server error'
+        });
+      }
+    }
+  });
+
+  // Enable/create a platform surface
+  fastify.post('/api/v1/platforms/:platformId/surfaces', {
+    schema: {
+      params: zodToJsonSchema(z.object({
+        platformId: z.string().uuid()
+      })),
+      body: zodToJsonSchema(z.object({
+        surface_type: z.enum(['REST', 'WEBHOOK', 'CLI', 'DASHBOARD', 'MOBILE_API']),
+        config: z.record(z.any()).optional(),
+        enabled: z.boolean().optional()
+      })),
+      response: {
+        201: zodToJsonSchema(z.object({
+          id: z.string().uuid(),
+          platform_id: z.string().uuid(),
+          surface_type: z.enum(['REST', 'WEBHOOK', 'CLI', 'DASHBOARD', 'MOBILE_API']),
+          config: z.record(z.any()).optional(),
+          enabled: z.boolean(),
+          created_at: z.string().datetime(),
+          updated_at: z.string().datetime()
+        })),
+        400: zodToJsonSchema(z.object({
+          error: z.string()
+        })),
+        404: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{
+        Params: { platformId: string }
+        Body: {
+          surface_type: 'REST' | 'WEBHOOK' | 'CLI' | 'DASHBOARD' | 'MOBILE_API'
+          config?: Record<string, any>
+          enabled?: boolean
+        }
+      }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        // Verify platform exists
+        const entry = platformRegistry.getPlatformById(request.params.platformId);
+        if (!entry) {
+          reply.code(404).send({
+            error: 'Platform not found'
+          });
+          return;
+        }
+
+        // Create or enable surface
+        const surface = await platformService.enablePlatformSurface(
+          request.params.platformId,
+          request.body.surface_type,
+          request.body.config || {},
+          request.body.enabled ?? true
+        );
+
+        logger.info('[POST /api/v1/platforms/:platformId/surfaces] Enabled platform surface', {
+          platformId: request.params.platformId,
+          surfaceType: request.body.surface_type
+        });
+
+        reply.code(201).send(surface);
+      } catch (error: any) {
+        logger.error('[POST /api/v1/platforms/:platformId/surfaces] Failed to enable surface', {
+          platformId: request.params.platformId,
+          error: error.message
+        });
+        reply.code(400).send({
+          error: error.message || 'Failed to enable surface'
+        });
+      }
+    }
+  });
+
+  // Update a platform surface
+  fastify.put('/api/v1/platforms/:platformId/surfaces/:surfaceType', {
+    schema: {
+      params: zodToJsonSchema(z.object({
+        platformId: z.string().uuid(),
+        surfaceType: z.enum(['REST', 'WEBHOOK', 'CLI', 'DASHBOARD', 'MOBILE_API'])
+      })),
+      body: zodToJsonSchema(z.object({
+        config: z.record(z.any()).optional(),
+        enabled: z.boolean().optional()
+      })),
+      response: {
+        200: zodToJsonSchema(z.object({
+          id: z.string().uuid(),
+          platform_id: z.string().uuid(),
+          surface_type: z.enum(['REST', 'WEBHOOK', 'CLI', 'DASHBOARD', 'MOBILE_API']),
+          config: z.record(z.any()).optional(),
+          enabled: z.boolean(),
+          created_at: z.string().datetime(),
+          updated_at: z.string().datetime()
+        })),
+        400: zodToJsonSchema(z.object({
+          error: z.string()
+        })),
+        404: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{
+        Params: {
+          platformId: string
+          surfaceType: 'REST' | 'WEBHOOK' | 'CLI' | 'DASHBOARD' | 'MOBILE_API'
+        }
+        Body: {
+          config?: Record<string, any>
+          enabled?: boolean
+        }
+      }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        // Verify platform exists
+        const entry = platformRegistry.getPlatformById(request.params.platformId);
+        if (!entry) {
+          reply.code(404).send({
+            error: 'Platform not found'
+          });
+          return;
+        }
+
+        // Update surface
+        const surface = await platformService.updatePlatformSurface(
+          request.params.platformId,
+          request.params.surfaceType,
+          request.body
+        );
+
+        logger.info('[PUT /api/v1/platforms/:platformId/surfaces/:surfaceType] Updated platform surface', {
+          platformId: request.params.platformId,
+          surfaceType: request.params.surfaceType
+        });
+
+        reply.code(200).send(surface);
+      } catch (error: any) {
+        const statusCode = error.message?.includes('not found') ? 404 : 400;
+        logger.error('[PUT /api/v1/platforms/:platformId/surfaces/:surfaceType] Failed to update surface', {
+          platformId: request.params.platformId,
+          surfaceType: request.params.surfaceType,
+          error: error.message
+        });
+        reply.code(statusCode).send({
+          error: error.message || 'Failed to update surface'
+        });
+      }
+    }
+  });
+
+  // Disable/delete a platform surface
+  fastify.delete('/api/v1/platforms/:platformId/surfaces/:surfaceType', {
+    schema: {
+      params: zodToJsonSchema(z.object({
+        platformId: z.string().uuid(),
+        surfaceType: z.enum(['REST', 'WEBHOOK', 'CLI', 'DASHBOARD', 'MOBILE_API'])
+      })),
+      response: {
+        204: z.null(),
+        404: zodToJsonSchema(z.object({
+          error: z.string()
+        })),
+        500: zodToJsonSchema(z.object({
+          error: z.string()
+        }))
+      }
+    },
+    handler: async (
+      request: FastifyRequest<{
+        Params: {
+          platformId: string
+          surfaceType: 'REST' | 'WEBHOOK' | 'CLI' | 'DASHBOARD' | 'MOBILE_API'
+        }
+      }>,
+      reply: FastifyReply
+    ): Promise<void> => {
+      try {
+        // Verify platform exists
+        const entry = platformRegistry.getPlatformById(request.params.platformId);
+        if (!entry) {
+          reply.code(404).send({
+            error: 'Platform not found'
+          });
+          return;
+        }
+
+        // Disable surface
+        await platformService.disablePlatformSurface(
+          request.params.platformId,
+          request.params.surfaceType
+        );
+
+        logger.info('[DELETE /api/v1/platforms/:platformId/surfaces/:surfaceType] Disabled platform surface', {
+          platformId: request.params.platformId,
+          surfaceType: request.params.surfaceType
+        });
+
+        reply.code(204).send();
+      } catch (error: any) {
+        const statusCode = error.message?.includes('not found') ? 404 : 500;
+        logger.error('[DELETE /api/v1/platforms/:platformId/surfaces/:surfaceType] Failed to disable surface', {
+          platformId: request.params.platformId,
+          surfaceType: request.params.surfaceType,
+          error: error.message
+        });
+        reply.code(statusCode).send({
+          error: error.message || 'Failed to disable surface'
+        });
+      }
+    }
+  });
 }

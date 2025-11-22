@@ -130,6 +130,17 @@ export {
   type RealtimeMetrics,
 } from './monitoring'
 
+// Surfaces (Phase 4 integration)
+export {
+  getPlatformSurfaces,
+  enablePlatformSurface,
+  updatePlatformSurface,
+  disablePlatformSurface,
+  type PlatformSurface,
+  type EnablePlatformSurfaceRequest,
+  type UpdatePlatformSurfaceRequest,
+} from './surfaces'
+
 // Task API (kept in main client for now as it's a small utility)
 export async function fetchTasks(filters?: {
   workflow_id?: string

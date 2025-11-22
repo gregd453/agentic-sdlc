@@ -1,0 +1,63 @@
+{
+  "surface_type": "GITHUB_WEBHOOK",
+  "enabled": true,
+  "config": {
+    "webhook": {
+      "secret": "WEBHOOK_SECRET_REFERENCE",
+      "events": [
+        "push",
+        "pull_request",
+        "release"
+      ],
+      "validate_signature": true
+    },
+    "filtering": {
+      "branches": {
+        "include": ["main", "develop", "release/*"],
+        "exclude": ["feature/*", "hotfix/*"]
+      },
+      "paths": {
+        "include": ["src/**", "packages/**"],
+        "exclude": ["docs/**", "*.md"]
+      }
+    },
+    "workflow_mapping": {
+      "push": {
+        "branch": "main",
+        "workflow_type": "deployment",
+        "workflow_definition": "production-deploy"
+      },
+      "pull_request": {
+        "action": "opened",
+        "workflow_type": "validation",
+        "workflow_definition": "pr-validation"
+      },
+      "release": {
+        "action": "published",
+        "workflow_type": "release",
+        "workflow_definition": "release-pipeline"
+      }
+    },
+    "payload_transformation": {
+      "extract_commit_info": true,
+      "extract_author_info": true,
+      "extract_pr_metadata": true
+    },
+    "retry": {
+      "enabled": true,
+      "max_attempts": 3,
+      "backoff_seconds": 5
+    },
+    "notifications": {
+      "send_github_status": true,
+      "status_context": "agentic-sdlc/workflow",
+      "send_commit_comment": false
+    }
+  },
+  "metadata": {
+    "description": "GitHub webhook surface configuration",
+    "version": "1.0.0",
+    "owner": "platform-team",
+    "github_repo": "owner/repo"
+  }
+}

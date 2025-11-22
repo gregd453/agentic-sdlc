@@ -1,0 +1,166 @@
+# Web Application Workflow Template
+# Typical workflow for web application development and deployment
+
+name: web-app-standard
+version: 1.0.0
+description: Standard web application development workflow with testing and deployment
+enabled: true
+
+definition:
+  name: web-app-standard
+  version: 1.0.0
+
+  stages:
+    # Stage 1: Scaffold project structure
+    - name: scaffold
+      agent_type: scaffold
+      timeout_ms: 300000       # 5 minutes
+      max_retries: 3
+      on_success: validate
+      on_failure: fail_workflow
+      config:
+        template: react-typescript
+        package_manager: pnpm
+        features:
+          - routing
+          - state-management
+          - testing
+
+    # Stage 2: Code validation
+    - name: validate
+      agent_type: validation
+      timeout_ms: 180000       # 3 minutes
+      max_retries: 2
+      on_success: unit-test
+      on_failure: fail_workflow
+      config:
+        run_linter: true
+        run_type_check: true
+        run_security_scan: true
+
+    # Stage 3: Unit testing
+    - name: unit-test
+      agent_type: integration
+      timeout_ms: 300000       # 5 minutes
+      max_retries: 2
+      on_success: e2e-test
+      on_failure: fail_workflow
+      config:
+        test_framework: vitest
+        coverage_threshold: 80
+        parallel_workers: 4
+
+    # Stage 4: End-to-end testing
+    - name: e2e-test
+      agent_type: e2e_test
+      timeout_ms: 600000       # 10 minutes
+      max_retries: 2
+      on_success: build
+      on_failure: fail_workflow
+      config:
+        browser: chromium
+        test_suite: full
+        headless: true
+
+    # Stage 5: Production build
+    - name: build
+      agent_type: scaffold
+      timeout_ms: 300000       # 5 minutes
+      max_retries: 2
+      on_success: deploy-staging
+      on_failure: fail_workflow
+      config:
+        environment: production
+        optimization: true
+        source_maps: true
+
+    # Stage 6: Deploy to staging
+    - name: deploy-staging
+      agent_type: deployment
+      timeout_ms: 600000       # 10 minutes
+      max_retries: 2
+      on_success: smoke-test
+      on_failure: fail_workflow
+      config:
+        environment: staging
+        region: us-west-2
+        auto_rollback: true
+
+    # Stage 7: Smoke testing
+    - name: smoke-test
+      agent_type: e2e_test
+      timeout_ms: 180000       # 3 minutes
+      max_retries: 1
+      on_success: deploy-production
+      on_failure: rollback-staging
+      config:
+        test_suite: smoke
+        environment: staging
+
+    # Stage 8: Deploy to production
+    - name: deploy-production
+      agent_type: deployment
+      timeout_ms: 900000       # 15 minutes
+      max_retries: 1
+      on_success: health-check
+      on_failure: rollback-production
+      config:
+        environment: production
+        region: us-west-2
+        deployment_strategy: blue-green
+        health_check_delay: 30
+
+    # Stage 9: Health check
+    - name: health-check
+      agent_type: monitoring
+      timeout_ms: 180000       # 3 minutes
+      max_retries: 2
+      on_success: END
+      on_failure: rollback-production
+      config:
+        endpoints:
+          - /health
+          - /api/status
+        expected_status: 200
+        timeout: 5000
+
+    # Recovery Stages
+    - name: rollback-staging
+      agent_type: recovery
+      timeout_ms: 300000       # 5 minutes
+      max_retries: 1
+      on_success: fail_workflow
+      on_failure: fail_workflow
+      config:
+        environment: staging
+        action: rollback-to-previous
+
+    - name: rollback-production
+      agent_type: recovery
+      timeout_ms: 600000       # 10 minutes
+      max_retries: 1
+      on_success: fail_workflow
+      on_failure: fail_workflow
+      config:
+        environment: production
+        action: rollback-to-previous
+        notify_team: true
+
+  metadata:
+    author: platform-team
+    created_at: '2025-11-22'
+    tags:
+      - web-app
+      - production
+      - blue-green-deployment
+    description: |
+      Standard web application workflow with comprehensive testing
+      and blue-green deployment strategy. Includes automated
+      rollback on failures.
+
+# Customization Tips:
+# - Adjust timeouts based on your app size
+# - Add/remove testing stages as needed
+# - Configure deployment strategy (blue-green, canary, rolling)
+# - Add security scanning stages
+# - Include database migration stages if needed

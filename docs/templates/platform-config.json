@@ -1,0 +1,38 @@
+{
+  "name": "my-platform",
+  "layer": "APPLICATION",
+  "description": "Description of what this platform does",
+  "config": {
+    "default_timeout_ms": 300000,
+    "max_concurrent_workflows": 10,
+    "enable_auto_retry": true,
+    "monitoring": {
+      "enabled": true,
+      "metrics": [
+        "workflow_duration",
+        "task_success_rate",
+        "agent_utilization"
+      ]
+    },
+    "notifications": {
+      "email": {
+        "enabled": true,
+        "recipients": ["team@example.com"]
+      },
+      "slack": {
+        "enabled": false,
+        "webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+      }
+    },
+    "storage": {
+      "artifacts_path": "s3://my-bucket/platform-artifacts/",
+      "logs_path": "s3://my-bucket/platform-logs/",
+      "retention_days": 90
+    },
+    "security": {
+      "require_auth": true,
+      "allowed_ips": ["0.0.0.0/0"],
+      "api_key_required": false
+    }
+  }
+}

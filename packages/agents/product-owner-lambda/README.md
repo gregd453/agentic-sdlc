@@ -1,6 +1,8 @@
-# Product Owner Lambda Agent
+# Product Owner Agent
 
-An AI-powered Lambda agent that generates comprehensive application requirements using Domain-Driven Design (DDD) principles. This agent acts as an automated Product Owner, creating structured requirements with domains, capabilities, and features.
+An AI-powered agent that generates comprehensive application requirements using Domain-Driven Design (DDD) principles. This agent acts as an automated Product Owner, creating structured requirements with domains, capabilities, and features.
+
+**Architecture:** Extends `BaseAgent` and uses the shared LLM functionality (`callClaude()`) with built-in circuit breaker and retry logic.
 
 ## 🎯 Features
 
@@ -63,21 +65,38 @@ An AI-powered Lambda agent that generates comprehensive application requirements
 ### Install Dependencies
 ```bash
 cd packages/agents/product-owner-lambda
-npm install
+pnpm install
 ```
 
-### Set Environment Variable (Optional)
-```bash
-# For AI-powered generation (recommended)
-export ANTHROPIC_API_KEY=your-api-key
+### Environment Configuration
 
-# Without API key, uses template-based generation
+The agent automatically loads configuration from `.env.development` in the project root:
+
+```bash
+# Already configured in .env.development:
+ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}  # Loaded from your shell environment
+REDIS_HOST=localhost
+REDIS_PORT=6380
+
+# Optional: Platform scoping (add to .env.development if needed)
+PLATFORM_ID=requirements-platform
 ```
 
-### Run Locally
+**Note:** Ensure your `ANTHROPIC_API_KEY` is set in your shell environment:
 ```bash
-npm start
-# Server runs on port 3457
+export ANTHROPIC_API_KEY=sk-ant-...  # Your actual key
+```
+
+### Build and Run
+```bash
+# Build TypeScript
+pnpm build
+
+# Run the agent
+pnpm start
+
+# Or run in development mode (with tsx)
+pnpm dev
 ```
 
 ### Test the Agent

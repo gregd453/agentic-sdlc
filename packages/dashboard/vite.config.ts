@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 // Validate VITE_DASHBOARD_PORT is set (required, no default)
 const dashboardPortEnv = process.env.VITE_DASHBOARD_PORT;
@@ -22,8 +23,27 @@ if (isNaN(port) || port < 1 || port > 65535) {
   process.exit(1);
 }
 
+// Validate VITE_API_URL includes /api/v1 suffix (critical for correct API calls)
+const apiUrl = process.env.VITE_API_URL;
+if (apiUrl && !apiUrl.includes('/api/v1')) {
+  console.error('❌ ERROR: VITE_API_URL must include the /api/v1 prefix');
+  console.error('');
+  console.error(`  Current value: ${apiUrl}`);
+  console.error(`  Correct value: ${apiUrl}/api/v1`);
+  console.error('');
+  console.error('This is required for API calls to work correctly.');
+  console.error('Update your .env file to include /api/v1 in VITE_API_URL');
+  console.error('');
+  process.exit(1);
+}
+
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   server: {
     port,
     host: process.env.VITE_HOST || '0.0.0.0'

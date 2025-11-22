@@ -73,7 +73,7 @@ model AgentTask {
   id              String          @id @default(uuid())
   task_id         String          @unique
   workflow_id     String
-  agent_type      AgentType
+  agent_type      String
   status          TaskStatus
   priority        Priority
   payload         Json
@@ -144,7 +144,7 @@ model PipelineExecution {
 model Agent {
   id              String          @id @default(uuid())
   agent_id        String          @unique
-  type            AgentType
+  type            String
   status          AgentStatus
   version         String
   capabilities    String[]
@@ -194,6 +194,11 @@ enum TaskStatus {
   cancelled
 }
 
+// ⚠️ DEPRECATED: This enum is no longer used for database columns
+// AgentTask.agent_type and Agent.type now use String type for unbounded extensibility
+// Keep this enum for reference of built-in agent types only
+// Session #85: Unbounded agent extensibility allows custom agent types (ml-training, data-validation, etc.)
+// Surface Architecture V3: Phase 1 migration to String type
 enum AgentType {
   scaffold
   validation
@@ -249,6 +254,8 @@ model Platform {
   surfaces        PlatformSurface[]
   workflows       Workflow[]
   agents          Agent[]
+  scheduled_jobs  ScheduledJob[]    // Session #89: Scheduler integration
+  event_handlers  EventHandler[]    // Session #89: Scheduler integration
 
   @@index([layer])
   @@index([enabled])
@@ -341,4 +348,214 @@ model Alert {
   @@index([rule_id])
   @@index([status])
   @@index([created_at])
+}
+
+// ==========================================
+// SCHEDULER COMPONENT MODELS (Session #89+)
+// ==========================================
+
+enum JobType {
+  cron        // Recurring with cron schedule
+  one_time    // Single future execution
+  recurring   // Cron with start/end dates and limits
+  event       // Triggered by events
+}
+
+enum JobStatus {
+  pending     // Created but not yet active
+  active      // Currently scheduled and running
+  paused      // Temporarily stopped
+  completed   // Finished (one-time or recurring reached limit)
+  failed      // Permanently failed (exceeded retries)
+  cancelled   // Manually cancelled
+}
+
+enum ExecutionStatus {
+  pending     // Queued for execution
+  running     // Currently executing
+  success     // Completed successfully
+  failed      // Failed (will retry if retries remain)
+  timeout     // Exceeded timeout limit
+  cancelled   // Manually cancelled
+  skipped     // Skipped (e.g., overlap not allowed)
+}
+
+model ScheduledJob {
+  // Primary Key
+  id                  String          @id @default(uuid())
+
+  // Basic Info
+  name                String
+  description         String?
+
+  // Type & Status
+  type                JobType
+  status              JobStatus
+
+  // Schedule (if applicable)
+  schedule            String?         // Cron expression
+  timezone            String          @default("UTC")
+  next_run            DateTime?       // Next scheduled execution
+  last_run            DateTime?       // Last execution time
+
+  // Execution Limits (for recurring jobs)
+  start_date          DateTime?
+  end_date            DateTime?
+  max_executions      Int?
+
+  // Handler Configuration
+  handler_name        String          // Name of registered handler
+  handler_type        String          @default("function") // function, agent, workflow
+  payload             Json?           // Handler arguments
+
+  // Execution Configuration
+  max_retries         Int             @default(3)
+  retry_delay_ms      Int             @default(60000) // 1 minute
+  timeout_ms          Int             @default(300000) // 5 minutes
+  priority            Priority        @default(medium)
+  concurrency         Int             @default(1)
+  allow_overlap       Boolean         @default(false)
+
+  // Statistics
+  executions_count    Int             @default(0)
+  success_count       Int             @default(0)
+  failure_count       Int             @default(0)
+  avg_duration_ms     Int?
+
+  // Organization
+  tags                String[]
+  metadata            Json?
+
+  // Platform-Scoped (Multi-tenancy)
+  platform_id         String?
+  created_by          String
+
+  // Timestamps
+  created_at          DateTime        @default(now())
+  updated_at          DateTime        @updatedAt
+  completed_at        DateTime?
+  cancelled_at        DateTime?
+
+  // Relationships
+  platform            Platform?       @relation(fields: [platform_id], references: [id], onDelete: Cascade)
+  executions          JobExecution[]
+
+  // Indexes
+  @@index([status])
+  @@index([type])
+  @@index([next_run])
+  @@index([platform_id])
+  @@index([handler_name])
+  @@index([created_at])
+  @@index([tags])
+}
+
+model JobExecution {
+  // Primary Key
+  id                  String          @id @default(uuid())
+
+  // Foreign Key
+  job_id              String
+
+  // Status
+  status              ExecutionStatus
+
+  // Timing
+  scheduled_at        DateTime        // When scheduled to run
+  started_at          DateTime?       // Actual start time
+  completed_at        DateTime?       // Actual completion
+  duration_ms         Int?            // Execution duration
+
+  // Results
+  result              Json?           // Return value
+  error               String?         @db.Text // Error message
+  error_stack         String?         @db.Text // Stack trace
+
+  // Retry Tracking
+  retry_count         Int             @default(0)
+  max_retries         Int             @default(3)
+  next_retry_at       DateTime?
+
+  // Execution Context
+  worker_id           String?         // Which worker executed
+  metadata            Json?
+
+  // Distributed Tracing (integrates with existing trace system)
+  trace_id            String?         @db.Text
+  span_id             String?         @db.Text
+  parent_span_id      String?         @db.Text
+
+  // Timestamps
+  created_at          DateTime        @default(now())
+
+  // Relationships
+  job                 ScheduledJob    @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  logs                JobExecutionLog[]
+
+  // Indexes
+  @@index([job_id])
+  @@index([status])
+  @@index([started_at])
+  @@index([scheduled_at])
+  @@index([trace_id])
+  @@index([created_at])
+}
+
+model JobExecutionLog {
+  // Primary Key
+  id                  String          @id @default(uuid())
+
+  // Foreign Key
+  execution_id        String
+
+  // Log Entry
+  timestamp           DateTime        @default(now())
+  level               String          // debug, info, warn, error
+  message             String          @db.Text
+  context             Json?
+
+  // Relationships
+  execution           JobExecution    @relation(fields: [execution_id], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([execution_id, timestamp])
+  @@index([level])
+}
+
+model EventHandler {
+  // Primary Key
+  id                  String          @id @default(uuid())
+
+  // Event
+  event_name          String          // e.g., "workflow:completed", "ticket:created"
+  handler_name        String          // Registered handler function name
+  handler_type        String          @default("function") // function, job_creator
+
+  // Configuration
+  enabled             Boolean         @default(true)
+  priority            Int             @default(5)
+
+  // Handler Action (for job_creator type)
+  action_type         String?         // create_job, trigger_workflow, dispatch_agent
+  action_config       Json?           // Configuration for the action
+
+  // Platform-Scoped
+  platform_id         String?
+
+  // Statistics
+  trigger_count       Int             @default(0)
+  success_count       Int             @default(0)
+  failure_count       Int             @default(0)
+
+  // Timestamps
+  created_at          DateTime        @default(now())
+  last_triggered      DateTime?
+
+  // Relationships
+  platform            Platform?       @relation(fields: [platform_id], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([event_name])
+  @@index([enabled])
+  @@index([platform_id])
 }

@@ -1,0 +1,52 @@
+{
+  "surface_type": "REST",
+  "enabled": true,
+  "config": {
+    "authentication": {
+      "type": "api_key",
+      "header_name": "X-API-Key",
+      "required": false
+    },
+    "rate_limiting": {
+      "enabled": true,
+      "max_requests_per_minute": 100,
+      "burst_size": 20
+    },
+    "validation": {
+      "require_workflow_type": true,
+      "allowed_workflow_types": [
+        "feature",
+        "bugfix",
+        "hotfix",
+        "release"
+      ],
+      "max_payload_size_mb": 10
+    },
+    "response": {
+      "include_workflow_id": true,
+      "include_trace_id": true,
+      "async_mode": true
+    },
+    "endpoints": {
+      "create_workflow": "/api/v1/workflows",
+      "get_status": "/api/v1/workflows/:id",
+      "cancel_workflow": "/api/v1/workflows/:id/cancel"
+    },
+    "cors": {
+      "enabled": true,
+      "allowed_origins": ["*"],
+      "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
+      "allowed_headers": ["Content-Type", "Authorization", "X-API-Key"]
+    },
+    "webhooks": {
+      "enabled": false,
+      "on_complete": "https://example.com/webhook/complete",
+      "on_failure": "https://example.com/webhook/failure"
+    }
+  },
+  "metadata": {
+    "description": "REST API surface configuration for platform",
+    "version": "1.0.0",
+    "owner": "platform-team"
+  }
+}

@@ -100,12 +100,16 @@ export async function monitoringRoutes(
           agent_health: {} // TODO: Transform agent health data
         };
 
-        // Set proper cache headers
+        // Set proper cache headers and wrap response to match schema
         reply
           .header('Cache-Control', 'no-cache, must-revalidate')
           .header('Content-Type', 'application/json')
           .code(200)
-          .send(transformedMetrics);
+          .send({
+            data: transformedMetrics,
+            timestamp: new Date().toISOString(),
+            ttl_ms: 5000  // Matches broadcast interval
+          });
 
         logger.debug('[MonitoringRoutes] Metrics returned', {
           duration_ms: duration,

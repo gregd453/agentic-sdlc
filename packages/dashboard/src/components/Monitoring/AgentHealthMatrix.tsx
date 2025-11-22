@@ -29,7 +29,7 @@ interface AgentHealthMatrixProps {
 }
 
 export default function AgentHealthMatrix({ metrics }: AgentHealthMatrixProps) {
-  if (!metrics || Object.keys(metrics.agent_health).length === 0) {
+  if (!metrics || !metrics.agent_health || Object.keys(metrics.agent_health).length === 0) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Agent Health</h3>

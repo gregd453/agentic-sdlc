@@ -31,11 +31,18 @@ import { PipelineWebSocketHandler } from './websocket/pipeline-websocket.handler
 import { MonitoringWebSocketHandler } from './websocket/monitoring-websocket.handler';
 import { EventAggregatorService } from './services/event-aggregator.service';
 import { monitoringRoutes } from './api/routes/monitoring.routes';
+import { schedulerRoutes } from './api/routes/scheduler.routes';
 import { logger } from './utils/logger';
 import { PlatformLoaderService } from './services/platform-loader.service';
 import { PlatformRegistryService } from './services/platform-registry.service';
 import { PlatformService } from './services/platform.service';
 import { AgentRegistryService } from './services/agent-registry.service';
+import { SchedulerService } from './services/scheduler.service';
+import { JobHandlerRegistry } from './services/job-handler-registry.service';
+import { JobExecutorService } from './services/job-executor.service';
+import { EventSchedulerService } from './services/event-scheduler.service';
+import { JobDispatcherWorker } from './workers/job-dispatcher.worker';
+import { JobConsumerWorker } from './workers/job-consumer.worker';
 import { metrics } from './utils/metrics';
 import {
   registerObservabilityMiddleware,
@@ -201,6 +208,37 @@ export async function createServer() {
   await agentRegistry.initialize();
   logger.info('Agent discovery service initialized');
 
+  // Session #89: Initialize scheduler services
+  logger.info('[Session #89] Initializing scheduler services');
+  const jobHandlerRegistry = new JobHandlerRegistry(agentRegistry, platformAwareWorkflowEngine);
+  const jobExecutor = new JobExecutorService(prisma, messageBus, jobHandlerRegistry);
+  const schedulerService = new SchedulerService(prisma, messageBus);
+  const eventScheduler = new EventSchedulerService(prisma, messageBus, schedulerService);
+
+  // Initialize event scheduler (load event handlers from database)
+  await eventScheduler.initialize();
+  logger.info('[Session #89] Scheduler services initialized');
+
+  // Session #89: Initialize scheduler workers
+  const jobDispatcher = new JobDispatcherWorker(prisma, messageBus, {
+    interval_ms: parseInt(process.env.SCHEDULER_INTERVAL_MS || '60000', 10),
+    batch_size: parseInt(process.env.SCHEDULER_BATCH_SIZE || '100', 10),
+    enabled: (process.env.ENABLE_JOB_DISPATCHER ?? 'true') === 'true'
+  });
+
+  const jobConsumer = new JobConsumerWorker(messageBus, jobExecutor, {
+    stream_name: 'stream:scheduler:job.dispatch',
+    consumer_group: 'scheduler-workers',
+    consumer_name: `consumer-${process.env.HOSTNAME || 'local'}`,
+    batch_size: 10,
+    enabled: (process.env.ENABLE_JOB_CONSUMER ?? 'true') === 'true'
+  });
+
+  // Start scheduler workers
+  jobDispatcher.start();
+  await jobConsumer.start();
+  logger.info('[Session #89] Scheduler workers started (dispatcher + consumer)');
+
   // Initialize pipeline services
   const qualityGateService = new QualityGateService();
   // Session #79: Create repository for pipeline execution persistence
@@ -256,6 +294,10 @@ export async function createServer() {
   // Session #88: Monitoring routes for real-time metrics
   await fastify.register(monitoringRoutes, { eventAggregator });
   logger.info('[Session #88] Monitoring routes registered at /api/v1/monitoring');
+
+  // Session #89: Scheduler routes for job management
+  await fastify.register(schedulerRoutes, { schedulerService, jobExecutor, eventScheduler });
+  logger.info('[Session #89] Scheduler routes registered at /api/v1/scheduler');
 
   // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 
@@ -335,6 +377,12 @@ export async function createServer() {
   // Phase 3: Add shutdown hook for OrchestratorContainer
   fastify.addHook('onClose', async () => {
     logger.info('[PHASE-3] Shutting down OrchestratorContainer');
+
+    // Session #89: Stop scheduler workers
+    logger.info('[Session #89] Stopping scheduler workers');
+    jobDispatcher.stop();
+    await jobConsumer.stop();
+    logger.info('[Session #89] Scheduler workers stopped');
 
     // Session #88: Stop monitoring services
     logger.info('[Session #88] Stopping monitoring services');

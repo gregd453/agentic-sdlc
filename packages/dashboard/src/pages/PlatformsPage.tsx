@@ -1,28 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchPlatforms, fetchPlatformAnalytics, createPlatform, updatePlatform, deletePlatform } from '../api/client'
-import { formatDate, formatDuration } from '../utils/format'
-import { getPlatformLayerColor, formatLayerName } from '../utils/platformColors'
+import { Grid, List, Plus, Filter, CheckSquare, Square, Trash2, Power, PowerOff } from 'lucide-react'
+import { fetchPlatforms, fetchPlatformAnalytics, createPlatform, updatePlatform, deletePlatform, type Platform } from '../api/client'
 import { logger } from '../utils/logger'
 import type { PlatformAnalytics } from '../types'
-import { PageTemplate } from '../components/Layout/PageTemplate'
+import { PageContainer } from '@/components/Layout/PageContainer'
+import { PlatformCard } from '@/components/Platforms/PlatformCard'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { EmptyState } from '@/components/Common/EmptyState'
 import PlatformFormModal from '../components/Platforms/PlatformFormModal'
 import DeleteConfirmationModal from '../components/Common/DeleteConfirmationModal'
 import CreateMockWorkflowModal from '../components/Workflows/CreateMockWorkflowModal'
 
-interface Platform {
-  id: string
-  name: string
-  layer: 'APPLICATION' | 'DATA' | 'INFRASTRUCTURE' | 'ENTERPRISE' | string
-  description?: string | null
-  config?: Record<string, any>
-  enabled: boolean
-  created_at?: string
-  updated_at?: string
-}
-
 interface PlatformWithAnalytics extends Platform {
   analytics?: PlatformAnalytics
+  config?: Record<string, any> // Extended for clone functionality
 }
 
 export const PlatformsPage: React.FC = () => {
@@ -30,7 +24,7 @@ export const PlatformsPage: React.FC = () => {
   const [platforms, setPlatforms] = useState<PlatformWithAnalytics[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedPeriod, setSelectedPeriod] = useState('24h')
+  const [selectedPeriod] = useState('24h')
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
   const [editingPlatform, setEditingPlatform] = useState<Platform | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -39,6 +33,16 @@ export const PlatformsPage: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false)
   const [modalError, setModalError] = useState<string | null>(null)
   const [isCreateWorkflowModalOpen, setIsCreateWorkflowModalOpen] = useState(false)
+
+  // New Phase 2 state
+  const [view, setView] = useState<'grid' | 'list'>('grid')
+  const [filterLayer, setFilterLayer] = useState<string>('all')
+  const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+
+  // Phase 2.2: Bulk operations
+  const [selectedPlatformIds, setSelectedPlatformIds] = useState<Set<string>>(new Set())
+  const [showCheckboxes, setShowCheckboxes] = useState(false)
 
   useEffect(() => {
     loadPlatforms()
@@ -159,154 +163,298 @@ export const PlatformsPage: React.FC = () => {
     navigate(`/workflows/${workflowId}`)
   }
 
+  const handleClonePlatform = async (platform: PlatformWithAnalytics) => {
+    const clonedData = {
+      name: `${platform.name} (Copy)`,
+      layer: platform.layer as 'APPLICATION' | 'DATA' | 'INFRASTRUCTURE' | 'ENTERPRISE',
+      description: platform.description,
+      config: platform.config,
+      enabled: false, // Start disabled
+    }
+    setEditingPlatform(null)
+    setModalError(null)
+
+    try {
+      await createPlatform(clonedData)
+      logger.info(`Platform cloned successfully (${clonedData.name})`)
+      await loadPlatforms()
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to clone platform'
+      setError(errorMessage)
+      logger.error(errorMessage)
+    }
+  }
+
+  // Bulk selection handlers
+  const handleToggleSelection = (platformId: string, selected: boolean) => {
+    const newSelection = new Set(selectedPlatformIds)
+    if (selected) {
+      newSelection.add(platformId)
+    } else {
+      newSelection.delete(platformId)
+    }
+    setSelectedPlatformIds(newSelection)
+  }
+
+  const handleSelectAll = () => {
+    if (selectedPlatformIds.size === filteredPlatforms.length) {
+      setSelectedPlatformIds(new Set())
+    } else {
+      setSelectedPlatformIds(new Set(filteredPlatforms.map(p => p.id)))
+    }
+  }
+
+  const handleBulkEnable = async () => {
+    const count = selectedPlatformIds.size
+    if (!confirm(`Enable ${count} selected platform${count > 1 ? 's' : ''}?`)) return
+
+    try {
+      await Promise.all(
+        Array.from(selectedPlatformIds).map(id =>
+          updatePlatform(id, { enabled: true })
+        )
+      )
+      logger.info(`Bulk enabled ${count} platforms`)
+      await loadPlatforms()
+      setSelectedPlatformIds(new Set())
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to enable platforms'
+      setError(errorMessage)
+      logger.error(errorMessage)
+    }
+  }
+
+  const handleBulkDisable = async () => {
+    const count = selectedPlatformIds.size
+    if (!confirm(`Disable ${count} selected platform${count > 1 ? 's' : ''}?`)) return
+
+    try {
+      await Promise.all(
+        Array.from(selectedPlatformIds).map(id =>
+          updatePlatform(id, { enabled: false })
+        )
+      )
+      logger.info(`Bulk disabled ${count} platforms`)
+      await loadPlatforms()
+      setSelectedPlatformIds(new Set())
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to disable platforms'
+      setError(errorMessage)
+      logger.error(errorMessage)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    const count = selectedPlatformIds.size
+    if (!confirm(`Delete ${count} selected platform${count > 1 ? 's' : ''}? This action cannot be undone.`)) return
+
+    try {
+      await Promise.all(
+        Array.from(selectedPlatformIds).map(id => deletePlatform(id))
+      )
+      logger.info(`Bulk deleted ${count} platforms`)
+      await loadPlatforms()
+      setSelectedPlatformIds(new Set())
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete platforms'
+      setError(errorMessage)
+      logger.error(errorMessage)
+    }
+  }
+
+  // Filter and search logic
+  const filteredPlatforms = useMemo(() => {
+    return platforms.filter((platform) => {
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase()
+        const matchesSearch =
+          platform.name.toLowerCase().includes(query) ||
+          platform.description?.toLowerCase().includes(query) ||
+          platform.layer.toLowerCase().includes(query)
+        if (!matchesSearch) return false
+      }
+
+      // Layer filter
+      if (filterLayer !== 'all' && platform.layer !== filterLayer) {
+        return false
+      }
+
+      // Status filter
+      if (filterStatus === 'active' && !platform.enabled) return false
+      if (filterStatus === 'inactive' && platform.enabled) return false
+
+      return true
+    })
+  }, [platforms, searchQuery, filterLayer, filterStatus])
+
   return (
-    <PageTemplate
+    <PageContainer
       title="Platforms"
-      subtitle={`Manage and monitor multi-platform workflows (${platforms.length} platforms)`}
+      description={`Manage and monitor multi-platform workflows (${platforms.length} total, ${filteredPlatforms.length} shown)`}
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/' },
+        { label: 'Platforms' }
+      ]}
+      actions={
+        <div className="flex items-center gap-2">
+          <Button
+            variant={showCheckboxes ? 'default' : 'outline'}
+            onClick={() => {
+              setShowCheckboxes(!showCheckboxes)
+              setSelectedPlatformIds(new Set())
+            }}
+          >
+            {showCheckboxes ? <CheckSquare className="mr-2 h-4 w-4" /> : <Square className="mr-2 h-4 w-4" />}
+            Select
+          </Button>
+          <Button onClick={handleOpenCreateModal}>
+            <Plus className="mr-2 h-4 w-4" />
+            New Platform
+          </Button>
+          <Button variant="outline" onClick={() => setIsCreateWorkflowModalOpen(true)}>
+            + Mock Workflow
+          </Button>
+        </div>
+      }
       error={error}
       isLoading={isLoading}
       onErrorDismiss={() => setError(null)}
-      headerAction={
-        <button
-          onClick={handleOpenCreateModal}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
-        >
-          + New Platform
-        </button>
-      }
-      headerActionSecondary={
-        <div className="flex gap-2 flex-wrap items-center justify-end">
-          <a
-            href="/workflows/pipeline"
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium transition-colors"
-          >
-            🏗️ Pipeline Builder
-          </a>
-          <button
-            onClick={() => setIsCreateWorkflowModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
-          >
-            + Create Mock Workflow
-          </button>
-          <div className="flex gap-2 border-l border-gray-300 dark:border-gray-600 pl-2 ml-2">
-            {['1h', '24h', '7d', '30d'].map((period) => (
-              <button
-                key={period}
-                onClick={() => setSelectedPeriod(period)}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  selectedPeriod === period
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                }`}
+    >
+      {/* Bulk Action Toolbar */}
+      {showCheckboxes && selectedPlatformIds.size > 0 && (
+        <div className="bg-primary/10 border border-primary rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <span className="font-medium">
+                {selectedPlatformIds.size} platform{selectedPlatformIds.size > 1 ? 's' : ''} selected
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSelectAll}
               >
-                {period === '1h' ? '1H' : period === '24h' ? '24H' : period === '7d' ? '7D' : '30D'}
-              </button>
-            ))}
+                {selectedPlatformIds.size === filteredPlatforms.length ? 'Deselect All' : 'Select All'}
+              </Button>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkEnable}
+              >
+                <Power className="mr-2 h-4 w-4" />
+                Enable
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkDisable}
+              >
+                <PowerOff className="mr-2 h-4 w-4" />
+                Disable
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </Button>
+            </div>
           </div>
         </div>
-      }
-    >
-      {platforms.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <p className="text-gray-500 dark:text-gray-400">No platforms configured</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {platforms.map((platform) => (
-            <div
-              key={platform.id}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
+      )}
+
+      {/* Filters and View Toggle */}
+      <div className="space-y-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          {/* Search and Filters */}
+          <div className="flex flex-1 gap-4 flex-wrap">
+            <Input
+              placeholder="Search platforms..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="max-w-xs"
+            />
+            <Select value={filterLayer} onValueChange={setFilterLayer}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="All Layers" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Layers</SelectItem>
+                <SelectItem value="APPLICATION">Application</SelectItem>
+                <SelectItem value="DATA">Data</SelectItem>
+                <SelectItem value="INFRASTRUCTURE">Infrastructure</SelectItem>
+                <SelectItem value="ENTERPRISE">Enterprise</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* View Toggle */}
+          <div className="flex gap-2">
+            <Button
+              variant={view === 'grid' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setView('grid')}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      {platform.name}
-                    </h2>
-                    {!platform.enabled && (
-                      <span className="px-2 py-1 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded">
-                        Disabled
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    {platform.description || 'No description'}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPlatformLayerColor(platform.layer)}`}>
-                    {formatLayerName(platform.layer)}
-                  </span>
-                  <button
-                    onClick={() => handleOpenEditModal(platform)}
-                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                    title="Edit platform"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => handleOpenDeleteModal(platform)}
-                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                    title="Delete platform"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+              <Grid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={view === 'list' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setView('list')}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
 
-              {platform.analytics && (
-                <div className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {platform.analytics.total_workflows}
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Total Workflows</div>
-                    </div>
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                      <div className="text-2xl font-bold text-green-600">
-                        {Math.round(platform.analytics.success_rate)}%
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Success Rate</div>
-                    </div>
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {platform.analytics.completed_workflows} /{' '}
-                        <span className="text-red-600">{platform.analytics.failed_workflows}</span>
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Completed / Failed</div>
-                    </div>
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                      <div className="text-sm font-medium text-blue-600">
-                        {platform.analytics.running_workflows}
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Running</div>
-                    </div>
-                  </div>
-
-                  {platform.analytics.avg_completion_time_ms !== null && (
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        Avg Completion: {formatDuration(platform.analytics.avg_completion_time_ms)}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
-                <div>
-                  {platform.created_at && <span>Created: {formatDate(platform.created_at)}</span>}
-                </div>
-                <div>
-                  {platform.updated_at && <span>Updated: {formatDate(platform.updated_at)}</span>}
-                </div>
-              </div>
-            </div>
+      {/* Platform List */}
+      {platforms.length === 0 ? (
+        <EmptyState
+          icon={Plus}
+          title="No platforms configured"
+          description="Create your first platform to start managing workflows"
+          action={{
+            label: 'Create Platform',
+            onClick: handleOpenCreateModal
+          }}
+        />
+      ) : filteredPlatforms.length === 0 ? (
+        <EmptyState
+          icon={Filter}
+          title="No platforms match your filters"
+          description="Try adjusting your search or filter criteria"
+        />
+      ) : (
+        <div className={view === 'grid' ? 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6' : 'space-y-4'}>
+          {filteredPlatforms.map((platform) => (
+            <PlatformCard
+              key={platform.id}
+              platform={platform as Platform}
+              view={view}
+              workflowCount={platform.analytics?.total_workflows || 0}
+              showMetrics={true}
+              onEdit={() => handleOpenEditModal(platform as Platform)}
+              onClone={() => handleClonePlatform(platform)}
+              onDelete={() => handleOpenDeleteModal(platform as Platform)}
+              showCheckbox={showCheckboxes}
+              isSelected={selectedPlatformIds.has(platform.id)}
+              onSelect={(selected) => handleToggleSelection(platform.id, selected)}
+            />
           ))}
         </div>
       )}
@@ -343,6 +491,6 @@ export const PlatformsPage: React.FC = () => {
         onClose={() => setIsCreateWorkflowModalOpen(false)}
         onWorkflowCreated={handleWorkflowCreated}
       />
-    </PageTemplate>
+    </PageContainer>
   )
 }

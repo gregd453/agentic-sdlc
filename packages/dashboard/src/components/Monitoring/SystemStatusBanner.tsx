@@ -44,14 +44,20 @@ export default function SystemStatusBanner({ metrics, connectionStatus }: System
     )
   }
 
-  const overview = metrics.overview.overview
-  const totalWorkflows = overview.total_workflows
+  // Safely extract overview data with null checks
+  const overview = metrics?.overview?.overview || {
+    total_workflows: 0,
+    running_workflows: 0,
+    completed_workflows: 0,
+    failed_workflows: 0
+  }
+  const totalWorkflows = overview.total_workflows || 0
   const successRate = totalWorkflows > 0
     ? ((overview.completed_workflows / totalWorkflows) * 100).toFixed(1)
     : 0
 
   // Determine health status based on metrics
-  const errorRate = metrics.error_rate_percent
+  const errorRate = metrics?.error_rate_percent || 0
   let healthStatus = 'healthy'
   let healthColor = 'from-green-500 to-green-600'
   let healthPercentage = 95

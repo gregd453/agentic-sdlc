@@ -192,7 +192,9 @@ let wsManager: WebSocketManager | null = null
  */
 export async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   try {
-    return await fetchJSON<RealtimeMetrics>(`${getAPIBase()}/monitoring/metrics/realtime`)
+    // API returns { data: RealtimeMetrics, timestamp, ttl_ms }
+    const response = await fetchJSON<{ data: RealtimeMetrics, timestamp: string, ttl_ms: number }>(`${getAPIBase()}/monitoring/metrics/realtime`)
+    return response.data  // Extract data from wrapper
   } catch (error) {
     console.error('[Monitoring API] Failed to fetch metrics:', error)
     // Return a minimal metrics object as fallback

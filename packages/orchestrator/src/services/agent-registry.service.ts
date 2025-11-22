@@ -159,6 +159,44 @@ export class AgentRegistryService {
             }
           }
         }
+      },
+      {
+        type: 'product-owner',
+        name: 'Product Owner Agent',
+        version: '1.0.0',
+        description: 'AI-powered requirements generation using Domain-Driven Design principles',
+        capabilities: ['requirements-generation', 'ddd-design', 'user-story-creation', 'mvp-scoping'],
+        timeout_ms: 60000,
+        max_retries: 2,
+        configSchema: {
+          application_type: {
+            type: 'string',
+            description: 'Type of application (e.g., web-app, mobile-app, api-service)',
+            default: 'web-app'
+          },
+          description: {
+            type: 'string',
+            description: 'High-level description of the application requirements'
+          },
+          industry: {
+            type: 'string',
+            description: 'Industry or domain (e.g., e-commerce, healthcare, finance)',
+            default: 'General'
+          },
+          target_market: {
+            type: 'string',
+            description: 'Target market or user base',
+            default: 'General users'
+          },
+          key_features: {
+            type: 'string',
+            description: 'Key features or functionality requested'
+          },
+          constraints: {
+            type: 'string',
+            description: 'Technical or business constraints'
+          }
+        }
       }
     ];
 

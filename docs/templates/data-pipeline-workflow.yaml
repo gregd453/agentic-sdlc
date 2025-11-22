@@ -1,0 +1,184 @@
+# Data Pipeline Workflow Template
+# ETL/ELT workflow for data processing and analytics
+
+name: data-pipeline-etl
+version: 2.0.0
+description: Data pipeline workflow with validation, transformation, and loading
+enabled: true
+
+definition:
+  name: data-pipeline-etl
+  version: 2.0.0
+
+  stages:
+    # Stage 1: Data ingestion
+    - name: ingest
+      agent_type: data-ingestion
+      timeout_ms: 900000       # 15 minutes
+      max_retries: 3
+      on_success: validate-raw
+      on_failure: fail_workflow
+      config:
+        source_type: s3
+        source_path: s3://data-lake/raw/
+        file_format: parquet
+        partitioning:
+          - date
+          - region
+        compression: snappy
+
+    # Stage 2: Validate raw data (optional)
+    - name: validate-raw
+      agent_type: data-validation
+      timeout_ms: 300000       # 5 minutes
+      max_retries: 2
+      on_success: transform
+      on_failure: skip         # Continue even if validation fails
+      config:
+        schema_validation: true
+        null_check: true
+        duplicate_check: true
+        data_quality_threshold: 0.95
+
+    # Stage 3: Data transformation
+    - name: transform
+      agent_type: data-transformation
+      timeout_ms: 1800000      # 30 minutes
+      max_retries: 2
+      on_success: enrich
+      on_failure: fail_workflow
+      config:
+        transformations:
+          - normalize
+          - aggregate
+          - denormalize
+        spark_config:
+          executor_memory: 4g
+          executor_cores: 2
+          num_executors: 10
+
+    # Stage 4: Data enrichment (optional)
+    - name: enrich
+      agent_type: data-enrichment
+      timeout_ms: 600000       # 10 minutes
+      max_retries: 2
+      on_success: optimize
+      on_failure: skip         # Continue with unenriched data
+      config:
+        lookup_tables:
+          - customer_dim
+          - product_dim
+        external_apis:
+          - geocoding
+          - sentiment_analysis
+
+    # Stage 5: Optimize data (optional)
+    - name: optimize
+      agent_type: data-optimizer
+      timeout_ms: 600000       # 10 minutes
+      max_retries: 1
+      on_success: load
+      on_failure: skip         # Continue with unoptimized data
+      config:
+        compression: snappy
+        partition_by:
+          - date
+          - region
+        z_order_by:
+          - customer_id
+        vacuum: true
+
+    # Stage 6: Load to data warehouse
+    - name: load
+      agent_type: data-loader
+      timeout_ms: 900000       # 15 minutes
+      max_retries: 3
+      on_success: validate-loaded
+      on_failure: cleanup
+      config:
+        destination_type: postgresql
+        destination: postgresql://data-warehouse/analytics
+        table: fact_sales
+        write_mode: append
+        batch_size: 10000
+        create_indexes: true
+
+    # Stage 7: Validate loaded data
+    - name: validate-loaded
+      agent_type: data-validation
+      timeout_ms: 300000       # 5 minutes
+      max_retries: 2
+      on_success: update-metadata
+      on_failure: cleanup
+      config:
+        row_count_check: true
+        integrity_check: true
+        reconciliation:
+          source_table: raw_data
+          target_table: fact_sales
+
+    # Stage 8: Update metadata catalog
+    - name: update-metadata
+      agent_type: data-cataloging
+      timeout_ms: 180000       # 3 minutes
+      max_retries: 2
+      on_success: notify-success
+      on_failure: skip         # Continue even if cataloging fails
+      config:
+        catalog_type: hive_metastore
+        update_statistics: true
+        update_lineage: true
+
+    # Stage 9: Success notification
+    - name: notify-success
+      agent_type: monitoring
+      timeout_ms: 60000        # 1 minute
+      max_retries: 1
+      on_success: END
+      on_failure: skip         # Don't fail workflow on notification error
+      config:
+        notification_type: email
+        recipients:
+          - data-team@example.com
+        include_metrics: true
+
+    # Recovery Stage: Cleanup
+    - name: cleanup
+      agent_type: data-cleanup
+      timeout_ms: 300000       # 5 minutes
+      max_retries: 1
+      on_success: fail_workflow
+      on_failure: fail_workflow
+      config:
+        delete_temp_files: true
+        rollback_partial_loads: true
+        notify_on_failure: true
+
+  metadata:
+    author: data-engineering-team
+    created_at: '2025-11-22'
+    tags:
+      - data-pipeline
+      - etl
+      - analytics
+      - production
+    sla:
+      max_duration_minutes: 60
+      critical: true
+    dependencies:
+      - data-lake-access
+      - data-warehouse-access
+      - spark-cluster
+
+# Performance Tips:
+# - Use snappy compression for faster I/O
+# - Partition large datasets by date/region
+# - Enable skip on non-critical stages (validation, enrichment)
+# - Configure Spark resources based on data volume
+# - Use batch loading for large datasets
+
+# Monitoring Tips:
+# - Track row counts before/after each stage
+# - Monitor data quality metrics
+# - Set up alerts for SLA violations
+# - Log transformation errors for debugging

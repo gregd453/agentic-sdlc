@@ -8,6 +8,7 @@ import LoadingSpinner from '../components/Common/LoadingSpinner'
 import ErrorDisplay from '../components/Common/ErrorDisplay'
 import PageTransition from '../components/Animations/PageTransition'
 import { AgentMatrixTable } from '../components/Platforms/AgentMatrixTable'
+import SurfaceConfigModal from '../components/Platforms/SurfaceConfigModal'
 
 interface Platform {
   id: string
@@ -30,6 +31,7 @@ export const PlatformDetailsPage: React.FC = () => {
   const [agentsError, setAgentsError] = useState<string | null>(null)
   const [selectedPeriod, setSelectedPeriod] = useState('24h')
   const [analytics, setAnalytics] = useState<any>(null)
+  const [showSurfaceConfig, setShowSurfaceConfig] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -136,6 +138,12 @@ export const PlatformDetailsPage: React.FC = () => {
             </div>
           </div>
           <div className="flex gap-2">
+            <button
+              onClick={() => setShowSurfaceConfig(true)}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors text-sm"
+            >
+              Configure Surfaces
+            </button>
             <a
               href={`/platforms/${platform.id}/definitions`}
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors text-sm"
@@ -248,6 +256,14 @@ export const PlatformDetailsPage: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* Surface Config Modal */}
+        <SurfaceConfigModal
+          isOpen={showSurfaceConfig}
+          onClose={() => setShowSurfaceConfig(false)}
+          platformId={platform.id}
+          platformName={platform.name}
+        />
       </div>
     </PageTransition>
   )

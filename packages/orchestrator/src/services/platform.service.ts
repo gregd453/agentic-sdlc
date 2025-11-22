@@ -7,9 +7,10 @@
  * - Delete platforms (with cascade handling)
  * - Validate platform data
  * - Update platform registry after database changes
+ * - Manage platform surface bindings (Phase 4)
  */
 
-import { PrismaClient, PlatformLayer } from '@prisma/client'
+import { PrismaClient, PlatformLayer, SurfaceType } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import { logger } from '../utils/logger'
 
@@ -34,6 +35,16 @@ export interface PlatformResponse {
   name: string
   layer: string
   description?: string | null
+  config?: Record<string, any>
+  enabled: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface PlatformSurfaceResponse {
+  id: string
+  platform_id: string
+  surface_type: SurfaceType
   config?: Record<string, any>
   enabled: boolean
   created_at: string
@@ -194,6 +205,189 @@ export class PlatformService {
       enabled: platform.enabled,
       created_at: platform.created_at.toISOString(),
       updated_at: platform.updated_at.toISOString()
+    }
+  }
+
+  // ==========================================
+  // PHASE 4: SURFACE MANAGEMENT METHODS
+  // ==========================================
+
+  /**
+   * Get all surfaces for a platform
+   */
+  async getPlatformSurfaces(platformId: string): Promise<PlatformSurfaceResponse[]> {
+    const surfaces = await this.prisma.platformSurface.findMany({
+      where: { platform_id: platformId }
+    })
+
+    return surfaces.map(surface => this.formatSurfaceResponse(surface))
+  }
+
+  /**
+   * Enable/create a platform surface
+   *
+   * @param platformId - UUID of the platform
+   * @param surfaceType - Type of surface to enable
+   * @param config - Surface configuration
+   * @param enabled - Whether the surface should be enabled (default: true)
+   * @returns Created or updated surface
+   */
+  async enablePlatformSurface(
+    platformId: string,
+    surfaceType: SurfaceType,
+    config: Record<string, any> = {},
+    enabled: boolean = true
+  ): Promise<PlatformSurfaceResponse> {
+    // Verify platform exists
+    const platform = await this.prisma.platform.findUnique({
+      where: { id: platformId }
+    })
+
+    if (!platform) {
+      throw new Error(`Platform not found: ${platformId}`)
+    }
+
+    // Upsert surface (create or update if exists)
+    const surface = await this.prisma.platformSurface.upsert({
+      where: {
+        platform_id_surface_type: {
+          platform_id: platformId,
+          surface_type: surfaceType
+        }
+      },
+      create: {
+        id: randomUUID(),
+        platform_id: platformId,
+        surface_type: surfaceType,
+        config,
+        enabled
+      },
+      update: {
+        config,
+        enabled
+      }
+    })
+
+    logger.info('[PlatformService] Enabled platform surface', {
+      platformId,
+      surfaceType,
+      surfaceId: surface.id,
+      enabled
+    })
+
+    return this.formatSurfaceResponse(surface)
+  }
+
+  /**
+   * Update a platform surface
+   *
+   * @param platformId - UUID of the platform
+   * @param surfaceType - Type of surface to update
+   * @param updates - Partial updates to apply
+   * @returns Updated surface
+   */
+  async updatePlatformSurface(
+    platformId: string,
+    surfaceType: SurfaceType,
+    updates: { config?: Record<string, any>; enabled?: boolean }
+  ): Promise<PlatformSurfaceResponse> {
+    // Verify platform surface exists
+    const existingSurface = await this.prisma.platformSurface.findUnique({
+      where: {
+        platform_id_surface_type: {
+          platform_id: platformId,
+          surface_type: surfaceType
+        }
+      }
+    })
+
+    if (!existingSurface) {
+      throw new Error(
+        `Surface ${surfaceType} not found for platform ${platformId}. Create it first.`
+      )
+    }
+
+    const surface = await this.prisma.platformSurface.update({
+      where: {
+        platform_id_surface_type: {
+          platform_id: platformId,
+          surface_type: surfaceType
+        }
+      },
+      data: {
+        ...(updates.config !== undefined && { config: updates.config }),
+        ...(updates.enabled !== undefined && { enabled: updates.enabled })
+      }
+    })
+
+    logger.info('[PlatformService] Updated platform surface', {
+      platformId,
+      surfaceType,
+      surfaceId: surface.id,
+      updates: Object.keys(updates)
+    })
+
+    return this.formatSurfaceResponse(surface)
+  }
+
+  /**
+   * Disable a platform surface
+   *
+   * @param platformId - UUID of the platform
+   * @param surfaceType - Type of surface to disable
+   */
+  async disablePlatformSurface(
+    platformId: string,
+    surfaceType: SurfaceType
+  ): Promise<void> {
+    // Verify surface exists
+    const existingSurface = await this.prisma.platformSurface.findUnique({
+      where: {
+        platform_id_surface_type: {
+          platform_id: platformId,
+          surface_type: surfaceType
+        }
+      }
+    })
+
+    if (!existingSurface) {
+      throw new Error(
+        `Surface ${surfaceType} not found for platform ${platformId}`
+      )
+    }
+
+    // Set enabled to false (soft delete)
+    await this.prisma.platformSurface.update({
+      where: {
+        platform_id_surface_type: {
+          platform_id: platformId,
+          surface_type: surfaceType
+        }
+      },
+      data: {
+        enabled: false
+      }
+    })
+
+    logger.info('[PlatformService] Disabled platform surface', {
+      platformId,
+      surfaceType,
+      surfaceId: existingSurface.id
+    })
+  }
+
+  /**
+   * Format platform surface response
+   */
+  private formatSurfaceResponse(surface: any): PlatformSurfaceResponse {
+    return {
+      id: surface.id,
+      platform_id: surface.platform_id,
+      surface_type: surface.surface_type,
+      config: surface.config,
+      enabled: surface.enabled,
+      created_at: surface.created_at.toISOString(),
+      updated_at: surface.updated_at.toISOString()
     }
   }
 }

@@ -6,9 +6,10 @@
  * - Validate surface-specific request formats
  * - Enrich workflow data with surface context
  * - Support both platform-specific and legacy surfaces
+ * - Enforce platform surface bindings (Phase 4)
  */
 
-import { SurfaceType } from '@prisma/client'
+import { PrismaClient, SurfaceType } from '@prisma/client'
 import { CreateWorkflowRequest } from '../types'
 import { logger } from '../utils/logger'
 
@@ -39,7 +40,7 @@ export interface SurfaceContext {
 }
 
 export class SurfaceRouterService {
-  constructor() {
+  constructor(private readonly prisma: PrismaClient) {
     logger.info('[SurfaceRouter] Service initialized')
   }
 
@@ -62,6 +63,11 @@ export class SurfaceRouterService {
         errors: validation.errors
       })
       throw new Error(errorMsg)
+    }
+
+    // NEW (Phase 4): Validate surface binding if platform_id provided
+    if (request.platform_id) {
+      await this.validatePlatformSurfaceBinding(request.platform_id, request.surface_type)
     }
 
     // Route based on surface type
@@ -96,6 +102,57 @@ export class SurfaceRouterService {
       type: context.validated_payload.type as any,
       priority: context.validated_payload.priority as any
     }
+  }
+
+  /**
+   * Validate platform surface binding (Phase 4)
+   *
+   * Ensures the surface is configured and enabled for the platform.
+   * @throws {Error} if surface is not configured or disabled
+   */
+  private async validatePlatformSurfaceBinding(
+    platform_id: string,
+    surface_type: SurfaceType
+  ): Promise<void> {
+    logger.debug('[SurfaceRouter] Validating platform surface binding', {
+      platform_id,
+      surface_type
+    })
+
+    const platformSurface = await this.prisma.platformSurface.findUnique({
+      where: {
+        platform_id_surface_type: {
+          platform_id,
+          surface_type
+        }
+      }
+    })
+
+    if (!platformSurface) {
+      const errorMsg =
+        `Surface ${surface_type} not configured for platform ${platform_id}. ` +
+        `Enable this surface in platform settings.`
+      logger.warn('[SurfaceRouter] Surface not configured', {
+        platform_id,
+        surface_type
+      })
+      throw new Error(errorMsg)
+    }
+
+    if (!platformSurface.enabled) {
+      const errorMsg = `Surface ${surface_type} is disabled for platform ${platform_id}.`
+      logger.warn('[SurfaceRouter] Surface is disabled', {
+        platform_id,
+        surface_type
+      })
+      throw new Error(errorMsg)
+    }
+
+    logger.debug('[SurfaceRouter] Platform surface validation passed', {
+      platform_id,
+      surface_type,
+      surface_id: platformSurface.id
+    })
   }
 
   /**

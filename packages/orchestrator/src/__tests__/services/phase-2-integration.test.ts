@@ -18,16 +18,20 @@ import { SurfaceRouterService, SurfaceRequest } from '../../services/surface-rou
 import { RestSurfaceService, RestApiRequest } from '../../services/rest-surface.service'
 import { WebhookSurfaceService, WebhookPayload } from '../../services/webhook-surface.service'
 import { CliSurfaceService, CliCommand } from '../../services/cli-surface.service'
+import { PrismaClient } from '@prisma/client'
 
 describe('Phase 2: Surface Abstraction Integration', () => {
   let surfaceRouter: SurfaceRouterService
   let restSurface: RestSurfaceService
   let webhookSurface: WebhookSurfaceService
   let cliSurface: CliSurfaceService
+  let mockPrisma: PrismaClient
 
   beforeAll(async () => {
     // Initialize services
-    surfaceRouter = new SurfaceRouterService()
+    // Mock PrismaClient (not used in Phase 2 tests since platform_id is not provided)
+    mockPrisma = {} as PrismaClient
+    surfaceRouter = new SurfaceRouterService(mockPrisma)
     restSurface = new RestSurfaceService(surfaceRouter)
     webhookSurface = new WebhookSurfaceService(surfaceRouter, {
       verify_signature: false, // Disable signature verification for tests
