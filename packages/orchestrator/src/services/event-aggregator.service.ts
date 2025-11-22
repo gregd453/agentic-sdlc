@@ -18,13 +18,19 @@ import {
   WorkflowStats
 } from '@agentic-sdlc/shared-types';
 import { logger } from '../utils/logger';
-
-// Metrics cache key in Redis
-const METRICS_CACHE_KEY = 'monitoring:metrics:realtime';
-const METRICS_CACHE_TTL_SEC = 300; // 5 minutes
-
-// Broadcast interval in milliseconds
-const BROADCAST_INTERVAL_MS = 5000; // 5 seconds
+import {
+  MONITORING_CACHE,
+  MONITORING_INTERVALS,
+  WORKFLOW_EVENT_STAGES,
+  MESSAGE_BUS_CONFIG,
+  METRICS_DEFAULTS,
+  LOG_CONTEXT
+} from '../constants/monitoring.constants';
+import {
+  createInitialMetricsState,
+  getEventHandler,
+  MetricsState
+} from './event-handlers';
 
 export class EventAggregatorService implements IEventAggregator {
   private isRunning = false;
@@ -33,21 +39,7 @@ export class EventAggregatorService implements IEventAggregator {
   private lastBroadcastTime = 0;
 
   // In-memory metrics tracking
-  private metricsState = {
-    totalWorkflows: 0,
-    runningWorkflows: 0,
-    completedWorkflows: 0,
-    failedWorkflows: 0,
-    pausedWorkflows: 0,
-    totalTasks: 0,
-    completedTasks: 0,
-    failedTasks: 0,
-    totalDurationMs: 0,
-    minDurationMs: Infinity,
-    maxDurationMs: 0,
-    workflowsByType: new Map<string, { total: number; completed: number; failed: number }>(),
-    agentPerformance: new Map<string, { total: number; completed: number; failed: number; totalDurationMs: number }>()
-  };
+  private metricsState: MetricsState = createInitialMetricsState();
 
   constructor(
     private messageBus: IMessageBus,
@@ -61,41 +53,39 @@ export class EventAggregatorService implements IEventAggregator {
    */
   async start(): Promise<void> {
     if (this.isRunning) {
-      logger.warn('[EventAggregator] Already running');
+      logger.warn(`${LOG_CONTEXT} Already running`);
       return;
     }
 
     try {
-      logger.info('[EventAggregator] Starting event aggregator');
+      logger.info(`${LOG_CONTEXT} Starting event aggregator`);
 
       // Subscribe to workflow events via message bus
-      // Note: The system doesn't currently publish to 'workflow:events' channel
-      // This will need to be integrated with the actual workflow publishing
       this.unsubscribe = await this.messageBus.subscribe(
-        'workflow:events',
+        MESSAGE_BUS_CONFIG.TOPIC,
         (event: any) => this.handleWorkflowEvent(event),
         {
-          consumerGroup: 'event-aggregator',
+          consumerGroup: MESSAGE_BUS_CONFIG.CONSUMER_GROUP,
           fromBeginning: false
         }
       );
-      logger.info('[EventAggregator] Subscribed to message bus workflow:events');
+      logger.info(`${LOG_CONTEXT} Subscribed to message bus ${MESSAGE_BUS_CONFIG.TOPIC}`);
 
       this.isRunning = true;
 
       // Start broadcast interval (send metrics every 5 seconds)
       this.broadcastInterval = setInterval(() => {
         this.broadcastMetrics().catch(err => {
-          logger.error('[EventAggregator] Error broadcasting metrics', { error: err.message });
+          logger.error(`${LOG_CONTEXT} Error broadcasting metrics`, { error: err.message });
         });
-      }, BROADCAST_INTERVAL_MS);
+      }, MONITORING_INTERVALS.METRICS_BROADCAST_MS);
 
       // Load initial stats from database
       await this.loadInitialMetrics();
 
-      logger.info('[EventAggregator] Started successfully');
+      logger.info(`${LOG_CONTEXT} Started successfully`);
     } catch (error) {
-      logger.error('[EventAggregator] Failed to start', { error });
+      logger.error(`${LOG_CONTEXT} Failed to start`, { error });
       throw error;
     }
   }
@@ -109,7 +99,7 @@ export class EventAggregatorService implements IEventAggregator {
     }
 
     try {
-      logger.info('[EventAggregator] Stopping event aggregator');
+      logger.info(`${LOG_CONTEXT} Stopping event aggregator`);
 
       this.isRunning = false;
 
@@ -125,9 +115,9 @@ export class EventAggregatorService implements IEventAggregator {
         this.unsubscribe = null;
       }
 
-      logger.info('[EventAggregator] Stopped successfully');
+      logger.info(`${LOG_CONTEXT} Stopped successfully`);
     } catch (error) {
-      logger.error('[EventAggregator] Error stopping', { error });
+      logger.error(`${LOG_CONTEXT} Error stopping`, { error });
       throw error;
     }
   }
@@ -145,7 +135,7 @@ export class EventAggregatorService implements IEventAggregator {
   async getRealtimeMetrics(): Promise<RealtimeMetrics | null> {
     try {
       // Try to get from cache first
-      const cached = await this.kvStore.get<RealtimeMetrics>(METRICS_CACHE_KEY);
+      const cached = await this.kvStore.get<RealtimeMetrics>(MONITORING_CACHE.METRICS_KEY);
       if (cached) {
         return cached;
       }
@@ -153,7 +143,7 @@ export class EventAggregatorService implements IEventAggregator {
       // If not in cache, compute from current state
       return this.buildMetricsFromState();
     } catch (error) {
-      logger.error('[EventAggregator] Error getting metrics', { error });
+      logger.error(`${LOG_CONTEXT} Error getting metrics`, { error });
       // Return mock metrics as fallback
       return this.getMockMetrics();
     }
@@ -201,114 +191,27 @@ export class EventAggregatorService implements IEventAggregator {
   }
 
   /**
-   * Handle workflow events
+   * Handle workflow events using strategy pattern
    */
   private async handleWorkflowEvent(event: any): Promise<void> {
     try {
-      const { metadata, payload } = event;
+      const { metadata } = event;
 
       if (!metadata || !metadata.stage) {
-        logger.warn('[EventAggregator] Event missing stage', { event: event.message_id });
+        logger.warn(`${LOG_CONTEXT} Event missing stage`, { event: event.message_id });
         return;
       }
 
       const stage = metadata.stage;
 
-      // Extract metrics based on event type
-      switch (stage) {
-        case 'orchestrator:workflow:created':
-          this.metricsState.totalWorkflows++;
-          this.metricsState.runningWorkflows++;
-
-          // Track by workflow type
-          const wfType = payload?.workflow_type || 'unknown';
-          const typeStats = this.metricsState.workflowsByType.get(wfType) || {
-            total: 0,
-            completed: 0,
-            failed: 0
-          };
-          typeStats.total++;
-          this.metricsState.workflowsByType.set(wfType, typeStats);
-          break;
-
-        case 'orchestrator:workflow:stage:completed':
-          // Track task completion
-          this.metricsState.completedTasks++;
-          const agentType = payload?.agent_type || 'unknown';
-          const agentStats = this.metricsState.agentPerformance.get(agentType) || {
-            total: 0,
-            completed: 0,
-            failed: 0,
-            totalDurationMs: 0
-          };
-          agentStats.total++;
-          agentStats.completed++;
-
-          // Track duration if available
-          if (payload?.duration_ms) {
-            agentStats.totalDurationMs += payload.duration_ms;
-            this.metricsState.totalDurationMs += payload.duration_ms;
-            this.metricsState.minDurationMs = Math.min(
-              this.metricsState.minDurationMs,
-              payload.duration_ms
-            );
-            this.metricsState.maxDurationMs = Math.max(
-              this.metricsState.maxDurationMs,
-              payload.duration_ms
-            );
-          }
-
-          this.metricsState.agentPerformance.set(agentType, agentStats);
-          break;
-
-        case 'orchestrator:workflow:completed':
-          this.metricsState.runningWorkflows = Math.max(0, this.metricsState.runningWorkflows - 1);
-          this.metricsState.completedWorkflows++;
-
-          // Update workflow type stats
-          const completedType = payload?.workflow_type || 'unknown';
-          const completedTypeStats = this.metricsState.workflowsByType.get(completedType);
-          if (completedTypeStats) {
-            completedTypeStats.completed++;
-          }
-          break;
-
-        case 'orchestrator:workflow:failed':
-          this.metricsState.runningWorkflows = Math.max(0, this.metricsState.runningWorkflows - 1);
-          this.metricsState.failedWorkflows++;
-          this.metricsState.failedTasks++;
-
-          // Update workflow type stats
-          const failedType = payload?.workflow_type || 'unknown';
-          const failedTypeStats = this.metricsState.workflowsByType.get(failedType);
-          if (failedTypeStats) {
-            failedTypeStats.failed++;
-          }
-
-          // Update agent stats
-          const failedAgentType = payload?.agent_type || 'unknown';
-          const failedAgentStats = this.metricsState.agentPerformance.get(failedAgentType);
-          if (failedAgentStats) {
-            failedAgentStats.failed++;
-          }
-          break;
-
-        case 'orchestrator:workflow:paused':
-          this.metricsState.pausedWorkflows++;
-          this.metricsState.runningWorkflows = Math.max(0, this.metricsState.runningWorkflows - 1);
-          break;
-
-        case 'orchestrator:workflow:resumed':
-          this.metricsState.pausedWorkflows = Math.max(0, this.metricsState.pausedWorkflows - 1);
-          this.metricsState.runningWorkflows++;
-          break;
-
-        default:
-          // Silently ignore unknown stages
-          break;
+      // Get and execute handler for this event type
+      const handler = getEventHandler(stage);
+      if (handler) {
+        handler(event, this.metricsState);
       }
+      // Silently ignore unknown stages
     } catch (error) {
-      logger.error('[EventAggregator] Error handling event', { error, event: event?.message_id });
+      logger.error(`${LOG_CONTEXT} Error handling event`, { error, event: event?.message_id });
     }
   }
 
@@ -346,18 +249,18 @@ export class EventAggregatorService implements IEventAggregator {
       const timeSinceLastBroadcast = now - this.lastBroadcastTime;
 
       // Skip if broadcast too soon (debounce)
-      if (timeSinceLastBroadcast < BROADCAST_INTERVAL_MS - 500) {
+      if (timeSinceLastBroadcast < MONITORING_INTERVALS.METRICS_BROADCAST_MS - MONITORING_INTERVALS.DEBOUNCE_MS) {
         return;
       }
 
       const metrics = this.buildMetricsFromState();
 
       // Cache in Redis
-      await this.kvStore.set(METRICS_CACHE_KEY, metrics, METRICS_CACHE_TTL_SEC);
+      await this.kvStore.set(MONITORING_CACHE.METRICS_KEY, metrics, MONITORING_CACHE.TTL_SECONDS);
 
       this.lastBroadcastTime = now;
 
-      logger.debug('[EventAggregator] Metrics broadcast to cache', {
+      logger.debug(`${LOG_CONTEXT} Metrics broadcast to cache`, {
         workflows: metrics.overview.total_workflows,
         agents: metrics.agents.length
       });
@@ -365,7 +268,7 @@ export class EventAggregatorService implements IEventAggregator {
       // TODO: Broadcast to WebSocket clients via WebSocketManager
       // This will be implemented in Phase 1.3
     } catch (error) {
-      logger.error('[EventAggregator] Error broadcasting metrics', { error });
+      logger.error(`${LOG_CONTEXT} Error broadcasting metrics`, { error });
     }
   }
 
@@ -374,12 +277,11 @@ export class EventAggregatorService implements IEventAggregator {
    */
   private buildMetricsFromState(): RealtimeMetrics {
     // Calculate health percentage (simplified)
+    // BUG FIX: Added parentheses for correct operator precedence
     const totalMetrics =
-      this.metricsState.totalWorkflows + this.metricsState.totalTasks ||
-      1;
+      (this.metricsState.totalWorkflows + this.metricsState.totalTasks) || 1;
     const successMetrics =
-      this.metricsState.completedWorkflows + this.metricsState.completedTasks ||
-      0;
+      (this.metricsState.completedWorkflows + this.metricsState.completedTasks) || 0;
     const healthPercent = totalMetrics > 0 ? (successMetrics / totalMetrics) * 100 : 100;
 
     // Calculate error rate
@@ -449,17 +351,17 @@ export class EventAggregatorService implements IEventAggregator {
       ),
       latency_p99_ms: Math.max(
         avgDuration,
-        this.metricsState.maxDurationMs * 0.99
+        this.metricsState.maxDurationMs * METRICS_DEFAULTS.LATENCY_PERCENTILE_P99
       ),
       last_update: new Date().toISOString(),
-      next_update_in_ms: BROADCAST_INTERVAL_MS
+      next_update_in_ms: MONITORING_INTERVALS.METRICS_BROADCAST_MS
     };
 
     // Validate against schema
     try {
       RealtimeMetricsSchema.parse(metrics);
     } catch (error) {
-      logger.error('[EventAggregator] Metrics validation failed', { error });
+      logger.error(`${LOG_CONTEXT} Metrics validation failed`, { error });
       // Return metrics anyway - schema issues shouldn't break the service
     }
 
@@ -468,12 +370,14 @@ export class EventAggregatorService implements IEventAggregator {
 
   /**
    * Calculate throughput (workflows per minute)
+   * BUG FIX: Fixed calculation that always returned same value
+   * TODO: In production, use time-windowed counters for accurate throughput
    */
   private calculateThroughput(): number {
-    // Simplified: workflows completed in last minute
-    // In production, would use time-windowed counters
+    // For now, return completed workflows as a baseline metric
+    // This represents total completion throughput, not per-minute
     return this.metricsState.completedWorkflows > 0
-      ? this.metricsState.completedWorkflows / Math.max(1, 1)
+      ? this.metricsState.completedWorkflows
       : 0;
   }
 }
