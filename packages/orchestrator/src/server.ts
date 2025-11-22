@@ -33,6 +33,7 @@ import { EventAggregatorService } from './services/event-aggregator.service';
 import { monitoringRoutes } from './api/routes/monitoring.routes';
 import { schedulerRoutes } from './api/routes/scheduler.routes';
 import { logger } from './utils/logger';
+import { withTimeout, tryWithTimeout } from './utils/timeout';
 import { PlatformLoaderService } from './services/platform-loader.service';
 import { PlatformRegistryService } from './services/platform-registry.service';
 import { PlatformService } from './services/platform.service';
@@ -124,8 +125,20 @@ export async function createServer() {
     coordinators: {} // No coordinators needed for workflow orchestration
   });
 
-  await container.initialize();
-  logger.info('[PHASE-3] OrchestratorContainer initialized successfully');
+  try {
+    await withTimeout(
+      () => container.initialize(),
+      10000,
+      'OrchestratorContainer.initialize()'
+    );
+    logger.info('[PHASE-3] OrchestratorContainer initialized successfully');
+  } catch (error: any) {
+    logger.error(
+      { error: error.message, stack: error.stack },
+      '[CRITICAL] OrchestratorContainer initialization failed or timed out'
+    );
+    throw error; // Container is critical - cannot continue without it
+  }
 
   // Initialize services
   // Use same Redis URL as container for consistency
@@ -192,54 +205,176 @@ export async function createServer() {
 
   // Session #88: Initialize EventAggregatorService for real-time monitoring
   // Pass EventBus for workflow events, messageBus/kv from container for Redis access
+  logger.info('[DEBUG] Creating EventAggregatorService...');
   const eventAggregator = new EventAggregatorService(messageBus, kv, statsService, eventBus);
-  await eventAggregator.start();
-  logger.info('[Session #88] EventAggregatorService initialized for real-time monitoring');
+
+  try {
+    logger.info('[DEBUG] Starting EventAggregatorService...');
+    await withTimeout(
+      () => eventAggregator.start(),
+      5000,
+      'EventAggregatorService.start()'
+    );
+    logger.info('[Session #88] EventAggregatorService initialized for real-time monitoring');
+  } catch (error: any) {
+    logger.error(
+      { error: error.message, stack: error.stack },
+      '[CRITICAL] EventAggregatorService initialization failed'
+    );
+    // Continue without event aggregator - not critical for core functionality
+  }
 
   // Initialize platform services
-  const platformLoader = new PlatformLoaderService(prisma);
-  const platformRegistry = new PlatformRegistryService(platformLoader);
-  await platformRegistry.initialize();
-  const platformService = new PlatformService(prisma);
-  logger.info('Platform services initialized (PlatformRegistry with %d platforms)', platformRegistry.size());
+  let platformLoader: any;
+  let platformRegistry: any;
+  let platformService: any;
+
+  try {
+    logger.info('[DEBUG] Creating PlatformLoaderService...');
+    platformLoader = new PlatformLoaderService(prisma);
+
+    logger.info('[DEBUG] Creating PlatformRegistryService...');
+    platformRegistry = new PlatformRegistryService(platformLoader);
+
+    logger.info('[DEBUG] Initializing PlatformRegistry (calling initialize())...');
+    await withTimeout(
+      () => platformRegistry.initialize(),
+      5000,
+      'PlatformRegistry.initialize()'
+    );
+
+    logger.info('[DEBUG] Creating PlatformService...');
+    platformService = new PlatformService(prisma);
+
+    logger.info('Platform services initialized (PlatformRegistry with %d platforms)', platformRegistry.size());
+  } catch (error: any) {
+    logger.error(
+      {
+        error: error.message,
+        stack: error.stack,
+        code: error.code,
+        meta: error.meta
+      },
+      '[CRITICAL] Platform services initialization failed'
+    );
+    // Create minimal platform registry for basic operation
+    platformRegistry = { size: () => 0, get: () => null };
+    platformService = null;
+    platformLoader = null;
+  }
 
   // Initialize agent discovery service (Session #85 - Dashboard Agent Extensibility)
-  const agentRegistry = new AgentRegistryService();
-  await agentRegistry.initialize();
-  logger.info('Agent discovery service initialized');
+  let agentRegistry: any;
+
+  try {
+    logger.info('[DEBUG] Creating AgentRegistryService...');
+    agentRegistry = new AgentRegistryService();
+
+    logger.info('[DEBUG] Initializing AgentRegistry (calling initialize())...');
+    await withTimeout(
+      () => agentRegistry.initialize(),
+      5000,
+      'AgentRegistry.initialize()'
+    );
+
+    logger.info('Agent discovery service initialized');
+  } catch (error: any) {
+    logger.error(
+      { error: error.message, stack: error.stack },
+      '[CRITICAL] Agent discovery service initialization failed'
+    );
+    // Create minimal agent registry
+    agentRegistry = { validateAgentExists: () => ({ exists: false }) };
+  }
 
   // Session #89: Initialize scheduler services
   logger.info('[Session #89] Initializing scheduler services');
-  const jobHandlerRegistry = new JobHandlerRegistry(agentRegistry, platformAwareWorkflowEngine);
-  const jobExecutor = new JobExecutorService(prisma, messageBus, jobHandlerRegistry);
-  const schedulerService = new SchedulerService(prisma, messageBus);
-  const eventScheduler = new EventSchedulerService(prisma, messageBus, schedulerService);
 
-  // Initialize event scheduler (load event handlers from database) - non-blocking
-  eventScheduler.initialize().catch((error) => {
-    logger.warn({ error }, '[Session #89] EventScheduler initialization failed, continuing without event handlers');
-  });
-  logger.info('[Session #89] Scheduler services initialized');
+  let jobHandlerRegistry: any;
+  let jobExecutor: any;
+  let schedulerService: any;
+  let eventScheduler: any;
 
-  // Session #89: Initialize scheduler workers
-  const jobDispatcher = new JobDispatcherWorker(prisma, messageBus, {
-    interval_ms: parseInt(process.env.SCHEDULER_INTERVAL_MS || '60000', 10),
-    batch_size: parseInt(process.env.SCHEDULER_BATCH_SIZE || '100', 10),
-    enabled: (process.env.ENABLE_JOB_DISPATCHER ?? 'true') === 'true'
-  });
+  try {
+    jobHandlerRegistry = new JobHandlerRegistry(agentRegistry, platformAwareWorkflowEngine);
+    logger.info('[Session #89] JobHandlerRegistry created');
 
-  const jobConsumer = new JobConsumerWorker(messageBus, jobExecutor, {
-    stream_name: 'stream:scheduler:job.dispatch',
-    consumer_group: 'scheduler-workers',
-    consumer_name: `consumer-${process.env.HOSTNAME || 'local'}`,
-    batch_size: 10,
-    enabled: (process.env.ENABLE_JOB_CONSUMER ?? 'true') === 'true'
-  });
+    jobExecutor = new JobExecutorService(prisma, messageBus, jobHandlerRegistry);
+    logger.info('[Session #89] JobExecutorService created');
 
-  // Start scheduler workers
-  jobDispatcher.start();
-  await jobConsumer.start();
-  logger.info('[Session #89] Scheduler workers started (dispatcher + consumer)');
+    schedulerService = new SchedulerService(prisma, messageBus);
+    logger.info('[Session #89] SchedulerService created');
+
+    eventScheduler = new EventSchedulerService(prisma, messageBus, schedulerService);
+    logger.info('[Session #89] EventSchedulerService created');
+  } catch (error: any) {
+    logger.error(
+      { error: error.message, stack: error.stack },
+      '[Session #89] Failed to initialize scheduler services'
+    );
+    // Continue without scheduler services - they're not critical for core orchestrator functionality
+    jobHandlerRegistry = null;
+    jobExecutor = null;
+    schedulerService = null;
+    eventScheduler = null;
+  }
+
+  // Initialize event scheduler (load event handlers from database) - non-blocking with timeout
+  // Start initialization in background to not block server startup
+  if (eventScheduler) {
+    setTimeout(async () => {
+      try {
+        logger.info('[Session #89] Starting EventScheduler initialization (deferred)');
+        await withTimeout(
+          () => eventScheduler.initialize(),
+          10000,
+          'EventScheduler.initialize()'
+        );
+        logger.info('[Session #89] EventScheduler initialization completed successfully');
+      } catch (error: any) {
+        logger.warn(
+          { error: error.message },
+          '[Session #89] EventScheduler initialization failed or timed out, continuing without event handlers'
+        );
+      }
+    }, 1000); // Delay by 1 second to let Redis connections stabilize
+  }
+
+  logger.info('[Session #89] Scheduler services initialized (EventScheduler starting in background)');
+
+  // Session #89: Initialize scheduler workers (only if scheduler services were created)
+  let jobDispatcher: any = null;
+  let jobConsumer: any = null;
+
+  if (schedulerService && jobExecutor) {
+    try {
+      jobDispatcher = new JobDispatcherWorker(prisma, messageBus, {
+        interval_ms: parseInt(process.env.SCHEDULER_INTERVAL_MS || '60000', 10),
+        batch_size: parseInt(process.env.SCHEDULER_BATCH_SIZE || '100', 10),
+        enabled: (process.env.ENABLE_JOB_DISPATCHER ?? 'true') === 'true'
+      });
+
+      jobConsumer = new JobConsumerWorker(messageBus, jobExecutor, {
+        stream_name: 'stream:scheduler:job.dispatch',
+        consumer_group: 'scheduler-workers',
+        consumer_name: `consumer-${process.env.HOSTNAME || 'local'}`,
+        batch_size: 10,
+        enabled: (process.env.ENABLE_JOB_CONSUMER ?? 'true') === 'true'
+      });
+
+      // Start scheduler workers
+      jobDispatcher.start();
+      await jobConsumer.start();
+      logger.info('[Session #89] Scheduler workers started (dispatcher + consumer)');
+    } catch (error: any) {
+      logger.error(
+        { error: error.message },
+        '[Session #89] Failed to initialize scheduler workers, continuing without them'
+      );
+    }
+  } else {
+    logger.warn('[Session #89] Skipping scheduler workers - scheduler services not available');
+  }
 
   // Initialize pipeline services
   const qualityGateService = new QualityGateService();
@@ -297,9 +432,13 @@ export async function createServer() {
   await fastify.register(monitoringRoutes, { eventAggregator });
   logger.info('[Session #88] Monitoring routes registered at /api/v1/monitoring');
 
-  // Session #89: Scheduler routes for job management
-  await fastify.register(schedulerRoutes, { schedulerService, jobExecutor, eventScheduler });
-  logger.info('[Session #89] Scheduler routes registered at /api/v1/scheduler');
+  // Session #89: Scheduler routes for job management (only if scheduler services available)
+  if (schedulerService && jobExecutor && eventScheduler) {
+    await fastify.register(schedulerRoutes, { schedulerService, jobExecutor, eventScheduler });
+    logger.info('[Session #89] Scheduler routes registered at /api/v1/scheduler');
+  } else {
+    logger.warn('[Session #89] Skipping scheduler routes - scheduler services not available');
+  }
 
   // Phase 3: scaffold.routes removed (depended on AgentDispatcherService which is now removed)
 
@@ -380,11 +519,17 @@ export async function createServer() {
   fastify.addHook('onClose', async () => {
     logger.info('[PHASE-3] Shutting down OrchestratorContainer');
 
-    // Session #89: Stop scheduler workers
-    logger.info('[Session #89] Stopping scheduler workers');
-    jobDispatcher.stop();
-    await jobConsumer.stop();
-    logger.info('[Session #89] Scheduler workers stopped');
+    // Session #89: Stop scheduler workers (if they were started)
+    if (jobDispatcher || jobConsumer) {
+      logger.info('[Session #89] Stopping scheduler workers');
+      if (jobDispatcher) {
+        jobDispatcher.stop();
+      }
+      if (jobConsumer) {
+        await jobConsumer.stop();
+      }
+      logger.info('[Session #89] Scheduler workers stopped');
+    }
 
     // Session #88: Stop monitoring services
     logger.info('[Session #88] Stopping monitoring services');

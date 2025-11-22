@@ -75,15 +75,46 @@ export class PlatformLoaderService {
    * Load all platforms with optional filtering
    */
   async loadAllPlatforms(enabled?: boolean): Promise<PlatformData[]> {
-    const platforms = await this.prisma.platform.findMany({
-      where: enabled !== undefined ? { enabled } : undefined,
-      orderBy: { created_at: 'desc' }
-    })
+    try {
+      console.log('[PlatformLoaderService] Starting loadAllPlatforms query...');
+      const startTime = Date.now();
 
-    // Cache all loaded platforms
-    platforms.forEach(p => this.setCache(p.id, p))
+      // Add timeout to Prisma query
+      const platforms = await Promise.race([
+        this.prisma.platform.findMany({
+          where: enabled !== undefined ? { enabled } : undefined,
+          orderBy: { created_at: 'desc' }
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => {
+            const elapsed = Date.now() - startTime;
+            reject(new Error(`Platform.findMany() query timeout after ${elapsed}ms`));
+          }, 3000)
+        )
+      ]).catch((error: any) => {
+        console.error('[PlatformLoaderService] Database query failed:', {
+          error: error.message,
+          code: error.code,
+          meta: error.meta,
+          elapsed: Date.now() - startTime
+        });
 
-    return platforms
+        // Return empty array on database error to allow system to continue
+        console.warn('[PlatformLoaderService] Returning empty platforms array due to database error');
+        return [];
+      });
+
+      const elapsed = Date.now() - startTime;
+      console.log(`[PlatformLoaderService] Loaded ${platforms.length} platforms in ${elapsed}ms`);
+
+      // Cache all loaded platforms
+      platforms.forEach(p => this.setCache(p.id, p));
+
+      return platforms;
+    } catch (error: any) {
+      console.error('[PlatformLoaderService] Unexpected error in loadAllPlatforms:', error);
+      return [];
+    }
   }
 
   /**

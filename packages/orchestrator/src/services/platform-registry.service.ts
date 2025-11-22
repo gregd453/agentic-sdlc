@@ -27,10 +27,26 @@ export class PlatformRegistryService {
    * Initialize registry by loading all platforms
    */
   async initialize(): Promise<void> {
-    const platforms = await this.platformLoader.loadAllPlatforms()
+    console.log('[PlatformRegistryService] Starting initialization...');
+    const startTime = Date.now();
 
-    for (const platform of platforms) {
-      this.registerPlatform(platform)
+    try {
+      console.log('[PlatformRegistryService] Calling platformLoader.loadAllPlatforms()...');
+      const platforms = await this.platformLoader.loadAllPlatforms();
+
+      console.log(`[PlatformRegistryService] Received ${platforms.length} platforms from loader`);
+
+      for (const platform of platforms) {
+        console.log(`[PlatformRegistryService] Registering platform: ${platform.name} (${platform.id})`);
+        this.registerPlatform(platform);
+      }
+
+      const elapsed = Date.now() - startTime;
+      console.log(`[PlatformRegistryService] Initialization complete in ${elapsed}ms with ${this.registry.size} platforms`);
+    } catch (error: any) {
+      const elapsed = Date.now() - startTime;
+      console.error(`[PlatformRegistryService] Initialization failed after ${elapsed}ms:`, error);
+      throw error;
     }
   }
 

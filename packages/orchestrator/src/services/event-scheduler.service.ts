@@ -82,16 +82,35 @@ export class EventSchedulerService {
       // Subscribe to each unique event
       const uniqueEvents = new Set(handlers.map(h => h.event_name));
 
-      for (const eventName of uniqueEvents) {
-        await this.subscribeToEvent(eventName);
-      }
+      // Subscribe to events in parallel with individual timeouts
+      const subscriptionPromises = Array.from(uniqueEvents).map(async (eventName) => {
+        try {
+          // Wrap subscription in timeout to prevent hanging
+          await Promise.race([
+            this.subscribeToEvent(eventName),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error(`Subscription timeout for event: ${eventName}`)), 3000)
+            )
+          ]);
+          logger.debug({ event_name: eventName }, 'Successfully subscribed to event');
+        } catch (error: any) {
+          logger.warn(
+            { event_name: eventName, error: error.message },
+            'Failed to subscribe to event, will retry later'
+          );
+        }
+      });
+
+      // Wait for all subscriptions to complete or timeout
+      await Promise.allSettled(subscriptionPromises);
 
       this.isInitialized = true;
 
       logger.info(
         {
           handler_count: handlers.length,
-          event_count: uniqueEvents.size
+          event_count: uniqueEvents.size,
+          subscribed_count: this.eventSubscriptions.size
         },
         'EventSchedulerService initialized'
       );
@@ -120,20 +139,29 @@ export class EventSchedulerService {
 
     logger.info({ event_name: eventName }, 'Subscribing to event');
 
-    // Subscribe to message bus - returns unsubscribe function
-    const unsubscribe = await this.messageBus.subscribe(eventName, async (data: any) => {
-      await this.handleEvent({
-        event_name: eventName,
-        data,
-        platform_id: data.platform_id,
-        trace_id: data.trace_id,
-        timestamp: new Date()
+    try {
+      // Subscribe to message bus - returns unsubscribe function
+      // Note: This starts a background Redis stream consumer loop
+      const unsubscribe = await this.messageBus.subscribe(eventName, async (data: any) => {
+        await this.handleEvent({
+          event_name: eventName,
+          data,
+          platform_id: data.platform_id,
+          trace_id: data.trace_id,
+          timestamp: new Date()
+        });
       });
-    });
 
-    this.eventSubscriptions.set(eventName, unsubscribe);
+      this.eventSubscriptions.set(eventName, unsubscribe);
 
-    logger.debug({ event_name: eventName }, 'Subscribed to event');
+      logger.debug({ event_name: eventName }, 'Subscribed to event');
+    } catch (error: any) {
+      logger.error(
+        { event_name: eventName, error: error.message },
+        'Failed to subscribe to event'
+      );
+      throw error;
+    }
   }
 
   /**
@@ -509,6 +537,35 @@ export class EventSchedulerService {
     // Reinitialize
     this.isInitialized = false;
     await this.initialize();
+  }
+
+  /**
+   * Lazy initialization - can be called after server startup to subscribe to events
+   * that failed during initial startup
+   */
+  async lazySubscribe(eventName: string): Promise<boolean> {
+    try {
+      if (this.eventSubscriptions.has(eventName)) {
+        logger.debug({ event_name: eventName }, 'Already subscribed to event');
+        return true;
+      }
+
+      await Promise.race([
+        this.subscribeToEvent(eventName),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`Lazy subscription timeout for event: ${eventName}`)), 3000)
+        )
+      ]);
+
+      logger.info({ event_name: eventName }, 'Lazy subscription successful');
+      return true;
+    } catch (error: any) {
+      logger.error(
+        { event_name: eventName, error: error.message },
+        'Lazy subscription failed'
+      );
+      return false;
+    }
   }
 
   /**

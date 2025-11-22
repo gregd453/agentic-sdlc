@@ -342,7 +342,7 @@ Throughout all 5 phases and into Phase 6, the system maintained **99%+ productio
 ### Documentation
 - [Phase 5 Implementation Report](./EPCC_CODE_PHASE5.md) - 402 lines
 - [Phase 6 Progress Report](./EPCC_CODE_PHASE6_PROGRESS.md) - 350 lines
-- [EPCC Plan](./EPCC_PLAN.md) - Master plan (485 lines)
+- [EPCC Plan](MONITOR-DASHBOARD-EPCC_PLAN.md) - Master plan (485 lines)
 - [CLAUDE.md](./CLAUDE.md) - Updated to v47.0
 
 ### Code
