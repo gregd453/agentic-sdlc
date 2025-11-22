@@ -215,8 +215,10 @@ export async function createServer() {
   const schedulerService = new SchedulerService(prisma, messageBus);
   const eventScheduler = new EventSchedulerService(prisma, messageBus, schedulerService);
 
-  // Initialize event scheduler (load event handlers from database)
-  await eventScheduler.initialize();
+  // Initialize event scheduler (load event handlers from database) - non-blocking
+  eventScheduler.initialize().catch((error) => {
+    logger.warn({ error }, '[Session #89] EventScheduler initialization failed, continuing without event handlers');
+  });
   logger.info('[Session #89] Scheduler services initialized');
 
   // Session #89: Initialize scheduler workers

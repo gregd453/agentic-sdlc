@@ -67,10 +67,15 @@ export class EventSchedulerService {
     logger.info('Initializing EventSchedulerService');
 
     try {
-      // Load all active event handlers from database
-      const handlers = await this.prisma.eventHandler.findMany({
-        where: { enabled: true }
-      });
+      // Load all active event handlers from database with timeout
+      const handlers = await Promise.race([
+        this.prisma.eventHandler.findMany({
+          where: { enabled: true }
+        }),
+        new Promise<any[]>((_, reject) =>
+          setTimeout(() => reject(new Error('Database query timeout after 5s')), 5000)
+        )
+      ]);
 
       logger.info({ handler_count: handlers.length }, 'Loading event handlers');
 
@@ -91,11 +96,12 @@ export class EventSchedulerService {
         'EventSchedulerService initialized'
       );
     } catch (error: any) {
-      logger.error(
-        { error: error.message, stack: error.stack },
-        'Failed to initialize EventSchedulerService'
+      logger.warn(
+        { error: error.message },
+        '[EventSchedulerService] Failed to load initial event handlers, continuing anyway'
       );
-      throw error;
+      // Mark as initialized even if loading fails - handlers can be registered later
+      this.isInitialized = true;
     }
   }
 

@@ -9,6 +9,7 @@ import {
   Shield,
   Users,
   Activity,
+  Clock,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -62,6 +63,12 @@ export const navigationConfig = {
       href: '/agents',
       icon: Bot,
       description: 'Agent registry and configuration',
+    },
+    {
+      label: 'Scheduler',
+      href: '/scheduler',
+      icon: Clock,
+      description: 'Job scheduling and execution',
     },
     {
       label: 'Analytics',

@@ -17,6 +17,9 @@ import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage'
 import WorkflowPipelineBuilderPage from './pages/WorkflowPipelineBuilderPage'
 import WorkflowDefinitionsPage from './pages/WorkflowDefinitionsPage'
 import MonitoringDashboardPage from './pages/MonitoringDashboardPage'
+import { SchedulerJobsPage } from './pages/SchedulerJobsPage'
+import { SchedulerExecutionsPage } from './pages/SchedulerExecutionsPage'
+import { SchedulerEventsPage } from './pages/SchedulerEventsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 const queryClient = new QueryClient({
@@ -57,6 +60,12 @@ function App() {
                   <Route path=":platformId/definitions" element={<WorkflowDefinitionsPage />} />
                 </Route>
                 <Route path="/surfaces" element={<SurfaceRegistryPage />} />
+                <Route path="/scheduler">
+                  <Route index element={<SchedulerJobsPage />} />
+                  <Route path="jobs" element={<SchedulerJobsPage />} />
+                  <Route path="executions" element={<SchedulerExecutionsPage />} />
+                  <Route path="events" element={<SchedulerEventsPage />} />
+                </Route>
                 <Route path="/traces" element={<TracesPage />} />
                 <Route path="/traces/:traceId" element={<TraceDetailPage />} />
                 <Route path="/agents" element={<AgentsPageEnhanced />} />
