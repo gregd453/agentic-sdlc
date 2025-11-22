@@ -18,6 +18,7 @@ export interface Logger {
   warn: (msg: string, meta?: Record<string, any>) => void;
   error: (msg: string, meta?: Record<string, any>) => void;
   debug: (msg: string, meta?: Record<string, any>) => void;
+  trace: (msg: string, meta?: Record<string, any>) => void;
 }
 
 /**
@@ -44,6 +45,11 @@ export function createLogger(scope: string): Logger {
     debug: (msg, meta) => {
       if (process.env.DEBUG) {
         log('DEBUG', msg, meta);
+      }
+    },
+    trace: (msg, meta) => {
+      if (process.env.TRACE) {
+        log('TRACE', msg, meta);
       }
     },
   };

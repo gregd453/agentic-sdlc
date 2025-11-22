@@ -114,7 +114,7 @@ export function makeRedisBus(
         // This allows agents to process queued tasks on restart (important for reliability)
         try {
           await pub.xGroupCreate(streamKey, consumerGroup, '0', { MKSTREAM: true });
-          console.log('[DEBUG-STREAM-INIT] Created NEW consumer group starting from BEGINNING of stream', {
+          log.trace('[DEBUG-STREAM-INIT] Created NEW consumer group starting from BEGINNING of stream', {
             streamKey,
             consumerGroup,
             startPosition: '0'
@@ -122,7 +122,7 @@ export function makeRedisBus(
           log.info('[PHASE-3] Created consumer group for stream', { streamKey, consumerGroup, startPosition: '0' });
         } catch (error: any) {
           if (error.message?.includes('BUSYGROUP')) {
-            console.log('[DEBUG-STREAM-INIT] Consumer group already exists (good - will continue from last position)', {
+            log.trace('[DEBUG-STREAM-INIT] Consumer group already exists (good - will continue from last position)', {
               streamKey,
               consumerGroup
             });
@@ -136,12 +136,12 @@ export function makeRedisBus(
 
         // Start stream consumer in background
         (async () => {
-          console.log('[DEBUG-STREAM-INIT] Stream consumer loop STARTED', { streamKey, consumerGroup, consumerName, topic });
+          log.trace('[DEBUG-STREAM-INIT] Stream consumer loop STARTED', { streamKey, consumerGroup, consumerName, topic });
           log.info('[PHASE-3] Starting stream consumer', { streamKey, consumerGroup, consumerName });
 
           while (subscriptions.has(topic)) {
             try {
-              console.log('[DEBUG-STREAM] About to call XREADGROUP', { streamKey, consumerGroup, consumerName });
+              log.trace('[DEBUG-STREAM] About to call XREADGROUP', { streamKey, consumerGroup, consumerName });
 
               // Read from stream with XREADGROUP
               // Always use '>' to read new undelivered messages for this consumer group
@@ -153,14 +153,14 @@ export function makeRedisBus(
                 { COUNT: 10, BLOCK: 5000 } // Block for 5 seconds
               );
 
-              console.log('[DEBUG-STREAM] XREADGROUP returned', {
+              log.trace('[DEBUG-STREAM] XREADGROUP returned', {
                 hasResults: !!results,
                 resultsLength: results?.length || 0,
                 resultsType: typeof results
               });
 
               if (results && results.length > 0) {
-                console.log('[DEBUG-STREAM] Processing results', { count: results.length });
+                log.trace('[DEBUG-STREAM] Processing results', { count: results.length });
                 for (const streamResult of results) {
                   for (const message of streamResult.messages) {
                     try {
@@ -231,7 +231,7 @@ export function makeRedisBus(
 
                       // 🔍 Step 3: Log handler invocation
                       const handlers = subscriptions.get(topic);
-                      console.log('[DEBUG-STREAM] Checking handlers', {
+                      log.trace('[DEBUG-STREAM] Checking handlers', {
                         topic,
                         hasHandlers: !!handlers,
                         handlerCount: handlers?.size || 0,
@@ -246,25 +246,25 @@ export function makeRedisBus(
                           task_id: taskId
                         });
 
-                        console.log('[DEBUG-STREAM] About to invoke handlers', { count: handlers.size });
+                        log.trace('[DEBUG-STREAM] About to invoke handlers', { count: handlers.size });
 
                         // Invoke all handlers - let errors propagate to keep message pending
                         await Promise.all(
                           Array.from(handlers).map(h => h(parsedMessage))
                         );
 
-                        console.log('[DEBUG-STREAM] Handlers completed successfully');
+                        log.trace('[DEBUG-STREAM] Handlers completed successfully');
 
                         // CRITICAL: Only ACK after ALL handlers succeed
                         // If any handler fails, message stays pending for retry
                         await pub.xAck(streamKey, consumerGroup, message.id);
-                        console.log('[DEBUG-STREAM] Message ACKed', { messageId: message.id });
+                        log.trace('[DEBUG-STREAM] Message ACKed', { messageId: message.id });
                         log.debug('[STREAM-CONSUME] Message acknowledged', {
                           messageId: message.id,
                           streamKey
                         });
                       } else {
-                        console.log('[DEBUG-STREAM] No handlers found!');
+                        log.trace('[DEBUG-STREAM] No handlers found!');
                         log.warn('[STREAM-CONSUME] No handlers found for topic', {
                           topic,
                           availableTopics: Array.from(subscriptions.keys()).join(',')
